@@ -1,0 +1,111 @@
+version: "3.8"
+
+# Đồ án tốt nghiệp: Streaming Pipeline + MLOps cho dự báo nhu cầu TMĐT
+# Trạng thái: khung khởi tạo Tuần 1-2 — sẽ bổ sung dần FastAPI, MLflow,
+# Prometheus, Grafana ở các tuần sau theo đề cương trong docs/weekly-progress.
+
+services:
+  # --- Nhắn tin / Streaming ---
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - ecom-net
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    networks:
+      - ecom-net
+
+  # --- Data Lake ---
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"   # API
+      - "9001:9001"   # Console
+    volumes:
+      - minio-data:/data
+    networks:
+      - ecom-net
+
+  # --- Data Warehouse ---
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    environment:
+      POSTGRES_USER: ecom
+      POSTGRES_PASSWORD: ecom_password
+      POSTGRES_DB: ecom_warehouse
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./warehouse/ddl:/docker-entrypoint-initdb.d
+    networks:
+      - ecom-net
+
+  # --- MLOps (sẽ kích hoạt từ Tuần 5) ---
+  # mlflow:
+  #   build: ./ml/mlflow
+  #   container_name: mlflow
+  #   ports:
+  #     - "5000:5000"
+  #   networks:
+  #     - ecom-net
+
+  # --- Model Serving (sẽ kích hoạt từ Tuần 7) ---
+  # fastapi:
+  #   build: ./serving
+  #   container_name: fastapi-serving
+  #   ports:
+  #     - "8000:8000"
+  #   networks:
+  #     - ecom-net
+
+  # --- Monitoring (sẽ kích hoạt từ Tuần 8) ---
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   container_name: prometheus
+  #   ports:
+  #     - "9090:9090"
+  #   networks:
+  #     - ecom-net
+  #
+  # grafana:
+  #   image: grafana/grafana:latest
+  #   container_name: grafana
+  #   ports:
+  #     - "3000:3000"
+  #   networks:
+  #     - ecom-net
+
+networks:
+  ecom-net:
+    driver: bridge
+
+volumes:
+  minio-data:
+  postgres-data:

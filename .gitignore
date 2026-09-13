@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data & artifacts (không đẩy dữ liệu lớn lên Git)
+data/
+*.parquet
+*.csv
+!notebooks/sample_data/*.csv
+
+# MLflow
+mlruns/
+mlflow.db
+
+# Docker volumes cục bộ (nếu mount ra thư mục project)
+volumes/
+minio-data/
+postgres-data/
+grafana-data/
+prometheus-data/
+
+# Power BI
+*.pbix.bak
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+
+# Logs
+*.log

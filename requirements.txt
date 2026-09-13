@@ -1,0 +1,36 @@
+# --- Streaming & Data Lake ---
+kafka-python==2.0.2
+confluent-kafka==2.5.0
+minio==7.2.7
+pyarrow==16.1.0
+
+# --- Database ---
+psycopg2-binary==2.9.9
+SQLAlchemy==2.0.31
+
+# --- Data Processing & EDA ---
+pandas==2.2.2
+numpy==1.26.4
+matplotlib==3.9.0
+seaborn==0.13.2
+
+# --- Machine Learning ---
+scikit-learn==1.5.1
+lightgbm==4.4.0
+xgboost==2.0.3
+torch==2.3.1
+
+# --- MLOps ---
+mlflow==2.14.1
+
+# --- Model Serving ---
+fastapi==0.111.0
+uvicorn[standard]==0.30.1
+pydantic==2.7.4
+
+# --- Monitoring ---
+prometheus-client==0.20.0
+evidently==0.4.33
+
+# --- Testing ---
+pytest==8.2.2
