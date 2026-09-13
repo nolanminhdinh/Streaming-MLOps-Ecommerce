@@ -1,8 +1,15 @@
 version: "3.8"
 
 # Đồ án tốt nghiệp: Streaming Pipeline + MLOps cho dự báo nhu cầu TMĐT
-# Trạng thái: khung khởi tạo Tuần 1-2 — sẽ bổ sung dần FastAPI, MLflow,
-# Prometheus, Grafana ở các tuần sau theo đề cương trong docs/weekly-progress.
+# Trạng thái: Tuần 2 — hạ tầng dữ liệu luồng (Kafka, Zookeeper, MinIO, PostgreSQL)
+# Các service MLflow / FastAPI / Prometheus / Grafana sẽ được thêm dần ở Tuần 5, 7, 8.
+#
+# Cách chạy (Docker Desktop - Windows/Mac):
+#   docker compose up -d
+#   docker compose ps                    # kiểm tra tất cả service ở trạng thái "healthy"
+#   docker compose logs -f kafka-init    # xem log tạo topic
+#
+# Xem hướng dẫn chi tiết tại docs/how-to-run-week2.md
 
 services:
   # --- Nhắn tin / Streaming ---
@@ -10,10 +17,15 @@ services:
     image: confluentinc/cp-zookeeper:7.6.0
     container_name: zookeeper
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_CLIENT_PORT: ${ZOOKEEPER_CLIENT_PORT:-2181}
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - "2181:2181"
+    healthcheck:
+      test: ["CMD-SHELL", "echo ruok | nc -w 2 localhost 2181 | grep imok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
     networks:
       - ecom-net
 
@@ -21,17 +33,45 @@ services:
     image: confluentinc/cp-kafka:7.6.0
     container_name: kafka
     depends_on:
-      - zookeeper
+      zookeeper:
+        condition: service_healthy
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      # Quan trọng cho Docker Desktop: PLAINTEXT_HOST dùng để Python chạy
+      # trên máy host (Windows/Mac, ngoài container) kết nối vào Kafka qua
+      # localhost:29092. PLAINTEXT dùng cho giao tiếp giữa các container.
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:${KAFKA_HOST_PORT:-29092}
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
     ports:
       - "9092:9092"
-      - "29092:29092"
+      - "${KAFKA_HOST_PORT:-29092}:29092"
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server localhost:9092"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    networks:
+      - ecom-net
+
+  # Service chạy một lần để tạo sẵn Kafka Topics, tránh phải gõ lệnh thủ công.
+  kafka-init:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: kafka-init
+    depends_on:
+      kafka:
+        condition: service_healthy
+    entrypoint: ["/bin/bash", "-c"]
+    command: >
+      "
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic ${KAFKA_TOPIC_ORDERS:-ecom.orders.raw} --partitions 3 --replication-factor 1 &&
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic ${KAFKA_TOPIC_INVENTORY:-inventory.logs} --partitions 3 --replication-factor 1 &&
+      echo 'Đã tạo xong Kafka topics:' &&
+      kafka-topics --bootstrap-server kafka:9092 --list
+      "
     networks:
       - ecom-net
 
@@ -41,13 +81,35 @@ services:
     container_name: minio
     command: server /data --console-address ":9001"
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
     ports:
-      - "9000:9000"   # API
-      - "9001:9001"   # Console
+      - "${MINIO_API_PORT:-9000}:9000"   # API
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"   # Console (đăng nhập bằng .env)
     volumes:
       - minio-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - ecom-net
+
+  # Service chạy một lần để tạo sẵn bucket lưu dữ liệu thô.
+  minio-init:
+    image: minio/mc:latest
+    container_name: minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-c"]
+    command: >
+      "
+      mc alias set local http://minio:9000 ${MINIO_ROOT_USER:-minioadmin} ${MINIO_ROOT_PASSWORD:-minioadmin} &&
+      mc mb --ignore-existing local/${MINIO_BUCKET_RAW:-ecom-raw-lake} &&
+      echo 'Đã tạo xong bucket ${MINIO_BUCKET_RAW:-ecom-raw-lake}'
+      "
     networks:
       - ecom-net
 
@@ -56,14 +118,19 @@ services:
     image: postgres:16
     container_name: postgres
     environment:
-      POSTGRES_USER: ecom
-      POSTGRES_PASSWORD: ecom_password
-      POSTGRES_DB: ecom_warehouse
+      POSTGRES_USER: ${POSTGRES_USER:-ecom}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ecom_password}
+      POSTGRES_DB: ${POSTGRES_DB:-ecom_warehouse}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./warehouse/ddl:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ecom} -d ${POSTGRES_DB:-ecom_warehouse}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
     networks:
       - ecom-net
 

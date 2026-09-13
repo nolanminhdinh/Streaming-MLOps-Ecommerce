@@ -91,18 +91,25 @@ Xem chi tiết đề cương tuần tại [docs/weekly-progress](docs/weekly-pro
 | 9 | Power BI Dashboard + kiểm thử tải |
 | 10 | Hoàn thiện báo cáo ĐATN + chuẩn bị bảo vệ |
 
-## 6. Hướng dẫn chạy nhanh (sẽ cập nhật dần theo tiến độ)
+## 6. Hướng dẫn chạy nhanh
 
 ```bash
-# Khởi động toàn bộ hạ tầng
+# Bước 1: tạo file .env từ file mẫu (không commit .env lên Git)
+cp .env.example .env
+
+# Bước 2: khởi động hạ tầng dữ liệu luồng (Kafka, Zookeeper, MinIO, PostgreSQL)
 docker compose up -d
 
-# Kiểm tra các service đang chạy
+# Kiểm tra các service đang chạy (kỳ vọng ở trạng thái "healthy")
 docker compose ps
 ```
 
-> Ghi chú: Repo đang trong giai đoạn khởi tạo (Tuần 1). Các service trong
-> `docker-compose.yml` sẽ được hoàn thiện dần qua từng tuần theo đề cương ở trên.
+Hướng dẫn chi tiết từng bước (kèm troubleshooting) cho Docker Desktop:
+xem [docs/how-to-run-week2.md](docs/how-to-run-week2.md).
+
+> Ghi chú: Repo đang ở **Tuần 2** — hạ tầng dữ liệu luồng cơ bản đã chạy được.
+> Các service MLflow/FastAPI/Prometheus/Grafana sẽ được kích hoạt dần ở
+> Tuần 5, 7, 8 theo đề cương ở trên.
 
 ## 7. Minh bạch sử dụng AI
 
