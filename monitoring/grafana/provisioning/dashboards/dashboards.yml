@@ -1,0 +1,13 @@
+# Cấu hình tự động nạp Dashboard cho Grafana từ thư mục JSON
+apiVersion: 1
+
+providers:
+  - name: "ECommerce MLOps Dashboards"
+    orgId: 1
+    folder: "MLOps Production"
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 15
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/provisioning/dashboards

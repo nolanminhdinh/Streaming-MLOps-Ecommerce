@@ -1,0 +1,26 @@
+# =============================================================
+# Cấu hình Prometheus Scraper cho Hệ thống Streaming MLOps (Tuần 8)
+# =============================================================
+
+global:
+  scrape_interval: 15s      # Chu kỳ thu thập metrics mặc định
+  evaluation_interval: 15s  # Chu kỳ đánh giá alerting rules
+  scrape_timeout: 10s
+
+scrape_configs:
+  # 1. Tự giám sát Prometheus
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # 2. Thu thập Metrics từ FastAPI Model Serving
+  - job_name: "fastapi-serving"
+    metrics_path: "/metrics"
+    scrape_interval: 10s
+    static_configs:
+      - targets: ["fastapi:8000"]
+    relabel_configs:
+      - target_label: app
+        replacement: "ecommerce-mlops"
+      - target_label: environment
+        replacement: "production"
