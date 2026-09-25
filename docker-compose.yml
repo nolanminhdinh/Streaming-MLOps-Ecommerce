@@ -134,40 +134,79 @@ services:
     networks:
       - ecom-net
 
-  # --- MLOps (sẽ kích hoạt từ Tuần 5) ---
-  # mlflow:
-  #   build: ./ml/mlflow
-  #   container_name: mlflow
-  #   ports:
-  #     - "5000:5000"
-  #   networks:
-  #     - ecom-net
+  # --- MLOps (Kích hoạt Tuần 5: Experiment Tracking & Model Registry) ---
+  mlflow:
+    build: ./ml/mlflow
+    container_name: mlflow
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    environment:
+      MLFLOW_BACKEND_STORE_URI: postgresql://${POSTGRES_USER:-ecom}:${POSTGRES_PASSWORD:-ecom_password}@postgres:5432/${POSTGRES_DB:-ecom_warehouse}
+      MLFLOW_DEFAULT_ARTIFACT_ROOT: s3://${MINIO_BUCKET_RAW:-ecom-raw-lake}/mlflow/
+      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+      AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER:-minioadmin}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    ports:
+      - "${MLFLOW_PORT:-5000}:5000"
+    networks:
+      - ecom-net
 
-  # --- Model Serving (sẽ kích hoạt từ Tuần 7) ---
-  # fastapi:
-  #   build: ./serving
-  #   container_name: fastapi-serving
-  #   ports:
-  #     - "8000:8000"
-  #   networks:
-  #     - ecom-net
+  # --- Model Serving (Kích hoạt Tuần 7: FastAPI Serving & Quản trị Tồn kho) ---
+  fastapi:
+    build: ./serving
+    container_name: fastapi-serving
+    depends_on:
+      - postgres
+      - minio
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-ecom_warehouse}
+      POSTGRES_USER: ${POSTGRES_USER:-ecom}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ecom_password}
+      MODEL_MANIFEST_PATH: /app/data/model_manifest.json
+    volumes:
+      - ./data:/app/data:ro
+    ports:
+      - "${API_PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ecom-net
 
-  # --- Monitoring (sẽ kích hoạt từ Tuần 8) ---
-  # prometheus:
-  #   image: prom/prometheus:latest
-  #   container_name: prometheus
-  #   ports:
-  #     - "9090:9090"
-  #   networks:
-  #     - ecom-net
-  #
-  # grafana:
-  #   image: grafana/grafana:latest
-  #   container_name: grafana
-  #   ports:
-  #     - "3000:3000"
-  #   networks:
-  #     - ecom-net
+  # --- Monitoring (Kích hoạt Tuần 8: Prometheus & Grafana) ---
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    container_name: prometheus
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    networks:
+      - ecom-net
+
+  grafana:
+    image: grafana/grafana:11.0.0
+    container_name: grafana
+    depends_on:
+      - prometheus
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+    ports:
+      - "3000:3000"
+    networks:
+      - ecom-net
 
 networks:
   ecom-net:
