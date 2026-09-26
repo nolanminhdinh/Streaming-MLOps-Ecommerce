@@ -148,15 +148,20 @@ class ABCXYZClassifier:
             sku_revenue["rev_share"] = 0.0
             sku_revenue["cum_rev_share"] = 0.0
 
-        def assign_abc(cum_share: float) -> str:
-            if cum_share <= self.pareto_a:
+        # Phân loại ABC: dùng ngưỡng tích lũy của phần tử trước đó (hoặc phần tử đầu tiên luôn là A)
+        sku_revenue["prev_cum_share"] = sku_revenue["cum_rev_share"].shift(1, fill_value=0.0)
+
+        def assign_abc(row: pd.Series) -> str:
+            # Nếu phần tử trước đó < pareto_a thì phần tử này thuộc nhóm A (bao gồm SKU đầu tiên)
+            if row["prev_cum_share"] < self.pareto_a:
                 return "A"
-            elif cum_share <= self.pareto_b:
+            elif row["prev_cum_share"] < self.pareto_b:
                 return "B"
             else:
                 return "C"
 
-        sku_revenue["abc_class"] = sku_revenue["cum_rev_share"].apply(assign_abc)
+        sku_revenue["abc_class"] = sku_revenue.apply(assign_abc, axis=1)
+        sku_revenue.drop(columns=["prev_cum_share"], inplace=True)
 
         # ─────────────────────────────────────────────────────
         # 2. PHÂN LOẠI XYZ: Tính biến động nhu cầu hàng ngày
