@@ -82,8 +82,7 @@ def build_consumer(retries: int = 5, retry_delay: float = 3.0) -> KafkaConsumer:
                 value_deserializer=lambda v: json.loads(v.decode("utf-8")),
                 auto_offset_reset="earliest",
                 group_id="minio-writer-group",
-                enable_auto_commit=True,
-                auto_commit_interval_ms=5000,
+                enable_auto_commit=False,  # Tắt auto commit để tránh mất dữ liệu khi crash
                 consumer_timeout_ms=1000,  # poll timeout 1s để check _running
             )
             logger.info("Kết nối Kafka Consumer thành công: %s", KAFKA_BOOTSTRAP_SERVERS)
@@ -136,9 +135,9 @@ def flush_batch_to_minio(
     """
     Chuyển batch records thành Parquet và upload lên MinIO.
 
-    Phân vùng theo platform + ngày để dễ query sau này:
-      raw/orders/platform=shopee/year=2026/month=09/day=24/part-<ts>.parquet
-      raw/orders/platform=tiktok/year=2026/month=09/day=24/part-<ts>.parquet
+    Phân vùng chuẩn xác theo platform + ngày của từng bản ghi:
+      raw/orders/platform=shopee/year=YYYY/month=MM/day=DD/part-<ts>.parquet
+      raw/orders/platform=tiktok/year=YYYY/month=MM/day=DD/part-<ts>.parquet
 
     Returns:
         Số file đã upload.
@@ -156,25 +155,23 @@ def flush_batch_to_minio(
     now = datetime.now(timezone.utc)
     ts_str = now.strftime("%Y%m%dT%H%M%S")
 
+    # Xác định ngày cho từng dòng thay vì lấy đại diện dòng đầu tiên
+    time_col = "create_time" if "create_time" in df.columns else ("created_time" if "created_time" in df.columns else None)
+    if time_col:
+        parsed_dates = pd.to_datetime(df[time_col], errors="coerce", utc=True)
+        df["_year"] = parsed_dates.dt.year.fillna(now.year).astype(int)
+        df["_month"] = parsed_dates.dt.month.fillna(now.month).astype(int)
+        df["_day"] = parsed_dates.dt.day.fillna(now.day).astype(int)
+    else:
+        df["_year"] = now.year
+        df["_month"] = now.month
+        df["_day"] = now.day
+
     files_uploaded = 0
 
-    # Group by platform để ghi file riêng
-    for platform, group_df in df.groupby("_platform"):
-        # Xác định ngày dựa trên create_time (Shopee) hoặc created_time (TikTok)
-        time_col = "create_time" if "create_time" in group_df.columns else "created_time"
-        if time_col in group_df.columns:
-            try:
-                first_ts = pd.to_datetime(group_df[time_col].iloc[0])
-                year = first_ts.year
-                month = first_ts.month
-                day = first_ts.day
-            except Exception:
-                year, month, day = now.year, now.month, now.day
-        else:
-            year, month, day = now.year, now.month, now.day
-
-        # Loại bỏ cột internal _platform trước khi ghi parquet
-        write_df = group_df.drop(columns=["_platform"], errors="ignore")
+    # Group by platform và ngày chính xác của bản ghi
+    for (platform, yr, mo, dy), group_df in df.groupby(["_platform", "_year", "_month", "_day"]):
+        write_df = group_df.drop(columns=["_platform", "_year", "_month", "_day"], errors="ignore")
 
         # Chuyển DataFrame → PyArrow Table → Parquet bytes
         table = pa.Table.from_pandas(write_df, preserve_index=False)
@@ -187,11 +184,11 @@ def flush_batch_to_minio(
         object_name = (
             f"raw/orders/"
             f"platform={platform}/"
-            f"year={year:04d}/month={month:02d}/day={day:02d}/"
+            f"year={yr:04d}/month={mo:02d}/day={dy:02d}/"
             f"part-{ts_str}-{len(group_df)}.parquet"
         )
 
-        # Upload
+        # Upload - Không nuốt lỗi để tránh mất dữ liệu khi commit offset
         try:
             minio_client.put_object(
                 bucket_name=bucket,
@@ -207,6 +204,7 @@ def flush_batch_to_minio(
             )
         except S3Error as e:
             logger.error("✗ Upload thất bại %s: %s", object_name, e)
+            raise
 
     return files_uploaded
 
@@ -247,6 +245,7 @@ def main():
                     elapsed = time.time() - last_flush_time
                     if len(buffer) >= BATCH_SIZE or elapsed >= BATCH_TIMEOUT_SEC:
                         n_files = flush_batch_to_minio(buffer, minio_client)
+                        consumer.commit()  # Chỉ commit offset sau khi ghi MinIO thành công
                         total_files += n_files
                         logger.info(
                             "Batch flushed: %d messages → %d files | "
@@ -264,6 +263,7 @@ def main():
             elapsed = time.time() - last_flush_time
             if buffer and elapsed >= BATCH_TIMEOUT_SEC:
                 n_files = flush_batch_to_minio(buffer, minio_client)
+                consumer.commit()
                 total_files += n_files
                 logger.info(
                     "Timeout flush: %d messages → %d files | "
@@ -278,9 +278,13 @@ def main():
     finally:
         # Flush buffer còn lại
         if buffer:
-            n_files = flush_batch_to_minio(buffer, minio_client)
-            total_files += n_files
-            logger.info("Final flush: %d messages → %d files", len(buffer), n_files)
+            try:
+                n_files = flush_batch_to_minio(buffer, minio_client)
+                consumer.commit()
+                total_files += n_files
+                logger.info("Final flush: %d messages → %d files", len(buffer), n_files)
+            except Exception as e:
+                logger.error("Lỗi flush cuối: %s", e)
 
         consumer.close()
         logger.info(

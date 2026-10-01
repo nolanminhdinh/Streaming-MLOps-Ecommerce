@@ -298,6 +298,18 @@ def post_reorder_alerts(request: ReorderAlertRequest) -> ReorderAlertResponse:
     )
 
 
+_ALERT_CACHE = {"summary": None, "timestamp": 0.0}
+_CACHE_TTL = 30.0  # 30 giây cache tránh tính toán lại liên tục khi Prometheus scrape
+
+
+def _get_cached_alert_summary(inv_service):
+    now = time.time()
+    if _ALERT_CACHE["summary"] is None or (now - _ALERT_CACHE["timestamp"]) > _CACHE_TTL:
+        _ALERT_CACHE["summary"] = inv_service.evaluate_all()
+        _ALERT_CACHE["timestamp"] = now
+    return _ALERT_CACHE["summary"]
+
+
 @app.get("/metrics", tags=["Monitoring"])
 def get_metrics(
     format: Optional[str] = Query(None, description="Định dạng trả về: 'prometheus' hoặc 'json'")
@@ -305,7 +317,7 @@ def get_metrics(
     """Cung cấp các metrics vận hành phục vụ giám sát Prometheus / Grafana."""
     uptime = round(time.time() - START_TIME, 1)
     inv_service = get_inventory_service()
-    alert_summary = inv_service.evaluate_all()
+    alert_summary = _get_cached_alert_summary(inv_service)
     manager = get_model_manager()
     meta = manager.get_metadata()
 

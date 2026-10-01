@@ -44,9 +44,19 @@ def get_engine():
 def upsert_dim_products(engine, df: pd.DataFrame) -> dict:
     """Upsert Dim_Products, trả về mapping sku → product_key."""
     skus = df[["sku", "product_name", "category", "original_price", "weight_kg"]].drop_duplicates(subset=["sku"])
+    records = [
+        {
+            "sku": r.get("sku"),
+            "name": r.get("product_name"),
+            "cat": r.get("category"),
+            "cost": r.get("original_price"),
+            "weight": r.get("weight_kg"),
+        }
+        for r in skus.to_dict(orient="records")
+    ]
 
     with engine.begin() as conn:
-        for _, row in skus.iterrows():
+        if records:
             conn.execute(text("""
                 INSERT INTO Dim_Products (sku, product_name, category, unit_cost, weight_kg)
                 VALUES (:sku, :name, :cat, :cost, :weight)
@@ -55,13 +65,7 @@ def upsert_dim_products(engine, df: pd.DataFrame) -> dict:
                     unit_cost = EXCLUDED.unit_cost,
                     weight_kg = EXCLUDED.weight_kg,
                     updated_at = NOW()
-            """), {
-                "sku": row["sku"],
-                "name": row.get("product_name"),
-                "cat": row.get("category"),
-                "cost": row.get("original_price"),
-                "weight": row.get("weight_kg"),
-            })
+            """), records)
 
         # Fetch mapping
         result = conn.execute(text("SELECT sku, product_key FROM Dim_Products"))
@@ -74,19 +78,23 @@ def upsert_dim_products(engine, df: pd.DataFrame) -> dict:
 def upsert_dim_shops(engine, df: pd.DataFrame) -> dict:
     """Upsert Dim_Shops, trả về mapping (shop_id, platform) → shop_key."""
     shops = df[["shop_id", "shop_name", "platform"]].drop_duplicates(subset=["shop_id", "platform"])
+    records = [
+        {
+            "sid": r.get("shop_id") or "",
+            "name": r.get("shop_name"),
+            "platform": r.get("platform"),
+        }
+        for r in shops.to_dict(orient="records")
+    ]
 
     with engine.begin() as conn:
-        for _, row in shops.iterrows():
+        if records:
             conn.execute(text("""
                 INSERT INTO Dim_Shops (shop_id, shop_name, platform)
                 VALUES (:sid, :name, :platform)
                 ON CONFLICT (shop_id, platform) DO UPDATE SET
                     shop_name = EXCLUDED.shop_name
-            """), {
-                "sid": row["shop_id"] or "",
-                "name": row["shop_name"],
-                "platform": row["platform"],
-            })
+            """), records)
 
         result = conn.execute(text("SELECT shop_id, platform, shop_key FROM Dim_Shops"))
         mapping = {(r[0], r[1]): r[2] for r in result}
@@ -100,22 +108,24 @@ def upsert_dim_geography(engine, df: pd.DataFrame) -> dict:
     geos = df[["state", "city", "district", "country"]].drop_duplicates(
         subset=["state", "city", "district"]
     )
+    records = [
+        {
+            "state": r.get("state"),
+            "city": r.get("city"),
+            "district": r.get("district"),
+            "country": r.get("country", "VN"),
+            "region": _classify_region(r.get("state", "")),
+        }
+        for r in geos.to_dict(orient="records")
+    ]
 
     with engine.begin() as conn:
-        for _, row in geos.iterrows():
-            # Phân vùng theo state → region (Bắc/Trung/Nam)
-            region = _classify_region(row.get("state", ""))
+        if records:
             conn.execute(text("""
                 INSERT INTO Dim_Geography (state, city, district, country, region)
                 VALUES (:state, :city, :district, :country, :region)
                 ON CONFLICT (state, city, district) DO NOTHING
-            """), {
-                "state": row.get("state"),
-                "city": row.get("city"),
-                "district": row.get("district"),
-                "country": row.get("country", "VN"),
-                "region": region,
-            })
+            """), records)
 
         result = conn.execute(text("SELECT state, city, district, geo_key FROM Dim_Geography"))
         mapping = {(r[0], r[1], r[2]): r[3] for r in result}
@@ -161,15 +171,15 @@ def lookup_dim_payment(engine) -> dict:
 
 def upsert_dim_carriers(engine, df: pd.DataFrame) -> dict:
     """Upsert Dim_Carriers, trả về mapping carrier_name → carrier_key."""
-    carriers = df["carrier_name"].dropna().unique()
+    carriers = [{"name": name} for name in df["carrier_name"].dropna().unique()]
 
     with engine.begin() as conn:
-        for name in carriers:
+        if carriers:
             conn.execute(text("""
                 INSERT INTO Dim_Carriers (carrier_name)
                 VALUES (:name)
                 ON CONFLICT (carrier_name) DO NOTHING
-            """), {"name": name})
+            """), carriers)
 
         result = conn.execute(text("SELECT carrier_name, carrier_key FROM Dim_Carriers"))
         mapping = {r[0]: r[1] for r in result}
@@ -191,19 +201,24 @@ def load_fact_orders(
     date_map: dict,
     payment_map: dict,
     carrier_map: dict,
+    batch_size: int = 5000,
 ) -> int:
     """
-    Load dữ liệu vào Fact_Orders.
+    Load dữ liệu vào Fact_Orders theo từng batch tối ưu bộ nhớ và số lượng tham số.
 
     Resolve foreign keys từ dimension mappings, insert batch.
     Returns: số rows đã insert.
     """
+    if df.empty:
+        return 0
+
+    records = df.to_dict(orient="records")
     rows_to_insert = []
 
-    for _, row in df.iterrows():
+    for row in records:
         # Resolve dimension keys
         product_key = product_map.get(row.get("sku"))
-        shop_key = shop_map.get((row.get("shop_id", ""), row.get("platform")))
+        shop_key = shop_map.get((row.get("shop_id") or "", row.get("platform")))
         geo_key = geo_map.get((row.get("state"), row.get("city"), row.get("district")))
 
         # Date key
@@ -223,7 +238,7 @@ def load_fact_orders(
             "order_id": row.get("order_id"),
             "platform": row.get("platform"),
             "order_status": row.get("order_status"),
-            "is_cancelled": row.get("is_cancelled", False),
+            "is_cancelled": bool(row.get("is_cancelled", False)),
             "cancel_reason": row.get("cancel_reason"),
             "quantity": row.get("quantity", 0),
             "original_price": row.get("original_price", 0),
@@ -249,33 +264,36 @@ def load_fact_orders(
     if not rows_to_insert:
         return 0
 
-    with engine.begin() as conn:
-        conn.execute(
-            text("""
-                INSERT INTO Fact_Orders (
-                    product_key, shop_key, geo_key, date_key, payment_key, carrier_key,
-                    order_id, platform, order_status, is_cancelled, cancel_reason,
-                    quantity, original_price, discounted_price, subtotal, buyer_total_amount,
-                    seller_discount, platform_discount, voucher_total,
-                    commission_fee, service_fee, transaction_fee,
-                    shipping_fee, original_shipping, tax_amount,
-                    create_time, pay_time, shipped_time, completed_time, cancel_time
-                ) VALUES (
-                    :product_key, :shop_key, :geo_key, :date_key, :payment_key, :carrier_key,
-                    :order_id, :platform, :order_status, :is_cancelled, :cancel_reason,
-                    :quantity, :original_price, :discounted_price, :subtotal, :buyer_total_amount,
-                    :seller_discount, :platform_discount, :voucher_total,
-                    :commission_fee, :service_fee, :transaction_fee,
-                    :shipping_fee, :original_shipping, :tax_amount,
-                    :create_time, :pay_time, :shipped_time, :completed_time, :cancel_time
-                )
-                ON CONFLICT (order_id, platform) DO NOTHING
-            """),
-            rows_to_insert,
+    insert_stmt = text("""
+        INSERT INTO Fact_Orders (
+            product_key, shop_key, geo_key, date_key, payment_key, carrier_key,
+            order_id, platform, order_status, is_cancelled, cancel_reason,
+            quantity, original_price, discounted_price, subtotal, buyer_total_amount,
+            seller_discount, platform_discount, voucher_total,
+            commission_fee, service_fee, transaction_fee,
+            shipping_fee, original_shipping, tax_amount,
+            create_time, pay_time, shipped_time, completed_time, cancel_time
+        ) VALUES (
+            :product_key, :shop_key, :geo_key, :date_key, :payment_key, :carrier_key,
+            :order_id, :platform, :order_status, :is_cancelled, :cancel_reason,
+            :quantity, :original_price, :discounted_price, :subtotal, :buyer_total_amount,
+            :seller_discount, :platform_discount, :voucher_total,
+            :commission_fee, :service_fee, :transaction_fee,
+            :shipping_fee, :original_shipping, :tax_amount,
+            :create_time, :pay_time, :shipped_time, :completed_time, :cancel_time
         )
+        ON CONFLICT (order_id, platform) DO NOTHING
+    """)
 
-    logger.info("Fact_Orders: %d rows inserted", len(rows_to_insert))
-    return len(rows_to_insert)
+    total_inserted = 0
+    with engine.begin() as conn:
+        for i in range(0, len(rows_to_insert), batch_size):
+            chunk = rows_to_insert[i : i + batch_size]
+            conn.execute(insert_stmt, chunk)
+            total_inserted += len(chunk)
+
+    logger.info("Fact_Orders: %d rows inserted", total_inserted)
+    return total_inserted
 
 
 # ─────────────────────────────────────────────────────────────

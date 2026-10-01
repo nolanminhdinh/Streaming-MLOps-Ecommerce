@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<template encoding-version="1.3">
+    <description>Luồng trực quan hóa dữ liệu E-Commerce Streaming: Kafka (ecom.orders.raw) -> Phân tích Schema -> Rẽ nhánh Platform (Shopee / TikTok) -> Ghi xuống MinIO Data Lake &amp; Giám sát Provenance thời gian thực.</description>
+    <groupId>ecom-streaming-mlops-group</groupId>
+    <name>ECommerce_Streaming_Pipeline</name>
+    <snippet>
+        <processors>
+            <!-- 1. ConsumeKafka_2_6: Thu nạp dữ liệu từ Kafka -->
+            <processor>
+                <id>proc-consume-kafka</id>
+                <name>1. ConsumeKafka (ecom.orders.raw)</name>
+                <type>org.apache.nifi.processors.kafka.pubsub.ConsumeKafka_2_6</type>
+                <bundle>
+                    <artifact>nifi-kafka-2-6-nar</artifact>
+                    <group>org.apache.nifi</group>
+                    <version>1.26.0</version>
+                </bundle>
+                <position>
+                    <x>100.0</x>
+                    <y>100.0</y>
+                </position>
+                <config>
+                    <bulletinLevel>WARN</bulletinLevel>
+                    <comments>Đọc các đơn hàng streaming từ Kafka topic ecom.orders.raw</comments>
+                    <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+                    <schedulingPeriod>0 sec</schedulingPeriod>
+                    <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                    <yieldDuration>1 sec</yieldDuration>
+                    <properties>
+                        <entry>
+                            <key>bootstrap.servers</key>
+                            <value>kafka:9092</value>
+                        </entry>
+                        <entry>
+                            <key>topic</key>
+                            <value>ecom.orders.raw</value>
+                        </entry>
+                        <entry>
+                            <key>group.id</key>
+                            <value>nifi-ecom-orders-consumer</value>
+                        </entry>
+                        <entry>
+                            <key>auto.offset.reset</key>
+                            <value>earliest</value>
+                        </entry>
+                        <entry>
+                            <key>key-attribute-encoding</key>
+                            <value>utf-8</value>
+                        </entry>
+                        <entry>
+                            <key>message-header-encoding</key>
+                            <value>UTF-8</value>
+                        </entry>
+                    </properties>
+                </config>
+            </processor>
+
+            <!-- 2. EvaluateJsonPath: Trích xuất các trường dữ liệu JSON thành FlowFile Attributes -->
+            <processor>
+                <id>proc-evaluate-json</id>
+                <name>2. EvaluateJsonPath (Extract Metadata)</name>
+                <type>org.apache.nifi.processors.standard.EvaluateJsonPath</type>
+                <bundle>
+                    <artifact>nifi-standard-nar</artifact>
+                    <group>org.apache.nifi</group>
+                    <version>1.26.0</version>
+                </bundle>
+                <position>
+                    <x>100.0</x>
+                    <y>320.0</y>
+                </position>
+                <config>
+                    <bulletinLevel>WARN</bulletinLevel>
+                    <comments>Trích xuất platform, order_id, sku, order_status, buyer_total_amount</comments>
+                    <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+                    <schedulingPeriod>0 sec</schedulingPeriod>
+                    <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                    <yieldDuration>1 sec</yieldDuration>
+                    <properties>
+                        <entry>
+                            <key>Destination</key>
+                            <value>flowfile-attribute</value>
+                        </entry>
+                        <entry>
+                            <key>Return Type</key>
+                            <value>auto-detect</value>
+                        </entry>
+                        <entry>
+                            <key>Null Value Representation</key>
+                            <value>empty string</value>
+                        </entry>
+                        <entry>
+                            <key>platform</key>
+                            <value>$._platform</value>
+                        </entry>
+                        <entry>
+                            <key>order_id</key>
+                            <value>$.order_id</value>
+                        </entry>
+                        <entry>
+                            <key>order_sn</key>
+                            <value>$.order_sn</value>
+                        </entry>
+                        <entry>
+                            <key>order_status</key>
+                            <value>$.order_status</value>
+                        </entry>
+                        <entry>
+                            <key>sku</key>
+                            <value>$.item_sku</value>
+                        </entry>
+                        <entry>
+                            <key>seller_sku</key>
+                            <value>$.seller_sku</value>
+                        </entry>
+                        <entry>
+                            <key>amount</key>
+                            <value>$.buyer_total_amount</value>
+                        </entry>
+                    </properties>
+                </config>
+            </processor>
+
+            <!-- 3. RouteOnAttribute: Phân nhánh sàn TMĐT (Shopee vs TikTok Shop) -->
+            <processor>
+                <id>proc-route-platform</id>
+                <name>3. RouteOnAttribute (Shopee vs TikTok)</name>
+                <type>org.apache.nifi.processors.standard.RouteOnAttribute</type>
+                <bundle>
+                    <artifact>nifi-standard-nar</artifact>
+                    <group>org.apache.nifi</group>
+                    <version>1.26.0</version>
+                </bundle>
+                <position>
+                    <x>100.0</x>
+                    <y>540.0</y>
+                </position>
+                <config>
+                    <bulletinLevel>WARN</bulletinLevel>
+                    <comments>Rẽ nhánh dữ liệu dựa vào thuộc tính platform</comments>
+                    <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+                    <schedulingPeriod>0 sec</schedulingPeriod>
+                    <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                    <yieldDuration>1 sec</yieldDuration>
+                    <properties>
+                        <entry>
+                            <key>Routing Strategy</key>
+                            <value>Route to Property name</value>
+                        </entry>
+                        <entry>
+                            <key>shopee_orders</key>
+                            <value>${platform:equals('shopee'):or(${order_sn:isEmpty():not()})}</value>
+                        </entry>
+                        <entry>
+                            <key>tiktok_orders</key>
+                            <value>${platform:equals('tiktok')}</value>
+                        </entry>
+                    </properties>
+                </config>
+            </processor>
+
+            <!-- 4. UpdateAttribute: Thiết lập S3 Object Key và Metadata phân vùng ngày -->
+            <processor>
+                <id>proc-update-s3-path</id>
+                <name>4. UpdateAttribute (Partitioning &amp; Path)</name>
+                <type>org.apache.nifi.processors.attributes.UpdateAttribute</type>
+                <bundle>
+                    <artifact>nifi-update-attribute-nar</artifact>
+                    <group>org.apache.nifi</group>
+                    <version>1.26.0</version>
+                </bundle>
+                <position>
+                    <x>650.0</x>
+                    <y>540.0</y>
+                </position>
+                <config>
+                    <bulletinLevel>WARN</bulletinLevel>
+                    <comments>Định dạng đường dẫn phân vùng chuẩn Data Lake trên MinIO</comments>
+                    <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+                    <schedulingPeriod>0 sec</schedulingPeriod>
+                    <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                    <yieldDuration>1 sec</yieldDuration>
+                    <properties>
+                        <entry>
+                            <key>s3.bucket</key>
+                            <value>ecom-raw-lake</value>
+                        </entry>
+                        <entry>
+                            <key>s3.object.key</key>
+                            <value>raw/orders/platform=${platform}/year=${now():format("yyyy")}/month=${now():format("MM")}/day=${now():format("dd")}/order-${now():format("yyyyMMddHHmmssSSS")}-${UUID()}.json</value>
+                        </entry>
+                        <entry>
+                            <key>mime.type</key>
+                            <value>application/json</value>
+                        </entry>
+                    </properties>
+                </config>
+            </processor>
+
+            <!-- 5. PutS3Object: Tải dữ liệu thô vào MinIO Data Lake -->
+            <processor>
+                <id>proc-put-minio</id>
+                <name>5. PutS3Object (MinIO Data Lake)</name>
+                <type>org.apache.nifi.processors.aws.s3.PutS3Object</type>
+                <bundle>
+                    <artifact>nifi-aws-nar</artifact>
+                    <group>org.apache.nifi</group>
+                    <version>1.26.0</version>
+                </bundle>
+                <position>
+                    <x>650.0</x>
+                    <y>320.0</y>
+                </position>
+                <config>
+                    <bulletinLevel>WARN</bulletinLevel>
+                    <comments>Ghi đối tượng trực tiếp vào MinIO Data Lake</comments>
+                    <concurrentlySchedulableTaskCount>2</concurrentlySchedulableTaskCount>
+                    <schedulingPeriod>0 sec</schedulingPeriod>
+                    <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                    <yieldDuration>1 sec</yieldDuration>
+                    <properties>
+                        <entry>
+                            <key>Bucket</key>
+                            <value>${s3.bucket}</value>
+                        </entry>
+                        <entry>
+                            <key>Object Key</key>
+                            <value>${s3.object.key}</value>
+                        </entry>
+                        <entry>
+                            <key>Endpoint Override URL</key>
+                            <value>http://minio:9000</value>
+                        </entry>
+                        <entry>
+                            <key>Access Key ID</key>
+                            <value>minioadmin</value>
+                        </entry>
+                        <entry>
+                            <key>Secret Access Key</key>
+                            <value>minioadmin</value>
+                        </entry>
+                        <entry>
+                            <key>Signer Override</key>
+                            <value>AWSS3V4SignerType</value>
+                        </entry>
+                        <entry>
+                            <key>Content Type</key>
+                            <value>application/json</value>
+                        </entry>
+                        <entry>
+                            <key>Multipart Threshold</key>
+                            <value>5 MB</value>
+                        </entry>
+                    </properties>
+                </config>
+            </processor>
+
+            <!-- 6. LogAttribute: Giám sát đơn hàng hoàn tất trên Canvas -->
+            <processor>
+                <id>proc-log-provenance</id>
+                <name>6. LogAttribute (Order Flow Monitor)</name>
+                <type>org.apache.nifi.processors.standard.LogAttribute</type>
+                <bundle>
+                    <artifact>nifi-standard-nar</artifact>
+                    <group>org.apache.nifi</group>
+                    <version>1.26.0</version>
+                </bundle>
+                <position>
+                    <x>650.0</x>
+                    <y>100.0</y>
+                </position>
+                <config>
+                    <bulletinLevel>INFO</bulletinLevel>
+                    <comments>Ghi log và hiển thị thống kê FlowFiles đã hoàn tất vòng đời streaming</comments>
+                    <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+                    <schedulingPeriod>0 sec</schedulingPeriod>
+                    <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                    <yieldDuration>1 sec</yieldDuration>
+                    <properties>
+                        <entry>
+                            <key>Log Level</key>
+                            <value>info</value>
+                        </entry>
+                        <entry>
+                            <key>Log Payload</key>
+                            <value>false</value>
+                        </entry>
+                        <entry>
+                            <key>Attributes to Log</key>
+                            <value>platform,order_id,order_status,amount,s3.object.key</value>
+                        </entry>
+                    </properties>
+                </config>
+            </processor>
+        </processors>
+
+        <connections>
+            <!-- ConsumeKafka -> EvaluateJsonPath -->
+            <connection>
+                <id>conn-kafka-to-eval</id>
+                <name>Stream Records</name>
+                <source>
+                    <groupId>ecom-streaming-mlops-group</groupId>
+                    <id>proc-consume-kafka</id>
+                    <type>PROCESSOR</type>
+                </source>
+                <destination>
+                    <groupId>ecom-streaming-mlops-group</groupId>
+                    <id>proc-evaluate-json</id>
+                    <type>PROCESSOR</type>
+                </destination>
+                <selectedRelationships>success</selectedRelationships>
+                <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+                <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+            </connection>
+
+            <!-- EvaluateJsonPath -> RouteOnAttribute -->
+            <connection>
+                <id>conn-eval-to-route</id>
+                <name>Parsed JSON</name>
+                <source>
+                    <groupId>ecom-streaming-mlops-group</groupId>
+                    <id>proc-evaluate-json</id>
+                    <type>PROCESSOR</type>
+                </source>
+                <destination>
+                    <groupId>ecom-streaming-mlops-group</groupId>
+                    <id>proc-route-platform</id>
+                    <type>PROCESSOR</type>
+                </destination>
+                <selectedRelationships>matched</selectedRelationships>
+                <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+            </connection>
+
+            <!-- RouteOnAttribute (Shopee) -> UpdateAttribute -->
+            <connection>
+                <id>conn-route-shopee-to-update</id>
+                <name>Shopee Flow</name>
+                <source>
+                    <groupId>ecom-streaming-mlops-group</groupId>
+                    <id>proc-route-platform</id>
+                    <type>PROCESSOR</type>
+                </source>
+                <destination>
+                    <groupId>ecom-streaming-mlops-group</groupId>
+                    <id>proc-update-s3-path</id>
+                    <type>PROCESSOR</type>
+                </destination>
+                <selectedRelationships>shopee_orders</selectedRelationships>
+            </connection>
+
+            <!-- RouteOnAttribute (TikTok) -> UpdateAttribute -->
+            <connection>
+                <id>conn-route-tiktok-to-update</id>
+                <name>TikTok Flow</name>
+                <source>
+                    <groupId>ecom-streaming-mlops-group</groupId>
+                    <id>proc-route-platform</id>
+                    <type>PROCESSOR</type>
+                </source>
+                <destination>
+                    <groupId>ecom-streaming-mlops-group</groupId>
+                    <id>proc-update-s3-path</id>
+                    <type>PROCESSOR</type>
+                </destination>
+                <selectedRelationships>tiktok_orders</selectedRelationships>
+            </connection>
+
+            <!-- UpdateAttribute -> PutS3Object -->
+            <connection>
+                <id>conn-update-to-puts3</id>
+                <name>Ready to Upload</name>
+                <source>
+                    <groupId>ecom-streaming-mlops-group</groupId>
+                    <id>proc-update-s3-path</id>
+                    <type>PROCESSOR</type>
+                </source>
+                <destination>
+                    <groupId>ecom-streaming-mlops-group</groupId>
+                    <id>proc-put-minio</id>
+                    <type>PROCESSOR</type>
+                </destination>
+                <selectedRelationships>success</selectedRelationships>
+            </connection>
+
+            <!-- PutS3Object -> LogAttribute -->
+            <connection>
+                <id>conn-puts3-to-log</id>
+                <name>MinIO Uploaded</name>
+                <source>
+                    <groupId>ecom-streaming-mlops-group</groupId>
+                    <id>proc-put-minio</id>
+                    <type>PROCESSOR</type>
+                </source>
+                <destination>
+                    <groupId>ecom-streaming-mlops-group</groupId>
+                    <id>proc-log-provenance</id>
+                    <type>PROCESSOR</type>
+                </destination>
+                <selectedRelationships>success</selectedRelationships>
+            </connection>
+        </connections>
+    </snippet>
+</template>

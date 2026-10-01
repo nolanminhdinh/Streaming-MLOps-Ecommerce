@@ -113,23 +113,43 @@ class ModelManager:
         }
 
     def _try_load_mlflow_pyfunc(self) -> None:
-        """Cố gắng tải mô hình pyfunc từ MLflow server nếu môi trường có sẵn."""
+        """Cố gắng tải mô hình pyfunc từ MLflow server hoặc joblib cục bộ."""
         tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000")
         model_name = self.manifest.get("model_registry_name", "ECommerceDemandForecastModel")
         stage = self.manifest.get("stage", "Staging")
 
+        # 1. Thử load từ MLflow Model Registry
         try:
             import mlflow
             mlflow.set_tracking_uri(tracking_uri)
             model_uri = f"models:/{model_name}/{stage}"
             self.model = mlflow.pyfunc.load_model(model_uri)
             logger.info(f"✓ Đã nạp thành công pyfunc model từ MLflow: {model_uri}")
+            return
         except Exception as e:
-            logger.info(
-                f"MLflow server không kết nối được hoặc model artifact chưa sẵn sàng ({e}). "
-                f"Sử dụng Calibrated Inference Engine cho thuật toán {self.manifest.get('champion_algorithm')}."
-            )
-            self.model = None
+            logger.debug(f"Không thể kết nối MLflow Registry ({e}), thử tìm artifact cục bộ...")
+
+        # 2. Thử load từ các artifact joblib đã huấn luyện cục bộ
+        local_candidates = [
+            os.path.join(os.path.dirname(__file__), "..", "..", "data", "champion_model.joblib"),
+            os.path.join(os.path.dirname(__file__), "..", "..", "data", "mlflow_artifacts", "lightgbm_model.joblib"),
+            os.path.join(os.path.dirname(__file__), "..", "..", "data", "mlflow_artifacts", "moving_average_model.joblib"),
+        ]
+        for path in local_candidates:
+            abs_p = os.path.abspath(path)
+            if os.path.exists(abs_p):
+                try:
+                    import joblib
+                    self.model = joblib.load(abs_p)
+                    logger.info(f"✓ Đã nạp thành công mô hình Machine Learning cục bộ: {abs_p}")
+                    return
+                except Exception as ex:
+                    logger.debug(f"Lỗi load artifact {abs_p}: {ex}")
+
+        logger.info(
+            f"Sử dụng Calibrated Inference Engine cho thuật toán {self.manifest.get('champion_algorithm')}."
+        )
+        self.model = None
 
     def predict_daily(
         self,
@@ -140,8 +160,8 @@ class ModelManager:
     ) -> Tuple[float, Optional[float], Optional[float]]:
         """
         Dự báo sản lượng cho 1 SKU tại 1 ngày cụ thể:
-          - Kết hợp đặc trưng lịch (thứ trong tuần, tháng, ngày đôi mega-sale)
-          - Hiệu ứng xu hướng và tính chất biến động theo nhóm ma trận ABC/XYZ
+          - Nếu có mô hình ML: chuyển đổi đặc trưng thời gian thực và gọi self.model.predict()
+          - Nếu chưa có artifact mô hình: sử dụng Calibrated Heuristic Engine chuẩn xác.
           - Ràng buộc dự báo không âm: y_pred >= 0.0
         """
         meta = CATALOG_METADATA.get(
@@ -163,13 +183,67 @@ class ModelManager:
         # 3. Hiệu ứng lịch gần cuối tháng (ngày 25 - 28 nhận lương): tăng 1.15 lần
         payday_factor = 1.15 if 25 <= target_date.day <= 28 else 1.0
 
-        # 4. Tính toán sản lượng cơ sở
-        pred = base * dow_factor * mega_factor * payday_factor
+        pred = 0.0
+        # 4. Ưu tiên suy luận qua mô hình ML thực tế nếu đã được nạp
+        if self.model is not None and hasattr(self.model, "predict"):
+            try:
+                import pandas as pd
+                h_lag1 = history_demand[-1] if history_demand else base
+                h_lag7 = history_demand[-7] if (history_demand and len(history_demand) >= 7) else base
+                h_mean7 = sum(history_demand[-7:]) / 7.0 if (history_demand and len(history_demand) >= 7) else base
 
-        # 5. Ràng buộc quan trọng: Sản lượng dự báo không được âm
-        pred = max(0.0, round(pred, 1))
+                feat_dict = {
+                    "day_of_week": dow,
+                    "is_weekend": int(dow in (5, 6)),
+                    "day_of_month": target_date.day,
+                    "month": target_date.month,
+                    "quarter": (target_date.month - 1) // 3 + 1,
+                    "is_mega_sale": int(is_mega),
+                    "lag_1": h_lag1,
+                    "lag_2": h_lag1,
+                    "lag_3": h_lag1,
+                    "lag_7": h_lag7,
+                    "lag_14": h_lag7,
+                    "lag_28": h_lag7,
+                    "rolling_mean_7": h_mean7,
+                    "rolling_std_7": sigma,
+                    "rolling_max_7": h_mean7 + sigma,
+                    "rolling_min_7": max(0.0, h_mean7 - sigma),
+                    "rolling_mean_14": h_mean7,
+                    "rolling_std_14": sigma,
+                    "rolling_max_14": h_mean7 + sigma,
+                    "rolling_min_14": max(0.0, h_mean7 - sigma),
+                    "rolling_mean_28": h_mean7,
+                    "rolling_std_28": sigma,
+                    "rolling_max_28": h_mean7 + sigma,
+                    "rolling_min_28": max(0.0, h_mean7 - sigma),
+                    "ema_7": h_mean7,
+                    "ema_14": h_mean7,
+                    "growth_wow": 0.0,
+                    "daily_demand": h_lag1,
+                    "daily_revenue": h_lag1 * 50000,
+                    "avg_unit_price": 50000,
+                    "order_count": max(1, int(h_lag1)),
+                    "total_discount": 0.0,
+                }
+                feat_df = pd.DataFrame([feat_dict])
+                if hasattr(self.model, "feature_names_in_"):
+                    for missing_c in self.model.feature_names_in_:
+                        if missing_c not in feat_df.columns:
+                            feat_df[missing_c] = 0.0
+                    feat_df = feat_df[self.model.feature_names_in_]
 
-        # 6. Khoảng tin cậy 95% (Z = 1.96)
+                raw_pred = self.model.predict(feat_df)
+                pred_val = float(raw_pred[0]) if hasattr(raw_pred, "__len__") else float(raw_pred)
+                pred = max(0.0, round(pred_val, 1))
+            except Exception as e:
+                logger.debug(f"Fallback sang Calibrated Engine ({e})")
+                pred = max(0.0, round(base * dow_factor * mega_factor * payday_factor, 1))
+        else:
+            # Fallback Calibrated Rule Engine
+            pred = max(0.0, round(base * dow_factor * mega_factor * payday_factor, 1))
+
+        # 5. Khoảng tin cậy 95% (Z = 1.96)
         lower_bound = None
         upper_bound = None
         if confidence_interval:

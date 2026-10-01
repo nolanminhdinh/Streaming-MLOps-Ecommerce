@@ -259,6 +259,19 @@ class DriftDetector:
         # Tạo báo cáo HTML trực quan
         self._export_html_report(summary, ref_data, curr_data)
 
+        # Tạo thêm Evidently Interactive Report nếu thư viện evidently được cài đặt
+        if HAS_EVIDENTLY and HAS_PANDAS:
+            try:
+                ref_df = pd.DataFrame(ref_data)
+                curr_df = pd.DataFrame(curr_data)
+                ev_report = Report(metrics=[DataDriftPreset()])
+                ev_report.run(reference_data=ref_df, current_data=curr_df)
+                evidently_html_path = os.path.join(self.reports_dir, "evidently_interactive_report.html")
+                ev_report.save_html(evidently_html_path)
+                logger.info(f"✓ Đã xuất Evidently Interactive Report tại: {evidently_html_path}")
+            except Exception as ev_err:
+                logger.debug(f"Không thể xuất báo cáo Evidently chuẩn: {ev_err}")
+
         return summary
 
     def _export_html_report(

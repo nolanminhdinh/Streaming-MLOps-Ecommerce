@@ -85,7 +85,7 @@ def build_producer(retries: int = 5, retry_delay: float = 3.0) -> KafkaProducer:
 
 
 def send_event(producer: KafkaProducer, event: dict, topic: str = TOPIC_ORDERS):
-    """Gửi 1 event vào Kafka topic, có callback log lỗi."""
+    """Gửi 1 event vào Kafka topic, có callback log lỗi và routing theo key."""
 
     def on_success(metadata):
         logger.debug(
@@ -96,7 +96,17 @@ def send_event(producer: KafkaProducer, event: dict, topic: str = TOPIC_ORDERS):
     def on_error(exc):
         logger.error("Gửi THẤT BẠI: %s", exc)
 
-    future = producer.send(topic, value=event)
+    # Sử dụng order_id / sku làm message key để đảm bảo tính thứ tự trên partition
+    key_str = str(
+        event.get("order_sn")
+        or event.get("order_id")
+        or event.get("item_sku")
+        or event.get("seller_sku")
+        or ""
+    )
+    key_bytes = key_str.encode("utf-8") if key_str else None
+
+    future = producer.send(topic, key=key_bytes, value=event)
     future.add_callback(on_success)
     future.add_errback(on_error)
 

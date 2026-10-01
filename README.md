@@ -74,6 +74,7 @@ streaming-mlops-ecommerce/
 | Model Serving | FastAPI |
 | Giám sát hạ tầng | Prometheus + Grafana |
 | Giám sát Data Drift | Evidently AI |
+| Trực quan hóa Dataflow | Apache NiFi |
 | BI/Báo cáo | Microsoft Power BI |
 
 ## 5. Lộ trình thực hiện (10 tuần)

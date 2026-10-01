@@ -102,21 +102,26 @@ def read_parquet_from_minio(client: Minio, bucket: str, object_name: str) -> pd.
         return pd.DataFrame()
 
 
+from concurrent.futures import ThreadPoolExecutor
+
+
 def extract(
     target_date: Optional[datetime] = None,
     bucket: str = MINIO_BUCKET,
+    client: Optional[Minio] = None,
 ) -> pd.DataFrame:
     """
-    Hàm extract chính: đọc tất cả Parquet files từ MinIO và merge.
+    Hàm extract chính: đọc song song tất cả Parquet files từ MinIO và merge.
 
     Args:
         target_date: Ngày cần extract (None = tất cả dữ liệu).
         bucket: Tên MinIO bucket.
+        client: Minio client tái sử dụng nếu có.
 
     Returns:
         DataFrame chứa dữ liệu thô merge từ tất cả files.
     """
-    client = build_minio_client()
+    client = client or build_minio_client()
 
     files = list_parquet_files(client, bucket, target_date=target_date)
     if not files:
@@ -126,10 +131,14 @@ def extract(
     logger.info("Tìm thấy %d file Parquet để extract", len(files))
 
     dfs = []
-    for f in files:
-        df = read_parquet_from_minio(client, bucket, f)
-        if not df.empty:
-            dfs.append(df)
+    # Đọc song song qua ThreadPoolExecutor để tối ưu I/O mạng
+    max_workers = min(16, max(2, len(files)))
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = [executor.submit(read_parquet_from_minio, client, bucket, f) for f in files]
+        for fut in futures:
+            df = fut.result()
+            if not df.empty:
+                dfs.append(df)
 
     if not dfs:
         return pd.DataFrame()
@@ -151,7 +160,7 @@ def extract_orders(
     """
     Hàm trích xuất đơn hàng (alias tương thích cho pipeline và các caller khác).
     """
-    return extract(target_date=target_date, bucket=bucket)
+    return extract(client=client, target_date=target_date, bucket=bucket)
 
 
 if __name__ == "__main__":

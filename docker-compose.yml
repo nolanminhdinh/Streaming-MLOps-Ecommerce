@@ -131,6 +131,29 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+  # --- Luồng Trực quan hóa Dữ liệu (Apache NiFi Canvas) ---
+  nifi:
+    image: apache/nifi:1.26.0
+    container_name: nifi
+    environment:
+      - NIFI_WEB_HTTP_PORT=8080
+      - NIFI_WEB_HTTP_HOST=0.0.0.0
+      - NIFI_WEB_HTTPS_PORT=
+      - NIFI_JVM_HEAP_INIT=1024m
+      - NIFI_JVM_HEAP_MAX=2048m
+      - SINGLE_USER_CREDENTIALS_USERNAME=admin
+      - SINGLE_USER_CREDENTIALS_PASSWORD=adminadmin1234
+    ports:
+      - "${NIFI_PORT:-8080}:8080"
+    volumes:
+      - ./ingestion/nifi/ecommerce_streaming_flow.xml:/opt/nifi/nifi-current/conf/templates/ecommerce_streaming_flow.xml:ro
+    depends_on:
+      kafka:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
     networks:
       - ecom-net
 

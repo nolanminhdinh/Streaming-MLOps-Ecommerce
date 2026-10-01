@@ -53,7 +53,9 @@ def unify_schema(df: pd.DataFrame) -> pd.DataFrame:
 
     unified_rows = []
 
-    for _, row in df.iterrows():
+    # Dùng to_dict('records') thay vì df.iterrows() để tăng tốc gấp hàng trăm lần
+    records = df.to_dict(orient="records")
+    for row in records:
         platform = row.get("_platform", "unknown")
 
         if platform == "shopee":
@@ -69,7 +71,7 @@ def unify_schema(df: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(unified_rows)
 
 
-def _unify_shopee_row(row: pd.Series) -> dict:
+def _unify_shopee_row(row: dict | pd.Series) -> dict:
     """Chuyển 1 row Shopee → schema chung."""
     return {
         "order_id": row.get("order_sn"),
@@ -115,7 +117,7 @@ def _unify_shopee_row(row: pd.Series) -> dict:
     }
 
 
-def _unify_tiktok_row(row: pd.Series) -> dict:
+def _unify_tiktok_row(row: dict | pd.Series) -> dict:
     """Chuyển 1 row TikTok → schema chung."""
     return {
         "order_id": row.get("order_id"),
