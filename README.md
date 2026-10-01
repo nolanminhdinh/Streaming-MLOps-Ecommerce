@@ -108,15 +108,15 @@ docker compose ps
 ```
 
 Hướng dẫn chi tiết từng bước cho từng giai đoạn:
-- Tuần 2 (Hạ tầng Docker & Kafka): xem [docs/how-to-run-week2.md](docs/how-to-run-week2.md).
-- Tuần 3 (Data Lake MinIO, Star Schema & Pipeline ETL): xem [docs/how-to-run-week3.md](docs/how-to-run-week3.md).
-- Tuần 4 (EDA & Ma trận 9 ô ABC/XYZ): xem [docs/how-to-run-week4.md](docs/how-to-run-week4.md), [notebooks/eda.ipynb](notebooks/eda.ipynb), [notebooks/abc_xyz_classification.ipynb](notebooks/abc_xyz_classification.ipynb), và báo cáo [docs/weekly-progress/tuan-04.md](docs/weekly-progress/tuan-04.md).
-- Tuần 5 (MLflow Tracking, Feature Store & Baseline Models): xem [docs/how-to-run-week5.md](docs/how-to-run-week5.md) và báo cáo [docs/weekly-progress/tuan-05.md](docs/weekly-progress/tuan-05.md).
-- Tuần 6 (Deep Learning LSTM/GRU, Optuna Tuning, Đối chiếu ABC/XYZ & Model Registry): xem [docs/how-to-run-week6.md](docs/how-to-run-week6.md) và báo cáo [docs/weekly-progress/tuan-06.md](docs/weekly-progress/tuan-06.md).
-- Tuần 7 (Model Serving FastAPI & Nghiệp vụ Quản trị Tồn kho Safety Stock/ROP): xem [docs/how-to-run-week7.md](docs/how-to-run-week7.md) và báo cáo [docs/weekly-progress/tuan-07.md](docs/weekly-progress/tuan-07.md).
-- Tuần 8 (Giám sát Prometheus/Grafana, Evidently Data Drift & Tái huấn luyện Closed-Loop): xem [docs/how-to-run-week8.md](docs/how-to-run-week8.md) và báo cáo [docs/weekly-progress/tuan-08.md](docs/weekly-progress/tuan-08.md).
-- Tuần 9 (Power BI Executive Dashboard, DAX Measures & Thực nghiệm Kiểm thử tải Locust): xem [docs/how-to-run-week9.md](docs/how-to-run-week9.md) và báo cáo [docs/weekly-progress/tuan-09.md](docs/weekly-progress/tuan-09.md).
-- Tuần 10 (Tổng kết Toàn diện, Nghiệm thu Hệ thống & Kịch bản Bảo vệ ĐATN): xem báo cáo [docs/weekly-progress/tuan-10.md](docs/weekly-progress/tuan-10.md).
+- Tuần 2 (Hạ tầng Docker & Kafka): xem [docs/how-to-run/how-to-run-week2.md](docs/how-to-run/how-to-run-week2.md).
+- Tuần 3 (Data Lake MinIO, Star Schema & Pipeline ETL): xem [docs/how-to-run/how-to-run-week3.md](docs/how-to-run/how-to-run-week3.md).
+- Tuần 4 (EDA & Ma trận 9 ô ABC/XYZ): xem [docs/how-to-run/how-to-run-week4.md](docs/how-to-run/how-to-run-week4.md), [notebooks/eda.ipynb](notebooks/eda.ipynb), [notebooks/abc_xyz_classification.ipynb](notebooks/abc_xyz_classification.ipynb), và báo cáo [docs/weekly-progress/tuan-04.md](docs/weekly-progress/tuan-04.md).
+- Tuần 5 (MLflow Tracking, Feature Store & Baseline Models): xem [docs/how-to-run/how-to-run-week5.md](docs/how-to-run/how-to-run-week5.md) và báo cáo [docs/weekly-progress/tuan-05.md](docs/weekly-progress/tuan-05.md).
+- Tuần 6 (Deep Learning LSTM/GRU, Optuna Tuning, Đối chiếu ABC/XYZ & Model Registry): xem [docs/how-to-run/how-to-run-week6.md](docs/how-to-run/how-to-run-week6.md) và báo cáo [docs/weekly-progress/tuan-06.md](docs/weekly-progress/tuan-06.md).
+- Tuần 7 (Model Serving FastAPI & Nghiệp vụ Quản trị Tồn kho Safety Stock/ROP): xem [docs/how-to-run/how-to-run-week7.md](docs/how-to-run/how-to-run-week7.md) và báo cáo [docs/weekly-progress/tuan-07.md](docs/weekly-progress/tuan-07.md).
+- Tuần 8 (Giám sát Prometheus/Grafana, Evidently Data Drift & Tái huấn luyện Closed-Loop): xem [docs/how-to-run/how-to-run-week8.md](docs/how-to-run/how-to-run-week8.md) và báo cáo [docs/weekly-progress/tuan-08.md](docs/weekly-progress/tuan-08.md).
+- Tuần 9 (Power BI Executive Dashboard, DAX Measures & Thực nghiệm Kiểm thử tải Locust): xem [docs/how-to-run/how-to-run-week9.md](docs/how-to-run/how-to-run-week9.md) và báo cáo [docs/weekly-progress/tuan-09.md](docs/weekly-progress/tuan-09.md).
+- Tuần 10 (Tổng kết Toàn diện, Nghiệm thu Hệ thống & Kịch bản Bảo vệ ĐATN): xem [docs/how-to-run/how-to-run-week10.md](docs/how-to-run/how-to-run-week10.md) và báo cáo [docs/weekly-progress/tuan-10.md](docs/weekly-progress/tuan-10.md).
 
 > Ghi chú: Repo đã hoàn thành trọn vẹn toàn bộ chu trình 10 tuần — từ hạ tầng Streaming Data Lake, Star Schema ETL, Feature Store, Model Serving FastAPI, Giám sát Prometheus/Grafana, Data Drift Closed-Loop Retraining, phân hệ trực quan hóa Executive Dashboard trên Power BI, thực nghiệm kiểm thử tải đồng thời 200 concurrent users đạt độ ổn định 100%, đến kịch bản demo và tài liệu chuẩn bị bảo vệ ĐATN.
 

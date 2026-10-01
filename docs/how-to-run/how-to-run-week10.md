@@ -1,4 +1,4 @@
-# Hướng dẫn Vận hành Tuần 10: Nghiệm thu Hệ thống & Chuẩn bị Bảo vệ ĐATN
+﻿# Hướng dẫn Vận hành Tuần 10: Nghiệm thu Hệ thống & Chuẩn bị Bảo vệ ĐATN
 
 Tài liệu này cung cấp quy trình kiểm tra toàn diện (End-to-End Rehearsal) và chuẩn bị bảo vệ Đồ án Tốt nghiệp (ĐATN) trước Hội đồng thẩm định.
 
@@ -106,4 +106,5 @@ Kết quả đo lường phân vị độ trễ (P50, P95, P99) và thông lư�
 | **Kịch bản Demo Trực tiếp** | [`docs/live_demo_script.md`](live_demo_script.md) | Hướng dẫn 5 bước demo trong 15 phút bảo vệ |
 | **Cấu trúc Slide Bảo vệ** | [`docs/presentation_slides.md`](presentation_slides.md) | Dàn ý 18 slide thuyết trình chuẩn học thuật |
 | **Báo cáo Tuần 1 - 10** | [`docs/weekly-progress/`](weekly-progress/) | Nhật ký tiến độ chi tiết từng tuần theo chuẩn Cẩm nang |
-| **Hướng dẫn Vận hành** | `docs/how-to-run-week*.md` | Sổ tay kỹ thuật từng module độc lập |
+| **Hướng dẫn Vận hành** | `docs/how-to-run/how-to-run-week*.md` | Sổ tay kỹ thuật từng module độc lập |
+

@@ -1,4 +1,4 @@
-# Tuần 6: Huấn luyện & So sánh mô hình (Baseline vs Deep Learning), Tối ưu hóa siêu tham số & Đăng ký Model Registry
+﻿# Tuần 6: Huấn luyện & So sánh mô hình (Baseline vs Deep Learning), Tối ưu hóa siêu tham số & Đăng ký Model Registry
 
 ## Mục tiêu
 Triển khai kiến trúc mạng nơ-ron hồi quy Deep Learning (LSTM và GRU) cho dữ liệu chuỗi thời gian; thực hiện tối ưu hóa siêu tham số tự động (Hyperparameter Tuning); tiến hành đối chiếu toàn diện giữa các mô hình Baseline (LightGBM, XGBoost, Ridge) và Deep Learning (LSTM, GRU), đặc biệt phân rã hiệu năng theo từng phân khúc ma trận ABC/XYZ; và đăng ký mô hình chiến thắng (Champion Model) vào MLflow Model Registry ở trạng thái `Staging` sẵn sàng cho giai đoạn Model Serving (FastAPI ở Tuần 7).
@@ -58,7 +58,7 @@ Triển khai kiến trúc mạng nơ-ron hồi quy Deep Learning (LSTM và GRU) 
 
 ### 5. Kiểm thử Tự động & Hướng dẫn Vận hành
 - `tests/test_deep_learning.py`: Bộ unit test kiểm tra cấu trúc tensor cửa sổ trượt, ràng buộc dự báo không âm ($\hat{y} \ge 0$), và logic tạo Model Manifest.
-- `docs/how-to-run-week6.md`: Hướng dẫn chi tiết chạy huấn luyện Deep Learning, tìm kiếm siêu tham số và kiểm tra Model Registry trên MLflow.
+- `docs/how-to-run/how-to-run-week6.md`: Hướng dẫn chi tiết chạy huấn luyện Deep Learning, tìm kiếm siêu tham số và kiểm tra Model Registry trên MLflow.
 
 ---
 
@@ -81,7 +81,7 @@ Triển khai kiến trúc mạng nơ-ron hồi quy Deep Learning (LSTM và GRU) 
 4. `ml/training/register_model.py`
 5. `data/model_manifest.json`
 6. `tests/test_deep_learning.py`
-7. `docs/how-to-run-week6.md`
+7. `docs/how-to-run/how-to-run-week6.md`
 
 ---
 
@@ -97,3 +97,4 @@ Triển khai kiến trúc mạng nơ-ron hồi quy Deep Learning (LSTM và GRU) 
 ## Minh bạch sử dụng AI
 - **Phần AI hỗ trợ**: Hỗ trợ thiết kế kiến trúc mạng nơ-ron hồi quy PyTorch (DemandLSTM, DemandGRU) với Huber Loss; xây dựng hàm chia cửa sổ trượt 3D; xây dựng kịch bản tích hợp với MLflow Model Registry API.
 - **Phần sinh viên tự thực hiện**: Thẩm định và phân tích ý nghĩa kết quả sai số trên từng nhóm ma trận ABC/XYZ; thiết lập các ràng buộc sản lượng không âm; kiểm định tính toàn vẹn của tệp manifest phục vụ triển khai.
+

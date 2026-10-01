@@ -1,4 +1,4 @@
-# Tuần 1: Khởi tạo dự án & Thiết kế kiến trúc hệ thống
+﻿# Tuần 1: Khởi tạo dự án & Thiết kế kiến trúc hệ thống
 
 ## Mục tiêu
 Thống nhất bài toán, hoàn thiện thiết kế kiến trúc và chuẩn bị môi trường phát triển.
@@ -19,3 +19,4 @@ _(điền trong quá trình thực hiện)_
 - Viết `docker-compose.yml` (Kafka, Zookeeper, MinIO, PostgreSQL).
 - Viết `data_simulator/data_simulator.py`.
 - Cấu hình Kafka Topics và Producer.
+

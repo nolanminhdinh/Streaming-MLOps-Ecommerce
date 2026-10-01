@@ -22,11 +22,10 @@ from sqlalchemy import create_engine, text
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from data_simulator.data_simulator import (
     PRODUCT_CATALOG,
-    SHOPEE_SHOPS,
-    TIKTOK_SHOPS,
+    SHOP_NAMES,
     SHOPEE_CARRIERS,
     TIKTOK_CARRIERS,
-    VN_ADDRESSES,
+    VIETNAM_ADDRESSES,
 )
 
 load_dotenv()
@@ -70,17 +69,17 @@ def seed_products(conn):
 
 def seed_shops(conn):
     all_shops = []
-    for s in SHOPEE_SHOPS:
+    for idx, name in enumerate(SHOP_NAMES, 1):
+        shop_id_shopee = f"100000{idx:02d}"
         all_shops.append({
-            "shop_id": s["shop_id"],
-            "shop_name": s["shop_name"],
+            "shop_id": shop_id_shopee,
+            "shop_name": name,
             "platform": "shopee",
-            "connection_id": s["connection_id"],
+            "connection_id": f"CONN-{shop_id_shopee[:4]}",
         })
-    for s in TIKTOK_SHOPS:
         all_shops.append({
-            "shop_id": s["shop_name"],  # TikTok định danh qua shop_name
-            "shop_name": s["shop_name"],
+            "shop_id": name,
+            "shop_name": name,
             "platform": "tiktok",
             "connection_id": None,
         })
@@ -117,11 +116,11 @@ def seed_carriers(conn):
 def seed_geography(conn):
     # Phân loại vùng miền Việt Nam
     bac = {"Hà Nội", "Hải Phòng", "Quảng Ninh", "Bắc Ninh", "Hải Dương", "Thái Nguyên"}
-    trung = {"Đà Nẵng", "Thừa Thiên Huế", "Khánh Hòa", "Quảng Nam", "Nghệ An", "Lâm Đồng"}
-    nam = {"Hồ Chí Minh", "Bình Dương", "Đồng Nai", "Cần Thơ", "Long An", "Tiền Giang", "Bà Rịa - Vũng Tàu"}
+    trung = {"Đà Nẵng", "Thừa Thiên Huế", "Khánh Hòa", "Quảng Nam", "Nghệ An", "Lâm Đồng", "Khánh Hoà", "Thanh Hoá"}
+    nam = {"Hồ Chí Minh", "TP.HCM", "Bình Dương", "Đồng Nai", "Cần Thơ", "Long An", "Tiền Giang", "Bà Rịa - Vũng Tàu"}
 
-    logger.info("Seeding Dim_Geography (%d địa điểm)...", len(VN_ADDRESSES))
-    for addr in VN_ADDRESSES:
+    logger.info("Seeding Dim_Geography (%d địa điểm)...", len(VIETNAM_ADDRESSES))
+    for addr in VIETNAM_ADDRESSES:
         state = addr["state"]
         if state in bac:
             region = "Miền Bắc"

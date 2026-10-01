@@ -1,4 +1,4 @@
-# Tuần 10: Tổng kết Toàn diện Hệ thống, Hoàn thiện Báo cáo ĐATN & Kịch bản Bảo vệ
+﻿# Tuần 10: Tổng kết Toàn diện Hệ thống, Hoàn thiện Báo cáo ĐATN & Kịch bản Bảo vệ
 
 ## Mục tiêu
 Tổng kết và nghiệm thu toàn diện toàn bộ chu trình kỹ thuật của hệ thống **Streaming MLOps E-Commerce Demand Forecasting & Inventory Optimization**; đồng bộ hóa toàn bộ tài liệu học thuật theo chuẩn Cẩm nang Đồ án Tốt nghiệp (ĐATN); đóng gói kịch bản trình diễn trực tiếp (Live Demo Script) và cấu trúc slide bảo vệ trước Hội đồng chấm tốt nghiệp.
@@ -86,3 +86,4 @@ Chuẩn bị kịch bản demo trực quan gồm 5 bước cô đọng trong 10-
 ## Minh bạch sử dụng AI (Tuân thủ Cẩm nang ĐATN)
 - **Phần AI hỗ trợ**: Hỗ trợ rà soát kiểm tra toàn bộ mã nguồn, phát hiện các điểm sai lệch giữa DDL và View SQL, chuẩn hóa cấu trúc import trong Docker, tinh chỉnh test isolation cho unit tests.
 - **Phần sinh viên thực hiện**: Thiết kế kiến trúc tổng thể, lựa chọn bài toán và cơ sở toán học, phân tích yêu cầu kinh doanh TMĐT Việt Nam, xây dựng toàn bộ logic nghiệp vụ, trực tiếp kiểm thử và bảo vệ đồ án trước Hội đồng.
+

@@ -1,4 +1,4 @@
-# Hướng dẫn chạy trọn vẹn luồng MLOps Tuần 8: Monitoring (Prometheus, Grafana), Data Drift & Closed-Loop Retraining
+﻿# Hướng dẫn chạy trọn vẹn luồng MLOps Tuần 8: Monitoring (Prometheus, Grafana), Data Drift & Closed-Loop Retraining
 
 Tài liệu này hướng dẫn cách khởi động hạ tầng giám sát thời gian thực với Prometheus và Grafana, kiểm tra Dashboard vận hành phục vụ mô hình & quản trị tồn kho, chạy pipeline phát hiện trôi dạt dữ liệu (Data Drift) bằng Evidently AI và kích hoạt quy trình tự động tái huấn luyện khép kín (Closed-Loop Retraining).
 
@@ -103,3 +103,4 @@ python -m unittest discover tests
 ```
 
 > **Kỳ vọng:** Toàn bộ 42 test cases của dự án đều đạt trạng thái **OK**.
+

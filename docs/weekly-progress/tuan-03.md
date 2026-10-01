@@ -1,4 +1,4 @@
-# Tuần 3: Lưu trữ phân tầng (Data Lake) & Mô hình kho dữ liệu (Star Schema)
+﻿# Tuần 3: Lưu trữ phân tầng (Data Lake) & Mô hình kho dữ liệu (Star Schema)
 
 ## Mục tiêu
 Triển khai lưu trữ dữ liệu thô dạng Parquet trên MinIO (Data Lake) và thiết kế, nạp dữ liệu vào kho dữ liệu quan hệ PostgreSQL theo mô hình Chấm sao (Star Schema), kèm pipeline ETL hoàn chỉnh có kiểm định chất lượng dữ liệu.
@@ -87,7 +87,7 @@ Triển khai lưu trữ dữ liệu thô dạng Parquet trên MinIO (Data Lake) 
 9. `scripts/seed_dim_tables.py`
 10. `tests/test_data_simulator.py`
 11. `tests/test_etl.py`
-12. `docs/how-to-run-week3.md`
+12. `docs/how-to-run/how-to-run-week3.md`
 
 ---
 
@@ -101,3 +101,4 @@ Triển khai lưu trữ dữ liệu thô dạng Parquet trên MinIO (Data Lake) 
 ## Minh bạch sử dụng AI
 - **Phần AI hỗ trợ**: Hỗ trợ thiết kế cấu trúc DDL Star Schema, ánh xạ schema Shopee/TikTok, xây dựng các regex và thuật toán kiểm định chất lượng dữ liệu trong `data_validation.py`.
 - **Phần sinh viên tự thực hiện**: Thẩm định quy tắc nghiệp vụ phí sàn TMĐT Việt Nam, cấu hình tham số batch size và timeout, chạy kiểm thử thực tế trên cụm Docker container.
+

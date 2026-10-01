@@ -1,4 +1,4 @@
-# Tuần 8: Giám sát Hệ thống (Prometheus, Grafana), Phát hiện Data Drift (Evidently AI) & Tái huấn luyện Khép kín (Closed-Loop Retraining)
+﻿# Tuần 8: Giám sát Hệ thống (Prometheus, Grafana), Phát hiện Data Drift (Evidently AI) & Tái huấn luyện Khép kín (Closed-Loop Retraining)
 
 ## Mục tiêu
 Thiết lập hạ tầng giám sát vận hành toàn diện cho hệ thống Streaming MLOps; triển khai Prometheus thu thập metrics thời gian thực từ API Model Serving; xây dựng Executive & Technical Dashboard trên Grafana; tích hợp module kiểm định trôi dạt dữ liệu (Data Drift) và trôi dạt khái niệm (Concept Drift) bằng Evidently AI; và giải quyết triệt để khuyết điểm kiến trúc đã nêu trong `docs/architecture.md` bằng cách xây dựng quy trình tự động kích hoạt tái huấn luyện vòng lặp khép kín (Closed-Loop Retraining Pipeline).
@@ -54,7 +54,7 @@ Thiết lập hạ tầng giám sát vận hành toàn diện cho hệ thống S
 
 ### 5. Kiểm thử Tự động & Hướng dẫn Vận hành
 - `tests/test_monitoring.py`: Bộ 8 unit tests kiểm định thuật toán KS-test, PSI, bộ phát hiện drift, quy trình Closed-Loop Retrainer, và định dạng Prometheus exposition của `/metrics` (toàn bộ 42 tests của dự án đều **OK**).
-- `docs/how-to-run-week8.md`: Tài liệu hướng dẫn truy cập Prometheus Web UI (`localhost:9090`), Grafana Dashboard (`localhost:3000`), chạy kiểm định drift và xem báo cáo HTML.
+- `docs/how-to-run/how-to-run-week8.md`: Tài liệu hướng dẫn truy cập Prometheus Web UI (`localhost:9090`), Grafana Dashboard (`localhost:3000`), chạy kiểm định drift và xem báo cáo HTML.
 
 ---
 
@@ -80,7 +80,7 @@ Thiết lập hạ tầng giám sát vận hành toàn diện cho hệ thống S
 7. `serving/app/main.py`: Cập nhật endpoint `/metrics` định dạng Prometheus Text 0.0.4.
 8. `docker-compose.yml`: Kích hoạt Prometheus (`9090`) và Grafana (`3000`).
 9. `tests/test_monitoring.py`: Bộ unit tests kiểm thử giám sát.
-10. `docs/how-to-run-week8.md`: Hướng dẫn vận hành chi tiết.
+10. `docs/how-to-run/how-to-run-week8.md`: Hướng dẫn vận hành chi tiết.
 
 ---
 
@@ -96,3 +96,4 @@ Thiết lập hạ tầng giám sát vận hành toàn diện cho hệ thống S
 ## Minh bạch sử dụng AI
 - **Phần AI hỗ trợ**: Hỗ trợ thiết kế cấu trúc JSON Dashboard của Grafana theo schema v38; lập trình công thức tiệm cận Kolmogorov-Smirnov CDF; xây dựng template báo cáo HTML responsive với Bootstrap 5.
 - **Phần sinh viên tự thực hiện**: Thiết lập logic ngưỡng báo động Data Drift ($\ge 30\%$) phù hợp với đặc thù biến động ngành E-Commerce; thiết kế quy trình closed-loop nâng cấp phiên bản mô hình trong manifest; thẩm định kết quả kiểm tra độ lệch phân phối trên các biến trễ (lags).
+

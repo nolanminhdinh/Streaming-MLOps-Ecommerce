@@ -1,4 +1,4 @@
-# Tuần 9: Xây dựng Power BI Executive Dashboard & Kiểm thử Tải Hệ thống (Load Testing)
+﻿# Tuần 9: Xây dựng Power BI Executive Dashboard & Kiểm thử Tải Hệ thống (Load Testing)
 
 ## Mục tiêu
 Thiết kế và đóng gói toàn diện phân hệ báo cáo kinh doanh điều hành (**Executive Dashboard**) trên nền tảng **Power BI Desktop**, cung cấp cái nhìn 360 độ về hiệu quả bán hàng đa kênh, độ chính xác dự báo và bản đồ rủi ro tồn kho; đồng thời tiến hành thực nghiệm kiểm thử tải và khả năng chịu lỗi (Load & Concurrency Testing) với kịch bản mô phỏng từ 10 đến 200 người dùng đồng thời, đo lường thông lượng Throughput (RPS) và độ trễ P95/P99 nhằm hoàn thiện Chương Thực nghiệm Đánh giá của Đồ án tốt nghiệp.
@@ -54,7 +54,7 @@ Thiết kế và đóng gói toàn diện phân hệ báo cáo kinh doanh điề
 
 ### 5. Kiểm thử Tự động & Hướng dẫn Vận hành
 - `tests/test_load_test.py`: Bộ 5 unit tests kiểm tra thuật toán tính phân vị, luồng thực thi tác vụ tải, kịch bản mini-benchmark và tính toàn vẹn của các tệp dữ liệu Power BI (toàn bộ 47 tests của dự án đều **OK**).
-- `docs/how-to-run-week9.md`: Hướng dẫn chi tiết các bước nạp dữ liệu vào Power BI Desktop, tạo DAX measures và chạy kiểm thử tải Locust.
+- `docs/how-to-run/how-to-run-week9.md`: Hướng dẫn chi tiết các bước nạp dữ liệu vào Power BI Desktop, tạo DAX measures và chạy kiểm thử tải Locust.
 
 ---
 
@@ -81,7 +81,7 @@ Thiết kế và đóng gói toàn diện phân hệ báo cáo kinh doanh điề
 7. `tests/load_testing/run_load_test.py`: Trình benchmark đa luồng đo lường RPS và Latency.
 8. `data/load_test_results.json` & `data/load_test_summary.md`: Báo cáo kết quả kiểm thử tải.
 9. `tests/test_load_test.py`: Bộ unit tests kiểm tra tải và dữ liệu Power BI.
-10. `docs/how-to-run-week9.md`: Hướng dẫn thực thi trọn vẹn.
+10. `docs/how-to-run/how-to-run-week9.md`: Hướng dẫn thực thi trọn vẹn.
 
 ---
 
@@ -98,3 +98,4 @@ Thiết kế và đóng gói toàn diện phân hệ báo cáo kinh doanh điề
 ## Minh bạch sử dụng AI
 - **Phần AI hỗ trợ**: Hỗ trợ chuẩn hóa cú pháp các biểu thức tính toán DAX nâng cao (`SUMX`, `SUMMARIZE`, `STDEVX.S`); lập trình khung điều phối benchmark đa luồng với `ThreadPoolExecutor`; tính toán công thức nội suy phân vị (percentile).
 - **Phần sinh viên tự thực hiện**: Thiết kế cấu trúc các trường thông tin trong SQL Views; xây dựng kịch bản kiểm thử tải phản ánh đúng tỷ trọng hành vi người dùng trong thực tế TMĐT (50% dự báo, 45% kiểm tra tồn kho, 5% sức khỏe); phân tích ý nghĩa các chỉ số hiệu năng RPS và P95 cho bài báo cáo tốt nghiệp.
+

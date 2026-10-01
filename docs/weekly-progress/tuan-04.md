@@ -1,4 +1,4 @@
-# Tuần 4: Tiền xử lý dữ liệu, Khám phá EDA & Phân loại danh mục hàng hóa ABC/XYZ
+﻿# Tuần 4: Tiền xử lý dữ liệu, Khám phá EDA & Phân loại danh mục hàng hóa ABC/XYZ
 
 ## Mục tiêu
 Thực hiện kiểm toán dữ liệu và phân tích khám phá (EDA) trên tập dữ liệu đa kênh (Shopee + TikTok Shop); phân loại danh mục sản phẩm theo ma trận 9 ô ABC/XYZ kết hợp hoạch định chính sách tồn kho an toàn; và xây dựng module trích xuất đặc trưng chuỗi thời gian (Feature Engineering) chuẩn bị cho việc huấn luyện mô hình ở Tuần 5–6.
@@ -82,3 +82,4 @@ Thực hiện kiểm toán dữ liệu và phân tích khám phá (EDA) trên t�
 ## Minh bạch sử dụng AI
 - **Phần AI hỗ trợ**: Hỗ trợ thiết kế cấu trúc hàm tính hệ số $CV$, công thức toán học tính Safety Stock và Reorder Point, xây dựng kịch bản trực quan hóa trong 2 Jupyter Notebooks theo tiêu chuẩn Storytelling with Data.
 - **Phần sinh viên tự thực hiện**: Thẩm định tính phù hợp của các ngưỡng phân loại (Pareto 80/15/5, CV 0.5/1.0), kiểm tra logic không rò rỉ dữ liệu chuỗi thời gian (`shift(1)`), và chạy kiểm thử tự động.
+

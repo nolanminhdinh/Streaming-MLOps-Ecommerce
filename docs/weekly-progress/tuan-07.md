@@ -1,4 +1,4 @@
-# Tuần 7: Triển khai Model Serving (FastAPI) & Nghiệp vụ Quản trị Tồn kho (Safety Stock / Reorder Point)
+﻿# Tuần 7: Triển khai Model Serving (FastAPI) & Nghiệp vụ Quản trị Tồn kho (Safety Stock / Reorder Point)
 
 ## Mục tiêu
 Thiết kế và xây dựng tầng Model Serving sẵn sàng môi trường sản xuất (Production-ready) bằng FastAPI; tích hợp cơ chế nạp mô hình tối ưu (In-Memory Model Caching) từ MLflow Model Registry / Model Manifest; phát triển dịch vụ tính toán định mức tồn kho an toàn (Safety Stock - SS) và điểm đặt hàng lại (Reorder Point - ROP) theo tiêu chuẩn quản trị chuỗi cung ứng; cung cấp giao diện REST API chuẩn hóa kèm Swagger UI trực quan; và đóng gói hoàn chỉnh thành Docker container phục vụ tại cổng `8000`.
@@ -60,7 +60,7 @@ Thiết kế và xây dựng tầng Model Serving sẵn sàng môi trường s�
 
 ### 5. Kiểm thử Tự động & Hướng dẫn Vận hành
 - `tests/test_serving.py`: Bộ unit test gồm 11 kịch bản kiểm tra toàn diện tính toàn vẹn của ModelManager, tính đúng đắn của công thức SS/ROP, phân loại cảnh báo tồn kho và các API endpoints.
-- `docs/how-to-run-week7.md`: Hướng dẫn chi tiết chạy container, gọi API bằng `curl` và kiểm tra tài liệu tương tác trên Swagger UI.
+- `docs/how-to-run/how-to-run-week7.md`: Hướng dẫn chi tiết chạy container, gọi API bằng `curl` và kiểm tra tài liệu tương tác trên Swagger UI.
 
 ---
 
@@ -86,7 +86,7 @@ Thiết kế và xây dựng tầng Model Serving sẵn sàng môi trường s�
 5. `serving/Dockerfile` & `serving/requirements.txt`: Đóng gói container Docker phục vụ độc lập.
 6. `docker-compose.yml`: Kích hoạt service `fastapi` tại cổng `8000`.
 7. `tests/test_serving.py`: Bộ unit tests kiểm thử logic và API.
-8. `docs/how-to-run-week7.md`: Hướng dẫn vận hành chi tiết.
+8. `docs/how-to-run/how-to-run-week7.md`: Hướng dẫn vận hành chi tiết.
 
 ---
 
@@ -101,3 +101,4 @@ Thiết kế và xây dựng tầng Model Serving sẵn sàng môi trường s�
 ## Minh bạch sử dụng AI
 - **Phần AI hỗ trợ**: Hỗ trợ thiết kế cấu trúc Pydantic v2 schemas; hỗ trợ viết công thức tính Z-Score, Safety Stock và Reorder Point chuẩn Logistics; thiết lập cấu hình Dockerfile đa tầng và kịch bản TestClient.
 - **Phần sinh viên tự thực hiện**: Định hình logic nghiệp vụ phân cấp cảnh báo 3 tầng (CRITICAL, WARNING, NORMAL); xác định các ngưỡng Service Level và Lead time phù hợp với chuỗi cung ứng TMĐT Việt Nam; kiểm định các ràng buộc sản lượng không âm và đối chiếu kết quả dự báo.
+

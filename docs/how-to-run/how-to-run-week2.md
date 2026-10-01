@@ -1,4 +1,4 @@
-# Hướng dẫn chạy hạ tầng Tuần 2 (Docker Desktop — Windows/Mac)
+﻿# Hướng dẫn chạy hạ tầng Tuần 2 (Docker Desktop — Windows/Mac)
 
 ## 1. Yêu cầu
 
@@ -111,3 +111,4 @@ docker compose down -v       # dừng và xóa luôn volume (reset toàn bộ d�
   và nối trực tiếp với `ingestion/producer.py`.
 - Hoàn thiện `ingestion/consumer_to_minio.py` để ghi Parquet thật vào MinIO
   (Tuần 3).
+

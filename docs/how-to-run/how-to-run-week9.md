@@ -1,4 +1,4 @@
-# Hướng dẫn chạy trọn vẹn luồng MLOps Tuần 9: Power BI Executive Dashboard & Kiểm thử Tải (Load Testing)
+﻿# Hướng dẫn chạy trọn vẹn luồng MLOps Tuần 9: Power BI Executive Dashboard & Kiểm thử Tải (Load Testing)
 
 Tài liệu này hướng dẫn chi tiết cách xuất khẩu dữ liệu và kết nối vào **Power BI Desktop** để tạo Dashboard điều hành, cũng như cách thực thi kiểm thử tải (Load Testing) hệ thống Model Serving bằng cả công cụ dòng lệnh độc lập lẫn **Locust Web UI**.
 
@@ -94,3 +94,4 @@ python -m unittest discover tests
 ```
 
 > **Kỳ vọng:** Toàn bộ 47 test cases của dự án đều đạt trạng thái **OK**.
+

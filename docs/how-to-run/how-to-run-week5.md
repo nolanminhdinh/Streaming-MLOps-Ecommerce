@@ -1,4 +1,4 @@
-# Hướng dẫn chạy trọn vẹn luồng MLOps Tuần 5
+﻿# Hướng dẫn chạy trọn vẹn luồng MLOps Tuần 5
 
 Tài liệu này hướng dẫn cách khởi động MLflow Tracking Server, chạy pipeline trích xuất đặc trưng chuỗi thời gian (Feature Store), huấn luyện các mô hình Baseline và theo dõi thí nghiệm trên giao diện trực quan của MLflow.
 
@@ -88,3 +88,4 @@ python tests/test_ml_pipeline.py
 ```
 
 > **Kỳ vọng:** Toàn bộ các test cases đều đạt trạng thái **OK**.
+

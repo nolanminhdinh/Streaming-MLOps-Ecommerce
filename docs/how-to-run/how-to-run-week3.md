@@ -1,4 +1,4 @@
-# Hướng dẫn chạy trọn vẹn luồng Streaming & ETL Tuần 3
+﻿# Hướng dẫn chạy trọn vẹn luồng Streaming & ETL Tuần 3
 
 Tài liệu này hướng dẫn cách chạy toàn bộ chu trình luồng dữ liệu (End-to-End Streaming Pipeline):
 ```
@@ -188,3 +188,4 @@ python tests/test_data_simulator.py
 python tests/test_etl.py
 ```
 > Cả 2 bài kiểm thử đều sử dụng thư viện chuẩn của Python và đảm bảo đạt **100% OK**.
+

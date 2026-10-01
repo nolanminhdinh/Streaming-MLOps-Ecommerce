@@ -1,4 +1,4 @@
-# Tuần 5: Báo cáo tiến độ, Thiết lập MLflow Tracking & Xây dựng Feature Store
+﻿# Tuần 5: Báo cáo tiến độ, Thiết lập MLflow Tracking & Xây dựng Feature Store
 
 ## Mục tiêu
 Triển khai hạ tầng MLOps Experiment Tracking với MLflow Tracking Server (kết nối PostgreSQL lưu metadata và MinIO lưu artifacts); hoàn thiện pipeline trích xuất đặc trưng chuỗi thời gian và lưu trữ Feature Store; huấn luyện các mô hình Baseline (Naive, Seasonal Naive, Moving Average, Ridge, LightGBM) sử dụng phương pháp Walk-Forward Validation; và tự động ghi log toàn diện tham số, metrics ($MAE, RMSE, MAPE, WAPE, Bias$) cùng artifacts lên MLflow.
@@ -75,7 +75,7 @@ Xây dựng bộ độ đo chuẩn hóa theo tiêu chuẩn chuỗi cung ứng b�
 4. `ml/training/metrics.py`
 5. `ml/training/train_baseline.py`
 6. `tests/test_ml_pipeline.py`
-7. `docs/how-to-run-week5.md`
+7. `docs/how-to-run/how-to-run-week5.md`
 8. Cập nhật `docker-compose.yml`, `.env.example`, `README.md`
 
 ---
@@ -91,3 +91,4 @@ Xây dựng bộ độ đo chuẩn hóa theo tiêu chuẩn chuỗi cung ứng b�
 ## Minh bạch sử dụng AI
 - **Phần AI hỗ trợ**: Hỗ trợ thiết kế Dockerfile cho MLflow Tracking Server tích hợp PostgreSQL và MinIO; xây dựng logic tính toán WAPE/Bias theo tiêu chuẩn bán lẻ; xây dựng pipeline huấn luyện Walk-Forward Validation.
 - **Phần sinh viên tự thực hiện**: Thẩm định cấu hình biến môi trường kết nối hạ tầng Docker, kiểm tra tính toàn vẹn của Feature Store, và phân tích đối chiếu kết quả các mô hình baseline.
+

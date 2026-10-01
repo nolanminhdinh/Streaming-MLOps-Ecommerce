@@ -1,4 +1,4 @@
-# Hướng dẫn chạy trọn vẹn luồng MLOps Tuần 6
+﻿# Hướng dẫn chạy trọn vẹn luồng MLOps Tuần 6
 
 Tài liệu này hướng dẫn cách thực hiện tối ưu hóa siêu tham số (Hyperparameter Tuning), huấn luyện & đối chiếu các mô hình Deep Learning (LSTM, GRU) với mô hình Baseline (LightGBM, Ridge, Seasonal Naive) theo phân khúc ma trận ABC/XYZ, và tự động đăng ký mô hình Champion vào **MLflow Model Registry** ở trạng thái `Staging`.
 
@@ -104,3 +104,4 @@ python -m unittest discover tests
 ```
 
 > **Kỳ vọng:** Toàn bộ các test cases đều đạt trạng thái **OK**.
+

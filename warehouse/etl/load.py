@@ -37,22 +37,38 @@ def get_engine():
     return create_engine(DATABASE_URL)
 
 
-# ─────────────────────────────────────────────────────────────
-# 1. UPSERT DIMENSIONS
-# ─────────────────────────────────────────────────────────────
+def _clean_val(val, default=None):
+    """Sanitize nullable values from pandas to None instead of float NaN."""
+    if val is None or pd.isna(val) or str(val).lower() == "nan":
+        return default
+    return val
+
+
+def _clean_ts(val):
+    """Sanitize datetime/timestamp values from pandas to python datetime or None."""
+    if val is None or pd.isna(val) or str(val).lower() == "nan":
+        return None
+    if isinstance(val, (datetime, pd.Timestamp)):
+        return val.to_pydatetime() if hasattr(val, "to_pydatetime") else val
+    try:
+        ts = pd.to_datetime(val)
+        return None if pd.isna(ts) else ts.to_pydatetime()
+    except Exception:
+        return None
 
 def upsert_dim_products(engine, df: pd.DataFrame) -> dict:
     """Upsert Dim_Products, trả về mapping sku → product_key."""
-    skus = df[["sku", "product_name", "category", "original_price", "weight_kg"]].drop_duplicates(subset=["sku"])
+    skus = df[["sku", "product_name", "category", "original_price", "weight_kg"]].dropna(subset=["sku"]).drop_duplicates(subset=["sku"])
     records = [
         {
-            "sku": r.get("sku"),
-            "name": r.get("product_name"),
-            "cat": r.get("category"),
-            "cost": r.get("original_price"),
-            "weight": r.get("weight_kg"),
+            "sku": str(r.get("sku")),
+            "name": _clean_val(r.get("product_name"), str(r.get("sku"))),
+            "cat": _clean_val(r.get("category"), "Chung"),
+            "cost": float(_clean_val(r.get("original_price"), 0.0)),
+            "weight": float(_clean_val(r.get("weight_kg"), 0.1)),
         }
         for r in skus.to_dict(orient="records")
+        if _clean_val(r.get("sku")) is not None
     ]
 
     with engine.begin() as conn:
@@ -77,12 +93,12 @@ def upsert_dim_products(engine, df: pd.DataFrame) -> dict:
 
 def upsert_dim_shops(engine, df: pd.DataFrame) -> dict:
     """Upsert Dim_Shops, trả về mapping (shop_id, platform) → shop_key."""
-    shops = df[["shop_id", "shop_name", "platform"]].drop_duplicates(subset=["shop_id", "platform"])
+    shops = df[["shop_id", "shop_name", "platform"]].dropna(subset=["platform"]).drop_duplicates(subset=["shop_id", "platform"])
     records = [
         {
-            "sid": r.get("shop_id") or "",
-            "name": r.get("shop_name"),
-            "platform": r.get("platform"),
+            "sid": str(r.get("shop_id")) if _clean_val(r.get("shop_id")) is not None else "",
+            "name": _clean_val(r.get("shop_name"), "Shop"),
+            "platform": str(r.get("platform")),
         }
         for r in shops.to_dict(orient="records")
     ]
@@ -105,16 +121,16 @@ def upsert_dim_shops(engine, df: pd.DataFrame) -> dict:
 
 def upsert_dim_geography(engine, df: pd.DataFrame) -> dict:
     """Upsert Dim_Geography, trả về mapping (state, city, district) → geo_key."""
-    geos = df[["state", "city", "district", "country"]].drop_duplicates(
+    geos = df[["state", "city", "district", "country"]].dropna(subset=["state"]).drop_duplicates(
         subset=["state", "city", "district"]
     )
     records = [
         {
-            "state": r.get("state"),
-            "city": r.get("city"),
-            "district": r.get("district"),
-            "country": r.get("country", "VN"),
-            "region": _classify_region(r.get("state", "")),
+            "state": str(r.get("state")),
+            "city": _clean_val(r.get("city"), ""),
+            "district": _clean_val(r.get("district"), ""),
+            "country": _clean_val(r.get("country"), "VN"),
+            "region": _classify_region(str(r.get("state") or "")),
         }
         for r in geos.to_dict(orient="records")
     ]
@@ -235,30 +251,30 @@ def load_fact_orders(
             "date_key": date_key,
             "payment_key": payment_key,
             "carrier_key": carrier_key,
-            "order_id": row.get("order_id"),
-            "platform": row.get("platform"),
-            "order_status": row.get("order_status"),
+            "order_id": str(row.get("order_id")),
+            "platform": str(row.get("platform")),
+            "order_status": _clean_val(row.get("order_status")),
             "is_cancelled": bool(row.get("is_cancelled", False)),
-            "cancel_reason": row.get("cancel_reason"),
-            "quantity": row.get("quantity", 0),
-            "original_price": row.get("original_price", 0),
-            "discounted_price": row.get("discounted_price"),
-            "subtotal": row.get("subtotal", 0),
-            "buyer_total_amount": row.get("buyer_total_amount", 0),
-            "seller_discount": row.get("seller_discount", 0),
-            "platform_discount": row.get("platform_discount", 0),
-            "voucher_total": row.get("voucher_total", 0),
-            "commission_fee": row.get("commission_fee", 0),
-            "service_fee": row.get("service_fee", 0),
-            "transaction_fee": row.get("transaction_fee", 0),
-            "shipping_fee": row.get("shipping_fee", 0),
-            "original_shipping": row.get("original_shipping", 0),
-            "tax_amount": row.get("tax_amount", 0),
-            "create_time": row.get("create_time"),
-            "pay_time": row.get("pay_time"),
-            "shipped_time": row.get("shipped_time"),
-            "completed_time": row.get("completed_time"),
-            "cancel_time": row.get("cancel_time"),
+            "cancel_reason": _clean_val(row.get("cancel_reason")),
+            "quantity": int(_clean_val(row.get("quantity"), 0)),
+            "original_price": float(_clean_val(row.get("original_price"), 0.0)),
+            "discounted_price": float(row.get("discounted_price")) if _clean_val(row.get("discounted_price")) is not None else None,
+            "subtotal": float(_clean_val(row.get("subtotal"), 0.0)),
+            "buyer_total_amount": float(_clean_val(row.get("buyer_total_amount"), 0.0)),
+            "seller_discount": float(_clean_val(row.get("seller_discount"), 0.0)),
+            "platform_discount": float(_clean_val(row.get("platform_discount"), 0.0)),
+            "voucher_total": float(_clean_val(row.get("voucher_total"), 0.0)),
+            "commission_fee": float(_clean_val(row.get("commission_fee"), 0.0)),
+            "service_fee": float(_clean_val(row.get("service_fee"), 0.0)),
+            "transaction_fee": float(_clean_val(row.get("transaction_fee"), 0.0)),
+            "shipping_fee": float(_clean_val(row.get("shipping_fee"), 0.0)),
+            "original_shipping": float(_clean_val(row.get("original_shipping"), 0.0)),
+            "tax_amount": float(_clean_val(row.get("tax_amount"), 0.0)),
+            "create_time": _clean_ts(row.get("create_time")),
+            "pay_time": _clean_ts(row.get("pay_time")),
+            "shipped_time": _clean_ts(row.get("shipped_time")),
+            "completed_time": _clean_ts(row.get("completed_time")),
+            "cancel_time": _clean_ts(row.get("cancel_time")),
         })
 
     if not rows_to_insert:

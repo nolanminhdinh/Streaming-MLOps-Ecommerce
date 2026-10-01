@@ -19,6 +19,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 
+import numpy as np
 import pandas as pd
 
 logger = logging.getLogger("etl.validation")
@@ -102,8 +103,16 @@ class DataValidator:
             for col in missing_cols:
                 df_check[col] = None
 
+        # Vectorized pre-parsing for timestamps to avoid calling pd.to_datetime per row
+        ts_cols = ["create_time", "pay_time", "shipped_time", "completed_time", "cancel_time"]
+        for c in ts_cols:
+            if c in df_check.columns:
+                df_check[c] = pd.to_datetime(df_check[c], errors="coerce")
+
+        records = df_check.to_dict(orient="records")
+
         # 2. Kiểm tra từng bản ghi
-        for idx, (_, row) in enumerate(df_check.iterrows()):
+        for idx, row in enumerate(records):
             row_errors = errors_per_row[idx]
 
             # Null checks
@@ -147,11 +156,11 @@ class DataValidator:
                         row_errors.append(f"INVALID_{amount_col.upper()}_TYPE")
 
             # Chronological Order checks
-            c_time = pd.to_datetime(row.get("create_time"), errors="coerce")
-            p_time = pd.to_datetime(row.get("pay_time"), errors="coerce")
-            s_time = pd.to_datetime(row.get("shipped_time"), errors="coerce")
-            d_time = pd.to_datetime(row.get("completed_time"), errors="coerce")
-            can_time = pd.to_datetime(row.get("cancel_time"), errors="coerce")
+            c_time = row.get("create_time")
+            p_time = row.get("pay_time")
+            s_time = row.get("shipped_time")
+            d_time = row.get("completed_time")
+            can_time = row.get("cancel_time")
 
             if pd.isna(c_time):
                 row_errors.append("INVALID_CREATE_TIMESTAMP")
@@ -159,7 +168,6 @@ class DataValidator:
                 if pd.notna(p_time) and p_time < c_time:
                     row_errors.append("PAY_TIME_BEFORE_CREATE_TIME")
                 if pd.notna(s_time) and pd.notna(p_time) and s_time < p_time:
-                    # Chú ý: với COD có thể ship trước khi thanh toán, nên chỉ áp dụng nếu không phải COD
                     is_cod = str(row.get("is_cod", "false")).lower() in ("true", "1", "t")
                     if not is_cod:
                         row_errors.append("SHIP_TIME_BEFORE_PAY_TIME")
@@ -170,7 +178,7 @@ class DataValidator:
 
         # 3. Phân tách Clean vs Quarantine
         df_check["rejection_reasons"] = errors_per_row
-        is_valid_mask = df_check["rejection_reasons"].apply(lambda errs: len(errs) == 0)
+        is_valid_mask = np.array([len(errs) == 0 for errs in errors_per_row], dtype=bool)
 
         clean_df = df_check[is_valid_mask].drop(columns=["rejection_reasons"]).copy()
         quarantine_df = df_check[~is_valid_mask].copy()

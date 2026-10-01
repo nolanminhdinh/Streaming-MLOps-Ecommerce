@@ -1,4 +1,4 @@
-# Hướng dẫn chạy trọn vẹn EDA, Phân loại ABC/XYZ & Kỹ nghệ Đặc trưng Tuần 4
+﻿# Hướng dẫn chạy trọn vẹn EDA, Phân loại ABC/XYZ & Kỹ nghệ Đặc trưng Tuần 4
 
 Tài liệu này hướng dẫn cách vận hành các module của **Tuần 4**:
 ```
@@ -109,3 +109,4 @@ python -m unittest tests/test_features.py
 ```
 
 > **Kỳ vọng:** `Ran 6 tests in ... OK`.
+

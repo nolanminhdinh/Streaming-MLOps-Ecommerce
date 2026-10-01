@@ -1,4 +1,4 @@
-# Hướng dẫn chạy trọn vẹn luồng MLOps Tuần 7: FastAPI Model Serving & Quản trị Tồn kho
+﻿# Hướng dẫn chạy trọn vẹn luồng MLOps Tuần 7: FastAPI Model Serving & Quản trị Tồn kho
 
 Tài liệu này hướng dẫn cách khởi chạy dịch vụ FastAPI Model Serving trong Docker, kiểm thử các API Endpoints dự báo sản lượng bán hàng (Demand Forecasting) và cảnh báo điểm đặt hàng lại (Reorder Point / Safety Stock) qua giao diện Swagger UI và dòng lệnh `curl`.
 
@@ -196,3 +196,4 @@ python -m unittest discover tests
 ```
 
 > **Kỳ vọng:** Toàn bộ test cases đều đạt trạng thái **OK**.
+

@@ -1,4 +1,4 @@
-# KỊCH BẢN TRÌNH DIỄN TRỰC TIẾP TRƯỚC HỘI ĐỒNG BẢO VỆ ĐATN
+﻿# KỊCH BẢN TRÌNH DIỄN TRỰC TIẾP TRƯỚC HỘI ĐỒNG BẢO VỆ ĐATN
 ## (LIVE DEMO SCRIPT - STREAMING MLOPS E-COMMERCE)
 
 > **Thời lượng khuyến nghị**: 10 – 15 phút.  
@@ -128,3 +128,4 @@ python monitoring/evidently/trigger_retraining.py
 
 ### KẾT LUẬN & CHUẨN BỊ TRẢ LỜI CÂU HỎI HỘI ĐỒNG (1 phút)
 > *"Em xin chân thành cảm ơn Quý Thầy Cô trong Hội đồng đã lắng nghe phần trình diễn. Em rất mong nhận được những góp ý quý báu của Thầy Cô để tiếp tục hoàn thiện đề tài!"*
+
