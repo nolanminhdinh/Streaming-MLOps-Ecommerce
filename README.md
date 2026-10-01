@@ -117,10 +117,11 @@ Hướng dẫn chi tiết từng bước cho từng giai đoạn:
 - Tuần 8 (Giám sát Prometheus/Grafana, Evidently Data Drift & Tái huấn luyện Closed-Loop): xem [docs/how-to-run/how-to-run-week8.md](docs/how-to-run/how-to-run-week8.md) và báo cáo [docs/weekly-progress/tuan-08.md](docs/weekly-progress/tuan-08.md).
 - Tuần 9 (Power BI Executive Dashboard, DAX Measures & Thực nghiệm Kiểm thử tải Locust): xem [docs/how-to-run/how-to-run-week9.md](docs/how-to-run/how-to-run-week9.md) và báo cáo [docs/weekly-progress/tuan-09.md](docs/weekly-progress/tuan-09.md).
 - Tuần 10 (Tổng kết Toàn diện, Nghiệm thu Hệ thống & Kịch bản Bảo vệ ĐATN): xem [docs/how-to-run/how-to-run-week10.md](docs/how-to-run/how-to-run-week10.md) và báo cáo [docs/weekly-progress/tuan-10.md](docs/weekly-progress/tuan-10.md).
+- **Báo cáo Cơ sở Lý thuyết & Công nghệ Toàn diện**: xem [docs/cong_nghe_ly_thuyet.md](docs/cong_nghe_ly_thuyet.md).
 - **Kiểm thử Hiệu năng Luồng Dữ liệu**: xem [docs/test-pipeline/bao_cao_kiem_thu_hieu_nang_lan_1.md](docs/test-pipeline/bao_cao_kiem_thu_hieu_nang_lan_1.md).
 - **Nhật ký Khắc phục Lỗi & Tối ưu hóa Luồng (Changelog)**: xem [docs/pipeline-updates/lan-01-khac-phuc-loi-va-toi-uu-luong.md](docs/pipeline-updates/lan-01-khac-phuc-loi-va-toi-uu-luong.md).
 
-> Ghi chú: Repo đã hoàn thành trọn vẹn toàn bộ chu trình 10 tuần — từ hạ tầng Streaming Data Lake, Star Schema ETL, Feature Store, Model Serving FastAPI, Giám sát Prometheus/Grafana, Data Drift Closed-Loop Retraining, phân hệ trực quan hóa Executive Dashboard trên Power BI, thực nghiệm kiểm thử tải đồng thời 200 concurrent users đạt độ ổn định 100%, đến kịch bản demo và tài liệu chuẩn bị bảo vệ ĐATN.
+> Ghi chú: Repo đã hoàn thành trọn vẹn toàn bộ chu trình 10 tuần — từ hạ tầng Streaming Data Lake, Star Schema ETL, Feature Store, Model Serving FastAPI, Giám sát Prometheus/Grafana, Data Drift Closed-Loop Retraining, phân hệ trực quan hóa Executive Dashboard trên Power BI, thực nghiệm kiểm thử tải đồng thời 200 concurrent users đạt độ ổn định 100%, đến kịch bản demo, báo cáo công nghệ lý thuyết và tài liệu chuẩn bị bảo vệ ĐATN.
 
 ## 7. Minh bạch sử dụng AI
 

@@ -375,6 +375,7 @@ streaming-mlops-ecommerce/
     ├── pipeline-updates/                       # Tài liệu khắc phục lỗi, nâng cấp & tối ưu hóa luồng dữ liệu
     │   ├── README.md                           # Thư viện & Quy chuẩn ghi chép cập nhật
     │   └── lan-01-khac-phuc-loi-va-toi-uu-luong.md
+    ├── cong_nghe_ly_thuyet.md                  # BÁO CÁO CƠ SỞ LÝ THUYẾT & CÔNG NGHỆ TOÀN DIỆN
     ├── architecture.md                         # Thiết kế kiến trúc tổng thể hệ thống
     ├── presentation_slides.md                  # Bộ slide thuyết trình bảo vệ ĐATN
     └── system_architecture_visualizer.html     # Giao diện trực quan hóa tương tác kiến trúc
