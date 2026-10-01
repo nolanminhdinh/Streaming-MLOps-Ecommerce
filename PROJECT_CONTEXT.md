@@ -1,4 +1,4 @@
-﻿# TÀI LIỆU TOÀN VĂN BỐI CẢNH DỰ ÁN CHO CÁC MÔ HÌNH AI (PROJECT CONTEXT FOR AI MODELS)
+# TÀI LIỆU TOÀN VĂN BỐI CẢNH DỰ ÁN CHO CÁC MÔ HÌNH AI (PROJECT CONTEXT FOR AI MODELS)
 
 > **DÀNH CHO BẤT KỲ MÔ HÌNH AI NÀO (LLM, AGENT, COPILOT) ĐỌC TÀI LIỆU NÀY:**
 > Tài liệu này là **Nguồn Sự thật Duy nhất (Single Source of Truth - SSOT)** mô tả toàn bộ kiến trúc, bài toán nghiệp vụ, cơ sở toán học, lược đồ dữ liệu, tiến độ thực hiện theo tuần (từ Tuần 1 đến Tuần 9), cấu trúc mã nguồn, và hướng dẫn vận hành của dự án **Streaming MLOps E-Commerce Demand Forecasting & Inventory Optimization**.
@@ -372,6 +372,9 @@ streaming-mlops-ecommerce/
     │   └── live_demo_script.md
     ├── test-pipeline/                          # Báo cáo kiểm thử & đo lường hiệu năng luồng dữ liệu
     │   └── bao_cao_kiem_thu_hieu_nang_lan_1.md
+    ├── pipeline-updates/                       # Tài liệu khắc phục lỗi, nâng cấp & tối ưu hóa luồng dữ liệu
+    │   ├── README.md                           # Thư viện & Quy chuẩn ghi chép cập nhật
+    │   └── lan-01-khac-phuc-loi-va-toi-uu-luong.md
     ├── architecture.md                         # Thiết kế kiến trúc tổng thể hệ thống
     ├── presentation_slides.md                  # Bộ slide thuyết trình bảo vệ ĐATN
     └── system_architecture_visualizer.html     # Giao diện trực quan hóa tương tác kiến trúc

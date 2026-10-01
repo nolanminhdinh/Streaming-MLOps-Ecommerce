@@ -161,6 +161,8 @@ Trong quá trình thực nghiệm với dữ liệu lớn 10,000 bản ghi, hệ
 | **3** | Nghẽn hiệu năng nghiêm trọng tại `DataValidator` (mất 49.6s cho 10k dòng) | Phương thức `validate()` sử dụng vòng lặp `for row in df.iterrows()` và gọi `pd.to_datetime()` riêng rẽ cho từng dòng, tạo ra hơn 50,000 lần phân tích chuỗi thời gian đơn lẻ. | Viết lại bằng kỹ thuật Vectorized Pre-parsing trên toàn cột trước vòng lặp, thay `iterrows()` bằng `to_dict(orient="records")`. Thời gian kiểm định giảm từ **49.6s xuống 2.7s (tăng tốc gấp 18 lần)**! |
 | **4** | Sai lệch chữ ký hàm tại `TimeSeriesFeatureExtractor` & `ABCXYZClassifier` | Tham số gọi hàm `create_features()` và tham số ngưỡng `a_threshold` không khớp với chữ ký lớp `extract_features()` và `pareto_a`. | Đồng bộ hóa hoàn toàn chữ ký phương thức chuẩn trong `scripts/run_heavy_pipeline_benchmark.py`. |
 
+> *Ghi chú chi tiết về phân tích nguyên nhân gốc rễ (RCA) và mã nguồn khắc phục cho từng lỗi, vui lòng xem tại:* [`docs/pipeline-updates/lan-01-khac-phuc-loi-va-toi-uu-luong.md`](../pipeline-updates/lan-01-khac-phuc-loi-va-toi-uu-luong.md).
+
 ---
 
 ## 7. KẾT LUẬN & ĐỀ XUẤT CHO LẦN KIỂM THỬ TIẾP THEO
