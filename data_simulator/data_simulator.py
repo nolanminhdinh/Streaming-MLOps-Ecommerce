@@ -1,12 +1,24 @@
 """
 Data_Simulator.py
 ------------------
-Mô phỏng luồng phát sinh đơn hàng E-Commerce theo thời gian thực, dựa trên
-schema thực tế của bộ dữ liệu ``vietnam_ecommerce`` trên XomData:
-  - shopee_orders (84 cột)
-  - tiktok_orders (71 cột)
+Mô phỏng luồng phát sinh đơn hàng E-Commerce và Quản trị Tồn kho thời gian thực
+cho 1 DOANH NGHIỆP BÁN LẺ ĐA KÊNH (Single Enterprise Multi-Channel Retailer):
+  - Kênh bán hàng: Shopee Mall & TikTok Official Shop.
+  - Kho hàng trung tâm (Central Warehouse): Quản lý tồn kho thực tế (Stock on Hand).
+  - Schema tuân thủ bộ dữ liệu thực tế ``vietnam_ecommerce`` trên XomData:
+      + shopee_orders (84 cột)
+      + tiktok_orders (71 cột)
 
-Các quy luật order đã triển khai:
+Hai luồng dữ liệu song hành phục vụ AI MLOps & Quản trị:
+  1. Luồng Đơn đặt hàng (Sales Orders): Khách hàng đặt mua SKU trên sàn.
+  2. Luồng Biến động Tồn kho (Inventory Movements & Snapshot):
+     - Khấu trừ tồn kho khi phát sinh đơn xuất bán (Outbound Sale).
+     - Huỷ đơn nếu kho hết hàng (Out of Stock).
+     - Tự động kích hoạt đề xuất nhập hàng (Reorder Point - ROP) & nhập kho sau Lead Time.
+     - Cảnh báo tồn kho 3 cấp độ (CRITICAL, WARNING, NORMAL) cho báo cáo quản trị.
+     - Phục vụ nạp bảng Fact_Orders và Fact_Inventory_Daily trong Data Warehouse.
+
+Các quy luật nghiệp vụ đã triển khai:
   1. Vòng đời đơn hàng (Order Lifecycle / State Machine):
      - Shopee:  UNPAID → READY_TO_SHIP → SHIPPED → COMPLETED  (hoặc → CANCELLED)
      - TikTok:  UNPAID → AWAITING_SHIPMENT → SHIPPED → DELIVERED → COMPLETED
@@ -30,17 +42,8 @@ Các quy luật order đã triển khai:
      - TikTok: shipping_fee, platform_discount, seller_discount, tax.
 
   5. Dữ liệu Việt Nam thực tế:
-     - Tên sản phẩm, SKU, kho hàng phân bố theo khu vực.
-     - Địa chỉ giao hàng: 63 tỉnh thành Việt Nam.
-     - Phương thức thanh toán: COD, Ví Shopee, VNPay, MoMo, Thẻ tín dụng, ...
-     - Đơn vị tiền: VND.
-
-Tích hợp:
-  - Tương thích với Kafka Producer ở ``ingestion/producer.py``.
-  - Output JSON có thể ghi thẳng vào topic ``ecom.orders.raw``.
-
-Nguồn dữ liệu tham khảo:
-  https://dataset.xomdata.com/datasets/schema/vietnam_ecommerce
+     - Danh mục SKU chuẩn, giá VND, trọng lượng, địa chỉ 63 tỉnh thành.
+     - Phương thức thanh toán: COD, Ví Shopee, VNPay, MoMo, ZaloPay, Thẻ tín dụng.
 """
 
 import json
@@ -123,29 +126,55 @@ TIKTOK_PAYMENT_METHODS = [
     "Credit Card", "Bank Transfer",
 ]
 
-# ── Sản phẩm mẫu Việt Nam ──
+# ── Sản phẩm mẫu & Thiết lập Tồn kho Doanh nghiệp ──
 PRODUCT_CATALOG = [
-    {"name": "Ốp lưng iPhone 15 Pro Max silicon",          "sku": "OL-IP15PM",   "price": 59_000,   "weight": 0.05, "category": "Phụ kiện điện thoại"},
-    {"name": "Áo thun nam cotton Premium Basic",            "sku": "ATN-CB-001",  "price": 129_000,  "weight": 0.2,  "category": "Thời trang nam"},
-    {"name": "Sạc nhanh 65W GaN Type-C PD",                "sku": "SN-65W-GAN",  "price": 249_000,  "weight": 0.12, "category": "Phụ kiện điện tử"},
-    {"name": "Bột giặt OMO Matic 6kg",                     "sku": "OMO-6KG",     "price": 175_000,  "weight": 6.0,  "category": "Gia dụng"},
-    {"name": "Tai nghe Bluetooth TWS AirBuds Pro",          "sku": "TN-TWS-PRO",  "price": 450_000,  "weight": 0.08, "category": "Điện tử"},
-    {"name": "Kem chống nắng Anessa SPF50+",               "sku": "KCN-ANESSA",  "price": 399_000,  "weight": 0.06, "category": "Mỹ phẩm"},
-    {"name": "Bàn phím cơ Gaming RGB 104 phím",             "sku": "BP-GM-104",   "price": 690_000,  "weight": 0.95, "category": "Gaming"},
-    {"name": "Nồi chiên không dầu 6L Air Fryer",           "sku": "AF-6L-001",   "price": 1_290_000,"weight": 4.5,  "category": "Gia dụng"},
-    {"name": "Sữa rửa mặt CeraVe 236ml",                  "sku": "SRM-CERAVE",  "price": 289_000,  "weight": 0.3,  "category": "Mỹ phẩm"},
-    {"name": "Giày thể thao nam Jogger Runner",             "sku": "GTT-JR-001",  "price": 550_000,  "weight": 0.7,  "category": "Giày dép"},
-    {"name": "Balo laptop chống sốc 15.6 inch",            "sku": "BL-15-CS",    "price": 350_000,  "weight": 0.65, "category": "Túi & Balo"},
-    {"name": "Nước hoa hồng Klairs 180ml",                 "sku": "NHH-KLA180",  "price": 320_000,  "weight": 0.25, "category": "Mỹ phẩm"},
-    {"name": "Chuột gaming Logitech G304",                  "sku": "CG-G304",     "price": 690_000,  "weight": 0.1,  "category": "Gaming"},
-    {"name": "Bộ drap giường cotton 1m8",                   "sku": "DG-CT-1M8",   "price": 399_000,  "weight": 1.2,  "category": "Gia dụng"},
-    {"name": "Đèn LED dây trang trí 10m",                   "sku": "DEN-LED-10",  "price": 89_000,   "weight": 0.15, "category": "Decor"},
-    {"name": "Serum Vitamin C The Ordinary 30ml",           "sku": "SR-VC-TO30",  "price": 230_000,  "weight": 0.05, "category": "Mỹ phẩm"},
-    {"name": "Combo 10 khẩu trang 3D KF94",                "sku": "KT-KF94-10",  "price": 45_000,   "weight": 0.08, "category": "Sức khoẻ"},
-    {"name": "Quạt mini cầm tay sạc USB",                  "sku": "QM-USB-01",   "price": 69_000,   "weight": 0.12, "category": "Gia dụng"},
-    {"name": "Túi xách nữ da PU thời trang",               "sku": "TX-PU-001",   "price": 259_000,  "weight": 0.35, "category": "Thời trang nữ"},
-    {"name": "Miếng dán cường lực Samsung Galaxy S24",      "sku": "CL-SS-S24",   "price": 35_000,   "weight": 0.02, "category": "Phụ kiện điện thoại"},
+    {"name": "Ốp lưng iPhone 15 Pro Max silicon",          "sku": "OL-IP15PM",   "price": 59_000,   "weight": 0.05, "category": "Phụ kiện điện thoại", "initial_stock": 350, "safety_stock": 50, "reorder_point": 100, "reorder_qty": 250, "lead_time_days": 2, "popularity_weight": 12.0},
+    {"name": "Áo thun nam cotton Premium Basic",            "sku": "ATN-CB-001",  "price": 129_000,  "weight": 0.2,  "category": "Thời trang nam",       "initial_stock": 250, "safety_stock": 40, "reorder_point": 80,  "reorder_qty": 180, "lead_time_days": 3, "popularity_weight": 6.5},
+    {"name": "Sạc nhanh 65W GaN Type-C PD",                "sku": "SN-65W-GAN",  "price": 249_000,  "weight": 0.12, "category": "Phụ kiện điện tử",    "initial_stock": 280, "safety_stock": 40, "reorder_point": 85,  "reorder_qty": 200, "lead_time_days": 2, "popularity_weight": 8.5},
+    {"name": "Bột giặt OMO Matic 6kg",                     "sku": "OMO-6KG",     "price": 175_000,  "weight": 6.0,  "category": "Gia dụng",             "initial_stock": 300, "safety_stock": 45, "reorder_point": 90,  "reorder_qty": 200, "lead_time_days": 3, "popularity_weight": 10.0},
+    {"name": "Tai nghe Bluetooth TWS AirBuds Pro",          "sku": "TN-TWS-PRO",  "price": 450_000,  "weight": 0.08, "category": "Điện tử",             "initial_stock": 220, "safety_stock": 35, "reorder_point": 70,  "reorder_qty": 150, "lead_time_days": 3, "popularity_weight": 6.0},
+    {"name": "Kem chống nắng Anessa SPF50+",               "sku": "KCN-ANESSA",  "price": 399_000,  "weight": 0.06, "category": "Mỹ phẩm",             "initial_stock": 260, "safety_stock": 45, "reorder_point": 90,  "reorder_qty": 200, "lead_time_days": 3, "popularity_weight": 9.0},
+    {"name": "Bàn phím cơ Gaming RGB 104 phím",             "sku": "BP-GM-104",   "price": 690_000,  "weight": 0.95, "category": "Gaming",              "initial_stock": 160, "safety_stock": 25, "reorder_point": 50,  "reorder_qty": 120, "lead_time_days": 4, "popularity_weight": 3.0},
+    {"name": "Nồi chiên không dầu 6L Air Fryer",           "sku": "AF-6L-001",   "price": 1_290_000,"weight": 4.5,  "category": "Gia dụng",             "initial_stock": 120, "safety_stock": 20, "reorder_point": 40,  "reorder_qty": 80,  "lead_time_days": 4, "popularity_weight": 2.2},
+    {"name": "Sữa rửa mặt CeraVe 236ml",                  "sku": "SRM-CERAVE",  "price": 289_000,  "weight": 0.3,  "category": "Mỹ phẩm",             "initial_stock": 240, "safety_stock": 35, "reorder_point": 75,  "reorder_qty": 160, "lead_time_days": 3, "popularity_weight": 6.5},
+    {"name": "Giày thể thao nam Jogger Runner",             "sku": "GTT-JR-001",  "price": 550_000,  "weight": 0.7,  "category": "Giày dép",            "initial_stock": 140, "safety_stock": 20, "reorder_point": 45,  "reorder_qty": 100, "lead_time_days": 4, "popularity_weight": 2.5},
+    {"name": "Balo laptop chống sốc 15.6 inch",            "sku": "BL-15-CS",    "price": 350_000,  "weight": 0.65, "category": "Túi & Balo",          "initial_stock": 130, "safety_stock": 20, "reorder_point": 40,  "reorder_qty": 90,  "lead_time_days": 3, "popularity_weight": 2.0},
+    {"name": "Nước hoa hồng Klairs 180ml",                 "sku": "NHH-KLA180",  "price": 320_000,  "weight": 0.25, "category": "Mỹ phẩm",             "initial_stock": 190, "safety_stock": 30, "reorder_point": 60,  "reorder_qty": 140, "lead_time_days": 3, "popularity_weight": 4.5},
+    {"name": "Chuột gaming Logitech G304",                  "sku": "CG-G304",     "price": 690_000,  "weight": 0.1,  "category": "Gaming",              "initial_stock": 200, "safety_stock": 30, "reorder_point": 65,  "reorder_qty": 150, "lead_time_days": 3, "popularity_weight": 4.5},
+    {"name": "Bộ drap giường cotton 1m8",                   "sku": "DG-CT-1M8",   "price": 399_000,  "weight": 1.2,  "category": "Gia dụng",             "initial_stock": 100, "safety_stock": 15, "reorder_point": 30,  "reorder_qty": 70,  "lead_time_days": 4, "popularity_weight": 1.5},
+    {"name": "Đèn LED dây trang trí 10m",                   "sku": "DEN-LED-10",  "price": 89_000,   "weight": 0.15, "category": "Decor",               "initial_stock": 210, "safety_stock": 35, "reorder_point": 70,  "reorder_qty": 150, "lead_time_days": 3, "popularity_weight": 5.0},
+    {"name": "Serum Vitamin C The Ordinary 30ml",           "sku": "SR-VC-TO30",  "price": 230_000,  "weight": 0.05, "category": "Mỹ phẩm",             "initial_stock": 220, "safety_stock": 35, "reorder_point": 70,  "reorder_qty": 150, "lead_time_days": 3, "popularity_weight": 5.5},
+    {"name": "Combo 10 khẩu trang 3D KF94",                "sku": "KT-KF94-10",  "price": 45_000,   "weight": 0.08, "category": "Sức khoẻ",            "initial_stock": 500, "safety_stock": 80, "reorder_point": 160, "reorder_qty": 400, "lead_time_days": 2, "popularity_weight": 15.0},
+    {"name": "Quạt mini cầm tay sạc USB",                  "sku": "QM-USB-01",   "price": 69_000,   "weight": 0.12, "category": "Gia dụng",             "initial_stock": 130, "safety_stock": 20, "reorder_point": 40,  "reorder_qty": 90,  "lead_time_days": 3, "popularity_weight": 2.0},
+    {"name": "Túi xách nữ da PU thời trang",               "sku": "TX-PU-001",   "price": 259_000,  "weight": 0.35, "category": "Thời trang nữ",       "initial_stock": 90,  "safety_stock": 15, "reorder_point": 30,  "reorder_qty": 60,  "lead_time_days": 4, "popularity_weight": 1.5},
+    {"name": "Miếng dán cường lực Samsung Galaxy S24",      "sku": "CL-SS-S24",   "price": 35_000,   "weight": 0.02, "category": "Phụ kiện điện thoại", "initial_stock": 300, "safety_stock": 45, "reorder_point": 90,  "reorder_qty": 220, "lead_time_days": 2, "popularity_weight": 8.0},
 ]
+
+# ── Cấu hình Doanh nghiệp Giả lập & Gian hàng đa kênh (Mock Enterprise Configuration) ──
+ENTERPRISE_CONFIG = {
+    "enterprise_id": "MOCK-CORP-VN",
+    "enterprise_name": "Mock Retail Enterprise",
+    "tax_code": "0319999999",
+    "central_warehouse": {
+        "warehouse_id": "WH-MOCK-CENTRAL",
+        "warehouse_name": "Kho Tổng Mock Logistics",
+        "state": "Bình Dương",
+        "city": "Thủ Dầu Một",
+        "district": "Dĩ An",
+    },
+    "channels": {
+        Platform.SHOPEE: {
+            "shop_id": "10000001",
+            "shop_name": "MockStore Official Mall",
+            "connection_id": "CONN-SPE-MOCK",
+        },
+        Platform.TIKTOK: {
+            "shop_id": "MockStore Official Shop",
+            "shop_name": "MockStore Official Shop",
+            "connection_id": "CONN-TT-MOCK",
+        },
+    },
+}
 
 # ── Địa chỉ giao hàng (Tỉnh → Thành phố → Quận/Huyện) ──
 VIETNAM_ADDRESSES = [
@@ -181,30 +210,67 @@ TIKTOK_CARRIERS = [
     "BEST Express", "Viettel Post",
 ]
 
-# ── Tên shop mẫu ──
+# ── Tên shop mẫu (Bảo toàn tương thích seed_dim_tables) ──
 SHOP_NAMES = [
-    "MinhShopVN", "BeautyHouseHCM", "TechZone Official",
+    "MockStore Official Mall", "MockStore Official Shop", "BeautyHouseHCM", "TechZone Official",
     "FashionKorea_VN", "HomeDecorHN", "SportsGear365",
     "GadgetWorldVN", "CosmeBoutique", "SneakerHub_SG",
     "FreshMartOnline",
 ]
 
-# ── Lý do huỷ đơn ──
+# ── Lý do huỷ đơn & Hoàn hàng ──
 SHOPEE_CANCEL_REASONS = [
-    "Khách hàng yêu cầu huỷ", "Hết hàng", "Không liên lạc được khách",
+    "Khách hàng yêu cầu huỷ", "Hết hàng", "Không liên lạc được khách (COD giao không thành công)",
     "Đổi ý không mua", "Trùng đơn", "Sản phẩm lỗi trước khi gửi",
     "Buyer requested to cancel", "Out of stock",
 ]
 TIKTOK_CANCEL_REASONS = [
     "Buyer Cancel", "Seller Cancel - Out of Stock",
     "System Cancel - Payment Timeout", "Buyer changed mind",
-    "Logistics issue", "Wrong item",
+    "Logistics delivery failed (COD)", "Wrong item",
 ]
 
 
 # ─────────────────────────────────────────────────────────────
-# 2. DATA CLASSES — ORDER EVENTS
+# 2. DATA CLASSES — INVENTORY & ORDER EVENTS
 # ─────────────────────────────────────────────────────────────
+
+@dataclass
+class InventoryItem:
+    """Theo dõi trạng thái tồn kho thực tế của từng SKU trong kho Doanh nghiệp."""
+    sku: str
+    product_name: str
+    category: str
+    price: float
+    weight: float
+    stock_on_hand: int
+    safety_stock: int
+    reorder_point: int
+    reorder_qty: int
+    lead_time_days: int
+    incoming_stock: int = 0
+    reserved_stock: int = 0
+    pending_return_stock: int = 0
+    restock_eta: Optional[str] = None
+    total_sold: int = 0
+    total_restocked: int = 0
+    total_returned: int = 0
+    out_of_stock_count: int = 0
+    last_updated: Optional[str] = None
+
+
+@dataclass
+class InventoryMovementEvent:
+    """Ghi nhận sự kiện biến động xuất nhập tồn kho (Inventory Transaction Audit)."""
+    movement_id: str
+    sku: str
+    warehouse_id: str
+    movement_type: str  # "OUTBOUND_SALE" | "INBOUND_RESTOCK" | "OUT_OF_STOCK_REJECT" | "RETURN_RESTOCK" | "CANCEL_RELEASE"
+    quantity: int
+    stock_before: int
+    stock_after: int
+    reference_order_id: Optional[str] = None
+    timestamp: Optional[str] = None
 
 @dataclass
 class ShopeeOrderEvent:
@@ -396,25 +462,251 @@ class TikTokOrderEvent:
 # ─────────────────────────────────────────────────────────────
 
 class ECommerceSimulator:
-    """Sinh sự kiện đơn hàng giả lập đa kênh (Shopee + TikTok) với các quy luật:
-    - Order lifecycle / state machine.
-    - Xu hướng tăng trưởng dài hạn + mùa vụ + flash sale + mega-sale.
-    - Phân bố giá và phí sàn theo quy tắc thực tế.
+    """Sinh sự kiện đơn hàng giả lập và quản trị tồn kho thời gian thực cho 1 Doanh nghiệp:
+    - Mô hình 1 Doanh nghiệp bán đa kênh (Shopee Mall & TikTok Official Shop).
+    - Quản lý trạng thái tồn kho (Current Stock / Stock on Hand) theo từng SKU.
+    - Khấu trừ tồn kho khi xuất bán; từ chối/hủy đơn khi hết hàng (Out of Stock).
+    - Cơ chế đề xuất nhập hàng (Reorder Point - ROP) và nhập kho (Restock) sau Lead Time.
+    - Cảnh báo tồn kho 3 cấp độ: CRITICAL, WARNING, NORMAL.
+    - Vòng đời đơn hàng, phí sàn và xu hướng mùa vụ Việt Nam.
     """
 
     def __init__(
         self,
         shopee_ratio: float = 0.55,     # 55% đơn Shopee, 45% TikTok
-        cancel_rate: float = 0.12,       # 12% tỉ lệ huỷ đơn
+        cancel_rate: float = 0.12,       # 12% tỉ lệ huỷ đơn thông thường
         trend_weekly_pct: float = 0.02,  # +2% mỗi tuần
         start_date: Optional[datetime] = None,
+        enterprise_config: Optional[dict] = None,
+        initial_stock_override: Optional[dict] = None,
     ):
         self.shopee_ratio = shopee_ratio
         self.cancel_rate = cancel_rate
         self.trend_weekly_pct = trend_weekly_pct
         self.start_date = start_date or datetime.now(timezone.utc)
+        self.enterprise = enterprise_config or ENTERPRISE_CONFIG
         self._order_counter = 0
         self._row_idx = 0
+        self._movement_counter = 0
+
+        # Khởi tạo trạng thái tồn kho nội bộ cho Doanh nghiệp
+        self.inventory: dict[str, InventoryItem] = {}
+        self.movement_history: list[InventoryMovementEvent] = []
+        self.pending_returns: list[dict] = []
+        self._init_inventory(initial_stock_override)
+
+    # ──────────── Inventory Engine ────────────
+
+    def _init_inventory(self, stock_override: Optional[dict] = None):
+        """Khởi tạo kho hàng ban đầu cho toàn bộ danh mục sản phẩm của Doanh nghiệp."""
+        override = stock_override or {}
+        for p in PRODUCT_CATALOG:
+            sku = p["sku"]
+            initial_stock = override.get(sku, p.get("initial_stock", 200))
+            self.inventory[sku] = InventoryItem(
+                sku=sku,
+                product_name=p["name"],
+                category=p.get("category", "Chung"),
+                price=float(p["price"]),
+                weight=float(p.get("weight", 0.1)),
+                stock_on_hand=initial_stock,
+                safety_stock=p.get("safety_stock", 30),
+                reorder_point=p.get("reorder_point", 60),
+                reorder_qty=p.get("reorder_qty", 150),
+                lead_time_days=p.get("lead_time_days", 3),
+                incoming_stock=0,
+                reserved_stock=0,
+                pending_return_stock=0,
+                restock_eta=None,
+                total_sold=0,
+                total_restocked=0,
+                total_returned=0,
+                out_of_stock_count=0,
+                last_updated=self._fmt(self.start_date),
+            )
+
+    def _process_incoming_restocks(self, now: datetime):
+        """Kiểm tra và nhập kho các lô hàng đã đến thời điểm giao (sau Lead Time)."""
+        dt_now = now if now.tzinfo is not None else now.replace(tzinfo=timezone.utc)
+        for sku, inv in self.inventory.items():
+            if inv.incoming_stock > 0 and inv.restock_eta is not None:
+                try:
+                    eta_dt = datetime.fromisoformat(inv.restock_eta)
+                    if eta_dt.tzinfo is None:
+                        eta_dt = eta_dt.replace(tzinfo=timezone.utc)
+                except Exception:
+                    continue
+
+                if dt_now >= eta_dt:
+                    stock_before = inv.stock_on_hand
+                    inv.stock_on_hand += inv.incoming_stock
+                    inv.total_restocked += inv.incoming_stock
+                    stock_after = inv.stock_on_hand
+                    restocked_qty = inv.incoming_stock
+
+                    self._movement_counter += 1
+                    mov = InventoryMovementEvent(
+                        movement_id=f"MOV-IN-{self._movement_counter:06d}",
+                        sku=sku,
+                        warehouse_id=self.enterprise["central_warehouse"]["warehouse_id"],
+                        movement_type="INBOUND_RESTOCK",
+                        quantity=restocked_qty,
+                        stock_before=stock_before,
+                        stock_after=stock_after,
+                        reference_order_id=None,
+                        timestamp=self._fmt(dt_now),
+                    )
+                    self.movement_history.append(mov)
+
+                    inv.incoming_stock = 0
+                    inv.restock_eta = None
+                    inv.last_updated = self._fmt(dt_now)
+
+    def _process_pending_returns(self, now: datetime):
+        """Kiểm tra và tái nhập kho (Restock Return) cho các kiện hàng hoàn về đến kho tổng (sau 3-5 ngày)."""
+        dt_now = now if now.tzinfo is not None else now.replace(tzinfo=timezone.utc)
+        still_pending = []
+        for ret in self.pending_returns:
+            eta = ret["return_eta"]
+            dt_eta = eta if eta.tzinfo is not None else eta.replace(tzinfo=timezone.utc)
+            if dt_now >= dt_eta:
+                sku = ret["sku"]
+                qty = ret["quantity"]
+                if sku in self.inventory:
+                    inv = self.inventory[sku]
+                    stock_before = inv.stock_on_hand
+                    inv.stock_on_hand += qty
+                    inv.total_returned += qty
+                    inv.pending_return_stock = max(0, inv.pending_return_stock - qty)
+                    inv.last_updated = self._fmt(dt_now)
+
+                    self._movement_counter += 1
+                    mov = InventoryMovementEvent(
+                        movement_id=f"MOV-RET-{self._movement_counter:06d}",
+                        sku=sku,
+                        warehouse_id=self.enterprise["central_warehouse"]["warehouse_id"],
+                        movement_type="RETURN_RESTOCK",
+                        quantity=qty,
+                        stock_before=stock_before,
+                        stock_after=inv.stock_on_hand,
+                        reference_order_id=ret["order_id"],
+                        timestamp=self._fmt(dt_now),
+                    )
+                    self.movement_history.append(mov)
+            else:
+                still_pending.append(ret)
+        self.pending_returns = still_pending
+
+    def _queue_return(self, sku: str, qty: int, order_id: str, cancel_time: Optional[datetime] = None):
+        """Đưa sản phẩm vào luồng logistics hoàn hàng (Reverse Logistics) về kho tổng sau 3-5 ngày."""
+        base_time = cancel_time or datetime.now(timezone.utc)
+        dt_cancel = base_time if base_time.tzinfo is not None else base_time.replace(tzinfo=timezone.utc)
+        return_lead_days = random.randint(3, 5)
+        eta = dt_cancel + timedelta(days=return_lead_days)
+        self.pending_returns.append({
+            "sku": sku,
+            "quantity": qty,
+            "order_id": order_id,
+            "return_eta": eta,
+            "enqueued_at": dt_cancel,
+        })
+        if sku in self.inventory:
+            self.inventory[sku].pending_return_stock += qty
+
+    def _release_cancelled_stock(self, sku: str, qty: int, order_id: str, now: datetime):
+        """Hoàn lại tồn kho tức thì khi đơn hàng bị huỷ trước khi xuất kho giao hàng."""
+        if sku not in self.inventory:
+            return
+        inv = self.inventory[sku]
+        dt_now = now if now.tzinfo is not None else now.replace(tzinfo=timezone.utc)
+        stock_before = inv.stock_on_hand
+        inv.stock_on_hand += qty
+        inv.total_sold = max(0, inv.total_sold - qty)
+        inv.last_updated = self._fmt(dt_now)
+
+        self._movement_counter += 1
+        mov = InventoryMovementEvent(
+            movement_id=f"MOV-CAN-{self._movement_counter:06d}",
+            sku=sku,
+            warehouse_id=self.enterprise["central_warehouse"]["warehouse_id"],
+            movement_type="CANCEL_RELEASE",
+            quantity=qty,
+            stock_before=stock_before,
+            stock_after=inv.stock_on_hand,
+            reference_order_id=order_id,
+            timestamp=self._fmt(dt_now),
+        )
+        self.movement_history.append(mov)
+
+    def _deduct_inventory(self, sku: str, qty: int, order_id: str, now: datetime) -> tuple[bool, int]:
+        """
+        Khấu trừ tồn kho khi phát sinh đơn hàng:
+          - Trả về (True, stock_left) nếu đủ hàng để xuất bán.
+          - Trả về (False, stock_left) nếu không đủ hàng (Out of Stock).
+          - Tự động kích hoạt đề xuất nhập hàng (Reorder) nếu tồn kho giảm <= Reorder Point.
+        """
+        self._process_incoming_restocks(now)
+        self._process_pending_returns(now)
+        dt_now = now if now.tzinfo is not None else now.replace(tzinfo=timezone.utc)
+
+        if sku not in self.inventory:
+            return True, 999  # Fallback nếu SKU không tồn tại trong kho
+
+        inv = self.inventory[sku]
+
+        # Kiểm tra đủ tồn kho hay không
+        if inv.stock_on_hand < qty:
+            inv.out_of_stock_count += 1
+            inv.last_updated = self._fmt(dt_now)
+
+            self._movement_counter += 1
+            mov = InventoryMovementEvent(
+                movement_id=f"MOV-REJ-{self._movement_counter:06d}",
+                sku=sku,
+                warehouse_id=self.enterprise["central_warehouse"]["warehouse_id"],
+                movement_type="OUT_OF_STOCK_REJECT",
+                quantity=qty,
+                stock_before=inv.stock_on_hand,
+                stock_after=inv.stock_on_hand,
+                reference_order_id=order_id,
+                timestamp=self._fmt(dt_now),
+            )
+            self.movement_history.append(mov)
+
+            # Kích hoạt nhập hàng bổ sung khẩn cấp nếu chưa có lệnh nhập đang trên đường về
+            if inv.incoming_stock == 0:
+                inv.incoming_stock = inv.reorder_qty
+                inv.restock_eta = self._fmt(dt_now + timedelta(days=inv.lead_time_days))
+
+            return False, inv.stock_on_hand
+
+        # Đủ hàng xuất bán
+        stock_before = inv.stock_on_hand
+        inv.stock_on_hand -= qty
+        inv.total_sold += qty
+        stock_after = inv.stock_on_hand
+        inv.last_updated = self._fmt(dt_now)
+
+        self._movement_counter += 1
+        mov = InventoryMovementEvent(
+            movement_id=f"MOV-OUT-{self._movement_counter:06d}",
+            sku=sku,
+            warehouse_id=self.enterprise["central_warehouse"]["warehouse_id"],
+            movement_type="OUTBOUND_SALE",
+            quantity=qty,
+            stock_before=stock_before,
+            stock_after=stock_after,
+            reference_order_id=order_id,
+            timestamp=self._fmt(dt_now),
+        )
+        self.movement_history.append(mov)
+
+        # Kiểm tra ngưỡng đặt hàng lại (Reorder Point)
+        if inv.stock_on_hand <= inv.reorder_point and inv.incoming_stock == 0:
+            inv.incoming_stock = inv.reorder_qty
+            inv.restock_eta = self._fmt(dt_now + timedelta(days=inv.lead_time_days))
+
+        return True, inv.stock_on_hand
 
     # ──────────── Seasonality & Trend ────────────
 
@@ -433,23 +725,36 @@ class ECommerceSimulator:
         """Mega-sale ngày đôi: 1/1, 2/2, …, 12/12."""
         return (now.month, now.day) in MEGA_SALE_DAYS
 
+    def _is_payday(self, now: datetime) -> bool:
+        """Ngày lĩnh lương định kỳ tại VN: ngày 15 và các ngày 25-28 hàng tháng."""
+        return now.day in (15, 25, 26, 27, 28)
+
+    def _payday_multiplier(self, now: datetime) -> float:
+        """Hệ số tăng trưởng đơn hàng vào ngày lĩnh lương (Payday Sale)."""
+        if now.day == 15:
+            return 1.8  # Đợt lương giữa tháng
+        elif now.day in (25, 26, 27, 28):
+            return 1.6  # Đợt lương cuối tháng
+        return 1.0
+
     def _seasonal_multiplier(self, now: datetime) -> float:
-        """Hệ số tổng hợp: tuần × flash × mega × giờ trong ngày."""
+        """Hệ số tổng hợp: tuần × flash × mega × payday × ngày trong tuần × giờ trong ngày."""
         # Hiệu ứng ngày trong tuần: T2-T6=1.0, T7=1.3, CN=1.2
         dow = now.weekday()
         dow_factor = {5: 1.3, 6: 1.2}.get(dow, 1.0)
 
-        # Hiệu ứng giờ trong ngày (bell curve quanh 10h sáng và 20h tối)
+        # Hiệu ứng giờ trong ngày (bell curve hành vi mua sắm thương mại điện tử thực tế)
         hour = now.hour
-        hour_factor = 0.3 + 0.7 * (
-            math.exp(-0.5 * ((hour - 10) / 3) ** 2) +
-            math.exp(-0.5 * ((hour - 20) / 2.5) ** 2)
+        hour_factor = 0.25 + 0.75 * (
+            0.8 * math.exp(-0.5 * ((hour - 10.5) / 2.5) ** 2) +
+            1.2 * math.exp(-0.5 * ((hour - 20.5) / 2.0) ** 2)
         )
 
         flash = 2.5 if self._is_flash_sale(now) else 1.0
         mega = 4.0 if self._is_mega_sale(now) else 1.0
+        payday = self._payday_multiplier(now)
 
-        return dow_factor * hour_factor * flash * mega * self._trend_multiplier(now)
+        return dow_factor * hour_factor * flash * mega * payday * self._trend_multiplier(now)
 
     def orders_per_second(self, now: datetime, base_rate: float = 3.0) -> int:
         """Số đơn/giây thực tế sau khi áp dụng tất cả hệ số mùa vụ."""
@@ -482,17 +787,24 @@ class ECommerceSimulator:
         return f"{ho} {ten_dem} {ten}"
 
     def _pick_product(self) -> dict:
-        return random.choice(PRODUCT_CATALOG)
+        """Chọn SKU theo trọng số phổ biến (Pareto 80/20 sales distribution)."""
+        weights = [p.get("popularity_weight", 1.0) for p in PRODUCT_CATALOG]
+        return random.choices(PRODUCT_CATALOG, weights=weights)[0]
 
     def _pick_address(self) -> dict:
         return random.choice(VIETNAM_ADDRESSES)
 
-    def _pick_shop(self) -> tuple[str, str, str]:
-        """Trả về (shop_name, shop_id, connection_id)."""
-        name = random.choice(SHOP_NAMES)
-        shop_id = str(random.randint(10000000, 99999999))
-        conn_id = f"CONN-{shop_id[:4]}"
-        return name, shop_id, conn_id
+    def _pick_shop(self, platform: Platform = Platform.SHOPEE) -> tuple[str, str, str]:
+        """Trả về (shop_name, shop_id, connection_id) của gian hàng chính hãng Doanh nghiệp."""
+        channels = self.enterprise.get("channels", {})
+        channel = channels.get(platform) or channels.get(Platform.SHOPEE, {})
+        default_name = "MockStore Official Mall" if platform == Platform.SHOPEE else "MockStore Official Shop"
+        default_conn = "CONN-SPE-MOCK" if platform == Platform.SHOPEE else "CONN-TT-MOCK"
+        return (
+            channel.get("shop_name", default_name),
+            channel.get("shop_id", "10000001"),
+            channel.get("connection_id", default_conn),
+        )
 
     # ──────────── Order Lifecycle Logic ────────────
 
@@ -664,16 +976,38 @@ class ECommerceSimulator:
         self._order_counter += 1
         product = self._pick_product()
         addr = self._pick_address()
-        shop_name, shop_id, conn_id = self._pick_shop()
+        shop_name, shop_id, conn_id = self._pick_shop(Platform.SHOPEE)
 
-        is_cancelled = random.random() < self.cancel_rate
-        status, stage = self._resolve_shopee_status(is_cancelled)
-        ts = self._generate_timestamps(now, stage, is_cancelled)
+        order_sn = f"SPE{now.strftime('%y%m%d')}{self._order_counter:06d}"
 
         qty = random.choices([1, 2, 3, 4, 5], weights=[50, 25, 12, 8, 5])[0]
         # Flash sale → tăng quantity
         if self._is_flash_sale(now):
             qty = min(10, qty + random.randint(1, 3))
+
+        # Khấu trừ kho Doanh nghiệp
+        in_stock, stock_left = self._deduct_inventory(product["sku"], qty, order_sn, now)
+
+        if not in_stock:
+            # Hết hàng -> bắt buộc hủy đơn
+            is_cancelled = True
+            status = ShopeeOrderStatus.CANCELLED.value
+            stage = 0
+            cancel_reason = "Hết hàng"
+            cancel_by = "seller"
+        else:
+            is_cancelled = random.random() < self.cancel_rate
+            status, stage = self._resolve_shopee_status(is_cancelled)
+            cancel_reason = random.choice(SHOPEE_CANCEL_REASONS) if is_cancelled else None
+            cancel_by = random.choice(["buyer", "seller", "system"]) if is_cancelled else None
+
+            if is_cancelled:
+                if stage < 2:
+                    self._release_cancelled_stock(product["sku"], qty, order_sn, now)
+                else:
+                    self._queue_return(product["sku"], qty, order_sn, now)
+
+        ts = self._generate_timestamps(now, stage, is_cancelled)
 
         # Discounted price
         disc_price = round(product["price"] * random.uniform(0.80, 1.0))
@@ -683,8 +1017,7 @@ class ECommerceSimulator:
         payment = random.choice(SHOPEE_PAYMENT_METHODS)
         is_cod = "True" if payment == "COD" else "False"
 
-        order_sn = f"SPE{now.strftime('%y%m%d')}{self._order_counter:06d}"
-        # Fix: dùng timezone-aware datetime cho synced_at / update_time
+        # Dùng timezone-aware datetime cho synced_at / update_time
         _utcnow = datetime.now(timezone.utc)
         pk_id = f"SPE-{shop_id}-{order_sn}"
         user_id = f"USR-{random.randint(100000, 999999)}"
@@ -704,9 +1037,9 @@ class ECommerceSimulator:
             shipped_time=self._fmt(ts["ship"]),
             completed_time=self._fmt(ts["complete"]),
             cancel_time=self._fmt(ts["cancel"]),
-            cancel_reason=random.choice(SHOPEE_CANCEL_REASONS) if is_cancelled else None,
-            cancel_by=random.choice(["buyer", "seller", "system"]) if is_cancelled else None,
-            fulfillment_flag="fulfilled_by_shopee" if random.random() < 0.3 else "fulfilled_by_seller",
+            cancel_reason=cancel_reason,
+            cancel_by=cancel_by,
+            fulfillment_flag="fulfilled_by_seller",  # Kho Doanh nghiệp tự vận hành
             item_name=product["name"],
             item_sku=product["sku"],
             model_name=product.get("category"),
@@ -760,27 +1093,53 @@ class ECommerceSimulator:
         self._row_idx += 1
         product = self._pick_product()
         addr = self._pick_address()
-        shop_name, _, _ = self._pick_shop()
+        shop_name, shop_id, conn_id = self._pick_shop(Platform.TIKTOK)
+        warehouse_id = self.enterprise["central_warehouse"]["warehouse_id"]
 
-        is_cancelled = random.random() < self.cancel_rate
-        status, stage = self._resolve_tiktok_status(is_cancelled)
-        ts = self._generate_timestamps(now, stage, is_cancelled)
+        order_id = f"TT{now.strftime('%y%m%d')}{self._order_counter:06d}"
 
         qty = random.choices([1, 2, 3, 4, 5], weights=[55, 22, 12, 7, 4])[0]
         if self._is_flash_sale(now):
             qty = min(10, qty + random.randint(1, 3))
+
+        # Livestream shopping: cao điểm 12h trưa và 19h-22h tối
+        is_live_hour = now.hour in (12, 19, 20, 21, 22)
+        if is_live_hour and random.random() < 0.65:
+            order_type = "livestream"
+        else:
+            order_type = "normal" if random.random() < 0.95 else "wholesale"
+
+        # Khấu trừ kho Doanh nghiệp
+        in_stock, stock_left = self._deduct_inventory(product["sku"], qty, order_id, now)
+
+        if not in_stock:
+            # Hết hàng -> bắt buộc hủy đơn
+            is_cancelled = True
+            status = TikTokOrderStatus.CANCELLED.value
+            stage = 0
+            item_cancel_reason = "Seller Cancel - Out of Stock"
+        else:
+            is_cancelled = random.random() < self.cancel_rate
+            status, stage = self._resolve_tiktok_status(is_cancelled)
+            item_cancel_reason = random.choice(TIKTOK_CANCEL_REASONS) if is_cancelled else None
+
+            if is_cancelled:
+                if stage < 2:
+                    self._release_cancelled_stock(product["sku"], qty, order_id, now)
+                else:
+                    self._queue_return(product["sku"], qty, order_id, now)
+
+        ts = self._generate_timestamps(now, stage, is_cancelled)
 
         fees = self._calc_tiktok_fees(product["price"], qty)
 
         payment = random.choice(TIKTOK_PAYMENT_METHODS)
         is_cod = "True" if payment == "COD" else "False"
 
-        order_id = f"TT{now.strftime('%y%m%d')}{self._order_counter:06d}"
         pk_id = str(uuid.uuid4())
         user_id = f"USR-{random.randint(100000, 999999)}"
         buyer_uid = f"TTBUY-{random.randint(1000000, 9999999)}"
 
-        # TikTok item_status follows order_status
         item_status_map = {
             TikTokOrderStatus.UNPAID.value: "UNPAID",
             TikTokOrderStatus.AWAITING_SHIPMENT.value: "AWAITING_SHIPMENT",
@@ -797,7 +1156,7 @@ class ECommerceSimulator:
             pkId=pk_id,
             user_id=user_id,
             order_id=order_id,
-            order_type="normal" if random.random() < 0.9 else "wholesale",
+            order_type=order_type,
             shop_name=shop_name,
             order_status=status,
             created_time=now.isoformat(),
@@ -830,12 +1189,12 @@ class ECommerceSimulator:
             shipping_platform_discount=fees["shipping_platform_discount"],
             payment_method=payment,
             is_cod=is_cod,
-            fulfillment_type="Seller Fulfillment" if random.random() < 0.7 else "TikTok Fulfillment",
+            fulfillment_type="Seller Fulfillment",
             delivery_type=random.choice(["Standard", "Economy"]),
             delivery_option=random.choice(["Standard", "Economy", "Express"]),
             shipping_provider=random.choice(TIKTOK_CARRIERS) if stage >= 2 else None,
             tracking_number=f"VN{random.randint(100000000000, 999999999999)}" if stage >= 2 else None,
-            warehouse_id=f"WH-{random.randint(100, 999)}" if stage >= 1 else None,
+            warehouse_id=warehouse_id if stage >= 1 else None,
             buyer_uid=buyer_uid,
             buyer_name=self._gen_recipient_name(),
             buyer_message=random.choice([None, None, "Giao giờ hành chính", "Gọi trước khi giao",
@@ -860,16 +1219,103 @@ class ECommerceSimulator:
             sku_id=f"TTSKU-{random.randint(1000000, 9999999)}",
             package_id=f"TTPKG-{random.randint(100000, 999999)}" if stage >= 2 else None,
             package_status="shipped" if stage >= 2 else None,
-            item_cancel_reason=random.choice(TIKTOK_CANCEL_REASONS) if is_cancelled else None,
+            item_cancel_reason=item_cancel_reason,
             createdAt=now.isoformat(),
             updatedAt=_utcnow_tt.isoformat(),
             row_idx=self._row_idx,
         )
 
-    # ──────────── PUBLIC API ────────────
+    # ──────────── PUBLIC API: INVENTORY & ORDERS ────────────
+
+    def get_inventory_snapshot(self, as_of: Optional[datetime] = None) -> list[dict]:
+        """
+        Trích xuất ảnh chụp trạng thái tồn kho (Inventory Snapshot) cho toàn bộ danh mục sản phẩm,
+        phù hợp nạp trực tiếp vào bảng Fact_Inventory_Daily.
+        """
+        dt_now = as_of or datetime.now(timezone.utc)
+        self._process_incoming_restocks(dt_now)
+        self._process_pending_returns(dt_now)
+
+        rows = []
+        for sku, inv in self.inventory.items():
+            if inv.stock_on_hand <= inv.safety_stock:
+                alert_level = "CRITICAL"
+            elif inv.stock_on_hand <= inv.reorder_point:
+                alert_level = "WARNING"
+            else:
+                alert_level = "NORMAL"
+
+            needs_reorder = (inv.stock_on_hand <= inv.reorder_point)
+            rec_reorder_qty = inv.reorder_qty if needs_reorder else 0
+
+            rows.append({
+                "enterprise_id": self.enterprise["enterprise_id"],
+                "warehouse_id": self.enterprise["central_warehouse"]["warehouse_id"],
+                "sku": sku,
+                "product_name": inv.product_name,
+                "category": inv.category,
+                "stock_on_hand": inv.stock_on_hand,
+                "safety_stock": inv.safety_stock,
+                "reorder_point": inv.reorder_point,
+                "incoming_stock": inv.incoming_stock,
+                "pending_return_stock": inv.pending_return_stock,
+                "restock_eta": inv.restock_eta,
+                "lead_time_days": inv.lead_time_days,
+                "alert_level": alert_level,
+                "needs_reorder": needs_reorder,
+                "recommended_reorder_qty": rec_reorder_qty,
+                "total_sold": inv.total_sold,
+                "total_restocked": inv.total_restocked,
+                "total_returned": inv.total_returned,
+                "out_of_stock_count": inv.out_of_stock_count,
+                "loaded_at": self._fmt(dt_now),
+            })
+        return rows
+
+    def get_inventory_alerts(self, as_of: Optional[datetime] = None) -> list[dict]:
+        """Lọc ra các SKU đang bị thiếu hàng hoặc cần nhập thêm (CRITICAL hoặc WARNING)."""
+        snapshot = self.get_inventory_snapshot(as_of)
+        return [item for item in snapshot if item["alert_level"] in ("CRITICAL", "WARNING")]
+
+    def restock_sku(self, sku: str, quantity: int, immediate: bool = True, now: Optional[datetime] = None):
+        """Chủ động nhập thêm hàng cho 1 SKU (thủ công hoặc theo quyết định quản trị)."""
+        if sku not in self.inventory:
+            return
+        inv = self.inventory[sku]
+        dt_now = now or datetime.now(timezone.utc)
+
+        if immediate:
+            stock_before = inv.stock_on_hand
+            inv.stock_on_hand += quantity
+            inv.total_restocked += quantity
+            inv.last_updated = self._fmt(dt_now)
+
+            self._movement_counter += 1
+            mov = InventoryMovementEvent(
+                movement_id=f"MOV-IN-{self._movement_counter:06d}",
+                sku=sku,
+                warehouse_id=self.enterprise["central_warehouse"]["warehouse_id"],
+                movement_type="INBOUND_RESTOCK",
+                quantity=quantity,
+                stock_before=stock_before,
+                stock_after=inv.stock_on_hand,
+                reference_order_id=None,
+                timestamp=self._fmt(dt_now),
+            )
+            self.movement_history.append(mov)
+        else:
+            inv.incoming_stock += quantity
+            inv.restock_eta = self._fmt(dt_now + timedelta(days=inv.lead_time_days))
+
+    def reset_inventory(self, stock_override: Optional[dict] = None):
+        """Khôi phục tồn kho về trạng thái ban đầu."""
+        self.movement_history.clear()
+        self.pending_returns.clear()
+        self._movement_counter = 0
+        self._init_inventory(stock_override)
 
     def generate_event(self, now: Optional[datetime] = None) -> dict:
-        """Sinh 1 sự kiện đơn hàng (Shopee hoặc TikTok), trả về dict."""
+        """Sinh 1 sự kiện đơn hàng (Shopee hoặc TikTok) và tự động cập nhật tồn kho."""
         now = now or datetime.now(timezone.utc)
         if random.random() < self.shopee_ratio:
             event = self._generate_shopee_event(now)
@@ -893,9 +1339,6 @@ class ECommerceSimulator:
             base_events_per_second: Tốc độ cơ bản (trước khi nhân hệ số mùa vụ).
             duration_seconds: Giới hạn thời gian chạy (None = chạy vô hạn).
             output_mode: "print" = in ra stdout, "return" = yield events.
-
-        Lưu ý: Khi tích hợp Kafka, thay output_mode="print" bằng cách gọi
-        ``ingestion.producer.send_event(producer, event)`` trong vòng lặp.
         """
         start = time.time()
 
@@ -930,50 +1373,64 @@ class ECommerceSimulator:
 
 
 # ─────────────────────────────────────────────────────────────
-# 4. DEMO — Chạy thử mô phỏng
+# 4. DEMO — Chạy thử mô phỏng Doanh nghiệp & Tồn kho
 # ─────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    print("=" * 80)
-    print("  DEMO: E-Commerce Order Simulator — Vietnam Multi-Channel")
-    print("  Schema: https://dataset.xomdata.com/datasets/schema/vietnam_ecommerce")
-    print("=" * 80)
+    print("=" * 85)
+    print("  DEMO: Enterprise E-Commerce & Inventory Simulator (Vietnam Multi-Channel)")
+    print("  Mô hình: 1 Doanh nghiệp đa kênh (Shopee Mall + TikTok Official Shop)")
+    print("  Kho trung tâm: WH-MOCK-CENTRAL (Quản lý tồn kho thực tế, xuất bán & nhập hàng)")
+    print("=" * 85)
     print()
 
     simulator = ECommerceSimulator(
-        shopee_ratio=0.55,     # 55% Shopee, 45% TikTok (phản ánh thị phần VN)
-        cancel_rate=0.12,      # ~12% tỉ lệ huỷ đơn
-        trend_weekly_pct=0.02, # tăng 2%/tuần
+        shopee_ratio=0.55,
+        cancel_rate=0.12,
+        trend_weekly_pct=0.02,
     )
 
+    print("─── Thông tin Doanh nghiệp & Kênh bán ───")
+    ent = simulator.enterprise
+    print(f"  Doanh nghiệp: {ent['enterprise_name']} ({ent['enterprise_id']})")
+    print(f"  Kho tổng:     {ent['central_warehouse']['warehouse_name']} ({ent['central_warehouse']['warehouse_id']})")
+    print(f"  Shopee Store: {ent['channels'][Platform.SHOPEE]['shop_name']}")
+    print(f"  TikTok Store: {ent['channels'][Platform.TIKTOK]['shop_name']}")
+    print()
+
     # ── Demo 1: Xem 3 đơn mẫu ──
-    print("─── Demo 1: Ba đơn hàng mẫu ───")
+    print("─── Demo 1: Ba đơn hàng mẫu & trừ kho thực tế ───")
     for i in range(3):
         event = simulator.generate_event()
         platform = event.get("_platform", "unknown")
         status = event.get("order_status", "?")
+        sku = event.get("item_sku") or event.get("seller_sku", "?")
+        qty = event.get("quantity", 0)
+        stock_left = simulator.inventory[sku].stock_on_hand
         amount_key = "buyer_total_amount" if platform == "shopee" else "total_amount"
         amount = event.get(amount_key, 0)
-        product = event.get("item_name") or event.get("product_name", "?")
-        qty = event.get("quantity", 0)
 
-        print(f"  [{platform.upper():7}] {status:20} | {product[:35]:35} "
-              f"x{qty} | {amount:>12,.0f} VND")
+        print(f"  [{platform.upper():7}] {status:20} | SKU: {sku:12} x{qty} | "
+              f"Tồn kho còn: {stock_left:>4} | {amount:>12,.0f} VND")
     print()
 
-    # ── Demo 2: Thống kê seasonal multiplier ──
-    print("─── Demo 2: Seasonal Multiplier theo giờ (hôm nay) ───")
+    # ── Demo 2: Snapshot Tồn kho & Cảnh báo nhập hàng ──
+    print("─── Demo 2: Ảnh chụp Tồn kho & Cảnh báo (Snapshot) ───")
+    snapshot = simulator.get_inventory_snapshot()
+    for row in snapshot[:6]:
+        print(f"  SKU: {row['sku']:12} | Tồn: {row['stock_on_hand']:>4} | "
+              f"ROP: {row['reorder_point']:>3} | SS: {row['safety_stock']:>3} | "
+              f"Cảnh báo: {row['alert_level']:8} | Đề xuất nhập: {row['recommended_reorder_qty']}")
+    print(f"  ... tổng cộng {len(snapshot)} mặt hàng được quản lý.")
+    print()
+
+    # ── Demo 3: Thống kê seasonal multiplier ──
+    print("─── Demo 3: Seasonal Multiplier theo giờ (hôm nay) ───")
     now = datetime.now(timezone.utc)
-    for h in range(24):
+    for h in [0, 9, 12, 15, 20, 23]:
         test_time = now.replace(hour=h, minute=0, second=0)
         mult = simulator._seasonal_multiplier(test_time)
         ops = simulator.orders_per_second(test_time, base_rate=3.0)
         bar = "█" * int(mult * 5)
         print(f"  {h:02d}:00  mult={mult:5.2f}  ~{ops} events/s  {bar}")
     print()
-
-    # ── Demo 3: Stream 5 giây ──
-    print("─── Demo 3: Stream 5 giây (JSON → stdout) ───")
-    print("    (Đây là output tương thích Kafka topic ecom.orders.raw)")
-    print()
-    simulator.run(base_events_per_second=2, duration_seconds=5)
