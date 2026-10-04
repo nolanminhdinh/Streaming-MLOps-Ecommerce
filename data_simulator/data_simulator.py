@@ -154,6 +154,7 @@ PRODUCT_CATALOG = [
 ENTERPRISE_CONFIG = {
     "enterprise_id": "MOCK-CORP-VN",
     "enterprise_name": "Mock Retail Enterprise",
+    "business_model": "General Merchandise Retailer (Chuỗi Bán lẻ Bách hóa Tổng hợp)",
     "tax_code": "0319999999",
     "central_warehouse": {
         "warehouse_id": "WH-MOCK-CENTRAL",
