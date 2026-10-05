@@ -241,7 +241,50 @@ DIAGRAMS = {
     WH_SHOPEE -.->|"Chỉ cần cắm nguồn thật vào đây"| PROD
     WH_TIKTOK -.->|"Chỉ cần cắm nguồn thật vào đây"| PROD
     CSV_DUMP -.->|"Hoặc nạp thẳng file"| LAKE
-    KAFKA ==> LAKE"""
+    KAFKA ==> LAKE""",
+    "diagram_5_three_tier_buffer": """flowchart TD
+    subgraph S_SRC["1. TẦNG PHÁT SINH SỰ KIỆN (DATA SOURCES)"]
+        SP["Shopee Mall Stream<br/>(84 cột - JSON UTF-8)"]
+        TT["TikTok Shop Stream<br/>(71 cột - JSON UTF-8)"]
+    end
+
+    subgraph S_BUF1["2. TẦNG ĐỆM 1: CLIENT-SIDE PRODUCER BUFFER"]
+        direction TB
+        PB["Producer Memory Accumulator<br/>(Buffer Size: 32MB / Batch: 32KB)"]
+        LZ["Nén luồng thời gian thực: LZ4"]
+        ROUT["Key-based Partitioner<br/>Key: order_sn / order_id / sku"]
+        PB --> LZ --> ROUT
+    end
+
+    subgraph S_KAFKA["3. TẦNG ĐỆM 2: DISTRIBUTED BROKER BUFFER (APACHE KAFKA)"]
+        direction TB
+        T1["Topic: ecom.orders.raw<br/>(3 Partitions - Append-Only Commit Log)"]
+        T2["Topic: inventory.logs<br/>(3 Partitions - Inbound/Outbound Audit)"]
+        OS_CACHE["Linux OS Page Cache + Zero-Copy Transfer (sendfile)"]
+        DISK[("Disk Log Segments<br/>Retention: 7 days / Segment: 1GB")]
+        T1 & T2 --> OS_CACHE --> DISK
+    end
+
+    subgraph S_BUF2["4. TẦNG ĐỆM 3: CONSUMER-SIDE MICRO-BATCHING BUFFER"]
+        direction TB
+        PULL["Active Pull Consumer<br/>Group: minio-writer-group"]
+        RAM_BUF["Dynamic In-Memory Window<br/>(500 msgs OR 60 seconds timeout)"]
+        ARROW["Vectorized PyArrow Table Converter"]
+        PULL --> RAM_BUF --> ARROW
+    end
+
+    subgraph S_SINK["5. TẦNG LƯU TRỮ HỒ DỮ LIỆU & KHO DỮ LIỆU (SINKS)"]
+        direction TB
+        MINIO[("MinIO S3 Data Lake (Bronze)<br/>ecom-raw-lake / Snappy Parquet")]
+        ETL["Warehouse ETL Pipeline<br/>(Extract -> Validate -> Transform -> Load)"]
+        PG[("PostgreSQL Star Schema<br/>Fact_Orders + Dim Tables")]
+        MINIO --> ETL --> PG
+    end
+
+    SP & TT --> S_BUF1
+    S_BUF1 -->|"TCP Socket (29092 / 9092)<br/>acks=all, retries=3"| S_KAFKA
+    S_KAFKA -->|"Batch Fetch Request"| S_BUF2
+    S_BUF2 -->|"Snappy Parquet Upload<br/>Commit Offset ONLY on Success"| MINIO"""
 }
 
 def render_to_svg(code):

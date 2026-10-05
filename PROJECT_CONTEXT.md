@@ -94,6 +94,8 @@ flowchart TB
     end
 ```
 
+> 📘 **Kiến trúc Bước đệm Đa tầng Chống tràn (Multi-Tier Buffering)**: Chi tiết thiết kế và sơ đồ chuỗi 3 tầng đệm liên hoàn từ Client tới Storage (Producer Buffer $\rightarrow$ Kafka Distributed Broker $\rightarrow$ Consumer Micro-batching Buffer $\rightarrow$ MinIO/Postgres) được mô tả tại [`docs/thiet_ke_buoc_dem_hung_du_lieu.md`](docs/thiet_ke_buoc_dem_hung_du_lieu.md) và [`docs/architecture.md`](docs/architecture.md).
+
 ---
 
 ## 4. CHI TIẾT LƯỢC ĐỒ DỮ LIỆU & NGUYÊN LÝ TOÁN HỌC

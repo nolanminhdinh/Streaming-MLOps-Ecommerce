@@ -282,7 +282,61 @@ flowchart LR
 
 ---
 
-## 5. Bảng Ma Trận Công Nghệ Chi Tiết (16 Components)
+## 5. Sơ Đồ Kiến Trúc Bước Đệm Đa Tầng Chống Tràn (Multi-Tier Buffering Architecture)
+
+Nhằm giải quyết triệt để hiện tượng lệch pha tốc độ (**Impedance Mismatch**) giữa lưu lượng đột biến trong các khung giờ Flash Sale / Mega Live ($1,500 - 3,000\text{ req/s}$) và năng lực ghi đĩa của hệ thống Data Lake / Data Warehouse, hệ thống thiết lập chuỗi **3 tầng đệm liên hoàn từ Client tới Storage**:
+
+```mermaid
+flowchart TD
+    subgraph S_SRC["1. TẦNG PHÁT SINH SỰ KIỆN (DATA SOURCES)"]
+        SP["Shopee Mall Stream<br/>(84 cột - JSON UTF-8)"]
+        TT["TikTok Shop Stream<br/>(71 cột - JSON UTF-8)"]
+    end
+
+    subgraph S_BUF1["2. TẦNG ĐỆM 1: CLIENT-SIDE PRODUCER BUFFER"]
+        direction TB
+        PB["Producer Memory Accumulator<br/>(Buffer Size: 32MB / Batch: 32KB)"]
+        LZ["Nén luồng thời gian thực: LZ4"]
+        ROUT["Key-based Partitioner<br/>Key: order_sn / order_id / sku"]
+        PB --> LZ --> ROUT
+    end
+
+    subgraph S_KAFKA["3. TẦNG ĐỆM 2: DISTRIBUTED BROKER BUFFER (APACHE KAFKA)"]
+        direction TB
+        T1["Topic: ecom.orders.raw<br/>(3 Partitions - Append-Only Commit Log)"]
+        T2["Topic: inventory.logs<br/>(3 Partitions - Inbound/Outbound Audit)"]
+        OS_CACHE["Linux OS Page Cache + Zero-Copy Transfer (sendfile)"]
+        DISK[("Disk Log Segments<br/>Retention: 7 days / Segment: 1GB")]
+        T1 & T2 --> OS_CACHE --> DISK
+    end
+
+    subgraph S_BUF2["4. TẦNG ĐỆM 3: CONSUMER-SIDE MICRO-BATCHING BUFFER"]
+        direction TB
+        PULL["Active Pull Consumer<br/>Group: minio-writer-group"]
+        RAM_BUF["Dynamic In-Memory Window<br/>(500 msgs OR 60 seconds timeout)"]
+        ARROW["Vectorized PyArrow Table Converter"]
+        PULL --> RAM_BUF --> ARROW
+    end
+
+    subgraph S_SINK["5. TẦNG LƯU TRỮ HỒ DỮ LIỆU & KHO DỮ LIỆU (SINKS)"]
+        direction TB
+        MINIO[("MinIO S3 Data Lake (Bronze)<br/>ecom-raw-lake / Snappy Parquet")]
+        ETL["Warehouse ETL Pipeline<br/>(Extract -> Validate -> Transform -> Load)"]
+        PG[("PostgreSQL Star Schema<br/>Fact_Orders + Dim Tables")]
+        MINIO --> ETL --> PG
+    end
+
+    SP & TT --> S_BUF1
+    S_BUF1 -->|"TCP Socket (29092 / 9092)<br/>acks=all, retries=3"| S_KAFKA
+    S_KAFKA -->|"Batch Fetch Request"| S_BUF2
+    S_BUF2 -->|"Snappy Parquet Upload<br/>Commit Offset ONLY on Success"| MINIO
+```
+
+> 📘 **Tài liệu thiết kế chi tiết**: Xem [docs/thiet_ke_buoc_dem_hung_du_lieu.md](thiet_ke_buoc_dem_hung_du_lieu.md) để nắm rõ cơ chế Backpressure, At-Least-Once Delivery, Idempotency và thực nghiệm chịu tải 10,000 đơn hàng.
+
+---
+
+## 6. Bảng Ma Trận Công Nghệ Chi Tiết (16 Components)
 
 | Phân tầng kiến trúc | Công nghệ / Thư viện chính | Phiên bản | Vai trò & Trách nhiệm chuyên biệt | Giao thức / Cổng | Định dạng dữ liệu |
 | :--- | :--- | :---: | :--- | :---: | :---: |
@@ -305,7 +359,7 @@ flowchart LR
 
 ---
 
-## 6. Cam Kết Đáp Ứng Hội Đồng Chấm Tốt Nghiệp
+## 7. Cam Kết Đáp Ứng Hội Đồng Chấm Tốt Nghiệp
 
 1. **Tính tương thích thực tế 100%**: Không sử dụng trường dữ liệu giả tưởng; 100% tên cột khớp hoàn toàn với định dạng xuất báo cáo và Webhook của Shopee & TikTok Shop.
 2. **Khả năng mở rộng ngang (Horizontal Scalability)**: Thiết kế decoupled qua Kafka và MinIO cho phép mở rộng độc lập từng tầng khi thông lượng tăng đột biến dịp Mega-Sale.
