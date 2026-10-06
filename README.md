@@ -40,7 +40,7 @@ Data_Simulator.py --> Kafka (ecom.orders.raw, inventory.logs)
                 Power BI Executive Dashboard (ABC/XYZ, Actual vs Forecast)
 ```
 
-Chi tiết kiến trúc và luận giải thiết kế: xem [docs/architecture.md](docs/architecture.md).
+Chi tiết kiến trúc và luận giải thiết kế: xem [docs/00-architecture-overview/architecture.md](docs/00-architecture-overview/architecture.md).
 > 📘 **Tài liệu Bối cảnh Toàn văn cho AI / Kỹ sư**: Xem tệp [`PROJECT_CONTEXT.md`](PROJECT_CONTEXT.md) để nắm toàn bộ bài toán, công thức toán, tiến độ tuần (W1 - W9) và cách vận hành.
 
 ## 3. Cấu trúc thư mục
@@ -79,7 +79,7 @@ streaming-mlops-ecommerce/
 
 ## 5. Lộ trình thực hiện (10 tuần)
 
-Xem chi tiết đề cương tuần tại [docs/weekly-progress](docs/weekly-progress).
+Xem chi tiết đề cương tuần tại [docs/06-weekly-progress](docs/06-weekly-progress).
 
 | Tuần | Nội dung chính |
 |---|---|
@@ -108,18 +108,19 @@ docker compose ps
 ```
 
 Hướng dẫn chi tiết từng bước cho từng giai đoạn:
-- Tuần 2 (Hạ tầng Docker & Kafka): xem [docs/how-to-run/how-to-run-week2.md](docs/how-to-run/how-to-run-week2.md).
-- Tuần 3 (Data Lake MinIO, Star Schema & Pipeline ETL): xem [docs/how-to-run/how-to-run-week3.md](docs/how-to-run/how-to-run-week3.md).
-- Tuần 4 (EDA & Ma trận 9 ô ABC/XYZ): xem [docs/how-to-run/how-to-run-week4.md](docs/how-to-run/how-to-run-week4.md), [notebooks/eda.ipynb](notebooks/eda.ipynb), [notebooks/abc_xyz_classification.ipynb](notebooks/abc_xyz_classification.ipynb), và báo cáo [docs/weekly-progress/tuan-04.md](docs/weekly-progress/tuan-04.md).
-- Tuần 5 (MLflow Tracking, Feature Store & Baseline Models): xem [docs/how-to-run/how-to-run-week5.md](docs/how-to-run/how-to-run-week5.md) và báo cáo [docs/weekly-progress/tuan-05.md](docs/weekly-progress/tuan-05.md).
-- Tuần 6 (Deep Learning LSTM/GRU, Optuna Tuning, Đối chiếu ABC/XYZ & Model Registry): xem [docs/how-to-run/how-to-run-week6.md](docs/how-to-run/how-to-run-week6.md) và báo cáo [docs/weekly-progress/tuan-06.md](docs/weekly-progress/tuan-06.md).
-- Tuần 7 (Model Serving FastAPI & Nghiệp vụ Quản trị Tồn kho Safety Stock/ROP): xem [docs/how-to-run/how-to-run-week7.md](docs/how-to-run/how-to-run-week7.md) và báo cáo [docs/weekly-progress/tuan-07.md](docs/weekly-progress/tuan-07.md).
-- Tuần 8 (Giám sát Prometheus/Grafana, Evidently Data Drift & Tái huấn luyện Closed-Loop): xem [docs/how-to-run/how-to-run-week8.md](docs/how-to-run/how-to-run-week8.md) và báo cáo [docs/weekly-progress/tuan-08.md](docs/weekly-progress/tuan-08.md).
-- Tuần 9 (Power BI Executive Dashboard, DAX Measures & Thực nghiệm Kiểm thử tải Locust): xem [docs/how-to-run/how-to-run-week9.md](docs/how-to-run/how-to-run-week9.md) và báo cáo [docs/weekly-progress/tuan-09.md](docs/weekly-progress/tuan-09.md).
-- Tuần 10 (Tổng kết Toàn diện, Nghiệm thu Hệ thống & Kịch bản Bảo vệ ĐATN): xem [docs/how-to-run/how-to-run-week10.md](docs/how-to-run/how-to-run-week10.md) và báo cáo [docs/weekly-progress/tuan-10.md](docs/weekly-progress/tuan-10.md).
-- **Báo cáo Cơ sở Lý thuyết & Công nghệ Toàn diện**: xem [docs/cong_nghe_ly_thuyet.md](docs/cong_nghe_ly_thuyet.md).
-- **Kiểm thử Hiệu năng Luồng Dữ liệu**: xem [docs/test-pipeline/bao_cao_kiem_thu_hieu_nang_lan_1.md](docs/test-pipeline/bao_cao_kiem_thu_hieu_nang_lan_1.md).
-- **Nhật ký Khắc phục Lỗi & Tối ưu hóa Luồng (Changelog)**: xem [docs/pipeline-updates/lan-01-khac-phuc-loi-va-toi-uu-luong.md](docs/pipeline-updates/lan-01-khac-phuc-loi-va-toi-uu-luong.md).
+- Tuần 2 (Hạ tầng Docker & Kafka): xem [docs/05-how-to-run/how-to-run-week2.md](docs/05-how-to-run/how-to-run-week2.md).
+- Tuần 3 (Data Lake MinIO, Star Schema & Pipeline ETL): xem [docs/05-how-to-run/how-to-run-week3.md](docs/05-how-to-run/how-to-run-week3.md).
+- Tuần 4 (EDA & Ma trận 9 ô ABC/XYZ): xem [docs/05-how-to-run/how-to-run-week4.md](docs/05-how-to-run/how-to-run-week4.md), [notebooks/eda.ipynb](notebooks/eda.ipynb), [notebooks/abc_xyz_classification.ipynb](notebooks/abc_xyz_classification.ipynb), và báo cáo [docs/06-weekly-progress/tuan-04.md](docs/06-weekly-progress/tuan-04.md).
+- Tuần 5 (MLflow Tracking, Feature Store & Baseline Models): xem [docs/05-how-to-run/how-to-run-week5.md](docs/05-how-to-run/how-to-run-week5.md) và báo cáo [docs/06-weekly-progress/tuan-05.md](docs/06-weekly-progress/tuan-05.md).
+- Tuần 6 (Deep Learning LSTM/GRU, Optuna Tuning, Đối chiếu ABC/XYZ & Model Registry): xem [docs/05-how-to-run/how-to-run-week6.md](docs/05-how-to-run/how-to-run-week6.md) và báo cáo [docs/06-weekly-progress/tuan-06.md](docs/06-weekly-progress/tuan-06.md).
+- Tuần 7 (Model Serving FastAPI & Nghiệp vụ Quản trị Tồn kho Safety Stock/ROP): xem [docs/05-how-to-run/how-to-run-week7.md](docs/05-how-to-run/how-to-run-week7.md) và báo cáo [docs/06-weekly-progress/tuan-07.md](docs/06-weekly-progress/tuan-07.md).
+- Tuần 8 (Giám sát Prometheus/Grafana, Evidently Data Drift & Tái huấn luyện Closed-Loop): xem [docs/05-how-to-run/how-to-run-week8.md](docs/05-how-to-run/how-to-run-week8.md) và báo cáo [docs/06-weekly-progress/tuan-08.md](docs/06-weekly-progress/tuan-08.md).
+- Tuần 9 (Power BI Executive Dashboard, DAX Measures & Thực nghiệm Kiểm thử tải Locust): xem [docs/05-how-to-run/how-to-run-week9.md](docs/05-how-to-run/how-to-run-week9.md) và báo cáo [docs/06-weekly-progress/tuan-09.md](docs/06-weekly-progress/tuan-09.md).
+- Tuần 10 (Tổng kết Toàn diện, Nghiệm thu Hệ thống & Kịch bản Bảo vệ ĐATN): xem [docs/05-how-to-run/how-to-run-week10.md](docs/05-how-to-run/how-to-run-week10.md) và báo cáo [docs/06-weekly-progress/tuan-10.md](docs/06-weekly-progress/tuan-10.md).
+- **Báo cáo Cơ sở Lý thuyết & Công nghệ Toàn diện**: xem [docs/00-architecture-overview/cong_nghe_ly_thuyet.md](docs/00-architecture-overview/cong_nghe_ly_thuyet.md).
+- **Kiểm thử Hiệu năng Luồng Dữ liệu**: xem [docs/03-testing-and-benchmark/bao_cao_kiem_thu_hieu_nang_lan_1.md](docs/03-testing-and-benchmark/bao_cao_kiem_thu_hieu_nang_lan_1.md).
+- **Nhật ký Khắc phục Lỗi & Tối ưu hóa Luồng (Changelog)**: xem [docs/04-pipeline-updates/lan-01-khac-phuc-loi-va-toi-uu-luong.md](docs/04-pipeline-updates/lan-01-khac-phuc-loi-va-toi-uu-luong.md).
+- **Báo cáo Sửa lỗi & Tối ưu Hệ thống Lần 2 (rà soát end-to-end)**: xem [docs/04-pipeline-updates/lan-02-sua-loi-va-toi-uu-he-thong.md](docs/04-pipeline-updates/lan-02-sua-loi-va-toi-uu-he-thong.md).
 
 > Ghi chú: Repo đã hoàn thành trọn vẹn toàn bộ chu trình 10 tuần — từ hạ tầng Streaming Data Lake, Star Schema ETL, Feature Store, Model Serving FastAPI, Giám sát Prometheus/Grafana, Data Drift Closed-Loop Retraining, phân hệ trực quan hóa Executive Dashboard trên Power BI, thực nghiệm kiểm thử tải đồng thời 200 concurrent users đạt độ ổn định 100%, đến kịch bản demo, báo cáo công nghệ lý thuyết và tài liệu chuẩn bị bảo vệ ĐATN.
 

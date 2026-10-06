@@ -11,7 +11,8 @@ Mỗi đợt kiểm thử (Test Run) có sự thay đổi về mã nguồn hoặ
 | Đợt kiểm thử | Tệp báo cáo cập nhật & tối ưu | Quy mô thử nghiệm | Trọng tâm sửa đổi & Tối ưu hóa | Trạng thái |
 | :---: | :--- | :---: | :--- | :---: |
 | **Lần 1** | [`lan-01-khac-phuc-loi-va-toi-uu-luong.md`](lan-01-khac-phuc-loi-va-toi-uu-luong.md) | 10,000 đơn hàng | • Khắc phục lỗi ép kiểu TIMESTAMP PostgreSQL (`NaN` handling)<br/>• Sửa lỗi seed Dimension tables & đồng bộ schema<br/>• **Tối ưu hóa Vectorized Validation tăng tốc 18 lần (49.6s → 2.7s)**<br/>• Xây dựng cơ chế DLQ 2 tầng & Engine Benchmark chuyên sâu | **ĐÃ HOÀN THÀNH** |
-| **Lần 2** | *Dự kiến: `lan-02-khac-phuc-loi-va-toi-uu-luong.md`* | 50,000 đơn + 200 HTTP Users | • Tối ưu PostgreSQL Bulk Copy Protocol (`COPY` / `execute_values`)<br/>• Tối ưu hóa bộ đệm Kafka consumer & Uvicorn ASGI workers | *Kế hoạch* |
+| **Lần 2** | [`lan-02-sua-loi-va-toi-uu-he-thong.md`](lan-02-sua-loi-va-toi-uu-he-thong.md) | Rà soát toàn hệ thống, 72 unit tests | • Sửa 15 lỗi: `date_key` NULL, training–serving skew, artifact sai fold, vòng retrain giả, tồn kho giả lập, leakage ABC/XYZ, múi giờ...<br/>• Serving dùng lịch sử thật + dự báo đệ quy, metrics Prometheus chuẩn, `/model/reload` | **ĐÃ HOÀN THÀNH** (chưa chạy lại trên stack Docker) |
+| **Lần 3** | *Dự kiến* | 50,000 đơn + 200 HTTP Users | • Tối ưu PostgreSQL Bulk Copy Protocol (`COPY` / `execute_values`)<br/>• Tối ưu hóa bộ đệm Kafka consumer & Uvicorn ASGI workers<br/>• Đo lại độ trễ serving sau đợt sửa lần 2 | *Kế hoạch* |
 
 ---
 
