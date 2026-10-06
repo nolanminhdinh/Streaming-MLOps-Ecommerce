@@ -2,17 +2,21 @@ import os
 import re
 
 svg_files = [
-    ("docs/diagram_1_tech_stack.svg", "tab-stack", "viewer-stack", "1"),
-    ("docs/diagram_2_pipeline_flow.svg", "tab-pipeline", "viewer-pipeline", "2"),
-    ("docs/diagram_3_sequence_flow.svg", "tab-sequence", "viewer-sequence", "3"),
-    ("docs/diagram_4_plug_and_play.svg", "tab-boundary", "viewer-boundary", "4")
+    ("docs/00-architecture-overview/diagram_1_tech_stack.svg", "tab-stack", "viewer-stack", "1"),
+    ("docs/00-architecture-overview/diagram_2_pipeline_flow.svg", "tab-pipeline", "viewer-pipeline", "2"),
+    ("docs/00-architecture-overview/diagram_3_sequence_flow.svg", "tab-sequence", "viewer-sequence", "3"),
+    ("docs/00-architecture-overview/diagram_4_plug_and_play.svg", "tab-boundary", "viewer-boundary", "4")
 ]
 
 inlined_svgs = {}
 
 for filepath, tab_id, viewer_id, idx in svg_files:
     if not os.path.exists(filepath):
-        raise FileNotFoundError(f"Missing {filepath}")
+        alt_path = filepath.replace("docs/00-architecture-overview/", "docs/")
+        if os.path.exists(alt_path):
+            filepath = alt_path
+        else:
+            raise FileNotFoundError(f"Missing {filepath}")
     with open(filepath, "r", encoding="utf-8") as f:
         content = f.read()
 
@@ -980,7 +984,8 @@ html_template = f"""<!DOCTYPE html>
 </body>
 </html>"""
 
-with open("docs/system_architecture_visualizer.html", "w", encoding="utf-8") as f:
+out_path = "docs/00-architecture-overview/system_architecture_visualizer.html"
+with open(out_path, "w", encoding="utf-8") as f:
     f.write(html_template)
 
-print("Created docs/system_architecture_visualizer.html successfully! File size:", len(html_template))
+print(f"Created {out_path} successfully! File size: {len(html_template)}")
