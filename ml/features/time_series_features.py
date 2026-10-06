@@ -109,7 +109,8 @@ class TimeSeriesFeatureExtractor:
         Trích xuất đầy đủ các nhóm đặc trưng cho từng SKU.
 
         Các nhóm đặc trưng:
-          1. Lịch & Sự kiện: DayOfWeek, Month, IsWeekend, IsMegaSale.
+          1. Lịch & Sự kiện: DayOfWeek, Month, IsWeekend, IsMegaSale (của ngày t)
+             và target_* (của ngày mục tiêu t+1).
           2. Lag Features: nhu cầu các ngày quá khứ (t-1, t-7, t-14, ...).
           3. Rolling Statistics: Mean, Std, Max, Min trên các cửa sổ trượt (tránh data leakage bằng shift(1)).
           4. Exponential Moving Average: EMA 7, 14 ngày.
@@ -127,6 +128,15 @@ class TimeSeriesFeatureExtractor:
         df["quarter"] = df["dt"].dt.quarter
         # Mega-sale ngày đôi: ngày = tháng (1/1, 2/2, ..., 12/12)
         df["is_mega_sale"] = (df["day_of_month"] == df["month"]).astype(int)
+
+        # Lịch của NGÀY MỤC TIÊU (t+1). Các cột lịch ở trên mô tả ngày t (ngày của dòng),
+        # nhưng target là nhu cầu ngày t+1 → mô hình cần biết ngày được dự báo có phải
+        # Mega-sale / cuối tuần hay không, nếu không hiệu ứng 10/10, 11/11 bị lệch 1 ngày.
+        target_dt = df["dt"] + pd.Timedelta(days=1)
+        df["target_day_of_week"] = target_dt.dt.dayofweek
+        df["target_is_weekend"] = df["target_day_of_week"].isin([5, 6]).astype(int)
+        df["target_day_of_month"] = target_dt.dt.day
+        df["target_is_mega_sale"] = (target_dt.dt.day == target_dt.dt.month).astype(int)
 
         feature_dfs = []
 

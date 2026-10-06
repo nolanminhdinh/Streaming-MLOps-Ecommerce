@@ -153,8 +153,10 @@ class TestFastAPIServing(unittest.TestCase):
         response = self.client.get("/health")
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        self.assertEqual(data["status"], "healthy")
-        self.assertTrue(data["model_loaded"])
+        # "healthy" chỉ khi đang phục vụ bằng mô hình ML thật; heuristic dự phòng → "degraded"
+        expected = "healthy" if data["model_loaded"] else "degraded"
+        self.assertEqual(data["status"], expected)
+        self.assertIn("model_source", data)
 
     def test_predict_endpoint(self):
         """Kiểm tra endpoint POST /predict/demand."""

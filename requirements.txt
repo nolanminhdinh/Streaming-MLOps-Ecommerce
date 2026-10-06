@@ -2,8 +2,8 @@
 python-dotenv==1.0.1
 
 # --- Streaming & Data Lake ---
-kafka-python==2.0.2
-confluent-kafka==2.5.0
+# kafka-python 2.0.2 không còn bảo trì và lỗi import trên Python 3.12 → dùng bản fork tương thích API
+kafka-python-ng==2.2.3
 minio==7.2.7
 pyarrow>=15.0.0,<16.0.0
 

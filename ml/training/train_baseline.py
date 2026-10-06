@@ -64,15 +64,11 @@ def get_feature_data() -> pd.DataFrame:
 
 def select_feature_columns(df: pd.DataFrame) -> Tuple[List[str], str]:
     """Lựa chọn các cột đặc trưng đầu vào (X) và biến mục tiêu (y)."""
-    target_col = "target_t_plus_1"
+    # Dùng chung định nghĩa với feature_pipeline để serving dựng đúng bộ cột này
+    from ml.features.feature_pipeline import TARGET_COL, get_feature_columns
 
-    # Các cột không đưa vào huấn luyện trực tiếp (định danh / metadata)
-    exclude_cols = {
-        "sku", "date", "product_name", "category", "abc_class", "xyz_class",
-        "matrix_class", target_col,
-    }
-
-    feature_cols = [c for c in df.columns if c not in exclude_cols]
+    target_col = TARGET_COL
+    feature_cols = get_feature_columns(df)
     logger.info("Đã chọn %d đặc trưng huấn luyện: %s", len(feature_cols), feature_cols[:8])
     return feature_cols, target_col
 
@@ -357,6 +353,11 @@ def run_training_pipeline(
             n_splits=n_splits,
         )
 
+        # Fit lại trên TOÀN BỘ dữ liệu trước khi lưu artifact phục vụ serving.
+        # Sau walk-forward, model_obj đang giữ trọng số của fold cuối cùng — fold có cửa sổ
+        # huấn luyện ngắn nhất (sớm nhất) → artifact cũ yếu hơn metric đã báo cáo.
+        model_obj.fit(df[feature_cols].fillna(0), df[target_col].values)
+
         # Xuất biểu đồ artifacts
         saved_plots = plot_and_save_artifacts(
             model_name=m_name,
@@ -391,8 +392,13 @@ def run_training_pipeline(
                     model_path = os.path.join(artifacts_dir, f"{m_name}_model.joblib")
                     joblib.dump(model_obj, model_path)
                     mlflow.log_artifact(model_path, artifact_path="model")
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.warning("Không thể lưu artifact mô hình %s: %s", m_name, e)
+
+                # Lưu hợp đồng đặc trưng cùng mô hình → serving dựng đúng cột/thứ tự/mã hóa
+                spec_path = os.path.join(os.path.dirname(artifacts_dir), "feature_spec.json")
+                if os.path.exists(spec_path):
+                    mlflow.log_artifact(spec_path, artifact_path="model")
 
                 logger.info("✓ Đã log thành công Run [%s] lên MLflow.", m_name)
         except Exception as e:

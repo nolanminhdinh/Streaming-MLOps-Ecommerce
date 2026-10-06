@@ -11,6 +11,15 @@ Phát hiện trôi dạt dữ liệu (Data Drift) & trôi dạt khái niệm (Co
      data/monitoring_reports/data_drift_report.html
   4. Xuất tệp tóm tắt JSON cho Prometheus & Closed-Loop Retraining:
      data/monitoring_reports/drift_summary.json
+
+Nguồn dữ liệu (mặc định): Feature Store `data/features_daily.parquet` được dựng lại từ
+Data Warehouse (chạy ml/features/feature_pipeline.py trước). Reference = 28 ngày trước
+cửa sổ hiện tại, Current = 7 ngày gần nhất. Dữ liệu giả lập chỉ dùng khi gọi rõ `--synthetic`
+(demo / unit test) và được ghi `data_source = "synthetic_demo"` trong summary.
+
+Chạy:
+  python monitoring/evidently/drift_detector.py                 # dữ liệu thật từ Feature Store
+  python monitoring/evidently/drift_detector.py --synthetic     # demo có tiêm drift
 """
 
 from __future__ import annotations
@@ -186,9 +195,12 @@ class DriftDetector:
         ref_data: Dict[str, List[float]],
         curr_data: Dict[str, List[float]],
         target_col: str = "daily_demand",
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
         Thực hiện kiểm định trôi dạt trên toàn bộ các cột đặc trưng.
+
+        `metadata` (nguồn dữ liệu, cửa sổ thời gian, ...) được ghi kèm vào drift_summary.json.
         """
         logger.info("Đang thực hiện kiểm định Data Drift & Concept Drift...")
         features = [col for col in ref_data.keys() if col != target_col]
@@ -248,6 +260,7 @@ class DriftDetector:
             "features_evaluated": feature_metrics,
             "target_drift": target_metric,
             "evaluated_at": datetime.now(timezone.utc).isoformat(),
+            **(metadata or {}),
         }
 
         # Lưu tệp summary JSON
@@ -410,12 +423,93 @@ class DriftDetector:
         return html_path
 
 
-def run_drift_pipeline(inject_drift: bool = True) -> Dict[str, Any]:
-    """Hàm chạy nhanh quy trình phát hiện Drift và sinh báo cáo."""
-    detector = DriftDetector()
-    ref, curr = detector.generate_synthetic_drift_data(n_samples=150, inject_drift=inject_drift)
-    return detector.detect_drift(ref, curr)
+DRIFT_MONITORED_COLUMNS = [
+    "lag_1", "lag_7", "rolling_mean_7", "rolling_std_7", "rolling_mean_28",
+    "avg_unit_price", "total_discount", "order_count", "daily_demand",
+]
+
+
+def load_feature_store_windows(
+    features_path: Optional[str] = None,
+    current_days: int = 7,
+    reference_days: int = 28,
+    columns: Optional[List[str]] = None,
+) -> Tuple[Dict[str, List[float]], Dict[str, List[float]], Dict[str, Any]]:
+    """
+    Tách Feature Store thành 2 cửa sổ liền kề theo thời gian:
+      Reference = [T - current_days - reference_days, T - current_days)
+      Current   = [T - current_days, T]
+    với T là ngày mới nhất trong Feature Store.
+    """
+    if not HAS_PANDAS:
+        raise RuntimeError("Cần pandas để đọc Feature Store")
+    features_path = features_path or os.path.join(
+        os.path.dirname(__file__), "..", "..", "data", "features_daily.parquet"
+    )
+    if not os.path.exists(features_path):
+        raise FileNotFoundError(
+            f"Chưa có Feature Store tại {features_path}. Chạy `python ml/features/feature_pipeline.py` trước."
+        )
+
+    df = pd.read_parquet(features_path)
+    df["date"] = pd.to_datetime(df["date"])
+    last = df["date"].max()
+    curr_start = last - pd.Timedelta(days=current_days - 1)
+    ref_start = curr_start - pd.Timedelta(days=reference_days)
+
+    ref_df = df[(df["date"] >= ref_start) & (df["date"] < curr_start)]
+    curr_df = df[df["date"] >= curr_start]
+    if ref_df.empty or curr_df.empty:
+        raise ValueError(
+            f"Feature Store không đủ dữ liệu cho cửa sổ {reference_days}+{current_days} ngày "
+            f"(có {df['date'].nunique()} ngày)."
+        )
+
+    cols = [c for c in (columns or DRIFT_MONITORED_COLUMNS) if c in df.columns]
+    ref = {c: ref_df[c].fillna(0).astype(float).tolist() for c in cols}
+    curr = {c: curr_df[c].fillna(0).astype(float).tolist() for c in cols}
+    meta = {
+        "data_source": "feature_store",
+        "features_path": os.path.abspath(features_path),
+        "reference_window": [str(ref_start.date()), str((curr_start - pd.Timedelta(days=1)).date())],
+        "current_window": [str(curr_start.date()), str(last.date())],
+        "reference_rows": int(len(ref_df)),
+        "current_rows": int(len(curr_df)),
+    }
+    return ref, curr, meta
+
+
+def run_drift_pipeline(
+    synthetic: bool = False,
+    inject_drift: bool = True,
+    features_path: Optional[str] = None,
+    reports_dir: Optional[str] = None,
+) -> Dict[str, Any]:
+    """
+    Phát hiện Drift và sinh báo cáo.
+
+    Mặc định dùng dữ liệu THẬT từ Feature Store. Trước đây hàm này luôn dùng dữ liệu
+    giả lập có tiêm drift → lần nào chạy cũng "phát hiện drift" và kích hoạt retrain.
+    """
+    detector = DriftDetector(reports_dir=reports_dir)
+    if synthetic:
+        ref, curr = detector.generate_synthetic_drift_data(n_samples=150, inject_drift=inject_drift)
+        meta = {"data_source": "synthetic_demo", "synthetic_drift_injected": inject_drift}
+    else:
+        ref, curr, meta = load_feature_store_windows(features_path)
+    return detector.detect_drift(ref, curr, metadata=meta)
 
 
 if __name__ == "__main__":
-    run_drift_pipeline(inject_drift=True)
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Phát hiện Data Drift trên Feature Store")
+    parser.add_argument("--synthetic", action="store_true", help="Dùng dữ liệu giả lập (demo)")
+    parser.add_argument("--no-inject", action="store_true", help="Với --synthetic: không tiêm drift")
+    parser.add_argument("--features-path", type=str, default=None)
+    args = parser.parse_args()
+    run_drift_pipeline(
+        synthetic=args.synthetic,
+        inject_drift=not args.no_inject,
+        features_path=args.features_path,
+    )

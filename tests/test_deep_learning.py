@@ -88,7 +88,20 @@ class TestModelRegistry(unittest.TestCase):
 
     def test_register_model_manifest(self):
         """Kiểm tra đăng ký mô hình và tạo tệp manifest chuẩn cho FastAPI Serving."""
-        manifest = register_champion_model(stage="Staging")
+        import json
+        import tempfile
+        from unittest import mock
+
+        fake_run = {
+            "run_id": "local_champion_run", "model_name": "LIGHTGBM",
+            "wape": 21.3, "mae": 1.7, "rmse": 2.4,
+            "artifact_uri": "data/champion_model.joblib", "model_file": "lightgbm_model.joblib",
+        }
+        with tempfile.TemporaryDirectory() as tmp_dir, \
+                mock.patch("ml.training.register_model.find_best_run", return_value=fake_run):
+            manifest = register_champion_model(stage="Staging", manifest_dir=tmp_dir)
+            with open(os.path.join(tmp_dir, "model_manifest.json"), encoding="utf-8") as f:
+                self.assertEqual(json.load(f)["model_file"], "lightgbm_model.joblib")
 
         self.assertIsInstance(manifest, dict)
         self.assertEqual(manifest["model_registry_name"], REGISTERED_MODEL_NAME)
@@ -96,7 +109,18 @@ class TestModelRegistry(unittest.TestCase):
         self.assertIn("champion_algorithm", manifest)
         self.assertEqual(manifest["status"], "READY_FOR_SERVING")
         self.assertIn("metrics", manifest)
-        self.assertIn("cv_wape", manifest["metrics"])
+        self.assertEqual(manifest["metrics"]["cv_wape"], 21.3)
+
+    def test_register_without_runs_writes_nothing(self):
+        """Không có run nào → không sinh manifest với metrics bịa."""
+        import tempfile
+        from unittest import mock
+
+        with tempfile.TemporaryDirectory() as tmp_dir, \
+                mock.patch("ml.training.register_model.find_best_run", return_value=None):
+            manifest = register_champion_model(stage="Staging", manifest_dir=tmp_dir)
+            self.assertEqual(manifest, {})
+            self.assertFalse(os.path.exists(os.path.join(tmp_dir, "model_manifest.json")))
 
 
 if __name__ == "__main__":

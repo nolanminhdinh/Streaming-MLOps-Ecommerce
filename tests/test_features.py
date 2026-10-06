@@ -165,6 +165,21 @@ class TestTimeSeriesFeatures(unittest.TestCase):
 
         row = feat_df.iloc[0]
         self.assertEqual(row["is_mega_sale"], 1)
+        # Dòng ngày 9/9 dự báo ngày 10/9 (không phải ngày đôi)
+        self.assertEqual(row["target_is_mega_sale"], 0)
+
+    def test_target_calendar_describes_forecast_day(self):
+        """Đặc trưng target_* phải mô tả ngày được dự báo (t+1), không phải ngày t."""
+        test_dt = date(2026, 10, 9)  # dòng ngày 9/10 → target là Mega-sale 10/10
+        records = [{
+            "sku": "SKU-01", "create_time": datetime.combine(test_dt, datetime.min.time()),
+            "quantity": 10, "original_price": 50000, "buyer_total_amount": 500000, "is_cancelled": False
+        }]
+        feat_df = self.extractor.extract_features(self.extractor.aggregate_daily(pd.DataFrame(records)))
+        row = feat_df.iloc[0]
+        self.assertEqual(row["is_mega_sale"], 0)
+        self.assertEqual(row["target_is_mega_sale"], 1)
+        self.assertEqual(row["target_day_of_week"], date(2026, 10, 10).weekday())
 
 
 if __name__ == "__main__":

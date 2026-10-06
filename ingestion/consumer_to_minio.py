@@ -6,7 +6,8 @@ Kafka Consumer: đọc message từ topic `ecom.orders.raw`, gom theo batch
 Data Lake dưới định dạng Parquet, phân vùng theo ngày + sàn TMĐT.
 
 Path trên MinIO:
-  raw/orders/platform={shopee|tiktok}/year=YYYY/month=MM/day=DD/part-<timestamp>.parquet
+  raw/orders/platform={shopee|tiktok}/year=YYYY/month=MM/day=DD/part-<timestamp>-<batch_id>-<rows>.parquet
+  (year/month/day theo múi giờ nghiệp vụ BUSINESS_TZ, mặc định Asia/Ho_Chi_Minh)
 
 Cấu hình được đọc từ file `.env` ở thư mục gốc dự án (xem `.env.example`).
 Nếu không có `.env`, sẽ dùng giá trị mặc định phù hợp với docker-compose.yml.
@@ -21,7 +22,7 @@ import os
 import signal
 import sys
 import time
-from datetime import datetime, timezone
+import uuid
 
 import pandas as pd
 import pyarrow as pa
@@ -47,6 +48,10 @@ MINIO_SECURE = os.getenv("MINIO_SECURE", "false").lower() == "true"
 # Batch config
 BATCH_SIZE = int(os.getenv("CONSUMER_BATCH_SIZE", "500"))      # flush mỗi N messages
 BATCH_TIMEOUT_SEC = int(os.getenv("CONSUMER_BATCH_TIMEOUT", "60"))  # hoặc mỗi N giây
+
+# Phân vùng year/month/day theo múi giờ nghiệp vụ (giống warehouse/etl/transform.py),
+# tránh việc đơn 0h-7h sáng giờ VN bị xếp vào partition ngày hôm trước (UTC).
+BUSINESS_TZ = os.getenv("BUSINESS_TZ", "Asia/Ho_Chi_Minh")
 
 # ─── Logging ───
 logging.basicConfig(
@@ -151,14 +156,16 @@ def flush_batch_to_minio(
     if "_platform" not in df.columns:
         df["_platform"] = "unknown"
 
-    # Lấy timestamp ghi nhận
-    now = datetime.now(timezone.utc)
+    # Lấy timestamp ghi nhận (theo giờ nghiệp vụ)
+    now = pd.Timestamp.now(tz=BUSINESS_TZ)
     ts_str = now.strftime("%Y%m%dT%H%M%S")
+    # Hậu tố ngẫu nhiên: 2 lần flush cùng giây (hoặc nhiều consumer song song) không ghi đè file nhau
+    batch_id = uuid.uuid4().hex[:8]
 
     # Xác định ngày cho từng dòng thay vì lấy đại diện dòng đầu tiên
     time_col = "create_time" if "create_time" in df.columns else ("created_time" if "created_time" in df.columns else None)
     if time_col:
-        parsed_dates = pd.to_datetime(df[time_col], errors="coerce", utc=True)
+        parsed_dates = pd.to_datetime(df[time_col], errors="coerce", utc=True).dt.tz_convert(BUSINESS_TZ)
         df["_year"] = parsed_dates.dt.year.fillna(now.year).astype(int)
         df["_month"] = parsed_dates.dt.month.fillna(now.month).astype(int)
         df["_day"] = parsed_dates.dt.day.fillna(now.day).astype(int)
@@ -185,7 +192,7 @@ def flush_batch_to_minio(
             f"raw/orders/"
             f"platform={platform}/"
             f"year={yr:04d}/month={mo:02d}/day={dy:02d}/"
-            f"part-{ts_str}-{len(group_df)}.parquet"
+            f"part-{ts_str}-{batch_id}-{len(group_df)}.parquet"
         )
 
         # Upload - Không nuốt lỗi để tránh mất dữ liệu khi commit offset

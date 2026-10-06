@@ -2,26 +2,56 @@
 model_loader.py
 ---------------
 Quản lý vòng đời nạp mô hình (Model Lifecycle & Inference Manager):
-  - Tải Champion Model từ MLflow Model Registry hoặc Model Manifest cục bộ.
-  - Áp dụng kỹ thuật Singleton / In-Memory Caching để nạp mô hình đúng 1 lần duy nhất khi khởi động API.
-  - Chuẩn bị đặc trưng thời gian thực (Lags, Rolling stats, Lịch, Flash Sale, Mega Sale).
-  - Thực thi suy luận (Inference) và bảo đảm ràng buộc sản lượng không âm (Demand >= 0).
+  - Tải Champion Model: MLflow Model Registry → artifact joblib cục bộ → (không có) heuristic.
+  - Nạp hợp đồng đặc trưng `feature_spec.json` (thứ tự cột, mã hóa, hồ sơ SKU) sinh ra lúc huấn luyện.
+  - Dựng đặc trưng từ LỊCH SỬ NHU CẦU THẬT trong Data Warehouse (serving/app/features.py)
+    và dự báo đệ quy nhiều ngày (ngày dự báo trước làm lag cho ngày sau).
+  - Ràng buộc dự báo không âm (Demand >= 0).
+  - Mọi kết quả đều ghi rõ nguồn: `model_source` (mô hình / heuristic) và `history_source`.
+
+Trước bản sửa này, serving dùng bảng 20 SKU hardcode, lag/rolling là hằng số và lỗi suy luận
+bị nuốt ở mức DEBUG → API trả kết quả heuristic nhưng vẫn báo "healthy".
 """
 
 from __future__ import annotations
 
+import glob
 import json
 import logging
 import math
 import os
-import sys
 from datetime import date, datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Tuple
+
+try:
+    from serving.app.data_access import get_repository
+    from serving.app.features import (
+        DEFAULT_EMA_SPANS,
+        DEFAULT_LAGS,
+        DEFAULT_ROLLING_WINDOWS,
+        build_feature_row,
+        to_model_input,
+    )
+except ImportError:
+    from app.data_access import get_repository
+    from app.features import (
+        DEFAULT_EMA_SPANS,
+        DEFAULT_LAGS,
+        DEFAULT_ROLLING_WINDOWS,
+        build_feature_row,
+        to_model_input,
+    )
 
 logger = logging.getLogger("mlops.serving.model_loader")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 
-# Danh mục sản phẩm tham chiếu chuẩn của hệ thống E-Commerce
+DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data"))
+HISTORY_DAYS = int(os.getenv("SERVING_HISTORY_DAYS", "120"))
+MAX_FORECAST_STEPS = int(os.getenv("SERVING_MAX_FORECAST_STEPS", "180"))
+STATS_WINDOW_DAYS = 28
+
+# Danh mục DỰ PHÒNG cho chế độ demo khi chưa có Data Warehouse / Feature Spec.
+# Chỉ được dùng khi không có nguồn thật; response sẽ đánh dấu nguồn là "fallback_catalog".
 CATALOG_METADATA: Dict[str, Dict[str, Any]] = {
     "OL-IP15PM":  {"name": "Ốp lưng iPhone 15 Pro Max",        "category": "Phụ kiện điện thoại", "base_demand": 28.5, "sigma": 4.2, "segment": "AX"},
     "ATN-CB-001": {"name": "Áo thun nam cotton Premium Basic",   "category": "Thời trang nam",     "base_demand": 16.5, "sigma": 4.0, "segment": "BY"},
@@ -44,9 +74,32 @@ CATALOG_METADATA: Dict[str, Dict[str, Any]] = {
     "TX-PU-001":  {"name": "Túi xách nữ da PU thời trang",      "category": "Thời trang nữ",      "base_demand": 5.5,  "sigma": 2.8, "segment": "CY"},
     "CL-SS-S24":  {"name": "Miếng dán cường lực Samsung S24",   "category": "Phụ kiện điện thoại","base_demand": 21.0, "sigma": 4.8, "segment": "AX"},
 }
+DEFAULT_PRODUCT = {"name": "Sản phẩm {sku}", "category": "Khác", "base_demand": 10.0, "sigma": 3.0, "segment": "BX"}
 
-MEGA_SALE_DAYS = {(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6),
-                  (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12)}
+MEGA_SALE_DAYS = {(m, m) for m in range(1, 13)}
+
+# Nguồn mô hình
+SOURCE_MLFLOW = "mlflow_registry"
+SOURCE_JOBLIB = "local_joblib"
+SOURCE_HEURISTIC_HISTORY = "heuristic_history"   # không có mô hình, nhưng baseline lấy từ lịch sử thật
+SOURCE_HEURISTIC_CATALOG = "heuristic_catalog"   # không có mô hình lẫn dữ liệu → bảng demo
+
+
+def _heuristic_factors(d: date) -> Tuple[float, float, float]:
+    """Hệ số thứ trong tuần / Mega-sale / ngày lương cho chế độ heuristic dự phòng."""
+    dow_factor = {0: 0.95, 1: 0.98, 2: 1.02, 3: 1.00, 4: 1.10, 5: 1.35, 6: 1.25}[d.weekday()]
+    mega_factor = 3.5 if (d.month, d.day) in MEGA_SALE_DAYS else 1.0
+    payday_factor = 1.15 if 25 <= d.day <= 28 else 1.0
+    return dow_factor, mega_factor, payday_factor
+
+
+def _mean_std(values: List[float]) -> Tuple[float, float]:
+    if not values:
+        return 0.0, 0.0
+    m = sum(values) / len(values)
+    if len(values) < 2:
+        return m, 0.0
+    return m, math.sqrt(sum((v - m) ** 2 for v in values) / (len(values) - 1))
 
 
 class ModelManager:
@@ -55,14 +108,15 @@ class ModelManager:
     _instance: Optional["ModelManager"] = None
 
     def __init__(self, manifest_path: Optional[str] = None):
-        self.manifest_path = manifest_path or os.getenv(
-            "MODEL_MANIFEST_PATH",
-            os.path.join(os.path.dirname(__file__), "..", "..", "data", "model_manifest.json"),
-        )
-        self.manifest_path = os.path.abspath(self.manifest_path)
+        self.manifest_path = os.path.abspath(manifest_path or os.getenv(
+            "MODEL_MANIFEST_PATH", os.path.join(DATA_DIR, "model_manifest.json")
+        ))
         self.model = None
+        self.model_source: str = SOURCE_HEURISTIC_CATALOG
+        self.model_artifact: Optional[str] = None
+        self.feature_spec: Dict[str, Any] = {}
         self.manifest: Dict[str, Any] = {}
-        self.is_loaded: bool = False
+        self.is_loaded: bool = False  # đã chạy xong quy trình khởi tạo (kể cả khi rơi về heuristic)
         self.load_timestamp: Optional[datetime] = None
 
     @classmethod
@@ -71,29 +125,39 @@ class ModelManager:
             cls._instance = cls(manifest_path=manifest_path)
         return cls._instance
 
-    def load_model(self) -> bool:
-        """Nạp thông tin mô hình Champion từ Manifest và MLflow."""
-        logger.info(f"Đang nạp Champion Model từ manifest: {self.manifest_path}")
+    @property
+    def has_model(self) -> bool:
+        """True khi đang phục vụ bằng mô hình ML thật (không phải heuristic)."""
+        return self.model is not None
 
-        # 1. Đọc tệp Manifest được tạo ở Tuần 6
+    # ─────────────────────────────────────────────────────────
+    # NẠP MÔ HÌNH
+    # ─────────────────────────────────────────────────────────
+
+    def load_model(self) -> bool:
+        logger.info("Đang nạp Champion Model từ manifest: %s", self.manifest_path)
         if os.path.exists(self.manifest_path):
             try:
                 with open(self.manifest_path, "r", encoding="utf-8") as f:
                     self.manifest = json.load(f)
-                logger.info(
-                    f"✓ Nạp manifest thành công: {self.manifest.get('model_registry_name')} "
-                    f"v{self.manifest.get('version')} [{self.manifest.get('stage')}]"
-                )
+                logger.info("✓ Nạp manifest: %s v%s [%s]", self.manifest.get("model_registry_name"),
+                            self.manifest.get("version"), self.manifest.get("stage"))
             except Exception as e:
-                logger.warning(f"Lỗi đọc manifest ({e}), khởi tạo cấu hình dự phòng mặc định.")
+                logger.warning("Lỗi đọc manifest (%s), dùng cấu hình mặc định.", e)
                 self.manifest = self._default_manifest()
         else:
-            logger.info("Chưa tìm thấy tệp manifest, sử dụng cấu hình mặc định (Staging LightGBM).")
+            logger.info("Chưa có manifest, dùng cấu hình mặc định.")
             self.manifest = self._default_manifest()
 
-        # 2. Thử kết nối tới MLflow Model Registry để load model artifact thật nếu khả dụng
-        self._try_load_mlflow_pyfunc()
+        self.model, self.model_source, self.model_artifact = None, SOURCE_HEURISTIC_CATALOG, None
+        spec_dir = self._try_load_mlflow() or self._try_load_local_joblib()
+        self._load_feature_spec(spec_dir)
 
+        if self.model is None:
+            logger.warning(
+                "⚠ KHÔNG nạp được mô hình ML nào — API chạy ở chế độ HEURISTIC DỰ PHÒNG "
+                "(/health sẽ báo 'degraded'). Hãy chạy train_baseline + register_model."
+            )
         self.is_loaded = True
         self.load_timestamp = datetime.now(timezone.utc)
         return True
@@ -101,157 +165,259 @@ class ModelManager:
     def _default_manifest(self) -> Dict[str, Any]:
         return {
             "model_registry_name": "ECommerceDemandForecastModel",
-            "version": "1",
+            "version": "0",
             "stage": "Staging",
-            "champion_algorithm": "LightGBM_Tuned",
-            "metrics": {"cv_wape": 24.5, "cv_mae": 1.85, "cv_rmse": 2.60},
+            "champion_algorithm": "none",
+            "metrics": {},
             "lead_time_days": 3,
             "service_level": 0.95,
-            "input_feature_count": 28,
-            "status": "READY_FOR_SERVING",
+            "input_feature_count": 0,
+            "status": "NO_REGISTERED_MODEL",
             "registered_at": datetime.now(timezone.utc).isoformat(),
         }
 
-    def _try_load_mlflow_pyfunc(self) -> None:
-        """Cố gắng tải mô hình pyfunc từ MLflow server hoặc joblib cục bộ."""
-        tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000")
-        model_name = self.manifest.get("model_registry_name", "ECommerceDemandForecastModel")
-        stage = self.manifest.get("stage", "Staging")
+    def _load_joblib(self, path: str) -> bool:
+        try:
+            import joblib
+            model = joblib.load(path)
+        except Exception as e:
+            logger.warning("Không nạp được artifact %s: %s", path, e)
+            return False
+        if not hasattr(model, "predict"):
+            logger.warning("Artifact %s không có phương thức predict — bỏ qua.", path)
+            return False
+        self.model, self.model_artifact = model, path
+        return True
 
-        # 1. Thử load từ MLflow Model Registry
+    def _try_load_mlflow(self) -> Optional[str]:
+        """Tải artifact joblib của version đang ở `stage` từ MLflow Registry. Trả về thư mục artifact."""
+        tracking_uri = os.getenv("MLFLOW_TRACKING_URI")
+        if not tracking_uri:
+            return None
+        # MLflow mặc định retry HTTP nhiều lần → khởi động API bị treo hàng phút khi server tắt
+        os.environ.setdefault("MLFLOW_HTTP_REQUEST_MAX_RETRIES", "0")
+        os.environ.setdefault("MLFLOW_HTTP_REQUEST_TIMEOUT", "5")
+        name = self.manifest.get("model_registry_name", "ECommerceDemandForecastModel")
+        stage = self.manifest.get("stage", "Staging")
         try:
             import mlflow
-            mlflow.set_tracking_uri(tracking_uri)
-            model_uri = f"models:/{model_name}/{stage}"
-            self.model = mlflow.pyfunc.load_model(model_uri)
-            logger.info(f"✓ Đã nạp thành công pyfunc model từ MLflow: {model_uri}")
-            return
+            from mlflow.tracking import MlflowClient
+
+            client = MlflowClient(tracking_uri=tracking_uri)
+            versions = client.get_latest_versions(name, stages=[stage])
+            if not versions:
+                logger.info("MLflow Registry chưa có version nào của %s ở stage %s.", name, stage)
+                return None
+            mv = versions[0]
+            local_dir = mlflow.artifacts.download_artifacts(artifact_uri=mv.source, tracking_uri=tracking_uri)
         except Exception as e:
-            logger.debug(f"Không thể kết nối MLflow Registry ({e}), thử tìm artifact cục bộ...")
+            logger.warning("Không tải được mô hình từ MLflow Registry (%s): %s", tracking_uri, e)
+            return None
 
-        # 2. Thử load từ các artifact joblib đã huấn luyện cục bộ
-        local_candidates = [
-            os.path.join(os.path.dirname(__file__), "..", "..", "data", "champion_model.joblib"),
-            os.path.join(os.path.dirname(__file__), "..", "..", "data", "mlflow_artifacts", "lightgbm_model.joblib"),
-            os.path.join(os.path.dirname(__file__), "..", "..", "data", "mlflow_artifacts", "moving_average_model.joblib"),
-        ]
-        for path in local_candidates:
-            abs_p = os.path.abspath(path)
-            if os.path.exists(abs_p):
-                try:
-                    import joblib
-                    self.model = joblib.load(abs_p)
-                    logger.info(f"✓ Đã nạp thành công mô hình Machine Learning cục bộ: {abs_p}")
-                    return
-                except Exception as ex:
-                    logger.debug(f"Lỗi load artifact {abs_p}: {ex}")
-
-        logger.info(
-            f"Sử dụng Calibrated Inference Engine cho thuật toán {self.manifest.get('champion_algorithm')}."
+        preferred = self.manifest.get("model_file")
+        candidates = ([os.path.join(local_dir, preferred)] if preferred else []) + sorted(
+            glob.glob(os.path.join(local_dir, "**", "*.joblib"), recursive=True)
         )
-        self.model = None
+        for path in candidates:
+            if os.path.exists(path) and self._load_joblib(path):
+                self.model_source = SOURCE_MLFLOW
+                self.manifest["version"] = str(mv.version)
+                logger.info("✓ Nạp mô hình từ MLflow Registry: %s v%s (%s)", name, mv.version, path)
+                return os.path.dirname(path)
+        logger.warning("Version %s của %s không chứa artifact *.joblib hợp lệ.", mv.version, name)
+        return None
 
-    def predict_daily(
+    def _try_load_local_joblib(self) -> Optional[str]:
+        preferred = self.manifest.get("model_file")
+        candidates = []
+        if preferred:
+            candidates.append(os.path.join(DATA_DIR, "mlflow_artifacts", preferred))
+        candidates += [
+            os.path.join(DATA_DIR, "champion_model.joblib"),
+            os.path.join(DATA_DIR, "mlflow_artifacts", "lightgbm_model.joblib"),
+        ]
+        for path in candidates:
+            if os.path.exists(path) and self._load_joblib(path):
+                self.model_source = SOURCE_JOBLIB
+                logger.info("✓ Nạp mô hình cục bộ: %s", path)
+                return None
+        return None
+
+    def _load_feature_spec(self, artifact_dir: Optional[str]) -> None:
+        paths = []
+        if artifact_dir:
+            paths.append(os.path.join(artifact_dir, "feature_spec.json"))
+        paths.append(os.getenv("FEATURE_SPEC_PATH", os.path.join(DATA_DIR, "feature_spec.json")))
+        for path in paths:
+            if os.path.exists(path):
+                try:
+                    with open(path, "r", encoding="utf-8") as f:
+                        self.feature_spec = json.load(f)
+                    logger.info("✓ Nạp Feature Spec: %s (%d đặc trưng)", path,
+                                len(self.feature_spec.get("feature_columns", [])))
+                    return
+                except Exception as e:
+                    logger.warning("Lỗi đọc Feature Spec %s: %s", path, e)
+        self.feature_spec = {}
+        if self.model is not None:
+            names = getattr(self.model, "feature_names_in_", None)
+            if names is None:
+                logger.warning("Có mô hình nhưng thiếu feature_spec.json và feature_names_in_ → không thể "
+                               "dựng đúng đầu vào, chuyển sang heuristic.")
+                self.model, self.model_source = None, SOURCE_HEURISTIC_CATALOG
+            else:
+                logger.warning("Thiếu feature_spec.json — dùng feature_names_in_ của mô hình, "
+                               "mã hóa phân khúc SKU sẽ mặc định -1.")
+                self.feature_spec = {"feature_columns": list(names)}
+
+    # ─────────────────────────────────────────────────────────
+    # DANH MỤC SẢN PHẨM
+    # ─────────────────────────────────────────────────────────
+
+    def get_catalog(self) -> Tuple[Dict[str, Dict[str, Any]], str]:
+        """Danh mục SKU: Data Warehouse → Feature Spec → bảng demo. Trả về (catalog, source)."""
+        catalog = get_repository().get_catalog()
+        if catalog:
+            return catalog, "warehouse"
+        profiles = self.feature_spec.get("sku_profiles") or {}
+        if profiles:
+            return {
+                sku: {"name": p.get("product_name") or sku, "category": p.get("category") or "Khác"}
+                for sku, p in profiles.items()
+            }, "feature_spec"
+        return {sku: {"name": m["name"], "category": m["category"]} for sku, m in CATALOG_METADATA.items()}, \
+            "fallback_catalog"
+
+    def get_product_info(self, sku: str) -> Dict[str, Any]:
+        info = dict(CATALOG_METADATA.get(sku) or {**DEFAULT_PRODUCT, "name": f"Sản phẩm {sku}"})
+        profile = (self.feature_spec.get("sku_profiles") or {}).get(sku) or {}
+        catalog = get_repository().get_catalog() or {}
+        if sku in catalog:
+            info.update(catalog[sku])
+        elif profile:
+            info["name"] = profile.get("product_name") or info["name"]
+            info["category"] = profile.get("category") or info["category"]
+        if profile.get("matrix_class"):
+            info["segment"] = profile["matrix_class"]
+        return info
+
+    # ─────────────────────────────────────────────────────────
+    # DỰ BÁO
+    # ─────────────────────────────────────────────────────────
+
+    def _load_history(self, sku: str, from_date: date) -> Tuple[Optional[List[Dict[str, Any]]], Optional[date]]:
+        """Lịch sử thật kết thúc tại min(from_date - 1, ngày cuối có dữ liệu)."""
+        repo = get_repository()
+        if not repo.available():
+            return None, None
+        last_known = repo.get_last_order_date()
+        if last_known is None:
+            return None, None
+        hist_end = min(from_date - timedelta(days=1), last_known)
+        history = repo.get_daily_history(sku, hist_end, days=HISTORY_DAYS)
+        return (history, hist_end) if history else (None, None)
+
+    def _model_predict_one(self, history: List[Dict[str, Any]], row_date: date, sku: str) -> float:
+        import pandas as pd
+
+        spec = self.feature_spec
+        cols = spec["feature_columns"]
+        row = build_feature_row(
+            history, row_date,
+            profile=(spec.get("sku_profiles") or {}).get(sku),
+            category_mappings=spec.get("category_mappings"),
+            lags=spec.get("lags", DEFAULT_LAGS),
+            rolling_windows=spec.get("rolling_windows", DEFAULT_ROLLING_WINDOWS),
+            ema_spans=spec.get("ema_spans", DEFAULT_EMA_SPANS),
+        )
+        x = pd.DataFrame([to_model_input(row, cols)], columns=cols)
+        raw = self.model.predict(x)
+        return max(0.0, float(raw[0] if hasattr(raw, "__len__") else raw))
+
+    def forecast(
         self,
         sku: str,
-        target_date: date,
-        history_demand: Optional[List[float]] = None,
+        from_date: date,
+        to_date: date,
         confidence_interval: bool = False,
-    ) -> Tuple[float, Optional[float], Optional[float]]:
+    ) -> Dict[str, Any]:
         """
-        Dự báo sản lượng cho 1 SKU tại 1 ngày cụ thể:
-          - Nếu có mô hình ML: chuyển đổi đặc trưng thời gian thực và gọi self.model.predict()
-          - Nếu chưa có artifact mô hình: sử dụng Calibrated Heuristic Engine chuẩn xác.
-          - Ràng buộc dự báo không âm: y_pred >= 0.0
+        Dự báo chuỗi nhu cầu [from_date, to_date].
+
+        - Có mô hình + lịch sử thật: dự báo đệ quy từ ngày cuối có dữ liệu; mỗi ngày dự báo
+          được nối vào chuỗi để làm lag/rolling cho ngày kế tiếp.
+        - Chỉ có lịch sử: heuristic với baseline = trung bình 28 ngày gần nhất.
+        - Không có gì: heuristic với bảng demo (đánh dấu rõ nguồn).
+
+        Returns:
+            {"items": [...], "model_source": str, "history_source": str}
         """
-        meta = CATALOG_METADATA.get(
-            sku,
-            {"name": f"Sản phẩm {sku}", "category": "Khác", "base_demand": 10.0, "sigma": 3.0, "segment": "BX"}
-        )
+        history, hist_end = self._load_history(sku, from_date)
+        recent = [h["daily_demand"] for h in history[-STATS_WINDOW_DAYS:]] if history else []
+        hist_mean, hist_std = _mean_std(recent)
 
-        base = meta["base_demand"]
-        sigma = meta["sigma"]
-
-        # 1. Hệ số ngày trong tuần: Thứ 7 (1.35x), Chủ nhật (1.25x), Thứ 2-6 (0.95x - 1.05x)
-        dow = target_date.weekday()
-        dow_factor = {0: 0.95, 1: 0.98, 2: 1.02, 3: 1.00, 4: 1.10, 5: 1.35, 6: 1.25}.get(dow, 1.0)
-
-        # 2. Hệ số ngày đôi Mega-sale (ví dụ 10/10, 11/11, 12/12): tăng 3.0 - 4.5 lần
-        is_mega = (target_date.month, target_date.day) in MEGA_SALE_DAYS
-        mega_factor = 3.5 if is_mega else 1.0
-
-        # 3. Hiệu ứng lịch gần cuối tháng (ngày 25 - 28 nhận lương): tăng 1.15 lần
-        payday_factor = 1.15 if 25 <= target_date.day <= 28 else 1.0
-
-        pred = 0.0
-        # 4. Ưu tiên suy luận qua mô hình ML thực tế nếu đã được nạp
-        if self.model is not None and hasattr(self.model, "predict"):
+        preds: Dict[date, float] = {}
+        model_source = self.model_source
+        if self.has_model and history and self.feature_spec.get("feature_columns"):
+            steps = (to_date - hist_end).days
+            if steps > MAX_FORECAST_STEPS:
+                raise ValueError(
+                    f"Khoảng dự báo cách dữ liệu cuối ({hist_end}) {steps} ngày, vượt giới hạn "
+                    f"{MAX_FORECAST_STEPS} bước đệ quy."
+                )
+            series = [dict(h) for h in history]
+            tot_orders = sum(h["order_count"] for h in series[-STATS_WINDOW_DAYS:])
+            qty_per_order = (sum(recent) / tot_orders) if tot_orders else 1.0
+            d = hist_end
             try:
-                import pandas as pd
-                h_lag1 = history_demand[-1] if history_demand else base
-                h_lag7 = history_demand[-7] if (history_demand and len(history_demand) >= 7) else base
-                h_mean7 = sum(history_demand[-7:]) / 7.0 if (history_demand and len(history_demand) >= 7) else base
-
-                feat_dict = {
-                    "day_of_week": dow,
-                    "is_weekend": int(dow in (5, 6)),
-                    "day_of_month": target_date.day,
-                    "month": target_date.month,
-                    "quarter": (target_date.month - 1) // 3 + 1,
-                    "is_mega_sale": int(is_mega),
-                    "lag_1": h_lag1,
-                    "lag_2": h_lag1,
-                    "lag_3": h_lag1,
-                    "lag_7": h_lag7,
-                    "lag_14": h_lag7,
-                    "lag_28": h_lag7,
-                    "rolling_mean_7": h_mean7,
-                    "rolling_std_7": sigma,
-                    "rolling_max_7": h_mean7 + sigma,
-                    "rolling_min_7": max(0.0, h_mean7 - sigma),
-                    "rolling_mean_14": h_mean7,
-                    "rolling_std_14": sigma,
-                    "rolling_max_14": h_mean7 + sigma,
-                    "rolling_min_14": max(0.0, h_mean7 - sigma),
-                    "rolling_mean_28": h_mean7,
-                    "rolling_std_28": sigma,
-                    "rolling_max_28": h_mean7 + sigma,
-                    "rolling_min_28": max(0.0, h_mean7 - sigma),
-                    "ema_7": h_mean7,
-                    "ema_14": h_mean7,
-                    "growth_wow": 0.0,
-                    "daily_demand": h_lag1,
-                    "daily_revenue": h_lag1 * 50000,
-                    "avg_unit_price": 50000,
-                    "order_count": max(1, int(h_lag1)),
-                    "total_discount": 0.0,
-                }
-                feat_df = pd.DataFrame([feat_dict])
-                if hasattr(self.model, "feature_names_in_"):
-                    for missing_c in self.model.feature_names_in_:
-                        if missing_c not in feat_df.columns:
-                            feat_df[missing_c] = 0.0
-                    feat_df = feat_df[self.model.feature_names_in_]
-
-                raw_pred = self.model.predict(feat_df)
-                pred_val = float(raw_pred[0]) if hasattr(raw_pred, "__len__") else float(raw_pred)
-                pred = max(0.0, round(pred_val, 1))
+                while d < to_date:
+                    y_hat = self._model_predict_one(series, d, sku)
+                    d = d + timedelta(days=1)
+                    price = series[-1]["avg_unit_price"] or 0.0
+                    series.append({
+                        "date": d,
+                        "daily_demand": y_hat,
+                        "daily_revenue": y_hat * price,
+                        "avg_unit_price": price,
+                        "total_discount": 0.0,
+                        "order_count": y_hat / qty_per_order if qty_per_order else 0.0,
+                    })
+                    if d >= from_date:
+                        preds[d] = y_hat
             except Exception as e:
-                logger.debug(f"Fallback sang Calibrated Engine ({e})")
-                pred = max(0.0, round(base * dow_factor * mega_factor * payday_factor, 1))
-        else:
-            # Fallback Calibrated Rule Engine
-            pred = max(0.0, round(base * dow_factor * mega_factor * payday_factor, 1))
+                # Không nuốt lỗi âm thầm: log WARNING và đánh dấu nguồn heuristic trong response
+                logger.warning("Suy luận mô hình lỗi cho SKU %s (%s) → heuristic dự phòng.", sku, e)
+                preds = {}
 
-        # 5. Khoảng tin cậy 95% (Z = 1.96)
-        lower_bound = None
-        upper_bound = None
-        if confidence_interval:
-            margin = 1.96 * sigma * math.sqrt(mega_factor)
-            lower_bound = max(0.0, round(pred - margin, 1))
-            upper_bound = round(pred + margin, 1)
+        if not preds:
+            base = hist_mean if history else self.get_product_info(sku)["base_demand"]
+            model_source = SOURCE_HEURISTIC_HISTORY if history else SOURCE_HEURISTIC_CATALOG
+            d = from_date
+            while d <= to_date:
+                dow, mega, payday = _heuristic_factors(d)
+                preds[d] = max(0.0, base * dow * mega * payday)
+                d += timedelta(days=1)
 
-        return pred, lower_bound, upper_bound
+        sigma = hist_std if history else self.get_product_info(sku)["sigma"]
+        items = []
+        for d in sorted(preds):
+            qty = round(preds[d], 1)
+            item: Dict[str, Any] = {"date": d.strftime("%Y-%m-%d"), "predicted_quantity": qty}
+            if confidence_interval:
+                # Khoảng ±1.96σ với σ = độ lệch chuẩn nhu cầu 28 ngày gần nhất (xấp xỉ, không phải
+                # khoảng dự báo hiệu chuẩn của mô hình); heuristic nới rộng theo hệ số Mega-sale.
+                scale = math.sqrt(_heuristic_factors(d)[1]) if model_source.startswith("heuristic") else 1.0
+                margin = 1.96 * sigma * scale
+                item["lower_bound"] = max(0.0, round(qty - margin, 1))
+                item["upper_bound"] = round(qty + margin, 1)
+            items.append(item)
+
+        return {
+            "items": items,
+            "model_source": model_source,
+            "history_source": "warehouse" if history else "none",
+            "history_end": str(hist_end) if hist_end else None,
+        }
 
     def predict_range(
         self,
@@ -260,40 +426,31 @@ class ModelManager:
         to_date: date,
         confidence_interval: bool = False,
     ) -> List[Dict[str, Any]]:
-        """Dự báo chuỗi nhu cầu từ from_date đến to_date."""
-        forecasts = []
-        curr = from_date
-        while curr <= to_date:
-            qty, lb, ub = self.predict_daily(
-                sku, curr, confidence_interval=confidence_interval
-            )
-            item: Dict[str, Any] = {
-                "date": curr.strftime("%Y-%m-%d"),
-                "predicted_quantity": qty,
-            }
-            if confidence_interval:
-                item["lower_bound"] = lb
-                item["upper_bound"] = ub
-            forecasts.append(item)
-            curr += timedelta(days=1)
-        return forecasts
+        """Dự báo chuỗi nhu cầu từ from_date đến to_date (giữ API cũ)."""
+        return self.forecast(sku, from_date, to_date, confidence_interval)["items"]
+
+    def predict_daily(
+        self,
+        sku: str,
+        target_date: date,
+        confidence_interval: bool = False,
+    ) -> Tuple[float, Optional[float], Optional[float]]:
+        """Dự báo 1 ngày (giữ API cũ): trả về (y_hat, lower, upper)."""
+        item = self.predict_range(sku, target_date, target_date, confidence_interval)[0]
+        return item["predicted_quantity"], item.get("lower_bound"), item.get("upper_bound")
 
     def get_metadata(self) -> Dict[str, Any]:
-        """Trả về toàn bộ thông tin metadata của mô hình."""
         if not self.is_loaded:
             self.load_model()
-        return self.manifest.copy()
-
-    def get_product_info(self, sku: str) -> Dict[str, Any]:
-        """Tra cứu thông tin danh mục sản phẩm."""
-        return CATALOG_METADATA.get(
-            sku,
-            {"name": f"Sản phẩm {sku}", "category": "Khác", "base_demand": 10.0, "sigma": 3.0, "segment": "BX"}
-        )
+        meta = self.manifest.copy()
+        meta["model_source"] = self.model_source
+        meta["model_ready"] = self.has_model
+        if self.feature_spec.get("feature_columns"):
+            meta["input_feature_count"] = len(self.feature_spec["feature_columns"])
+        return meta
 
 
 def get_model_manager() -> ModelManager:
-    """Hàm tiện ích lấy instance ModelManager."""
     manager = ModelManager.get_instance()
     if not manager.is_loaded:
         manager.load_model()

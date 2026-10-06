@@ -130,6 +130,17 @@ class TestETLPipeline(unittest.TestCase):
         cleaned = clean_data(df)
         self.assertEqual(len(cleaned), 2)
 
+    def test_clean_data_business_timezone_and_order_date(self):
+        """create_time quy đổi về giờ VN và sinh order_date (khóa lookup Dim_Dates.date_key)."""
+        df = pd.DataFrame([
+            {"order_id": "SPE010", "sku": "SKU-A", "quantity": 1, "original_price": 50000,
+             "create_time": "2026-09-24T20:30:00+00:00"},  # 03:30 sáng 25/09 giờ VN
+        ])
+        cleaned = clean_data(df)
+        self.assertIn("order_date", cleaned.columns)
+        self.assertEqual(str(cleaned.iloc[0]["order_date"]), "2026-09-25")
+        self.assertEqual(str(cleaned.iloc[0]["create_time"]), "2026-09-25 03:30:00")
+
     def test_data_validator_clean(self):
         """Kiểm tra DataValidator duyệt qua bản ghi sạch."""
         df = pd.DataFrame([{

@@ -1,8 +1,6 @@
-version: "3.8"
-
 # Đồ án tốt nghiệp: Streaming Pipeline + MLOps cho dự báo nhu cầu TMĐT
-# Trạng thái: Tuần 2 — hạ tầng dữ liệu luồng (Kafka, Zookeeper, MinIO, PostgreSQL)
-# Các service MLflow / FastAPI / Prometheus / Grafana sẽ được thêm dần ở Tuần 5, 7, 8.
+# Toàn bộ stack: Kafka/Zookeeper, MinIO, PostgreSQL, NiFi, MLflow, FastAPI, Prometheus, Grafana.
+# (Khóa `version:` đã bị Docker Compose v2 loại bỏ nên không khai báo nữa.)
 #
 # Cách chạy (Docker Desktop - Windows/Mac):
 #   docker compose up -d
@@ -131,6 +129,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+    # Bắt buộc cùng mạng ecom-net: thiếu khối này Postgres nằm ở mạng `default`,
+    # MLflow/FastAPI/NiFi (ở ecom-net) sẽ không resolve được hostname `postgres`.
+    networks:
+      - ecom-net
+
   # --- Luồng Trực quan hóa Dữ liệu (Apache NiFi Canvas) ---
   nifi:
     image: apache/nifi:1.26.0
@@ -141,8 +144,8 @@ services:
       - NIFI_WEB_HTTPS_PORT=
       - NIFI_JVM_HEAP_INIT=1024m
       - NIFI_JVM_HEAP_MAX=2048m
-      - SINGLE_USER_CREDENTIALS_USERNAME=admin
-      - SINGLE_USER_CREDENTIALS_PASSWORD=adminadmin1234
+      - SINGLE_USER_CREDENTIALS_USERNAME=${NIFI_USERNAME:-admin}
+      - SINGLE_USER_CREDENTIALS_PASSWORD=${NIFI_PASSWORD:-adminadmin1234}
     ports:
       - "${NIFI_PORT:-8080}:8080"
     volumes:
@@ -161,13 +164,16 @@ services:
   mlflow:
     build: ./ml/mlflow
     container_name: mlflow
+    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
       minio:
         condition: service_healthy
     environment:
-      MLFLOW_BACKEND_STORE_URI: postgresql://${POSTGRES_USER:-ecom}:${POSTGRES_PASSWORD:-ecom_password}@postgres:5432/${POSTGRES_DB:-ecom_warehouse}
+      # Tách database riêng cho metadata MLflow, không trộn bảng MLflow với Star Schema.
+      # Database `mlflow` được tạo bởi warehouse/ddl/00_create_mlflow_db.sql khi khởi tạo volume.
+      MLFLOW_BACKEND_STORE_URI: postgresql://${POSTGRES_USER:-ecom}:${POSTGRES_PASSWORD:-ecom_password}@postgres:5432/${MLFLOW_DB:-mlflow}
       MLFLOW_DEFAULT_ARTIFACT_ROOT: s3://${MINIO_BUCKET_RAW:-ecom-raw-lake}/mlflow/
       MLFLOW_S3_ENDPOINT_URL: http://minio:9000
       AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER:-minioadmin}
@@ -181,11 +187,20 @@ services:
   fastapi:
     build: ./serving
     container_name: fastapi-serving
+    restart: unless-stopped
     depends_on:
-      - postgres
-      - minio
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      mlflow:
+        condition: service_started
     environment:
       MLFLOW_TRACKING_URI: http://mlflow:5000
+      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+      AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER:-minioadmin}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      CORS_ALLOW_ORIGINS: ${CORS_ALLOW_ORIGINS:-*}
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
       POSTGRES_DB: ${POSTGRES_DB:-ecom_warehouse}
@@ -210,6 +225,7 @@ services:
     container_name: prometheus
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
     ports:
       - "9090:9090"
     networks:
@@ -221,11 +237,12 @@ services:
     depends_on:
       - prometheus
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
       - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
       - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - grafana-data:/var/lib/grafana
     ports:
       - "3000:3000"
     networks:
@@ -238,3 +255,5 @@ networks:
 volumes:
   minio-data:
   postgres-data:
+  prometheus-data:
+  grafana-data:

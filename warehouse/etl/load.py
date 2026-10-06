@@ -298,7 +298,18 @@ def load_fact_orders(
             :shipping_fee, :original_shipping, :tax_amount,
             :create_time, :pay_time, :shipped_time, :completed_time, :cancel_time
         )
-        ON CONFLICT (order_id, platform) DO NOTHING
+        ON CONFLICT (order_id, platform) DO UPDATE SET
+            -- Đơn hàng có thể đổi trạng thái giữa các lần ETL (PAID → SHIPPED → COMPLETED/CANCELLED).
+            -- DO NOTHING sẽ giữ mãi trạng thái cũ, nên cập nhật các cột vòng đời đơn hàng.
+            order_status   = EXCLUDED.order_status,
+            is_cancelled   = EXCLUDED.is_cancelled,
+            cancel_reason  = COALESCE(EXCLUDED.cancel_reason, Fact_Orders.cancel_reason),
+            date_key       = COALESCE(Fact_Orders.date_key, EXCLUDED.date_key),
+            pay_time       = COALESCE(EXCLUDED.pay_time, Fact_Orders.pay_time),
+            shipped_time   = COALESCE(EXCLUDED.shipped_time, Fact_Orders.shipped_time),
+            completed_time = COALESCE(EXCLUDED.completed_time, Fact_Orders.completed_time),
+            cancel_time    = COALESCE(EXCLUDED.cancel_time, Fact_Orders.cancel_time),
+            loaded_at      = NOW()
     """)
 
     total_inserted = 0
@@ -308,7 +319,7 @@ def load_fact_orders(
             conn.execute(insert_stmt, chunk)
             total_inserted += len(chunk)
 
-    logger.info("Fact_Orders: %d rows inserted", total_inserted)
+    logger.info("Fact_Orders: %d rows upserted", total_inserted)
     return total_inserted
 
 
@@ -316,7 +327,7 @@ def load_fact_orders(
 # 3. MAIN LOAD
 # ─────────────────────────────────────────────────────────────
 
-def load(df: pd.DataFrame) -> dict:
+def load(df: pd.DataFrame, batch_size: int = 5000) -> dict:
     """
     Pipeline load chính: upsert dimensions → load fact table.
 
@@ -346,6 +357,7 @@ def load(df: pd.DataFrame) -> dict:
         engine, df,
         product_map, shop_map, geo_map,
         date_map, payment_map, carrier_map,
+        batch_size=batch_size,
     )
 
     result = {

@@ -32,6 +32,11 @@ load_dotenv()  # đọc file .env nếu có, không lỗi nếu file không tồ
 # không phải trong cùng network với container Kafka.
 KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS_HOST", "localhost:29092")
 TOPIC_ORDERS = os.getenv("KAFKA_TOPIC_ORDERS", "ecom.orders.raw")
+TOPIC_INVENTORY = os.getenv("KAFKA_TOPIC_INVENTORY", "inventory.logs")
+# Chu kỳ (giây) gửi ảnh chụp tồn kho của toàn bộ SKU lên topic inventory.logs.
+# Simulator giữ trạng thái tồn kho trong bộ nhớ của chính tiến trình producer, nên chỉ
+# producer mới phát được tồn kho "thật" khớp với luồng đơn hàng đã bắn đi.
+INVENTORY_SNAPSHOT_INTERVAL_SEC = float(os.getenv("INVENTORY_SNAPSHOT_INTERVAL", "60"))
 
 # ─── Logging ───
 logging.basicConfig(
@@ -102,6 +107,7 @@ def send_event(producer: KafkaProducer, event: dict, topic: str = TOPIC_ORDERS):
         or event.get("order_id")
         or event.get("item_sku")
         or event.get("seller_sku")
+        or event.get("sku")
         or ""
     )
     key_bytes = key_str.encode("utf-8") if key_str else None
@@ -109,6 +115,15 @@ def send_event(producer: KafkaProducer, event: dict, topic: str = TOPIC_ORDERS):
     future = producer.send(topic, key=key_bytes, value=event)
     future.add_callback(on_success)
     future.add_errback(on_error)
+
+
+def send_inventory_snapshot(producer: KafkaProducer, simulator: ECommerceSimulator) -> int:
+    """Gửi ảnh chụp tồn kho (1 message / SKU, key = sku) lên topic inventory.logs."""
+    rows = simulator.get_inventory_snapshot()
+    for row in rows:
+        send_event(producer, row, topic=TOPIC_INVENTORY)
+    logger.info("Đã gửi snapshot tồn kho: %d SKU → %s", len(rows), TOPIC_INVENTORY)
+    return len(rows)
 
 
 def run_producer(
@@ -121,7 +136,7 @@ def run_producer(
 
     logger.info("═" * 60)
     logger.info("  Kafka Producer — E-Commerce Order Streaming")
-    logger.info("  Topic: %s", TOPIC_ORDERS)
+    logger.info("  Topic: %s (+ snapshot tồn kho → %s mỗi %.0fs)", TOPIC_ORDERS, TOPIC_INVENTORY, INVENTORY_SNAPSHOT_INTERVAL_SEC)
     logger.info("  Bootstrap: %s", KAFKA_BOOTSTRAP_SERVERS)
     logger.info("  Base rate: %.1f events/s (trước hệ số mùa vụ)", base_events_per_second)
     logger.info("═" * 60)
@@ -134,6 +149,9 @@ def run_producer(
 
     total_sent = 0
     start_time = time.time()
+    # Gửi snapshot ngay khi khởi động để Fact_Inventory_Daily có dữ liệu sớm
+    send_inventory_snapshot(producer, simulator)
+    last_snapshot = time.time()
 
     try:
         for event in simulator.stream(base_events_per_second=base_events_per_second):
@@ -142,6 +160,10 @@ def run_producer(
 
             send_event(producer, event)
             total_sent += 1
+
+            if time.time() - last_snapshot >= INVENTORY_SNAPSHOT_INTERVAL_SEC:
+                send_inventory_snapshot(producer, simulator)
+                last_snapshot = time.time()
 
             # Log tiến độ mỗi 100 events
             if total_sent % 100 == 0:

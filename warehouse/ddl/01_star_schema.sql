@@ -136,7 +136,8 @@ CREATE TABLE IF NOT EXISTS Fact_Orders (
     CONSTRAINT uq_fact_orders_order_platform UNIQUE (order_id, platform)
 );
 
--- Fact_Inventory_Daily: ảnh chụp tồn kho hàng ngày (sẽ bổ sung ở Tuần 4)
+-- Fact_Inventory_Daily: ảnh chụp tồn kho hàng ngày, nạp từ topic Kafka `inventory.logs`
+-- (ingestion/consumer_inventory_to_postgres.py)
 CREATE TABLE IF NOT EXISTS Fact_Inventory_Daily (
     inventory_fact_id  BIGSERIAL PRIMARY KEY,
     product_key        INTEGER REFERENCES Dim_Products(product_key),
@@ -158,6 +159,10 @@ CREATE INDEX IF NOT EXISTS idx_fact_orders_platform ON Fact_Orders(platform);
 CREATE INDEX IF NOT EXISTS idx_fact_orders_status ON Fact_Orders(order_status);
 CREATE INDEX IF NOT EXISTS idx_fact_orders_create ON Fact_Orders(create_time);
 CREATE INDEX IF NOT EXISTS idx_fact_inventory_date ON Fact_Inventory_Daily(date_key);
+-- Mỗi SKU chỉ có 1 ảnh chụp tồn kho / ngày (kho trung tâm) → consumer inventory.logs
+-- upsert theo khóa này, bản ghi mới nhất trong ngày ghi đè bản ghi cũ.
+CREATE UNIQUE INDEX IF NOT EXISTS uq_fact_inventory_product_date
+    ON Fact_Inventory_Daily(product_key, date_key);
 
 
 -- ========== SEED: Dim_Dates (3 năm: 2025-2027) ==========

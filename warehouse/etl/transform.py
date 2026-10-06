@@ -15,12 +15,18 @@ Tuần 3: Tầng Transform của pipeline ETL.
 """
 
 import logging
+import os
 from datetime import datetime
 
 import numpy as np
 import pandas as pd
 
 logger = logging.getLogger("etl.transform")
+
+# Múi giờ nghiệp vụ: ngày bán hàng, ngày Mega-sale, Dim_Dates đều tính theo giờ Việt Nam.
+# Timestamp gốc (ISO có offset, hoặc naive được coi là UTC) được quy đổi về múi giờ này
+# rồi bỏ tz trước khi nạp vào cột TIMESTAMP của PostgreSQL.
+BUSINESS_TZ = os.getenv("BUSINESS_TZ", "Asia/Ho_Chi_Minh")
 
 
 # ─────────────────────────────────────────────────────────────
@@ -211,11 +217,18 @@ def clean_data(df: pd.DataFrame, return_report: bool = False):
         # Giá phải >= 0
         df = df[df["original_price"] >= 0]
 
-    # 2e. Parse timestamps
+    # 2e. Parse timestamps → quy đổi về giờ nghiệp vụ (naive local time)
     timestamp_cols = ["create_time", "pay_time", "shipped_time", "completed_time", "cancel_time"]
     for col in timestamp_cols:
         if col in df.columns:
-            df[col] = pd.to_datetime(df[col], errors="coerce", utc=True)
+            ts = pd.to_datetime(df[col], errors="coerce", utc=True)
+            df[col] = ts.dt.tz_convert(BUSINESS_TZ).dt.tz_localize(None)
+
+    # Ngày đặt hàng theo giờ nghiệp vụ → dùng để lookup Dim_Dates.date_key khi load.
+    # (Trước đây chỉ transform() thêm cột này, còn pipeline.py gọi thẳng clean_data()
+    #  nên Fact_Orders.date_key luôn NULL.)
+    if "create_time" in df.columns:
+        df["order_date"] = df["create_time"].dt.date
 
     # 2f. Chuẩn hóa text
     if "order_status" in df.columns:
@@ -277,10 +290,6 @@ def transform(raw_df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
 
     # Step 2: Clean data
     clean_df, report = clean_data(unified_df, return_report=True)
-
-    # Step 3: Thêm date_key helper
-    if "create_time" in clean_df.columns and not clean_df.empty:
-        clean_df["order_date"] = clean_df["create_time"].dt.date
 
     logger.info("Transform hoàn tất: %d rows sẵn sàng để load", len(clean_df))
     return clean_df, report

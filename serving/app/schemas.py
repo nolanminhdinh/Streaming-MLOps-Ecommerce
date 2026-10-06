@@ -77,6 +77,10 @@ class DemandPredictResponse(BaseModel):
     model_name: str = Field(..., description="Tên mô hình phục vụ từ Model Registry")
     model_version: str = Field(..., description="Phiên bản mô hình")
     model_stage: str = Field(..., description="Trạng thái triển khai (Staging/Production)")
+    model_source: Optional[str] = Field(None, description="mlflow_registry | local_joblib | heuristic_history | heuristic_catalog")
+    history_source: Optional[str] = Field(None, description="warehouse (lịch sử thật từ Fact_Orders) | none")
+
+    model_config = {"protected_namespaces": ()}
 
 
 class BatchDemandPredictRequest(BaseModel):
@@ -119,6 +123,8 @@ class ReorderAlertItem(BaseModel):
     alert_level: str = Field(..., description="Mức độ cảnh báo: CRITICAL, WARNING, NORMAL")
     days_until_stockout: float = Field(..., description="Số ngày dự kiến còn lại trước khi đứt hàng")
     recommended_reorder_qty: int = Field(..., description="Số lượng đề xuất nhập thêm để đạt mức tồn kho an toàn mục tiêu")
+    stock_source: Optional[str] = Field(None, description="Nguồn tồn kho: request | warehouse_snapshot:<ngày> | simulated_demo")
+    demand_source: Optional[str] = Field(None, description="Nguồn nhu cầu: model_forecast | warehouse_history | fallback_catalog")
 
 
 class ReorderAlertResponse(BaseModel):
@@ -138,6 +144,7 @@ class ReorderAlertResponse(BaseModel):
 
 class ModelMetadataResponse(BaseModel):
     """Thông tin chi tiết về Champion Model đang phục vụ."""
+    model_config = {"protected_namespaces": ()}
     model_registry_name: str
     version: str
     stage: str
@@ -147,10 +154,12 @@ class ModelMetadataResponse(BaseModel):
     input_feature_count: int
     metrics: Dict[str, float]
     inventory_defaults: Dict[str, Any]
+    model_source: Optional[str] = None
 
 
 class HealthResponse(BaseModel):
     """Trạng thái sức khỏe và độ sẵn sàng của Serving Service."""
+    model_config = {"protected_namespaces": ()}
     status: str
     service: str
     version: str
@@ -160,3 +169,5 @@ class HealthResponse(BaseModel):
     model_stage: str
     champion_algorithm: str
     uptime_seconds: float
+    model_source: Optional[str] = None
+    warehouse_connected: Optional[bool] = None

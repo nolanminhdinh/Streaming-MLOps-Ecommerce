@@ -60,13 +60,15 @@ def find_best_run(experiment_name: str) -> Optional[Dict[str, Any]]:
             return None
 
         best_run = runs.iloc[0]
+        model_name = best_run.get("params.model_name", "lightgbm")
         return {
             "run_id": best_run["run_id"],
-            "model_name": best_run.get("params.model_name", "lightgbm"),
-            "wape": best_run.get("metrics.cv_wape", 24.5),
-            "mae": best_run.get("metrics.cv_mae", 1.85),
-            "rmse": best_run.get("metrics.cv_rmse", 2.60),
+            "model_name": model_name,
+            "wape": best_run.get("metrics.cv_wape"),
+            "mae": best_run.get("metrics.cv_mae"),
+            "rmse": best_run.get("metrics.cv_rmse"),
             "artifact_uri": best_run.get("artifact_uri", ""),
+            "model_file": f"{str(model_name).lower()}_model.joblib",
         }
     except Exception as e:
         logger.warning("Không thể truy vấn MLflow Server (%s), chuyển sang đọc bảng so sánh cục bộ...", e)
@@ -84,22 +86,29 @@ def find_best_run(experiment_name: str) -> Optional[Dict[str, Any]]:
             "mae": top["MAE"],
             "rmse": top["RMSE"],
             "artifact_uri": "data/champion_model.joblib",
+            "model_file": f"{str(top['Mô hình']).lower()}_model.joblib",
         }
 
-    return {
-        "run_id": "default_champion_run",
-        "model_name": "LightGBM_Tuned",
-        "wape": 24.5,
-        "mae": 1.85,
-        "rmse": 2.60,
-        "artifact_uri": "data/champion_model.joblib",
-    }
+    # Không còn trả về metrics "mặc định" (24.5 / 1.85 / 2.60): không có run thật thì
+    # không có gì để đăng ký — tránh manifest chứa số liệu bịa.
+    return None
+
+
+def _feature_count() -> int:
+    """Số đặc trưng đầu vào thực tế, đọc từ data/feature_spec.json (không hardcode)."""
+    spec_path = os.path.join(os.path.dirname(__file__), "..", "..", "data", "feature_spec.json")
+    try:
+        with open(spec_path, "r", encoding="utf-8") as f:
+            return len(json.load(f)["feature_columns"])
+    except Exception:
+        return 0
 
 
 def register_champion_model(
     experiment_name: str = "demand-forecasting-model-comparison",
     model_name: str = REGISTERED_MODEL_NAME,
     stage: str = "Staging",
+    manifest_dir: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Đăng ký mô hình Champion vào Model Registry và xuất manifest.
@@ -170,19 +179,23 @@ def register_champion_model(
         "stage": stage,
         "champion_algorithm": str(best_info["model_name"]),
         "metrics": {
-            "cv_wape": float(best_info["wape"]),
-            "cv_mae": float(best_info["mae"]),
-            "cv_rmse": float(best_info["rmse"]),
+            k: float(best_info[src])
+            for k, src in (("cv_wape", "wape"), ("cv_mae", "mae"), ("cv_rmse", "rmse"))
+            if best_info.get(src) is not None
         },
+        "run_id": best_info["run_id"],
+        "model_file": best_info.get("model_file"),
         "target_variable": "daily_demand_t_plus_1",
         "registered_at": datetime.now(timezone.utc).isoformat(),
-        "input_feature_count": 28,
+        "input_feature_count": _feature_count(),
         "lead_time_days": 3,
         "service_level": 0.95,
         "status": "READY_FOR_SERVING",
     }
 
-    manifest_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data"))
+    manifest_dir = os.path.abspath(
+        manifest_dir or os.path.join(os.path.dirname(__file__), "..", "..", "data")
+    )
     os.makedirs(manifest_dir, exist_ok=True)
     manifest_path = os.path.join(manifest_dir, "model_manifest.json")
 

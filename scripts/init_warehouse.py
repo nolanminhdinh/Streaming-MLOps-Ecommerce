@@ -68,6 +68,23 @@ def test_connection(engine, max_retries: int = 5, delay: float = 3.0):
     raise ConnectionError(f"Không thể kết nối PostgreSQL sau {max_retries} lần thử.")
 
 
+MLFLOW_DB = os.getenv("MLFLOW_DB", "mlflow")
+
+
+def ensure_mlflow_database(engine, db_name: str = MLFLOW_DB):
+    """Tạo database riêng cho MLflow nếu chưa có (volume Postgres cũ không chạy lại initdb)."""
+    with engine.connect().execution_options(isolation_level="AUTOCOMMIT") as conn:
+        exists = conn.execute(
+            text("SELECT 1 FROM pg_database WHERE datname = :name"), {"name": db_name}
+        ).scalar()
+        if exists:
+            logger.info("Database MLflow '%s' đã tồn tại.", db_name)
+            return
+        # CREATE DATABASE không nhận bind parameter → tên DB lấy từ biến môi trường, đã quote.
+        conn.execute(text(f'CREATE DATABASE "{db_name}"'))
+        logger.info("✓ Đã tạo database MLflow '%s'.", db_name)
+
+
 def init_warehouse(drop_first: bool = False):
     ddl_path = os.path.join(
         os.path.dirname(__file__), "..", "warehouse", "ddl", "01_star_schema.sql"
@@ -100,6 +117,8 @@ def init_warehouse(drop_first: bool = False):
         logger.info("Thực thi script DDL 01_star_schema.sql...")
         # PostgreSQL thực thi toàn bộ script trong 1 khối
         conn.execute(text(ddl_sql))
+
+    ensure_mlflow_database(engine)
 
     # Kiểm tra lại các bảng
     logger.info("Kiểm tra sự tồn tại và số lượng bản ghi của các bảng:")

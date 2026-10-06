@@ -94,15 +94,100 @@ class TestClosedLoopRetraining(unittest.TestCase):
             with open(tmp_manifest, "w", encoding="utf-8") as f:
                 json.dump({"model_registry_name": "TestModel", "version": "1"}, f)
 
+            def fake_register(manifest_dir):
+                return {"model_registry_name": "TestModel", "version": "1", "stage": "Staging",
+                        "run_id": "local_champion_run", "metrics": {"cv_wape": 20.0}}
+
+            reload_calls = []
             retrainer = ClosedLoopRetrainer(
+                summary_path=os.path.join(tmp_dir, "no_summary.json"),
                 manifest_path=tmp_manifest,
                 retraining_log_path=tmp_log,
+                train_fn=lambda: {"model_name": "LIGHTGBM", "cv_wape": 20.0},
+                register_fn=fake_register,
+                reload_fn=lambda: reload_calls.append(1) or True,
             )
             result = retrainer.evaluate_and_trigger(force_retrain=True)
 
             self.assertEqual(result["status"], "RETRAINED")
             self.assertEqual(result["new_version"], "2")
             self.assertTrue(os.path.exists(tmp_log))
+            self.assertEqual(reload_calls, [1])
+            with open(tmp_manifest, encoding="utf-8") as f:
+                manifest = json.load(f)
+            self.assertEqual(manifest["version"], "2")
+            self.assertEqual(manifest["metrics"], {"cv_wape": 20.0})
+
+    def test_failed_training_keeps_current_model(self):
+        """Huấn luyện lỗi → FAILED, manifest giữ nguyên, không có metrics bịa."""
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp_manifest = os.path.join(tmp_dir, "m.json")
+            original = {"model_registry_name": "TestModel", "version": "3", "metrics": {"cv_wape": 25.0}}
+            with open(tmp_manifest, "w", encoding="utf-8") as f:
+                json.dump(original, f)
+
+            def broken_train():
+                raise RuntimeError("không kết nối được PostgreSQL")
+
+            retrainer = ClosedLoopRetrainer(
+                summary_path=os.path.join(tmp_dir, "none.json"),
+                manifest_path=tmp_manifest,
+                retraining_log_path=os.path.join(tmp_dir, "log.json"),
+                train_fn=broken_train,
+                register_fn=lambda d: self.fail("không được đăng ký khi train lỗi"),
+                reload_fn=lambda: self.fail("không được reload khi train lỗi"),
+            )
+            result = retrainer.evaluate_and_trigger(force_retrain=True)
+
+            self.assertEqual(result["status"], "FAILED")
+            with open(tmp_manifest, encoding="utf-8") as f:
+                self.assertEqual(json.load(f), original)
+
+    def test_synthetic_drift_does_not_auto_retrain(self):
+        """Drift summary sinh từ dữ liệu giả lập không được tự động kích hoạt retrain."""
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            summary = os.path.join(tmp_dir, "drift_summary.json")
+            with open(summary, "w", encoding="utf-8") as f:
+                json.dump({"drift_detected": True, "drift_share": 0.8, "data_source": "synthetic_demo"}, f)
+            retrainer = ClosedLoopRetrainer(
+                summary_path=summary,
+                manifest_path=os.path.join(tmp_dir, "m.json"),
+                retraining_log_path=os.path.join(tmp_dir, "log.json"),
+                train_fn=lambda: self.fail("không được train"),
+            )
+            self.assertEqual(retrainer.evaluate_and_trigger()["status"], "SKIPPED")
+
+
+class TestFeatureStoreDriftWindows(unittest.TestCase):
+
+    def test_windows_split_by_date(self):
+        """Drift thật: Reference = 28 ngày trước, Current = 7 ngày cuối của Feature Store."""
+        import tempfile
+        try:
+            import pandas as pd
+        except ImportError:
+            self.skipTest("Cần pandas")
+        from monitoring.evidently.drift_detector import load_feature_store_windows, run_drift_pipeline
+
+        dates = pd.date_range("2026-07-01", periods=40, freq="D")
+        df = pd.DataFrame({
+            "sku": ["A"] * 40, "date": dates.date,
+            "lag_1": range(40), "daily_demand": [10.0] * 33 + [40.0] * 7,
+        })
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            path = os.path.join(tmp_dir, "features_daily.parquet")
+            df.to_parquet(path, index=False)
+            ref, curr, meta = load_feature_store_windows(path)
+            self.assertEqual(len(curr["daily_demand"]), 7)
+            self.assertEqual(len(ref["daily_demand"]), 28)
+            self.assertEqual(meta["current_window"], ["2026-08-03", "2026-08-09"])
+            self.assertEqual(meta["data_source"], "feature_store")
+
+            summary = run_drift_pipeline(features_path=path, reports_dir=tmp_dir)
+            self.assertEqual(summary["data_source"], "feature_store")
+            self.assertTrue(summary["target_drift_detected"])
 
 
 class TestPrometheusMetricsExposition(unittest.TestCase):

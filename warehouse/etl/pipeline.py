@@ -21,14 +21,16 @@ import logging
 import os
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Optional
+
+import pandas as pd
 
 # Cho phép import các module trong cùng package
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from warehouse.etl.extract import build_minio_client, extract_orders
-from warehouse.etl.transform import unify_schema, clean_data, generate_quality_report
+from warehouse.etl.transform import BUSINESS_TZ, unify_schema, clean_data, generate_quality_report
 from warehouse.etl.data_validation import DataValidator
 from warehouse.etl.load import get_engine, load
 
@@ -140,7 +142,7 @@ def run_etl_pipeline(
             stats["status"] = "EMPTY_CLEAN_DATA"
         else:
             try:
-                load_result = load(clean_df)
+                load_result = load(clean_df, batch_size=batch_size)
                 loaded_count = load_result.get("rows_loaded", 0)
                 stats["loaded_records"] = loaded_count
                 stats["status"] = "SUCCESS"
@@ -168,7 +170,7 @@ def main():
         "--date",
         type=str,
         default=None,
-        help="Ngày cần xử lý định dạng YYYY-MM-DD (Mặc định: hôm nay)",
+        help="Ngày cần xử lý định dạng YYYY-MM-DD (Mặc định: hôm nay theo BUSINESS_TZ)",
     )
     parser.add_argument(
         "--all-dates",
@@ -197,8 +199,8 @@ def main():
             logger.error("Định dạng ngày không hợp lệ. Vui lòng dùng YYYY-MM-DD")
             sys.exit(1)
     elif not args.all_dates:
-        # Mặc định lấy ngày hôm nay (UTC)
-        target_date = datetime.now(timezone.utc)
+        # Mặc định lấy ngày hôm nay theo múi giờ nghiệp vụ (khớp cách consumer phân vùng MinIO)
+        target_date = pd.Timestamp.now(tz=BUSINESS_TZ).to_pydatetime()
 
     try:
         stats = run_etl_pipeline(
