@@ -1,6 +1,9 @@
 # Module Power BI Executive Dashboard (Tuần 9)
+## Thiết kế Theo Phương pháp luận Ralph Kimball (*The Data Warehouse Toolkit*)
 
 Thư mục này chứa toàn bộ tài nguyên phục vụ việc thiết kế và xây dựng **Executive Dashboard** trên **Power BI Desktop**, hỗ trợ ban giám khảo và các nhà quản lý chuỗi cung ứng theo dõi toàn diện hoạt động kinh doanh đa kênh, dự báo nhu cầu bán hàng và quản trị tồn kho thông minh.
+
+> 📖 **Báo cáo Kỹ thuật Đầy đủ**: Xem chi tiết tại [`docs/02-warehouse-etl-feature-store/bao_cao_xay_dung_power_bi_dashboard.md`](../docs/02-warehouse-etl-feature-store/bao_cao_xay_dung_power_bi_dashboard.md)
 
 ---
 
@@ -8,13 +11,16 @@ Thư mục này chứa toàn bộ tài nguyên phục vụ việc thiết kế v
 
 ```
 powerbi/
-├── data/                         # Thư mục chứa các tệp CSV xuất bản sẵn sàng import
-│   ├── Dim_Products.csv          # Danh mục sản phẩm, phân khúc ma trận
+├── data/                         # Thư mục chứa các tệp CSV xuất bản sẵn sàng import (Chuẩn Star Schema)
+│   ├── Dim_Dates.csv             # Chiều lịch thời gian nhất quán (Conformed Date Dimension)
+│   ├── Dim_Products.csv          # Danh mục sản phẩm, Surrogate Key, phân khúc ma trận ABC/XYZ
 │   ├── Dim_Geography.csv         # Phân bổ địa lý 3 miền Bắc - Trung - Nam
 │   ├── Fact_Orders_Summary.csv   # Doanh thu & đơn hàng tổng hợp theo ngày và sàn
 │   ├── Inventory_Health_Alerts.csv # Tồn kho thực tế, Safety Stock, ROP, cấp độ cảnh báo
 │   └── Forecast_vs_Actual.csv    # Đối chiếu 60 ngày sản lượng thực tế vs dự báo
-├── views_for_powerbi.sql         # Các SQL Views tối ưu hóa cho kết nối trực tiếp PostgreSQL
+├── Report_PowerBI.pbix           # Tệp Báo cáo Power BI hoàn thiện
+├── theme_pastel.json             # Theme màu Pastel chuẩn Microsoft JSON Schema
+├── views_for_powerbi.sql         # 4 SQL Views tối ưu hóa cho kết nối trực tiếp PostgreSQL
 ├── dax_measures.md               # Tập hợp đầy đủ các công thức tính toán DAX chuẩn
 ├── export_powerbi_dataset.py     # Script xuất khẩu tự động các tệp dữ liệu phẳng CSV
 └── README.md                     # Tài liệu hướng dẫn này

@@ -1,0 +1,20 @@
+{
+  "name": "Pastel Palette",
+  "dataColors": [
+    "#768CCE",
+    "#FFC6D0",
+    "#C3D6F2",
+    "#E1F7E7",
+    "#D1EAF5",
+    "#FFD6DA"
+  ],
+  "background": "#FFFFFF",
+  "foreground": "#2E3A59",
+  "tableAccent": "#768CCE",
+  "good": "#E1F7E7",
+  "neutral": "#C3D6F2",
+  "bad": "#FFC6D0",
+  "maximum": "#768CCE",
+  "center": "#C3D6F2",
+  "minimum": "#FFD6DA"
+}

@@ -56,6 +56,10 @@ Tập trung vào chu trình xử lý dữ liệu sau bước đệm và chuẩn 
   - **Mô hình Dữ liệu Chấm sao (Star Schema)**: Fact_Orders và 5 bảng Dimension.
   - **Kỹ nghệ đặc trưng chuỗi thời gian**: Gom nhóm ngày (Daily Aggregation), Lưới Descartes lấp đầy ngày khuyết (Cartesian Grid), Ma trận ABC/XYZ, Lags, Rolling Statistics với nguyên tắc Shift(1) chống Data Leakage tuyệt đối.
   - **Walk-Forward Validation**: Phân chia tập dữ liệu huấn luyện theo Cửa sổ mở rộng (Expanding Window).
+- [`bao_cao_xay_dung_power_bi_dashboard.md`](02-warehouse-etl-feature-store/bao_cao_xay_dung_power_bi_dashboard.md): Báo cáo thiết kế kỹ thuật **Executive Dashboard & Mô hình hóa Chiều theo Chuẩn Ralph Kimball** (The Data Warehouse Toolkit):
+  - Phương pháp luận thiết kế chiều: Conformed Dimensions (`Dim_Dates`, `Dim_Products`), Star Joins và cơ chế Drill-Across.
+  - Phân hệ 19 công thức quản trị DAX nhóm trong 3 Display Folders của bảng `_Measures`.
+  - Bộ Theme màu Pastel doanh nghiệp và chiến lược vận hành 2 chế độ (Flat CSV Data Marts vs DirectQuery PostgreSQL).
 - **Các sơ đồ Vector (SVG)**:
   - [`diagram_6_etl_star_schema_pipeline.svg`](02-warehouse-etl-feature-store/diagram_6_etl_star_schema_pipeline.svg): Luồng xử lý chi tiết ETL/ELT từ MinIO vào PostgreSQL.
   - [`diagram_7_star_schema_er_model.svg`](02-warehouse-etl-feature-store/diagram_7_star_schema_er_model.svg): Sơ đồ quan hệ thực thể (ERD) Star Schema.
