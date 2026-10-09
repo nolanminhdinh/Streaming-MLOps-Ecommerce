@@ -41,6 +41,7 @@ from ml.mlflow.setup_tracking import configure_mlflow
 from ml.training.metrics import calculate_all_metrics
 from ml.features.time_series_features import TimeSeriesFeatureExtractor
 from ml.features.feature_pipeline import load_orders_data, build_feature_store
+from ml.training.recursive_evaluation import forecast_fold_recursively
 
 logging.basicConfig(
     level=logging.INFO,
@@ -55,11 +56,61 @@ def get_feature_data() -> pd.DataFrame:
     data_path = os.path.join(os.path.dirname(__file__), "..", "..", "data", "features_daily.parquet")
     if os.path.exists(data_path):
         logger.info("Nạp dữ liệu từ Feature Store: %s", data_path)
-        return pd.read_parquet(data_path)
+        df = pd.read_parquet(data_path)
+        if "target_date" not in df.columns:
+            df["target_date"] = pd.to_datetime(df["date"]).dt.date + pd.Timedelta(days=1)
+        return df
 
     logger.info("Chưa có file Feature Store. Đang tự động chạy feature_pipeline...")
     orders_df = load_orders_data()
-    return build_feature_store(orders_df, save_path=data_path)
+    df = build_feature_store(orders_df, save_path=data_path)
+    df["target_date"] = pd.to_datetime(df["date"]).dt.date + pd.Timedelta(days=1)
+    return df
+
+
+def _daily_history_matches_feature(feature_df: pd.DataFrame, daily: pd.DataFrame) -> bool:
+    expected = feature_df[["sku", "date", "daily_demand"]].copy()
+    expected["date"] = pd.to_datetime(expected["date"]).dt.date
+    actual = daily[["sku", "date", "daily_demand"]].copy()
+    actual["date"] = pd.to_datetime(actual["date"]).dt.date
+    aligned = expected.merge(
+        actual,
+        on=["sku", "date"],
+        how="left",
+        suffixes=("_feature", "_source"),
+        validate="one_to_one",
+    )
+    return (
+        len(aligned) == len(expected)
+        and aligned["daily_demand_source"].notna().all()
+        and np.allclose(
+            aligned["daily_demand_feature"].to_numpy(dtype=float),
+            aligned["daily_demand_source"].to_numpy(dtype=float),
+        )
+    )
+
+
+def get_daily_history_data(feature_df: Optional[pd.DataFrame] = None) -> Optional[pd.DataFrame]:
+    """Nạp chuỗi SKU × ngày đầy đủ để dựng đúng lịch sử lúc đánh giá đệ quy."""
+    history_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", "daily_history.parquet"))
+    if os.path.exists(history_path):
+        saved_history = pd.read_parquet(history_path)
+        if feature_df is None or _daily_history_matches_feature(feature_df, saved_history):
+            return saved_history
+        logger.warning("daily_history.parquet không khớp Feature Store; thử khôi phục từ nguồn đơn hàng.")
+
+    # Tương thích với Feature Store cũ chưa có daily_history.parquet: khôi phục từ
+    # nguồn đơn hàng nếu khớp toàn bộ nhu cầu hiện tại trong Feature Store.
+    if feature_df is not None:
+        try:
+            daily = TimeSeriesFeatureExtractor().aggregate_daily(load_orders_data())
+            if _daily_history_matches_feature(feature_df, daily):
+                daily.to_parquet(history_path, index=False)
+                logger.info("Khôi phục daily_history.parquet từ nguồn đơn hàng khớp Feature Store.")
+                return daily
+        except Exception as exc:
+            logger.warning("Không khôi phục được lịch sử đầy đủ từ nguồn đơn hàng: %s", exc)
+    return None
 
 
 def select_feature_columns(df: pd.DataFrame) -> Tuple[List[str], str]:
@@ -185,16 +236,21 @@ def evaluate_walk_forward(
     n_splits: int = 3,
     test_days: int = 14,
     val_days: int = 7,
+    daily_history: Optional[pd.DataFrame] = None,
 ) -> Tuple[Dict[str, float], np.ndarray, np.ndarray]:
     """
-    Thực hiện Walk-Forward Cross Validation trên 3 folds và trả về metrics bình quân.
+    Đánh giá walk-forward theo ngày target bằng dự báo đệ quy hết từng test horizon.
     """
+    if "target_date" not in df.columns:
+        df = df.copy()
+        df["target_date"] = pd.to_datetime(df["date"]).dt.date + pd.Timedelta(days=1)
+
     fold_metrics: List[Dict[str, float]] = []
     all_actuals = []
     all_preds = []
 
     split_gen = TimeSeriesFeatureExtractor.walk_forward_split(
-        df, date_col="date", n_splits=n_splits, test_days=test_days, val_days=val_days
+        df, date_col="target_date", n_splits=n_splits, test_days=test_days, val_days=val_days
     )
 
     for fold_idx, (train_df, val_df, test_df) in enumerate(split_gen, start=1):
@@ -204,14 +260,22 @@ def evaluate_walk_forward(
         X_train = fit_df[feature_cols].fillna(0)
         y_train = fit_df[target_col].values
 
-        X_test = test_df[feature_cols].fillna(0)
-        y_test = test_df[target_col].values
-
-        # Fit & Predict
+        # Fit trên các nhãn có target date trước test horizon.
         model_obj.fit(X_train, y_train)
-        preds = model_obj.predict(X_test)
-        # Cắt âm về 0
-        preds = np.clip(preds, a_min=0.0, a_max=None)
+
+        # Không dùng lag/rolling dựng sẵn trong test_df: các ngày test phải nhận
+        # dự báo của ngày trước giống serving nhiều bước.
+        scored_df, y_test, preds = forecast_fold_recursively(
+            model=model_obj,
+            feature_df=df,
+            test_df=test_df,
+            feature_cols=feature_cols,
+            target_col=target_col,
+            daily_history=daily_history,
+        )
+        if len(y_test) == 0:
+            logger.warning("  [%s] Fold %d không có SKU đủ lịch sử để đánh giá.", model_name.upper(), fold_idx)
+            continue
 
         metrics = calculate_all_metrics(y_test, preds)
         fold_metrics.append(metrics)
@@ -227,7 +291,10 @@ def evaluate_walk_forward(
     avg_metrics: Dict[str, float] = {}
     for metric_key in ["wape", "mae", "rmse", "mape", "r2", "bias"]:
         vals = [fm[metric_key] for fm in fold_metrics]
-        avg_metrics[metric_key] = round(float(np.mean(vals)), 2 if "pe" in metric_key or metric_key == "bias" else 4)
+        avg_metrics[metric_key] = (
+            round(float(np.mean(vals)), 2 if "pe" in metric_key or metric_key == "bias" else 4)
+            if vals else float("nan")
+        )
 
     return avg_metrics, np.array(all_actuals), np.array(all_preds)
 
@@ -312,6 +379,7 @@ def run_training_pipeline(
     # 2. Chuẩn bị dữ liệu
     df = get_feature_data()
     feature_cols, target_col = select_feature_columns(df)
+    daily_history = get_daily_history_data(df)
 
     if models_to_run is None:
         models_to_run = ["naive", "seasonal_naive", "moving_average", "ridge", "lightgbm"]
@@ -351,6 +419,7 @@ def run_training_pipeline(
             feature_cols=feature_cols,
             target_col=target_col,
             n_splits=n_splits,
+            daily_history=daily_history,
         )
 
         # Fit lại trên TOÀN BỘ dữ liệu trước khi lưu artifact phục vụ serving.
@@ -375,6 +444,7 @@ def run_training_pipeline(
                 mlflow.log_param("model_name", m_name)
                 mlflow.log_param("n_features", len(feature_cols))
                 mlflow.log_param("n_walk_forward_splits", n_splits)
+                mlflow.log_param("evaluation_strategy", "recursive_multi_step")
                 for pk, pv in params.items():
                     mlflow.log_param(pk, pv)
 

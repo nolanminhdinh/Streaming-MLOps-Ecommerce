@@ -107,7 +107,7 @@ def load_orders_data() -> pd.DataFrame:
 # Dùng chung cho train_baseline.select_feature_columns và feature_spec.json (serving).
 TARGET_COL = "target_t_plus_1"
 EXCLUDE_COLS = {
-    "sku", "date", "product_name", "category", "abc_class", "xyz_class",
+    "sku", "date", "target_date", "product_name", "category", "abc_class", "xyz_class",
     "matrix_class", TARGET_COL,
 }
 
@@ -237,6 +237,12 @@ def build_feature_store(
 
     valid_features.to_parquet(save_path, index=False)
     logger.info("✓ Đã lưu Feature Store tại: %s", save_path)
+
+    # Lưu đầy đủ chuỗi ngày làm ngữ cảnh cho đánh giá đệ quy nhiều bước.
+    # Feature Store chỉ giữ các dòng sau burn-in nên không đủ để khôi phục lịch sử đầu chuỗi.
+    history_path = os.path.join(os.path.dirname(os.path.abspath(save_path)), "daily_history.parquet")
+    daily_df.to_parquet(history_path, index=False)
+    logger.info("✓ Đã lưu lịch sử nhu cầu ngày tại: %s", history_path)
 
     spec_path = spec_path or os.path.join(os.path.dirname(os.path.abspath(save_path)), "feature_spec.json")
     save_feature_spec(

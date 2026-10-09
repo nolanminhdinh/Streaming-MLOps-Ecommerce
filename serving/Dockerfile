@@ -12,6 +12,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# MLflow 2.14 imports pkg_resources; setuptools 81 removed that module.
+RUN pip install --no-cache-dir "setuptools<81"
+
 # Copy mã nguồn serving theo cấu trúc package serving/app
 COPY ./app ./serving/app
 ENV PYTHONPATH="/app"

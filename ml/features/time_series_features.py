@@ -189,6 +189,9 @@ class TimeSeriesFeatureExtractor:
         """
         Chia dữ liệu theo phương pháp Walk-Forward Validation (Expanding Window) cho chuỗi thời gian.
 
+        Với bài toán dự báo t+1, hãy truyền ``date_col="target_date"`` để mỗi nhãn
+        được xếp vào fold theo ngày nhu cầu mà nhãn đại diện, thay vì ngày tạo đặc trưng.
+
         Yields:
             (train_df, val_df, test_df) cho từng fold.
         """

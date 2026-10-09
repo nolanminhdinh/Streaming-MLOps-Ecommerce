@@ -32,7 +32,14 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from ml.mlflow.setup_tracking import configure_mlflow
 from ml.training.metrics import calculate_all_metrics, weighted_absolute_percentage_error
 from ml.features.time_series_features import TimeSeriesFeatureExtractor
-from ml.training.train_baseline import select_feature_columns, get_feature_data, get_ml_model, SeasonalNaiveModel
+from ml.training.train_baseline import (
+    select_feature_columns,
+    get_feature_data,
+    get_daily_history_data,
+    get_ml_model,
+    SeasonalNaiveModel,
+)
+from ml.training.recursive_evaluation import forecast_fold_recursively
 from ml.training.deep_learning_models import DeepLearningTrainer, HAS_TORCH
 
 logging.basicConfig(
@@ -148,6 +155,7 @@ def run_model_comparison(
 
     df = get_feature_data()
     feature_cols, target_col = select_feature_columns(df)
+    daily_history = get_daily_history_data(df)
 
     # Đọc siêu tham số đã tune nếu có
     params_file = os.path.join(os.path.dirname(__file__), "..", "..", "data", "best_params_lightgbm.json")
@@ -175,8 +183,11 @@ def run_model_comparison(
 
     results = []
 
-    # Sử dụng generator Walk-Forward để chia tập
-    splits = list(TimeSeriesFeatureExtractor.walk_forward_split(df, date_col="date", n_splits=n_splits))
+    # Chia fold theo ngày mà nhãn target_t_plus_1 đại diện.
+    if "target_date" not in df.columns:
+        df = df.copy()
+        df["target_date"] = pd.to_datetime(df["date"]).dt.date + pd.Timedelta(days=1)
+    splits = list(TimeSeriesFeatureExtractor.walk_forward_split(df, date_col="target_date", n_splits=n_splits))
 
     for m_name, model_obj in models_dict.items():
         logger.info("─" * 55)
@@ -192,9 +203,6 @@ def run_model_comparison(
             X_train = fit_df[feature_cols].fillna(0).values
             y_train = fit_df[target_col].values
 
-            X_test = test_df[feature_cols].fillna(0).values
-            y_test = test_df[target_col].values
-
             # Huấn luyện
             if hasattr(model_obj, "fit"):
                 if isinstance(model_obj, DeepLearningTrainer):
@@ -205,20 +213,32 @@ def run_model_comparison(
                     # Sklearn / LightGBM
                     model_obj.fit(fit_df[feature_cols].fillna(0), y_train)
 
-            # Dự báo
+            # Dự báo test theo đúng cách serving chạy nhiều ngày: dự báo trước đó
+            # được đưa vào lịch sử để dựng đặc trưng cho ngày sau.
+            predict_one = None
             if isinstance(model_obj, DeepLearningTrainer):
-                preds = model_obj.predict(X_test)
-            else:
-                preds = model_obj.predict(test_df[feature_cols].fillna(0))
-
-            preds = np.clip(preds, a_min=0.0, a_max=None)
+                predict_one = lambda current, values, columns: current.predict(
+                    np.asarray([values], dtype=np.float32)
+                )
+            scored_df, y_test, preds = forecast_fold_recursively(
+                model=model_obj,
+                feature_df=df,
+                test_df=test_df,
+                feature_cols=feature_cols,
+                target_col=target_col,
+                daily_history=daily_history,
+                predict_one=predict_one,
+            )
+            if len(y_test) == 0:
+                logger.warning("Fold %d không có SKU đủ lịch sử để đánh giá %s.", fold_idx, m_name)
+                continue
 
             # Metrics tổng quát
             m = calculate_all_metrics(y_test, preds)
             fold_metrics_list.append(m)
 
             # Metrics theo phân khúc ABC/XYZ
-            seg_m = evaluate_model_on_segments(preds, y_test, test_df)
+            seg_m = evaluate_model_on_segments(preds, y_test, scored_df)
             seg_metrics_list.append(seg_m)
 
             all_actuals.extend(y_test)
@@ -240,6 +260,7 @@ def run_model_comparison(
         try:
             with mlflow.start_run(run_name=f"compare_{m_name}"):
                 mlflow.log_param("model_name", m_name)
+                mlflow.log_param("evaluation_strategy", "recursive_multi_step")
                 mlflow.log_metric("cv_wape", overall_wape)
                 mlflow.log_metric("cv_mae", overall_mae)
                 mlflow.log_metric("cv_rmse", overall_rmse)
@@ -252,6 +273,7 @@ def run_model_comparison(
 
         row_data = {
             "Mô hình": m_name,
+            "Evaluation strategy": "recursive_multi_step",
             "WAPE (%)": overall_wape,
             "MAE": overall_mae,
             "RMSE": overall_rmse,

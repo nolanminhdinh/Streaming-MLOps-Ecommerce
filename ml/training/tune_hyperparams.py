@@ -30,7 +30,7 @@ from ml.mlflow.setup_tracking import configure_mlflow
 from ml.training.metrics import calculate_all_metrics
 from ml.features.time_series_features import TimeSeriesFeatureExtractor
 from ml.features.feature_pipeline import load_orders_data, build_feature_store
-from ml.training.train_baseline import select_feature_columns, get_feature_data
+from ml.training.train_baseline import select_feature_columns, get_feature_data, get_daily_history_data
 
 logging.basicConfig(
     level=logging.INFO,
@@ -49,7 +49,13 @@ except ImportError:
     logger.warning("Optuna chưa được cài đặt. Module Tuning sẽ sử dụng Random Grid Search fallback.")
 
 
-def objective_lightgbm(trial: Any, df: pd.DataFrame, feature_cols: list[str], target_col: str) -> float:
+def objective_lightgbm(
+    trial: Any,
+    df: pd.DataFrame,
+    feature_cols: list[str],
+    target_col: str,
+    daily_history: Optional[pd.DataFrame] = None,
+) -> float:
     """Hàm mục tiêu tối ưu cho LightGBM trên Walk-Forward splits."""
     if HAS_OPTUNA and hasattr(trial, "suggest_int"):
         params = {
@@ -83,6 +89,7 @@ def objective_lightgbm(trial: Any, df: pd.DataFrame, feature_cols: list[str], ta
         feature_cols=feature_cols,
         target_col=target_col,
         n_splits=2,
+        daily_history=daily_history,
     )
     return avg_metrics["wape"]
 
@@ -106,6 +113,7 @@ def run_tuning(
 
     df = get_feature_data()
     feature_cols, target_col = select_feature_columns(df)
+    daily_history = get_daily_history_data(df)
 
     best_params = {}
     best_wape = float("inf")
@@ -113,7 +121,7 @@ def run_tuning(
     if HAS_OPTUNA:
         study = optuna.create_study(direction="minimize")
         study.optimize(
-            lambda trial: objective_lightgbm(trial, df, feature_cols, target_col),
+            lambda trial: objective_lightgbm(trial, df, feature_cols, target_col, daily_history),
             n_trials=n_trials,
         )
         best_params = study.best_params
@@ -122,7 +130,7 @@ def run_tuning(
         # Fallback grid search
         logger.info("Đang chạy Grid Search fallback...")
         for t_idx in range(n_trials):
-            val = objective_lightgbm(t_idx, df, feature_cols, target_col)
+            val = objective_lightgbm(t_idx, df, feature_cols, target_col, daily_history)
             if val < best_wape:
                 best_wape = val
                 best_params = {

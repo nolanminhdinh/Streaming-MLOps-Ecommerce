@@ -11,6 +11,10 @@ RUN pip install --no-cache-dir \
     psycopg2-binary==2.9.9 \
     boto3==1.34.131
 
+# MLflow 2.14 imports pkg_resources; setuptools 81 removed that module.
+# It is also incompatible with SQLAlchemy 2.1, so keep the tested 2.0.31 version.
+RUN pip install --no-cache-dir "setuptools<81" "SQLAlchemy==2.0.31"
+
 EXPOSE 5000
 
 # Khởi chạy MLflow Server với backend PostgreSQL và S3 artifact store

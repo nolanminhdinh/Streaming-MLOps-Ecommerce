@@ -2,7 +2,7 @@
 register_model.py
 -----------------
 Tự động hóa đăng ký mô hình chiến thắng (Champion Model) vào MLflow Model Registry:
-  1. Quét các runs trong MLflow Tracking Server để tìm mô hình có chỉ số WAPE thấp nhất.
+  1. Quét các runs đã đánh giá đệ quy trên nhiều ngày để tìm mô hình có WAPE thấp nhất.
   2. Đăng ký mô hình vào MLflow Model Registry với tên: `ECommerceDemandForecastModel`.
   3. Gán thẻ tags và mô tả phiên bản (Framework, Metrics, Target, Input Features).
   4. Chuyển trạng thái mô hình sang `Staging` (sẵn sàng phục vụ cho FastAPI Model Serving ở Tuần 7).
@@ -39,10 +39,11 @@ logger = logging.getLogger("mlops.registry")
 
 
 REGISTERED_MODEL_NAME = "ECommerceDemandForecastModel"
+REQUIRED_EVALUATION_STRATEGY = "recursive_multi_step"
 
 
 def find_best_run(experiment_name: str) -> Optional[Dict[str, Any]]:
-    """Tìm Run có WAPE thấp nhất từ MLflow Tracking Server."""
+    """Tìm Run có WAPE thấp nhất theo giao thức đánh giá đệ quy hiện tại."""
     try:
         import mlflow
         exp = mlflow.get_experiment_by_name(experiment_name)
@@ -54,6 +55,24 @@ def find_best_run(experiment_name: str) -> Optional[Dict[str, Any]]:
             experiment_ids=[exp.experiment_id],
             order_by=["metrics.cv_wape ASC"],
         )
+
+        strategy_col = "params.evaluation_strategy"
+        if strategy_col not in runs.columns:
+            logger.warning(
+                "Experiment '%s' chưa có run dùng đánh giá '%s'; chưa thể chọn champion.",
+                experiment_name,
+                REQUIRED_EVALUATION_STRATEGY,
+            )
+            return None
+        compatible_runs = runs[runs[strategy_col] == REQUIRED_EVALUATION_STRATEGY]
+        if compatible_runs.empty:
+            logger.warning(
+                "Experiment '%s' chưa có run dùng đánh giá '%s'; chưa thể chọn champion.",
+                experiment_name,
+                REQUIRED_EVALUATION_STRATEGY,
+            )
+            return None
+        runs = compatible_runs
 
         if runs.empty:
             logger.warning("Experiment '%s' chưa có run nào.", experiment_name)
@@ -78,6 +97,13 @@ def find_best_run(experiment_name: str) -> Optional[Dict[str, Any]]:
     if os.path.exists(csv_path):
         import pandas as pd
         comp_df = pd.read_csv(csv_path)
+        if "Evaluation strategy" not in comp_df.columns:
+            logger.warning("Bảng so sánh cũ chưa có nhãn evaluation strategy; bỏ qua metric cũ.")
+            return None
+        comp_df = comp_df[comp_df["Evaluation strategy"] == REQUIRED_EVALUATION_STRATEGY]
+        if comp_df.empty:
+            logger.warning("Bảng so sánh chưa có kết quả '%s'.", REQUIRED_EVALUATION_STRATEGY)
+            return None
         top = comp_df.iloc[0]
         return {
             "run_id": "local_champion_run",
