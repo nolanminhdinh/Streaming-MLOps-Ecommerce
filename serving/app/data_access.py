@@ -192,6 +192,80 @@ class WarehouseRepository:
         stocks = self._query("latest_stock", run, ttl=30)
         return stocks or None
 
+    def record_served_forecasts(
+        self,
+        sku: str,
+        forecasts: List[Dict[str, Any]],
+        model_name: str,
+        model_version: str,
+        model_source: str,
+        history_source: str,
+        history_end: Optional[str],
+    ) -> int:
+        """Lưu dự báo ML đã phát ra để đối chiếu với nhu cầu thực tế sau này.
+
+        Không ghi dự báo heuristic/demo hoặc dự báo không có lịch sử trong warehouse.
+        Ngày mục tiêu phải sau ngày cuối của lịch sử đầu vào để tránh ghi nhận dự báo
+        hồi cứu như một kết quả forecast thật.
+        """
+        if (
+            not self.enabled
+            or model_source not in {"mlflow_registry", "local_joblib"}
+            or history_source != "warehouse"
+            or not history_end
+        ):
+            return 0
+
+        try:
+            history_end_date = date.fromisoformat(str(history_end)[:10])
+            rows = []
+            for item in forecasts:
+                target_date = date.fromisoformat(str(item["date"])[:10])
+                if target_date <= history_end_date:
+                    continue
+                rows.append({
+                    "sku": sku,
+                    "target_date": target_date,
+                    "predicted_quantity": max(0.0, float(item["predicted_quantity"])),
+                    "model_name": model_name,
+                    "model_version": str(model_version),
+                    "model_source": model_source,
+                    "history_source": history_source,
+                    "history_end_date": history_end_date,
+                })
+        except (KeyError, TypeError, ValueError) as e:
+            logger.warning("Không thể chuẩn hóa dự báo để lưu Power BI (%s).", e.__class__.__name__)
+            return 0
+
+        if not rows or not self.available():
+            return 0
+
+        from sqlalchemy import text
+
+        try:
+            with self._get_engine().begin() as conn:
+                result = conn.execute(text("""
+                    INSERT INTO Fact_Forecast_Predictions (
+                        product_key, target_date, predicted_quantity, model_name,
+                        model_version, model_source, history_source, history_end_date
+                    )
+                    SELECT p.product_key, :target_date, :predicted_quantity, :model_name,
+                           :model_version, :model_source, :history_source, :history_end_date
+                    FROM Dim_Products p
+                    WHERE p.sku = :sku
+                    ON CONFLICT (product_key, target_date, model_version, history_end_date)
+                    DO NOTHING
+                """), rows)
+            return int(result.rowcount or 0)
+        except Exception as e:
+            # Forecast serving phải tiếp tục được ngay cả khi phần ghi audit lỗi.
+            logger.warning(
+                "Không lưu được forecast vào Fact_Forecast_Predictions (%s). "
+                "Hãy áp dụng lại warehouse/ddl/01_star_schema.sql.",
+                e.__class__.__name__,
+            )
+            return 0
+
 
 _repo: Optional[WarehouseRepository] = None
 

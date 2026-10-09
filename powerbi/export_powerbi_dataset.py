@@ -1,193 +1,188 @@
 """
-export_powerbi_dataset.py
--------------------------
-Xuất bộ dữ liệu chuẩn hóa Star Schema theo phương pháp luận Ralph Kimball
-(The Data Warehouse Toolkit) phục vụ Power BI Desktop:
-  1. Dim_Dates.csv              (Conformed Date Dimension)
-  2. Dim_Products.csv           (Product Dimension với Surrogate Key)
-  3. Dim_Geography.csv          (Geography Dimension)
-  4. Fact_Orders_Summary.csv    (Sales Aggregate Fact Table)
-  5. Forecast_vs_Actual.csv     (MLOps Consolidated Fact Table)
-  6. Inventory_Health_Alerts.csv (Inventory Periodic Snapshot Fact)
+Export Power BI data marts from the PostgreSQL warehouse.
+
+Every sales, inventory, and forecast value in these CSVs is read from persisted
+warehouse facts. This exporter deliberately has no synthetic-data fallback:
+without warehouse facts the dashboard should be empty/error, not plausible but
+misleading.
 """
 
 from __future__ import annotations
 
 import csv
 import logging
-import math
 import os
-import random
-import sys
-from datetime import date, datetime, timedelta
+from typing import Any, Iterable, Sequence
 
 logger = logging.getLogger("mlops.powerbi.export")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 
-# Cho phép import serving
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from serving.app.model_loader import CATALOG_METADATA, get_model_manager
-from serving.app.inventory_service import get_inventory_service
+DATASETS: dict[str, Sequence[str]] = {
+    "Dim_Dates.csv": (
+        "date_key", "full_date", "day_of_week", "day_name", "month", "month_name",
+        "quarter", "year", "is_weekend", "is_mega_sale",
+    ),
+    "Dim_Products.csv": (
+        "product_key", "sku", "product_name", "category", "base_demand", "sigma", "matrix_segment",
+    ),
+    "Dim_Geography.csv": (
+        "geo_key", "state", "region", "total_revenue", "total_units", "total_orders",
+    ),
+    "Fact_Orders_Summary.csv": (
+        "date_key", "order_date", "platform", "total_orders", "units_sold",
+        "gross_revenue", "discounts", "net_revenue", "aov",
+    ),
+    "Forecast_vs_Actual.csv": (
+        "date_key", "product_key", "date", "sku", "product_name", "category", "matrix_segment",
+        "actual_demand", "forecast_demand", "lower_bound", "upper_bound", "absolute_error",
+        "squared_error", "model_name", "model_version", "model_source", "forecast_generated_at",
+    ),
+    "Inventory_Health_Alerts.csv": (
+        "date_key", "product_key", "sku", "product_name", "category", "matrix_segment",
+        "current_stock", "avg_daily_demand", "safety_stock", "reorder_point", "needs_reorder",
+        "alert_level", "days_until_stockout", "recommended_reorder_qty",
+    ),
+}
+
+
+def _database_url() -> str:
+    return (
+        f"postgresql://{os.getenv('POSTGRES_USER', 'ecom')}:{os.getenv('POSTGRES_PASSWORD', 'ecom_password')}"
+        f"@{os.getenv('POSTGRES_HOST', 'localhost')}:{os.getenv('POSTGRES_PORT', '5432')}"
+        f"/{os.getenv('POSTGRES_DB', 'ecom_warehouse')}"
+    )
+
+
+def _install_views(conn: Any) -> None:
+    sql_path = os.path.join(os.path.dirname(__file__), "views_for_powerbi.sql")
+    with open(sql_path, "r", encoding="utf-8") as sql_file:
+        script = sql_file.read()
+    # The view file contains only standalone CREATE OR REPLACE VIEW statements.
+    # Execute each separately so this also works with SQLAlchemy 2.x drivers.
+    for statement in script.split(";"):
+        if statement.strip():
+            conn.exec_driver_sql(statement)
+
+
+def _query(conn: Any, sql: str) -> list[dict[str, Any]]:
+    from sqlalchemy import text
+
+    return [dict(row) for row in conn.execute(text(sql)).mappings().all()]
+
+
+def _write_csv(path: str, columns: Sequence[str], rows: Iterable[dict[str, Any]]) -> int:
+    count = 0
+    with open(path, "w", newline="", encoding="utf-8-sig") as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=columns, extrasaction="ignore")
+        writer.writeheader()
+        for row in rows:
+            writer.writerow(row)
+            count += 1
+    return count
 
 
 def export_powerbi_data(output_dir: str | None = None) -> str:
-    out_dir = output_dir or os.path.join(os.path.dirname(__file__), "data")
-    out_dir = os.path.abspath(out_dir)
+    """Refresh the Power BI CSV data marts from PostgreSQL warehouse facts."""
+    try:
+        from dotenv import load_dotenv
+        from sqlalchemy import create_engine
+    except ImportError as exc:
+        raise RuntimeError("Cần cài dependencies của warehouse/serving để xuất dữ liệu Power BI.") from exc
+
+    load_dotenv()
+    out_dir = os.path.abspath(output_dir or os.path.join(os.path.dirname(__file__), "data"))
     os.makedirs(out_dir, exist_ok=True)
+    engine = create_engine(_database_url(), pool_pre_ping=True, connect_args={"connect_timeout": 3})
 
-    logger.info(f"Đang xuất khẩu bộ dữ liệu Kimball Star Schema vào thư mục: {out_dir}")
+    queries = {
+        "Dim_Dates.csv": """
+            SELECT date_key, full_date, day_of_week, day_name, month, month_name,
+                   quarter, year, is_weekend, is_mega_sale
+            FROM Dim_Dates
+            ORDER BY full_date
+        """,
+        "Dim_Products.csv": """
+            SELECT p.product_key, p.sku, p.product_name, p.category,
+                   COALESCE(m.avg_daily_demand, 0) AS base_demand,
+                   COALESCE(m.std_daily_demand, 0) AS sigma,
+                   COALESCE(m.matrix_segment, 'NA') AS matrix_segment
+            FROM Dim_Products p
+            LEFT JOIN vw_powerbi_abc_xyz_matrix m ON m.sku = p.sku
+            ORDER BY p.product_key
+        """,
+        "Dim_Geography.csv": """
+            SELECT g.geo_key, g.state, g.region,
+                   COALESCE(SUM(f.buyer_total_amount), 0) AS total_revenue,
+                   COALESCE(SUM(f.quantity), 0) AS total_units,
+                   COUNT(f.order_fact_id) AS total_orders
+            FROM Dim_Geography g
+            LEFT JOIN Fact_Orders f
+                   ON f.geo_key = g.geo_key AND f.is_cancelled = FALSE
+            GROUP BY g.geo_key, g.state, g.region
+            HAVING COUNT(f.order_fact_id) > 0
+            ORDER BY total_revenue DESC
+        """,
+        "Fact_Orders_Summary.csv": """
+            SELECT d.date_key, d.full_date AS order_date, s.platform,
+                   COUNT(f.order_fact_id) AS total_orders,
+                   SUM(f.quantity) AS units_sold,
+                   SUM(COALESCE(f.subtotal, f.quantity * f.original_price)) AS gross_revenue,
+                   SUM(COALESCE(f.seller_discount, 0) + COALESCE(f.platform_discount, 0)) AS discounts,
+                   SUM(f.buyer_total_amount) AS net_revenue,
+                   AVG(f.buyer_total_amount) AS aov
+            FROM Fact_Orders f
+            JOIN Dim_Dates d ON d.date_key = f.date_key
+            JOIN Dim_Shops s ON s.shop_key = f.shop_key
+            WHERE f.is_cancelled = FALSE
+            GROUP BY d.date_key, d.full_date, s.platform
+            ORDER BY d.full_date, s.platform
+        """,
+        "Forecast_vs_Actual.csv": """
+            SELECT date_key, product_key, date, sku, product_name, category, matrix_segment,
+                   actual_demand, forecast_demand, lower_bound, upper_bound,
+                   absolute_error, squared_error, model_name, model_version,
+                   model_source, forecast_generated_at
+            FROM vw_powerbi_forecast_vs_actual
+            ORDER BY date, sku
+        """,
+        "Inventory_Health_Alerts.csv": """
+            SELECT date_key, product_key, sku, product_name, category, matrix_segment,
+                   current_stock, avg_daily_demand, safety_stock, reorder_point,
+                   needs_reorder, alert_level, days_until_stockout, recommended_reorder_qty
+            FROM vw_powerbi_inventory_health
+            ORDER BY CASE alert_level WHEN 'CRITICAL' THEN 1 WHEN 'WARNING' THEN 2 ELSE 3 END,
+                     days_until_stockout
+        """,
+    }
 
-    # Mapping SKU sang integer Surrogate Key (Kimball Best Practice)
-    sku_to_key: dict[str, int] = {}
-    for idx, sku in enumerate(CATALOG_METADATA.keys(), start=1):
-        sku_to_key[sku] = idx
+    try:
+        with engine.begin() as conn:
+            _install_views(conn)
+            datasets = {name: _query(conn, sql) for name, sql in queries.items()}
+    except Exception as exc:
+        raise RuntimeError(
+            "Không thể xuất Power BI từ Data Warehouse. Hãy khởi động PostgreSQL, chạy "
+            "`python scripts/init_warehouse.py`, nạp dữ liệu ETL/đơn hàng và kiểm tra "
+            "Fact_Forecast_Predictions đã được tạo. Không có dữ liệu mô phỏng thay thế."
+        ) from exc
+    finally:
+        engine.dispose()
 
-    start_dt = date(2026, 8, 1)
-    end_dt = date(2026, 9, 24)
+    if not datasets["Fact_Orders_Summary.csv"]:
+        raise RuntimeError(
+            "Data Warehouse chưa có đơn hàng hợp lệ trong Fact_Orders; chưa thể tạo dashboard thực."
+        )
 
-    # 1. Dim_Dates.csv (Conformed Date Dimension - Chapter 3)
-    dates_file = os.path.join(out_dir, "Dim_Dates.csv")
-    with open(dates_file, "w", newline="", encoding="utf-8-sig") as f:
-        writer = csv.writer(f)
-        writer.writerow([
-            "date_key", "full_date", "day_of_week", "day_name",
-            "month", "month_name", "quarter", "year",
-            "is_weekend", "is_mega_sale"
-        ])
-        curr = date(2026, 7, 1)
-        max_dt = date(2026, 10, 31)
-        while curr <= max_dt:
-            date_key = curr.year * 10000 + curr.month * 100 + curr.day
-            dow = curr.weekday()
-            day_name = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ Nhật"][dow]
-            month_name = f"Tháng {curr.month}"
-            quarter = f"Q{(curr.month - 1) // 3 + 1}"
-            is_weekend = dow in (5, 6)
-            is_mega_sale = (curr.day == curr.month)
-            writer.writerow([
-                date_key, curr.strftime("%Y-%m-%d"), dow, day_name,
-                curr.month, month_name, quarter, curr.year,
-                is_weekend, is_mega_sale
-            ])
-            curr += timedelta(days=1)
-    logger.info(f"✓ Đã xuất {dates_file}")
+    logger.info("Đang ghi dữ liệu Power BI lấy từ PostgreSQL vào %s", out_dir)
+    for filename, rows in datasets.items():
+        count = _write_csv(os.path.join(out_dir, filename), DATASETS[filename], rows)
+        logger.info("Đã xuất %s (%d dòng)", filename, count)
 
-    # 2. Dim_Products.csv (Product Dimension - Chapter 3)
-    products_file = os.path.join(out_dir, "Dim_Products.csv")
-    with open(products_file, "w", newline="", encoding="utf-8-sig") as f:
-        writer = csv.writer(f)
-        writer.writerow(["product_key", "sku", "product_name", "category", "base_demand", "sigma", "matrix_segment"])
-        for sku, meta in CATALOG_METADATA.items():
-            writer.writerow([
-                sku_to_key[sku], sku, meta["name"], meta["category"],
-                meta["base_demand"], meta["sigma"], meta["segment"]
-            ])
-    logger.info(f"✓ Đã xuất {products_file}")
-
-    # 3. Dim_Geography.csv (Geography Dimension - Chapter 3)
-    geo_file = os.path.join(out_dir, "Dim_Geography.csv")
-    provinces = [
-        (1, "TP.HCM", "Nam", 450000000),
-        (2, "Hà Nội", "Bắc", 380000000),
-        (3, "Đà Nẵng", "Trung", 120000000),
-        (4, "Bình Dương", "Nam", 95000000),
-        (5, "Đồng Nai", "Nam", 85000000),
-        (6, "Hải Phòng", "Bắc", 75000000),
-        (7, "Cần Thơ", "Nam", 65000000),
-        (8, "Khánh Hoà", "Trung", 45000000),
-        (9, "Nghệ An", "Bắc", 40000000),
-        (10, "Lâm Đồng", "Trung", 35000000),
-    ]
-    with open(geo_file, "w", newline="", encoding="utf-8-sig") as f:
-        writer = csv.writer(f)
-        writer.writerow(["geo_key", "state", "region", "historical_gmp_vnd"])
-        for p in provinces:
-            writer.writerow(p)
-    logger.info(f"✓ Đã xuất {geo_file}")
-
-    # 4. Inventory_Health_Alerts.csv (Periodic Snapshot Fact - Chapter 4)
-    inv_service = get_inventory_service()
-    alerts_res = inv_service.evaluate_all()
-    snapshot_date_key = end_dt.year * 10000 + end_dt.month * 100 + end_dt.day
-
-    inv_file = os.path.join(out_dir, "Inventory_Health_Alerts.csv")
-    with open(inv_file, "w", newline="", encoding="utf-8-sig") as f:
-        writer = csv.writer(f)
-        writer.writerow([
-            "date_key", "product_key", "sku", "product_name", "category", "matrix_segment",
-            "current_stock", "avg_daily_demand", "safety_stock", "reorder_point",
-            "needs_reorder", "alert_level", "days_until_stockout", "recommended_reorder_qty"
-        ])
-        for a in alerts_res.alerts:
-            p_key = sku_to_key.get(a.sku, 0)
-            writer.writerow([
-                snapshot_date_key, p_key, a.sku, a.product_name, a.category, a.matrix_segment,
-                a.current_stock, a.avg_daily_demand, a.safety_stock, a.reorder_point,
-                a.needs_reorder, a.alert_level, a.days_until_stockout, a.recommended_reorder_qty
-            ])
-    logger.info(f"✓ Đã xuất {inv_file}")
-
-    # 5. Forecast_vs_Actual.csv (Consolidated Fact Table - Chapter 7)
-    manager = get_model_manager()
-    fva_file = os.path.join(out_dir, "Forecast_vs_Actual.csv")
-    random.seed(42)
-    with open(fva_file, "w", newline="", encoding="utf-8-sig") as f:
-        writer = csv.writer(f)
-        writer.writerow([
-            "date_key", "product_key", "date", "sku", "product_name", "category", "matrix_segment",
-            "actual_demand", "forecast_demand", "lower_bound", "upper_bound",
-            "absolute_error", "squared_error"
-        ])
-        curr = start_dt
-        while curr <= end_dt:
-            date_key = curr.year * 10000 + curr.month * 100 + curr.day
-            for sku, meta in CATALOG_METADATA.items():
-                p_key = sku_to_key[sku]
-                pred, lb, ub = manager.predict_daily(sku, curr, confidence_interval=True)
-                noise = random.gauss(0, meta["sigma"] * 0.8)
-                actual = max(0.0, round(pred + noise, 1))
-                abs_err = round(abs(actual - pred), 2)
-                sq_err = round(abs_err ** 2, 2)
-
-                writer.writerow([
-                    date_key, p_key, curr.strftime("%Y-%m-%d"), sku, meta["name"], meta["category"], meta["segment"],
-                    actual, pred, lb, ub, abs_err, sq_err
-                ])
-            curr += timedelta(days=1)
-    logger.info(f"✓ Đã xuất {fva_file}")
-
-    # 6. Fact_Orders_Summary.csv (Sales Aggregate Fact - Chapter 3 & 15)
-    orders_file = os.path.join(out_dir, "Fact_Orders_Summary.csv")
-    with open(orders_file, "w", newline="", encoding="utf-8-sig") as f:
-        writer = csv.writer(f)
-        writer.writerow([
-            "date_key", "order_date", "platform", "total_orders", "units_sold",
-            "gross_revenue", "discounts", "net_revenue", "aov"
-        ])
-        curr = start_dt
-        while curr <= end_dt:
-            date_key = curr.year * 10000 + curr.month * 100 + curr.day
-            for platform, ratio, price_mult in [("shopee", 0.55, 1.0), ("tiktok", 0.45, 0.95)]:
-                dow = curr.weekday()
-                dow_mult = 1.3 if dow in (5, 6) else 1.0
-                orders = int(random.gauss(120, 15) * dow_mult * ratio)
-                units = int(orders * random.uniform(1.4, 1.8))
-                gross = round(units * 185_000 * price_mult)
-                disc = round(gross * random.uniform(0.08, 0.14))
-                net = gross - disc
-                aov = round(net / max(orders, 1))
-
-                writer.writerow([
-                    date_key, curr.strftime("%Y-%m-%d"), platform, orders, units,
-                    gross, disc, net, aov
-                ])
-            curr += timedelta(days=1)
-    logger.info(f"✓ Đã xuất {orders_file}")
-
-    logger.info("═" * 60)
-    logger.info("  HOÀN THÀNH XUẤT KHẨU TẬP DỮ LIỆU KIMBALL STAR SCHEMA")
-    logger.info(f"  Vị trí tệp: {out_dir}")
-    logger.info("═" * 60)
+    if not datasets["Forecast_vs_Actual.csv"]:
+        logger.warning(
+            "Chưa có forecast ML được lưu. Hãy gọi /predict/demand với model thật và lịch sử warehouse; "
+            "WAPE/accuracy sẽ có dữ liệu sau khi các ngày mục tiêu kết thúc."
+        )
     return out_dir
 
 

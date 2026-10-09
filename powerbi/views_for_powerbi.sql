@@ -112,6 +112,8 @@ LEFT JOIN sku_daily_stats s ON a.sku = s.sku;
 CREATE OR REPLACE VIEW vw_powerbi_inventory_health AS
 WITH latest_inv AS (
     SELECT
+        p.product_key,
+        i.date_key,
         p.sku,
         p.product_name,
         p.category,
@@ -154,7 +156,9 @@ SELECT
     END AS needs_reorder,
     ROUND(inv.current_stock / NULLIF(m.avg_daily_demand, 0), 1) AS days_until_stockout,
     GREATEST(0, (m.reorder_point + CEIL(m.avg_daily_demand * 7)) - inv.current_stock) AS recommended_reorder_qty,
-    inv.inventory_date AS last_audited_date
+    inv.inventory_date AS last_audited_date,
+    inv.date_key,
+    inv.product_key
 FROM latest_inv inv
 JOIN matrix_params m ON inv.sku = m.sku
 WHERE inv.rn = 1;
@@ -174,3 +178,74 @@ JOIN Dim_Geography g ON f.geo_key = g.geo_key
 JOIN Dim_Shops s ON f.shop_key = s.shop_key
 WHERE f.is_cancelled = FALSE
 GROUP BY g.state, g.region, s.platform;
+
+
+-- 5. Dự báo do API thực sự phát ra, ghép với đơn hàng thật sau khi ngày mục tiêu kết thúc.
+-- Dự báo heuristic/demo bị loại. Accuracy chỉ tính những ngày đã hoàn tất.
+CREATE OR REPLACE VIEW vw_powerbi_forecast_vs_actual AS
+WITH actual_daily AS (
+    SELECT
+        f.product_key,
+        f.create_time::date AS target_date,
+        SUM(f.quantity)::NUMERIC AS actual_demand
+    FROM Fact_Orders f
+    WHERE f.is_cancelled = FALSE
+    GROUP BY f.product_key, f.create_time::date
+), ranked_forecasts AS (
+    SELECT
+        fp.forecast_id,
+        fp.product_key,
+        fp.target_date,
+        fp.predicted_quantity,
+        fp.model_name,
+        fp.model_version,
+        fp.model_source,
+        fp.forecast_generated_at,
+        ROW_NUMBER() OVER (
+            PARTITION BY fp.product_key, fp.target_date
+            ORDER BY fp.forecast_generated_at DESC, fp.forecast_id DESC
+        ) AS forecast_rank
+    FROM Fact_Forecast_Predictions fp
+    WHERE fp.model_source IN ('mlflow_registry', 'local_joblib')
+      AND fp.history_source = 'warehouse'
+      -- Chỉ chấm forecast được phát trước ngày cần dự báo (giờ nghiệp vụ Việt Nam).
+      AND fp.target_date > (fp.forecast_generated_at AT TIME ZONE 'Asia/Ho_Chi_Minh')::date
+)
+SELECT
+    d.date_key,
+    p.product_key,
+    d.full_date AS date,
+    p.sku,
+    p.product_name,
+    p.category,
+    COALESCE(m.matrix_segment, 'NA') AS matrix_segment,
+    CASE
+        WHEN rf.target_date < (NOW() AT TIME ZONE 'Asia/Ho_Chi_Minh')::date
+        THEN COALESCE(a.actual_demand, 0)::NUMERIC
+        ELSE NULL::NUMERIC
+    END AS actual_demand,
+    rf.predicted_quantity AS forecast_demand,
+    -- API hiện trả khoảng xấp xỉ từ sigma lịch sử, chưa hiệu chuẩn thành prediction interval.
+    NULL::NUMERIC AS lower_bound,
+    NULL::NUMERIC AS upper_bound,
+    CASE
+        WHEN rf.target_date < (NOW() AT TIME ZONE 'Asia/Ho_Chi_Minh')::date
+        THEN ABS(COALESCE(a.actual_demand, 0) - rf.predicted_quantity)
+        ELSE NULL::NUMERIC
+    END AS absolute_error,
+    CASE
+        WHEN rf.target_date < (NOW() AT TIME ZONE 'Asia/Ho_Chi_Minh')::date
+        THEN POWER(COALESCE(a.actual_demand, 0) - rf.predicted_quantity, 2)
+        ELSE NULL::NUMERIC
+    END AS squared_error,
+    rf.model_name,
+    rf.model_version,
+    rf.model_source,
+    rf.forecast_generated_at
+FROM ranked_forecasts rf
+JOIN Dim_Products p ON p.product_key = rf.product_key
+JOIN Dim_Dates d ON d.full_date = rf.target_date
+LEFT JOIN actual_daily a
+       ON a.product_key = rf.product_key AND a.target_date = rf.target_date
+LEFT JOIN vw_powerbi_abc_xyz_matrix m ON m.sku = p.sku
+WHERE rf.forecast_rank = 1;

@@ -22,22 +22,25 @@ OK (skipped=15)
 
 ---
 
-## 2. Kiểm tra Dữ liệu Phẳng Power BI Desktop
+## 2. Làm mới Dữ liệu Power BI Desktop
 
-Xuất khẩu bộ dữ liệu phẳng mới nhất ra thư mục `powerbi/data/`:
+Khởi động PostgreSQL, áp dụng DDL mới (bao gồm bảng lưu forecast), nạp đơn hàng và chạy Model Serving:
+
+```bash
+docker compose up -d postgres
+python scripts/init_warehouse.py
+# Chạy ingestion/ETL và Model Serving trước khi xuất.
+```
+
+Gọi `/predict/demand` để ghi forecast ML được tạo từ lịch sử warehouse, sau đó xuất các bảng thật:
 
 ```bash
 python powerbi/export_powerbi_dataset.py
 ```
 
-Kiểm tra 5 tệp CSV đã được sinh đầy đủ tại `powerbi/data/`:
-- `Dim_Products.csv` (20 SKUs đầy đủ danh mục và phân khúc ABC/XYZ)
-- `Dim_Geography.csv` (10 tỉnh thành trọng điểm)
-- `Fact_Orders_Summary.csv` (Tổng hợp đơn hàng 60 ngày theo sàn)
-- `Inventory_Health_Alerts.csv` (Cảnh báo tồn kho CRITICAL / WARNING / NORMAL)
-- `Forecast_vs_Actual.csv` (Đối chiếu thực tế vs dự báo)
+Lệnh xuất đọc `Fact_Orders`, `Fact_Inventory_Daily` và `Fact_Forecast_Predictions`; không sinh dữ liệu ngẫu nhiên. `Forecast_vs_Actual.csv` chỉ có accuracy sau khi ngày dự báo kết thúc và actual đã có trong kho. Khi chưa có model forecast đã lưu, bảng forecast có header nhưng chưa có dòng.
 
-Mở **Power BI Desktop**, nạp 5 tệp CSV trên hoặc kết nối trực tiếp vào PostgreSQL Views (`powerbi/views_for_powerbi.sql`).
+Mở **Power BI Desktop** và chọn **Refresh** để tải các CSV đã cập nhật hoặc kết nối trực tiếp vào PostgreSQL Views (`powerbi/views_for_powerbi.sql`).
 
 ---
 

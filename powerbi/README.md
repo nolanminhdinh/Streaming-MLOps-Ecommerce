@@ -17,10 +17,10 @@ powerbi/
 │   ├── Dim_Geography.csv         # Phân bổ địa lý 3 miền Bắc - Trung - Nam
 │   ├── Fact_Orders_Summary.csv   # Doanh thu & đơn hàng tổng hợp theo ngày và sàn
 │   ├── Inventory_Health_Alerts.csv # Tồn kho thực tế, Safety Stock, ROP, cấp độ cảnh báo
-│   └── Forecast_vs_Actual.csv    # Đối chiếu 60 ngày sản lượng thực tế vs dự báo
+│   └── Forecast_vs_Actual.csv    # Forecast ML đã lưu, ghép actual sau ngày mục tiêu
 ├── Report_PowerBI.pbix           # Tệp Báo cáo Power BI hoàn thiện
 ├── theme_pastel.json             # Theme màu Pastel chuẩn Microsoft JSON Schema
-├── views_for_powerbi.sql         # 4 SQL Views tối ưu hóa cho kết nối trực tiếp PostgreSQL
+├── views_for_powerbi.sql         # 5 SQL Views cho kết nối trực tiếp PostgreSQL
 ├── dax_measures.md               # Tập hợp đầy đủ các công thức tính toán DAX chuẩn
 ├── export_powerbi_dataset.py     # Script xuất khẩu tự động các tệp dữ liệu phẳng CSV
 └── README.md                     # Tài liệu hướng dẫn này
@@ -30,14 +30,25 @@ powerbi/
 
 ## 2 Phương thức Kết nối Dữ liệu vào Power BI Desktop
 
-### Cách 1: Nạp trực tiếp từ các tệp CSV (Khuyến nghị cho kiểm thử & chấm đồ án)
-1. Chạy script để cập nhật dữ liệu mới nhất:
+### Cách 1: Nạp CSV từ Data Warehouse
+1. Khởi động PostgreSQL, tạo/cập nhật schema và nạp dữ liệu ETL:
+   ```bash
+   docker compose up -d postgres
+   python scripts/init_warehouse.py
+   # Chạy ingestion/ETL và Model Serving như hướng dẫn vận hành.
+   ```
+2. Chạy API `/predict/demand` để các dự báo ML có lịch sử warehouse được ghi vào `Fact_Forecast_Predictions`.
+3. Xuất lại các bảng CSV:
    ```bash
    python powerbi/export_powerbi_dataset.py
    ```
-2. Khởi động **Power BI Desktop**.
-3. Chọn **Get Data** ➔ **Text/CSV** (hoặc **Folder**) ➔ Trỏ tới thư mục `powerbi/data/`.
-4. Nhấn **Load** để nạp toàn bộ các bảng vào Data Model.
+4. Trong Power BI Desktop, chọn **Refresh** để tải dữ liệu mới.
+
+Exporter đọc trực tiếp `Fact_Orders`, `Fact_Inventory_Daily` và forecast đã lưu trong PostgreSQL. Nếu kho không truy cập được hoặc chưa có đơn hợp lệ, lệnh dừng với thông báo lỗi; nó không tạo số liệu ngẫu nhiên. `Forecast_vs_Actual` chỉ có forecast ML từ `mlflow_registry`/`local_joblib`, dựa trên lịch sử warehouse. `actual_demand` chỉ được gán sau khi ngày mục tiêu kết thúc; các forecast chưa có actual sẽ không ảnh hưởng WAPE/Bias. Khi chưa có dự báo ML đã lưu, file chỉ có header và dashboard chưa hiển thị metric accuracy.
+
+“Actual” ở đây là giao dịch đã được ghi nhận trong warehouse. Nếu demo đang dùng `data_simulator`, accuracy là accuracy trên luồng mô phỏng đó; exporter không tự tạo actual bằng cách cộng nhiễu vào dự báo.
+
+Các CSV đã xuất từ phiên bản cũ không tự đổi khi cập nhật mã nguồn. Chỉ bấm **Refresh** sau khi lệnh export chạy thành công để tránh tiếp tục xem snapshot demo cũ.
 
 ### Cách 2: Kết nối trực tiếp vào PostgreSQL Star Schema
 1. Đảm bảo container PostgreSQL đang chạy (`docker compose up -d postgres`).
@@ -54,14 +65,14 @@ powerbi/
 
 ### Trang 1: Tổng quan Kinh doanh Đa kênh (Executive Overview)
 - **KPI Cards**: Tổng doanh thu (Net Revenue), Sản lượng bán (Units Sold), Tổng đơn hàng (Orders), Giá trị đơn trung bình (AOV).
-- **Donut Chart**: Tỷ trọng đóng góp doanh thu giữa **Shopee** (55%) và **TikTok Shop** (45%).
+- **Donut Chart**: Tỷ trọng doanh thu Shopee/TikTok tính từ các đơn hợp lệ trong warehouse.
 - **Area Chart**: Xu hướng tăng trưởng doanh thu theo ngày, làm nổi bật các đợt Flash Sale và Mega-sale ngày đôi.
 - **Bar Chart**: Top 10 sản phẩm đóng góp doanh thu lớn nhất chuỗi.
 
 ### Trang 2: Độ chính xác Dự báo Nhu cầu (Demand Forecasting & Accuracy)
-- **Line & Clustered Column Chart**: So sánh trực tiếp sản lượng thực tế (**Actual Demand**) và sản lượng mô hình dự báo (**Forecast Demand**), kèm vùng bóng mờ biểu thị khoảng tin cậy 95%.
-- **Gauge Chart**: Chỉ số độ chính xác dự báo (**Forecast Accuracy %** = $1 - \text{WAPE}$).
-- **Table / Matrix**: Phân rã sai số WAPE và Bias theo từng phân khúc sản phẩm (AX/AY sai số thấp $\approx 19.8\%$, AZ/BZ $\approx 28.2\%$).
+- **Line & Clustered Column Chart**: So sánh nhu cầu thực tế đã phát sinh với forecast ML đã lưu; forecast tương lai hiển thị riêng cho đến khi có actual.
+- **Gauge Chart**: Chỉ số độ chính xác dự báo (**Forecast Accuracy %** = $1 - \text{WAPE}$); để trống khi chưa có actual đã hoàn tất.
+- **Table / Matrix**: WAPE và Bias tính từ cặp forecast/actual đã hoàn tất, có thể phân rã theo phân khúc sản phẩm. Khoảng tin cậy chưa được hiệu chuẩn nên không dùng làm dải 95%.
 
 ### Trang 3: Quản trị Tồn kho & Cảnh báo Đặt hàng lại (Inventory Risk Matrix)
 - **Scatter Plot / Matrix Grid**: Trực quan hóa ma trận 9 ô ABC/XYZ (Trục X: Hệ số biến thiên CV, Trục Y: Doanh thu Pareto).

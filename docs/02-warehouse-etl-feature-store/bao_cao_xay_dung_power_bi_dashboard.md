@@ -87,7 +87,7 @@ Theo Ralph Kimball (*Chapter 3, trang 70–72*), quy trình thiết kế mô hì
 3. **Bước 3 - Xác định các chiều (Dimensions):**
    - Chiều thời gian lịch: `Dim_Dates` (ngày, thứ, tuần, tháng, quý, năm, sự kiện Mega-sale).
    - Chiều sản phẩm: `Dim_Products` (SKU, tên sản phẩm, danh mục, phân khúc ma trận ABC/XYZ).
-   - Chiều địa lý: `Dim_Geography` (tỉnh/thành, miền Bắc - Trung - Nam, quy mô thị trường).
+   - Chiều địa lý: `Dim_Geography` (tỉnh/thành, miền Bắc - Trung - Nam), doanh thu và sản lượng tính từ đơn hàng trong kho.
 4. **Bước 4 - Xác định các số đo (Facts):**
    - Doanh thu thực nhận (`net_revenue`), sản lượng bán (`units_sold`), đơn hàng (`total_orders`), giá trị đơn trung bình (`aov`).
    - Nhu cầu thực tế (`actual_demand`), dự báo (`forecast_demand`), sai số tuyệt đối (`absolute_error`).
@@ -185,7 +185,10 @@ Bảng danh mục sản phẩm chuẩn hóa:
 - **Khóa ngoại:** 
   - `date` $\rightarrow$ `Dim_Dates[Date]`
   - `sku` $\rightarrow$ `Dim_Products[sku]`
-- **Các số đo:** `actual_demand`, `forecast_demand`, `lower_bound`, `upper_bound`, `absolute_error`, `squared_error`.
+- **Nguồn forecast:** `Fact_Forecast_Predictions`, được Model Serving ghi lại khi chạy mô hình đã nạp với lịch sử warehouse; heuristic/demo không được đưa vào.
+- **Nguồn actual:** tổng `quantity` từ `Fact_Orders` không hủy, chỉ gán sau khi ngày mục tiêu kết thúc. Ngày chưa kết thúc giữ `actual_demand` rỗng và bị loại khỏi WAPE/Bias.
+- **Các số đo/metadata:** `actual_demand`, `forecast_demand`, `absolute_error`, `squared_error`, `model_name`, `model_version`, `model_source`, `forecast_generated_at`.
+- `lower_bound` và `upper_bound` để rỗng vì cận API hiện tại chưa được hiệu chuẩn thành prediction interval 95%.
 
 ---
 
@@ -197,7 +200,7 @@ Bảng danh mục sản phẩm chuẩn hóa:
 ---
 
 ### 3.6. Bảng Phân bổ Không gian Địa lý Dim_Geography
-- Chứa thông tin 10 tỉnh thành kinh tế trọng điểm của 3 miền: `state`, `region`, `historical_gmp_vnd` (doanh số lịch sử vùng). Phục vụ vẽ bản đồ nhiệt và biểu đồ tỷ trọng địa lý.
+- Chỉ xuất các địa bàn xuất hiện trong đơn hàng hợp lệ; `total_revenue`, `total_units`, `total_orders` được tổng hợp trực tiếp từ `Fact_Orders`. Không dùng chỉ số quy mô kinh tế giả lập.
 
 ---
 
@@ -262,22 +265,43 @@ Các measures được phân cấp vào **3 Display Folders** tương ứng vớ
 11. **Tổng Sai số Tuyệt đối (Absolute Error):**
     $$\text{Forecast Absolute Error} = \sum |\text{Actual} - \text{Forecast}|$$
     ```dax
-    Forecast Absolute Error = SUM(Forecast_vs_Actual[absolute_error])
+    Forecast Absolute Error =
+    SUMX(
+        FILTER(Forecast_vs_Actual, NOT ISBLANK(Forecast_vs_Actual[actual_demand])),
+        Forecast_vs_Actual[absolute_error]
+    )
     ```
 12. **Sai số Tuyệt đối Trọng số (WAPE %):**
     $$\text{WAPE} = \frac{\sum |\text{Actual}_i - \text{Forecast}_i|}{\sum \text{Actual}_i}$$
     ```dax
-    WAPE % = DIVIDE([Forecast Absolute Error], [Actual Demand], 0)
+    WAPE % = DIVIDE(
+        [Forecast Absolute Error],
+        SUMX(
+            FILTER(Forecast_vs_Actual, NOT ISBLANK(Forecast_vs_Actual[actual_demand])),
+            Forecast_vs_Actual[actual_demand]
+        )
+    )
     ```
 13. **Độ chính xác Dự báo (Forecast Accuracy %):**
     $$\text{Forecast Accuracy} = \max(0, 1 - \text{WAPE})$$
     ```dax
-    Forecast Accuracy % = MAX(0, 1 - [WAPE %])
+    Forecast Accuracy % =
+    VAR CurrentWAPE = [WAPE %]
+    RETURN IF(ISBLANK(CurrentWAPE), BLANK(), MAX(0, 1 - CurrentWAPE))
     ```
 14. **Độ lệch Hệ thống (Forecast Bias %):**
     $$\text{Forecast Bias} = \frac{\sum (\text{Forecast}_i - \text{Actual}_i)}{\sum \text{Actual}_i}$$
     ```dax
-    Forecast Bias % = DIVIDE([Forecast Demand] - [Actual Demand], [Actual Demand], 0)
+    Forecast Bias % = DIVIDE(
+        SUMX(
+            FILTER(Forecast_vs_Actual, NOT ISBLANK(Forecast_vs_Actual[actual_demand])),
+            Forecast_vs_Actual[forecast_demand] - Forecast_vs_Actual[actual_demand]
+        ),
+        SUMX(
+            FILTER(Forecast_vs_Actual, NOT ISBLANK(Forecast_vs_Actual[actual_demand])),
+            Forecast_vs_Actual[actual_demand]
+        )
+    )
     ```
 
 ---
@@ -313,13 +337,13 @@ Các measures được phân cấp vào **3 Display Folders** tương ứng vớ
 
 - **Trang 1: Tổng quan Điều hành Đa kênh (Executive Overview):**
   - Hàng đầu: 4 thẻ KPI Cards (`Total Revenue`, `Total Orders`, `Total Units Sold`, `AOV`).
-  - Bên trái: Biểu đồ Donut Chart phân bổ thị phần Shopee (`55%`) vs TikTok Shop (`45%`).
-  - Ở giữa: Biểu đồ miền (Area Chart) biểu diễn xu hướng doanh thu 60 ngày theo trục ngày của `Dim_Dates`, đánh dấu các đỉnh Flash Sale và ngày Mega-sale.
+  - Bên trái: Biểu đồ Donut Chart tính tỷ trọng Shopee/TikTok từ các đơn hợp lệ trong warehouse.
+  - Ở giữa: Biểu đồ miền biểu diễn doanh thu theo ngày có dữ liệu thực trong `Fact_Orders`, đánh dấu các ngày Mega-sale.
   - Bên phải: Biểu đồ thanh ngang (Bar Chart) Top 10 SKU mang lại doanh thu cao nhất chuỗi.
 
 - **Trang 2: Độ chính xác Dự báo Nhu cầu (Demand Forecasting & MLOps Accuracy):**
-  - Biểu đồ kết hợp cột và đường (Line & Clustered Column Chart): Trục X là `Dim_Dates[Date]`, đường màu xanh `#768CCE` biểu thị `Actual Demand`, đường nét đứt biểu thị `Forecast Demand`, dải bóng mờ biểu thị khoảng tin cậy 95% (`lower_bound` – `upper_bound`).
-  - Đồng hồ đo (Gauge Chart): Hiển thị chỉ số độ chính xác `Forecast Accuracy %` (đạt xấp xỉ $80.2\%$, tương ứng $WAPE \approx 19.8\%$).
+  - Biểu đồ kết hợp cột và đường (Line & Clustered Column Chart): so sánh nhu cầu actual đã phát sinh với các forecast ML đã lưu; forecast tương lai chưa có actual không tham gia tính accuracy.
+  - Đồng hồ đo (Gauge Chart): Hiển thị `Forecast Accuracy % = 1 - WAPE` trên các cặp forecast/actual đã hoàn tất; để trống khi chưa có actual và thay đổi theo dữ liệu warehouse.
   - Bảng phân tích sai số (Matrix): Phân rã sai số WAPE và Bias theo từng phân khúc ma trận ABC/XYZ.
 
 - **Trang 3: Bản đồ Rủi ro Tồn kho & Cảnh báo Nhập hàng (Inventory Risk Matrix):**

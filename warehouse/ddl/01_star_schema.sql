@@ -149,6 +149,24 @@ CREATE TABLE IF NOT EXISTS Fact_Inventory_Daily (
     loaded_at          TIMESTAMP DEFAULT NOW()
 );
 
+-- Fact_Forecast_Predictions: lưu dự báo thật đã được Model Serving phát ra.
+-- Fact này cho phép đối chiếu dự báo với đơn hàng thực tế sau khi ngày mục tiêu kết thúc.
+CREATE TABLE IF NOT EXISTS Fact_Forecast_Predictions (
+    forecast_id          BIGSERIAL PRIMARY KEY,
+    product_key          INTEGER NOT NULL REFERENCES Dim_Products(product_key),
+    target_date          DATE NOT NULL,
+    predicted_quantity   NUMERIC(14, 3) NOT NULL CHECK (predicted_quantity >= 0),
+    model_name           VARCHAR(255) NOT NULL,
+    model_version        VARCHAR(100) NOT NULL,
+    model_source         VARCHAR(50) NOT NULL,
+    history_source       VARCHAR(50) NOT NULL,
+    history_end_date     DATE,
+    forecast_generated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_fact_forecasts_issue UNIQUE (
+        product_key, target_date, model_version, history_end_date
+    )
+);
+
 
 -- ========== INDEXES ==========
 
@@ -159,6 +177,8 @@ CREATE INDEX IF NOT EXISTS idx_fact_orders_platform ON Fact_Orders(platform);
 CREATE INDEX IF NOT EXISTS idx_fact_orders_status ON Fact_Orders(order_status);
 CREATE INDEX IF NOT EXISTS idx_fact_orders_create ON Fact_Orders(create_time);
 CREATE INDEX IF NOT EXISTS idx_fact_inventory_date ON Fact_Inventory_Daily(date_key);
+CREATE INDEX IF NOT EXISTS idx_fact_forecasts_target ON Fact_Forecast_Predictions(product_key, target_date);
+CREATE INDEX IF NOT EXISTS idx_fact_forecasts_generated ON Fact_Forecast_Predictions(forecast_generated_at);
 -- Mỗi SKU chỉ có 1 ảnh chụp tồn kho / ngày (kho trung tâm) → consumer inventory.logs
 -- upsert theo khóa này, bản ghi mới nhất trong ngày ghi đè bản ghi cũ.
 CREATE UNIQUE INDEX IF NOT EXISTS uq_fact_inventory_product_date

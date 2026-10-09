@@ -154,10 +154,11 @@ DIVIDE([Current Stock], [Avg Daily Demand], 0)
 
 ### 3.1. Sản lượng Thực tế vs Dự báo (Actual vs Forecast)
 ```dax
-Actual Demand = [Total Units Sold]
+Actual Demand =
+SUM(Forecast_vs_Actual[actual_demand])
 
 Forecast Demand = 
-SUM(Fact_Forecast[predicted_quantity])
+SUM(Forecast_vs_Actual[forecast_demand])
 ```
 
 ### 3.2. Sai số Tuyệt đối Trọng số (Weighted Absolute Percentage Error - WAPE)
@@ -165,24 +166,55 @@ Chỉ số tiêu chuẩn bán lẻ tránh chia cho 0:
 ```dax
 Forecast Absolute Error = 
 SUMX(
-    SUMMARIZE(Fact_Orders, Dim_Products[sku], Dim_Dates[full_date]),
-    ABS([Actual Demand] - [Forecast Demand])
+    FILTER(
+        Forecast_vs_Actual,
+        NOT ISBLANK(Forecast_vs_Actual[actual_demand])
+    ),
+    Forecast_vs_Actual[absolute_error]
 )
 
 WAPE % = 
-DIVIDE([Forecast Absolute Error], [Actual Demand], 0)
+DIVIDE(
+    [Forecast Absolute Error],
+    SUMX(
+        FILTER(
+            Forecast_vs_Actual,
+            NOT ISBLANK(Forecast_vs_Actual[actual_demand])
+        ),
+        Forecast_vs_Actual[actual_demand]
+    )
+)
 ```
 
 ### 3.3. Độ chính xác Dự báo (Forecast Accuracy %)
 ```dax
 Forecast Accuracy % = 
-MAX(0, 1 - [WAPE %])
+VAR CurrentWAPE = [WAPE %]
+RETURN
+    IF(ISBLANK(CurrentWAPE), BLANK(), MAX(0, 1 - CurrentWAPE))
 ```
 
 ### 3.4. Độ lệch Hệ thống (Forecast Bias %)
 ```dax
 Forecast Bias % = 
-DIVIDE([Forecast Demand] - [Actual Demand], [Actual Demand], 0)
+DIVIDE(
+    SUMX(
+        FILTER(
+            Forecast_vs_Actual,
+            NOT ISBLANK(Forecast_vs_Actual[actual_demand])
+        ),
+        Forecast_vs_Actual[forecast_demand] - Forecast_vs_Actual[actual_demand]
+    ),
+    SUMX(
+        FILTER(
+            Forecast_vs_Actual,
+            NOT ISBLANK(Forecast_vs_Actual[actual_demand])
+        ),
+        Forecast_vs_Actual[actual_demand]
+    )
+)
 ```
 - $\text{Bias} > 0$: Mô hình có xu hướng dự báo thừa (Over-forecasting) $\rightarrow$ Nguy cơ ứ đọng vốn.
 - $\text{Bias} < 0$: Mô hình dự báo thiếu (Under-forecasting) $\rightarrow$ Nguy cơ thiếu hụt hàng.
+
+> Các measure WAPE/Bias chỉ tính những dòng có `actual_demand`; dự báo tương lai chưa có nhãn thực tế sẽ không làm sai metric. `Forecast_vs_Actual` chỉ chứa dự báo ML được API ghi lại từ lịch sử warehouse; không dùng dòng heuristic/demo.

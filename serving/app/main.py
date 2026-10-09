@@ -317,6 +317,23 @@ def _predict_one(request: DemandPredictRequest) -> DemandPredictResponse:
     forecast_items = result["items"]
     total_qty = round(sum(item["predicted_quantity"] for item in forecast_items), 1)
 
+    # Chỉ lưu dự báo ML từ lịch sử warehouse. Heuristic/demo không được tính vào
+    # chỉ số accuracy của mô hình trên Power BI.
+    record_forecasts = getattr(get_repository(), "record_served_forecasts", None)
+    if callable(record_forecasts):
+        record_forecasts(
+            sku=request.sku,
+            forecasts=forecast_items,
+            model_name=str(
+                meta.get("champion_algorithm")
+                or meta.get("model_registry_name", "ECommerceDemandForecastModel")
+            ),
+            model_version=str(meta.get("version", "0")),
+            model_source=result["model_source"],
+            history_source=result["history_source"],
+            history_end=result.get("history_end"),
+        )
+
     return DemandPredictResponse(
         sku=request.sku,
         product_name=prod_info["name"],
