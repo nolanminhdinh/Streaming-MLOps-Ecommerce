@@ -60,6 +60,15 @@ Tập trung vào chu trình xử lý dữ liệu sau bước đệm và chuẩn 
   - Phương pháp luận thiết kế chiều: Conformed Dimensions (`Dim_Dates`, `Dim_Products`), Star Joins và cơ chế Drill-Across.
   - Phân hệ 19 công thức quản trị DAX nhóm trong 3 Display Folders của bảng `_Measures`.
   - Bộ Theme màu Pastel doanh nghiệp và chiến lược vận hành 2 chế độ (Flat CSV Data Marts vs DirectQuery PostgreSQL).
+- [`data_dictionary_data_model_specification.md`](02-warehouse-etl-feature-store/data_dictionary_data_model_specification.md): **Tài liệu Quản lý Dự án Báo cáo, Từ điển Dữ liệu & Đặc tả Mô hình Dữ liệu** (Project Management Specification, Data Dictionary & BI Model):
+  - Bảng 1: Nhật ký tinh chỉnh kỹ thuật, logic nghiệp vụ & truy vấn SQL (Task & SQL Change Log).
+  - Bảng 2: Từ điển dữ liệu toàn diện 7 bảng (`Dim_Dates`, `Dim_Products`, `Dim_Geography`, `Dim_Shops`, `Fact_Orders_Summary`, `Forecast_vs_Actual`, `Inventory_Health_Alerts`).
+  - Phần 3: Bản đồ nghiệp vụ phân tích báo cáo (Business Mindmap 3 trụ cột).
+  - Phần 4: Mô hình dữ liệu Chấm sao chuẩn hóa Ralph Kimball (Star Schema Data Model).
+  - Bảng 5: Danh mục 3 trang báo cáo Power BI (Executive Overview, Demand Forecasting, Inventory Risk Matrix).
+  - Bảng 6: Thư viện 19 công thức quản trị DAX chuẩn hóa (Measures & DAX Formulas).
+  - Bảng 7: Quy trình & Tiến độ triển khai 10 tuần (Project Timeline).
+  - *Tệp bảng tính Excel đính kèm đầy đủ 7 sheets*: [`data_management_specification.xlsx`](02-warehouse-etl-feature-store/data_management_specification.xlsx) và tệp CSV [`data_dictionary.csv`](02-warehouse-etl-feature-store/data_dictionary.csv).
 - **Các sơ đồ Vector (SVG)**:
   - [`diagram_6_etl_star_schema_pipeline.svg`](02-warehouse-etl-feature-store/diagram_6_etl_star_schema_pipeline.svg): Luồng xử lý chi tiết ETL/ELT từ MinIO vào PostgreSQL.
   - [`diagram_7_star_schema_er_model.svg`](02-warehouse-etl-feature-store/diagram_7_star_schema_er_model.svg): Sơ đồ quan hệ thực thể (ERD) Star Schema.

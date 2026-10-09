@@ -1,0 +1,118 @@
+﻿=== 1. TASK & SQL CHANGE LOG (NHẬT KÝ TINH CHỈNH LOGIC & SQL) ===
+Task,PIC,End date,Completed,SQL mới (highlight changes),SQL sửa lần 2,Logic cũ ban đầu,Giải thích thay đổi,Note,Chi tiết
+Chuẩn hóa Doanh thu Thực nhận sau Voucher & Trợ giá Sàn,Minh,2026-08-25,1,buyer_total_amount = f.subtotal - f.seller_discount - f.platform_discount - f.voucher_total,net_revenue = f.buyer_total_amount - f.commission_fee - f.service_fee,revenue = f.quantity * f.original_price,Giá niêm yết không phản ánh dòng tiền thực tế thu về do các đợt Flash Sale và trợ giá sàn Shopee / TikTok. Tính theo tiền người mua thực trả.,Tránh phóng đại doanh thu thật lên 15–25%; đồng bộ giữa Fact_Orders và báo cáo tài chính.,Phân rã mã voucher cấp sàn vs cấp shop để hạch toán đúng nguồn tài trợ.
+Xử lý Lưới Ngày Liên tục chống Missing Time-Series (Cartesian Grid),Minh,2026-08-28,1,"WITH grid AS (SELECT d.date_key, p.product_key FROM Dim_Dates d CROSS JOIN Dim_Products p) SELECT g.date_key, g.product_key, COALESCE(SUM(f.quantity), 0) AS units_sold FROM grid g LEFT JOIN Fact_Orders f ON g.date_key = f.date_key AND g.product_key = f.product_key GROUP BY g.date_key, g.product_key","Tối ưu hóa bảng tạm Feature Store bằng Index đa cột (product_key, date_key).","SELECT date_key, product_key, SUM(quantity) FROM Fact_Orders GROUP BY date_key, product_key","Nếu chỉ gom nhóm theo Fact_Orders, những ngày SKU không phát sinh đơn hàng sẽ bị khuyết dòng. Mô hình chuỗi thời gian đòi hỏi lưới ngày liên tục không đứt đoạn để tính đúng Lags và Rolling Stats.","Đảm bảo đủ 60 ngày liên tục cho toàn bộ 19 SKU (tổng cộng 1,140 điểm thời gian chuẩn).",Lấp số 0 cho nhu cầu bán (Zero-demand Imputation) tránh sai lệch thống kê.
+Chuẩn hóa Thước đo Sai số Dự báo WAPE thay thế MAPE,Minh,2026-09-02,1,"WAPE = DIVIDE(SUM(Forecast_vs_Actual[absolute_error]), SUM(Forecast_vs_Actual[actual_demand]), 0); Accuracy = MAX(0, 1 - [WAPE %])","Forecast_Bias = DIVIDE(SUM(forecast_demand) - SUM(actual_demand), SUM(actual_demand), 0)","MAPE = AVG(ABS(actual - pred) / NULLIF(actual, 0))","Trong bán lẻ TMĐT, nhiều ngày có sản lượng bán bằng 0 (Zero-demand), khiến MAPE bị chia cho 0 gây lỗi vô cùng hoặc phóng đại sai số ở ngày lượng bán nhỏ.","WAPE chia tổng lỗi cho tổng sản lượng thực tế, là chuẩn công nghiệp bán lẻ quốc tế.",Đạt WAPE ~ 19.8% trên tập kiểm thử đối chứng thực tế.
+Động hóa Định mức Tồn kho An toàn (Safety Stock) & Điểm Đặt Hàng Lại (ROP),Minh,2026-09-10,1,SS = CEILING(1.645 * p.sigma * SQRT(3)); ROP = CEILING(p.base_demand * 3 + SS),"Động hóa hệ số Z theo biến động nhu cầu: Mặt hàng ổn định (Z=1.645), Biến động cao (Z=1.96)",Cố định Safety Stock = 50 chiếc và ROP = 100 chiếc cho tất cả các SKU.,Cố định tĩnh gây đứt hàng với SKU bán chạy và ứ đọng vốn với SKU bán chậm. Động hóa theo độ lệch chuẩn nhu cầu sigma và Lead Time 3 ngày.,Giảm tỷ lệ đứt hàng (Stockout Rate) thực nghiệm từ 14.2% xuống dưới 1.5%.,Tự động cập nhật avg_daily_demand và sigma từ cửa sổ trượt 30 ngày.
+Thiết kế Mô hình Star Schema & Conformed Dimensions theo Chuẩn Ralph Kimball,Minh,2026-09-20,1,Fact_Orders_Summary[order_date] -> Dim_Dates[Date] (N:1) và Forecast_vs_Actual[sku] -> Dim_Products[sku] (N:1),Bổ sung Conformed Dimension Dim_Dates dạng DAX Table bao quát toàn bộ 60 ngày giao dịch và các cờ sự kiện.,"Nối trực tiếp các bảng Fact với nhau qua chuỗi sku tự nhiên, thiếu bảng chiều lịch Dim_Dates, mô hình bị cô lập.","Khắc phục triệt để Mistake 5 & 10 trong sách Ralph Kimball (The Data Warehouse Toolkit), hỗ trợ cơ chế Drill-Across đa bảng Fact qua các Conformed Dimensions.","Toàn bộ quan hệ 1:N, Single directional cross-filter; tối ưu hóa bộ nhớ VertiPaq.",Tạo bảng riêng _Measures chứa 19 chỉ tiêu được phân loại thành 3 Display Folders.
+Tối ưu Phân tầng Đệm Hứng Dữ liệu (3-Tier Ingestion Buffering),Minh,2026-08-22,1,Consumer ghi micro-batch định kỳ 30 giây hoặc 500 records sang MinIO theo định dạng nén Parquet phân vùng theo ngày.,Bổ sung cơ chế Dead Letter Queue (DLQ) cho các bản ghi lỗi format sàn.,Ingest trực tiếp từng bản ghi streaming đơn lẻ vào PostgreSQL Warehouse.,Ingest trực tiếp gây nghẽn kết nối và khóa bảng (Lock contention) khi có đợt Flash Sale lưu lượng đột biến.,Tách biệt tệp Raw Parquet trên Data Lake và tầng Star Schema của Warehouse.,Chịu tải thực nghiệm đạt 200 RPS với độ trễ P99 < 15ms.
+Pipeline Kỹ nghệ Đặc trưng ML chống Rò rỉ Dữ liệu (Zero Data Leakage),Minh,2026-09-15,1,"Lags (t-1, t-2, t-3, t-7, t-14) và Rolling Stats (mean, std 7d, 14d, 30d) áp dụng nghiêm ngặt shift(1) trước khi tính toán.","Thêm các đặc trưng ngoại sinh: Cờ ngày đôi Mega-sale, Cờ cuối tuần, Tỷ lệ giảm giá trung bình.","Tính rolling mean trực tiếp trên cửa sổ [t, t-6] bao gồm cả ngày dự báo t.","Bao gồm ngày t gây rò rỉ thông tin tương lai vào mô hình huấn luyện, làm mô hình đạt điểm giả tạo nhưng sai lệch lớn khi triển khai thực tế.",43 đặc trưng chuỗi thời gian được kiểm chuẩn 100% bằng unit tests.,Sử dụng Walk-Forward Validation Expanding Window phản ánh chu kỳ huấn luyện thực tế.
+""
+=== 2. DATA DICTIONARY (TỪ ĐIỂN DỮ LIỆU) ===
+STT,Nguồn,Tên bảng,Mô tả bảng,Tên cột,Mô tả cột,Loại dữ liệu,Ghi chú
+1,PostgreSQL Warehouse / DAX,Dim_Dates,Bảng chiều lịch thời gian chuẩn tắc (Conformed Date Dimension),date_key,Khóa ngày thông minh dạng số nguyên,Integer,Smart Surrogate Key (PK) YYYYMMDD
+,,,,Date,Ngày lịch thực tế đầy đủ,Date,Chuẩn ISO-8601 (YYYY-MM-DD)
+,,,,day_of_week,Thứ trong tuần theo số,Smallint,0 (Thứ Hai) -> 6 (Chủ Nhật)
+,,,,day_name,Tên thứ trong tuần,Text,Thứ Hai -> Chủ Nhật
+,,,,week_of_year,Tuần trong năm,Smallint,1 -> 53
+,,,,month,Số thứ tự tháng,Smallint,1 -> 12
+,,,,month_name,Tên tháng,Text,Tháng 1 -> Tháng 12
+,,,,month_year,Tháng Năm,Text,"2026-08, 2026-09"
+,,,,quarter,Quý kinh doanh,Text,"Q1, Q2, Q3, Q4"
+,,,,year,Năm lịch,Smallint,2025 -> 2027
+,,,,is_weekend,Cờ nhận diện cuối tuần,Boolean,TRUE nếu Thứ Bảy / Chủ Nhật
+,,,,is_mega_sale,Cờ ngày hội mua sắm Mega-sale,Boolean,"TRUE nếu ngày đôi 8/8, 9/9..."
+2,PostgreSQL Data Warehouse,Dim_Products,Bảng danh mục sản phẩm chuẩn hóa (Conformed Product Dimension),product_key,Khóa nhân tạo sản phẩm,Integer,Surrogate Key (PK)
+,,,,sku,Mã quản lý hàng hóa,Text,Natural Key (NK) ví dụ EL-001
+,,,,product_name,Tên đầy đủ của sản phẩm,Text,Nhãn hiển thị thương phẩm
+,,,,category,Ngành hàng phân loại,Text,"Electronics, Fashion, Home..."
+,,,,base_demand,Nhu cầu tiêu thụ cơ sở,Numeric,Sản lượng bán trung bình ngày
+,,,,sigma,Độ lệch chuẩn nhu cầu,Numeric,Đo lường mức độ biến động sức mua
+,,,,matrix_segment,Phân khúc ma trận 9 ô,Text,"AX, AY, AZ, BX, BY, BZ, CX, CY, CZ"
+3,PostgreSQL Data Warehouse,Dim_Geography,Bảng chiều địa lý giao hàng theo vùng miền,geo_key,Khóa nhân tạo địa lý,Integer,Surrogate Key (PK)
+,,,,state,Tỉnh / Thành phố,Text,"TP.HCM, Hà Nội, Đà Nẵng..."
+,,,,region,Khu vực địa lý,Text,"Bắc, Trung, Nam"
+,,,,historical_gmp_vnd,Dung lượng thị trường lịch sử,BigInt,Quy mô giao dịch địa phương (VND)
+4,PostgreSQL Data Warehouse,Dim_Shops,Bảng chiều gian hàng & sàn phân phối,shop_key,Khóa nhân tạo gian hàng,Integer,Surrogate Key (PK)
+,,,,shop_id,Mã định danh shop trên sàn,Text,Natural Key từ sàn
+,,,,shop_name,Tên gian hàng chính hãng,Text,Tên hiển thị gian hàng
+,,,,platform,Nền tảng sàn TMĐT,Text,"shopee, tiktok"
+5,Data Warehouse / CSV Mart,Fact_Orders_Summary,Bảng số đo bán hàng tổng hợp (Sales Aggregate Fact),date_key,Khóa ngoại ngày đơn hàng,Integer,Nối Dim_Dates[date_key]
+,,,,order_date,Ngày phát sinh đơn hàng,Date,Nối Dim_Dates[Date]
+,,,,platform,Sàn phân phối,Text,"shopee, tiktok"
+,,,,total_orders,Tổng số đơn hàng hợp lệ,BigInt,Số đo cộng gộp (Orders Count)
+,,,,units_sold,Tổng sản lượng bán,BigInt,Số đo cộng gộp (chiếc)
+,,,,gross_revenue,Doanh thu niêm yết gộp,BigInt,Số đo cộng gộp (VND)
+,,,,discounts,Tổng giá trị chiết khấu / voucher,BigInt,Số đo cộng gộp (VND)
+,,,,net_revenue,Doanh thu thực nhận,BigInt,Số đo cộng gộp (VND)
+,,,,aov,Giá trị đơn bình quân,BigInt,net_revenue / total_orders
+6,Model Serving / MLflow,Forecast_vs_Actual,Bảng đối chứng dự báo MLOps (Consolidated Fact),date_key,Khóa ngoại ngày đối chứng,Integer,Nối Dim_Dates[date_key]
+,,,,date,Ngày đối chứng,Date,Nối Dim_Dates[Date]
+,,,,product_key,Khóa ngoại sản phẩm,Integer,Nối Dim_Products[product_key]
+,,,,sku,Mã SKU sản phẩm,Text,Nối Dim_Products[sku]
+,,,,actual_demand,Sản lượng bán thực tế,Numeric,Số đo thực tế đối chứng
+,,,,forecast_demand,Sản lượng mô hình dự báo,Numeric,Dự báo từ Champion Model
+,,,,lower_bound,Cận dưới khoảng tin cậy 95%,Numeric,Giới hạn dưới suy luận thống kê
+,,,,upper_bound,Cận trên khoảng tin cậy 95%,Numeric,Giới hạn trên suy luận thống kê
+,,,,absolute_error,Sai số tuyệt đối,Numeric,abs(actual_demand - forecast_demand)
+,,,,squared_error,Bình phương sai số,Numeric,(absolute_error)^2
+7,Inventory Service / Kafka,Inventory_Health_Alerts,Bảng ảnh chụp tồn kho & cảnh báo (Snapshot Fact),date_key,Khóa ngoại ngày ảnh chụp,Integer,Nối Dim_Dates[date_key]
+,,,,product_key,Khóa ngoại sản phẩm,Integer,Nối Dim_Products[product_key]
+,,,,sku,Mã SKU sản phẩm,Text,Nối Dim_Products[sku]
+,,,,current_stock,Tồn kho thực tế hiện tại,BigInt,Số lượng tồn vật lý trong kho (chiếc)
+,,,,avg_daily_demand,Nhu cầu trung bình ngày,Numeric,Tốc độ tiêu thụ bình quân ngày
+,,,,safety_stock,Tồn kho an toàn định mức,BigInt,Ngưỡng đệm an toàn động (SS)
+,,,,reorder_point,Điểm đặt hàng lại,BigInt,Ngưỡng kích hoạt lệnh nhập (ROP)
+,,,,needs_reorder,Cờ yêu cầu đặt hàng lại,Boolean,TRUE nếu current_stock <= ROP
+,,,,alert_level,Cấp độ cảnh báo rủi ro,Text,"CRITICAL, WARNING, NORMAL"
+,,,,days_until_stockout,Số ngày trước khi cạn kho,Numeric,current_stock / avg_daily_demand
+,,,,recommended_reorder_qty,Lượng đề xuất đặt thêm,BigInt,Số lượng hàng cần nhập bổ sung
+""
+=== 3. REPORTS (DANH MỤC BÁO CÁO TRIỂN KHAI) ===
+STT,Tên Báo Cáo,Trang Báo Cáo,Mục Tiêu Phân Tích,Nội Dung Hiển Thị & Thành Phần Visuals,Ghi Chú & Tương Tác Kỹ Thuật
+1,Tổng quan Kinh doanh Đa kênh,Executive Overview,"Cung cấp góc nhìn điều hành 360 độ về quy mô doanh thu, tốc độ tăng trưởng đơn hàng và cơ cấu thị phần sàn TMĐT.","1/ KPI Cards: Total Revenue, Total Orders, Total Units Sold, Average Order Value (AOV). 2/ Donut Chart: Tỷ trọng doanh thu Shopee (55%) vs TikTok Shop (45%). 3/ Area Chart: Xu hướng tăng trưởng doanh thu 60 ngày theo trục Dim_Dates, làm nổi bật ngày Mega-sale và cuối tuần. 4/ Bar Chart: Top 10 SKU mang lại doanh thu lớn nhất chuỗi. 5/ Column Chart: Cơ cấu doanh số 3 miền Bắc - Trung - Nam từ Dim_Geography.","- Slicers: Chọn nhanh theo Tháng, Quý, và Cờ Mega-sale. - Tooltips: Hover vào điểm ngày hiển thị chi tiết số đơn hủy và tỷ lệ giảm giá. - Cross-filtering: Chọn sàn Shopee trên Donut Chart tự động lọc doanh số và Top SKU của riêng Shopee."
+2,Độ chính xác Dự báo Nhu cầu,Demand Forecasting & MLOps Accuracy,"Giám sát chất lượng dự đoán của mô hình Machine Learning Champion, phát hiện sớm suy giảm hiệu năng và Data Drift.","1/ Line & Clustered Column Chart: So sánh sản lượng bán thực tế (Actual Demand) và dự báo mô hình (Forecast Demand), kèm dải bóng mờ khoảng tin cậy 95%. 2/ Gauge Chart: Chỉ số độ chính xác toàn chuỗi Forecast Accuracy % (Mục tiêu >= 80%, tương ứng WAPE <= 20%). 3/ Bar Chart: Độ lệch hệ thống Forecast Bias % nhận diện xu hướng dự báo thừa hay thiếu. 4/ Matrix Table: Phân rã sai số chi tiết WAPE% theo nhóm sản phẩm.",- Slicers: Lọc theo Ngành hàng (Category) và Phân khúc ma trận. - Drill-through: Nhấp chuột phải vào một SKU để xem chi tiết chuỗi thời gian của riêng sản phẩm đó. - Conditional Formatting: Bôi đỏ cảnh báo khi WAPE của nhóm hàng vượt ngưỡng 30%.
+3,Quản trị Tồn kho & Cảnh báo Nhập hàng,Inventory Risk Matrix & Replenishment,"Kiểm soát rủi ro đứt hàng, giải phóng hàng tồn đọng và tự động hóa đề xuất đơn nhập hàng bổ sung cho nhà cung cấp.","1/ Scatter Plot: Phân bố 19 SKU trên hệ trục tọa độ (Trục X: Độ biến động CV, Trục Y: Doanh thu Pareto). 2/ Stat Status Cards: 3 thẻ đếm nhanh số lượng mặt hàng theo mã màu cảnh báo (CRITICAL, WARNING, NORMAL). 3/ Actionable Table: Danh sách sản phẩm cần nhập hàng gấp, hiển thị Tồn hiện tại, SS, ROP, Số ngày trước khi cạn kho và Lượng đề xuất đặt thêm. 4/ KPI Card: Tổng số lượng hàng đề xuất đặt thêm (Total Reorder Qty).","- Slicers: Lọc theo Cấp độ cảnh báo (alert_level: CRITICAL, WARNING, NORMAL). - Bookmarks: Chuyển đổi nhanh giữa chế độ xem Cảnh báo Khẩn cấp và Toàn bộ Danh mục. - Alert Highlighting: Bôi đỏ các SKU có days_until_stockout < 2 ngày để ưu tiên xử lý."
+""
+=== 4. MEASURES (DANH SÁCH CHỈ TIÊU & CÔNG THỨC DAX) ===
+STT,Tên Chỉ Tiêu,Tên Measure,Định nghĩa,Công thức,Hàm DAX
+1,Tổng Doanh thu Thực nhận,Total Revenue,Dòng tiền thực tế thu về sau khi trừ chiết khấu sàn và voucher,SUM(net_revenue),Total Revenue = SUM(Fact_Orders_Summary[net_revenue])
+2,Tổng Số Đơn hàng,Total Orders,Tổng số lượng đơn hàng hợp lệ đã thanh toán thành công,SUM(total_orders),Total Orders = SUM(Fact_Orders_Summary[total_orders])
+3,Tổng Sản lượng Bán,Total Units Sold,Tổng số lượng sản phẩm vật lý tiêu thụ qua các kênh,SUM(units_sold),Total Units Sold = SUM(Fact_Orders_Summary[units_sold])
+4,Giá trị Đơn hàng Trung bình,Average Order Value (AOV),Doanh thu bình quân trên một đơn hàng hợp lệ,Total Revenue / Total Orders,"Average Order Value (AOV) = DIVIDE([Total Revenue], [Total Orders], 0)"
+5,Doanh thu Sàn Shopee,Shopee Revenue,Doanh thu thực nhận phát sinh riêng từ sàn Shopee,"CALCULATE(Total Revenue, platform='shopee')","Shopee Revenue = CALCULATE([Total Revenue], Fact_Orders_Summary[platform] = ""shopee"")"
+6,Doanh thu Sàn TikTok Shop,TikTok Revenue,Doanh thu thực nhận phát sinh riêng từ sàn TikTok Shop,"CALCULATE(Total Revenue, platform='tiktok')","TikTok Revenue = CALCULATE([Total Revenue], Fact_Orders_Summary[platform] = ""tiktok"")"
+7,Tỷ trọng Doanh thu Shopee,Shopee Share %,Tỷ lệ phần trăm doanh thu Shopee trên tổng doanh thu,Shopee Revenue / Total Revenue,"Shopee Share % = DIVIDE([Shopee Revenue], [Total Revenue], 0)"
+8,Tỷ trọng Doanh thu TikTok Shop,TikTok Share %,Tỷ lệ phần trăm doanh thu TikTok Shop trên tổng doanh thu,TikTok Revenue / Total Revenue,"TikTok Share % = DIVIDE([TikTok Revenue], [Total Revenue], 0)"
+9,Sản lượng Bán Thực tế,Actual Demand,Tổng sản lượng bán thực tế đối chứng trong chu kỳ,SUM(actual_demand),Actual Demand = SUM(Forecast_vs_Actual[actual_demand])
+10,Sản lượng Mô hình Dự báo,Forecast Demand,Tổng sản lượng dự báo từ mô hình Champion AI,SUM(forecast_demand),Forecast Demand = SUM(Forecast_vs_Actual[forecast_demand])
+11,Tổng Sai số Tuyệt đối,Forecast Absolute Error,Tổng chênh lệch độ lệch tuyệt đối giữa thực tế và dự báo,SUM(abs(Actual - Forecast)),Forecast Absolute Error = SUM(Forecast_vs_Actual[absolute_error])
+12,Sai số Tuyệt đối Trọng số,WAPE %,"Thước đo sai số chuẩn ngành bán lẻ, chia tổng lỗi cho tổng lượng bán",Total Absolute Error / Total Actual,"WAPE % = DIVIDE([Forecast Absolute Error], [Actual Demand], 0)"
+13,Độ chính xác Dự báo,Forecast Accuracy %,Tỷ lệ dự báo chuẩn xác của hệ sinh thái MLOps,"MAX(0, 1 - WAPE)","Forecast Accuracy % = MAX(0, 1 - [WAPE %])"
+14,Độ lệch Hệ thống (Forecast Bias),Forecast Bias %,Nhận biết xu hướng dự báo thừa (>0) hay dự báo thiếu (<0),(Forecast - Actual) / Actual,"Forecast Bias % = DIVIDE([Forecast Demand] - [Actual Demand], [Actual Demand], 0)"
+15,Tổng Tồn kho Hiện tại,Total Current Stock,Tổng số lượng sản phẩm vật lý còn lại trong kho,SUM(current_stock),Total Current Stock = SUM(Inventory_Health_Alerts[current_stock])
+16,Số lượng SKU Báo động Đỏ,Critical SKU Count,Đếm số mặt hàng có nguy cơ đứt hàng khẩn cấp (tồn kho <= SS),COUNTROWS(Alert='CRITICAL'),"Critical SKU Count = CALCULATE(COUNTROWS(Inventory_Health_Alerts), Inventory_Health_Alerts[alert_level] = ""CRITICAL"")"
+17,Số lượng SKU Cảnh báo Vàng,Warning SKU Count,Đếm số mặt hàng đã chạm điểm đặt hàng lại (tồn kho <= ROP),COUNTROWS(Alert='WARNING'),"Warning SKU Count = CALCULATE(COUNTROWS(Inventory_Health_Alerts), Inventory_Health_Alerts[alert_level] = ""WARNING"")"
+18,Số lượng SKU Mức An toàn,Normal SKU Count,Đếm số mặt hàng có lượng tồn kho nằm trong ngưỡng an toàn,COUNTROWS(Alert='NORMAL'),"Normal SKU Count = CALCULATE(COUNTROWS(Inventory_Health_Alerts), Inventory_Health_Alerts[alert_level] = ""NORMAL"")"
+19,Tổng Số lượng Đề xuất Nhập thêm,Total Reorder Qty,Tổng sản lượng hàng hóa hệ thống khuyến nghị làm PO đặt thêm,SUM(recommended_reorder_qty),Total Reorder Qty = SUM(Inventory_Health_Alerts[recommended_reorder_qty])
+""
+=== 5. TIMELINE (QUY TRÌNH & TIẾN ĐỘ TRIỂN KHAI DỰ ÁN 10 TUẦN) ===
+Giai Đoạn,Đầu Mục Công Việc,Ngày Bắt Đầu,Ngày Kết Thúc,Kế hoạch,Triển khai,Kiểm thử (Test),Rà soát & Nghiệm thu,Trạng Thái
+I. KHỞI TẠO & KIỂM TRA NGHIỆP VỤ,1. Khảo sát nghiệp vụ bán hàng Shopee & TikTok Shop,2026-08-01,2026-08-07,✔,✔,,,Hoàn thành
+,2. Thiết kế kiến trúc tổng thể Streaming MLOps 6 phân tầng,2026-08-08,2026-08-14,✔,✔,,,Hoàn thành
+,"3. Xây dựng Data Simulator đa sàn (Shopee 84 cột, TikTok 71 cột)",2026-08-15,2026-08-21,,✔,✔,,Hoàn thành
+II. KẾT NỐI DỮ LIỆU & ETL WAREHOUSE,4. Thiết lập cụm 3 tầng đệm (Producer Buffer -> Kafka -> MinIO),2026-08-22,2026-08-28,,✔,✔,,Hoàn thành
+,5. Thiết kế DDL PostgreSQL Star Schema (01_star_schema.sql),2026-08-29,2026-09-04,✔,✔,✔,,Hoàn thành
+,6. Pipeline ETL nạp Fact_Orders & Fact_Inventory_Daily,2026-09-05,2026-09-11,,✔,✔,✔,Hoàn thành
+III. FEATURE STORE & MACHINE LEARNING,7. Kỹ nghệ đặc trưng chuỗi thời gian & Walk-Forward Validation,2026-09-12,2026-09-18,✔,✔,✔,,Hoàn thành
+,"8. Huấn luyện Baseline & Deep Learning GRU, tracking MLflow",2026-09-19,2026-09-25,,✔,✔,✔,Hoàn thành
+,9. Đóng gói Model Serving FastAPI & Tự động hóa Tồn kho ROP,2026-09-26,2026-10-02,,✔,✔,✔,Hoàn thành
+IV. XÂY DỰNG DATA MODEL & MEASURES,10. Xuất khẩu bộ dữ liệu CSV chuẩn hóa (export_powerbi_dataset.py),2026-10-03,2026-10-04,,✔,✔,,Hoàn thành
+,11. Xây dựng Conformed Dimension Dim_Dates & Chuẩn hóa Star Schema,2026-10-05,2026-10-06,✔,✔,✔,,Hoàn thành
+,12. Triển khai bảng _Measures và 19 công thức DAX trong 3 Folders,2026-10-06,2026-10-07,,✔,✔,,Hoàn thành
+V. TRIỂN KHAI BÁO CÁO POWER BI,13. Xây dựng Trang 1: Tổng quan Kinh doanh Đa kênh (Executive Overview),2026-10-07,2026-10-07,,✔,✔,,Hoàn thành
+,14. Xây dựng Trang 2: Độ chính xác Dự báo Nhu cầu (Demand Forecasting),2026-10-07,2026-10-08,,✔,✔,,Hoàn thành
+,15. Xây dựng Trang 3: Quản trị Tồn kho & Cảnh báo (Inventory Risk Matrix),2026-10-08,2026-10-08,,✔,✔,,Hoàn thành
+,16. Thiết kế bộ Theme màu Pastel chuẩn Microsoft JSON Schema,2026-10-08,2026-10-08,✔,✔,,,Hoàn thành
+VI. KIỂM THỬ TẢI & NGHIỆM THU CUỐI KỲ,17. Thực nghiệm kiểm thử tải Locust (10-200 RPS) & Soak Test 1h,2026-10-09,2026-10-09,,,✔,✔,Hoàn thành
+,"18. Nghiệm thu toàn diện hệ thống, biên soạn Slide & Kịch bản Bảo vệ",2026-10-09,2026-10-09,,,,✔,Hoàn thành
