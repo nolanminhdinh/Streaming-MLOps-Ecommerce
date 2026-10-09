@@ -17,6 +17,9 @@ RUN pip install --no-cache-dir "setuptools<81" "SQLAlchemy==2.0.31"
 
 EXPOSE 5000
 
+HEALTHCHECK --interval=10s --timeout=5s --retries=10 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:5000/health', timeout=3)" || exit 1
+
 # Khởi chạy MLflow Server với backend PostgreSQL và S3 artifact store
 CMD ["sh", "-c", "mlflow server \
     --backend-store-uri ${MLFLOW_BACKEND_STORE_URI:-postgresql://ecom:ecom_password@postgres:5432/ecom_warehouse} \

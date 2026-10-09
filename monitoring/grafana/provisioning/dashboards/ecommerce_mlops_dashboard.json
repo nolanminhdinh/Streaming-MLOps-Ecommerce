@@ -242,6 +242,61 @@
           "color": { "mode": "palette-classic" }
         }
       }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 19 },
+      "id": 103,
+      "title": "ĐỘ SẴN SÀNG, FALLBACK & ĐỘ TRỄ (RELIABILITY)",
+      "type": "row"
+    },
+    {
+      "id": 10,
+      "title": "Model Ready",
+      "type": "stat",
+      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 20 },
+      "targets": [
+        { "expr": "ecommerce_model_ready", "format": "time_series", "legendFormat": "Ready" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "options": { "0": { "text": "NOT READY", "color": "red" }, "1": { "text": "READY", "color": "green" } }, "type": "value" }
+          ],
+          "unit": "short"
+        }
+      },
+      "options": { "reduceOptions": { "values": false, "calcs": ["lastNotNull"] }, "textMode": "value" }
+    },
+    {
+      "id": 11,
+      "title": "Heuristic Fallback Forecasts / sec",
+      "type": "timeseries",
+      "gridPos": { "h": 5, "w": 6, "x": 6, "y": 20 },
+      "targets": [
+        { "expr": "sum(rate(ecommerce_predictions_total{model_source=~\"heuristic.*\"}[5m]))", "format": "time_series", "legendFormat": "Fallback forecasts" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "reqps", "color": { "mode": "fixed", "fixedColor": "orange" } } }
+    },
+    {
+      "id": 12,
+      "title": "API Latency P95 by Endpoint",
+      "type": "timeseries",
+      "gridPos": { "h": 5, "w": 6, "x": 12, "y": 20 },
+      "targets": [
+        { "expr": "histogram_quantile(0.95, sum by (le, endpoint) (rate(ecommerce_api_request_duration_seconds_bucket[5m])))", "format": "time_series", "legendFormat": "{{endpoint}}" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s", "color": { "mode": "palette-classic" } } }
+    },
+    {
+      "id": 13,
+      "title": "API Latency P99 by Endpoint",
+      "type": "timeseries",
+      "gridPos": { "h": 5, "w": 6, "x": 18, "y": 20 },
+      "targets": [
+        { "expr": "histogram_quantile(0.99, sum by (le, endpoint) (rate(ecommerce_api_request_duration_seconds_bucket[5m])))", "format": "time_series", "legendFormat": "{{endpoint}}" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s", "color": { "mode": "palette-classic" } } }
     }
   ],
   "refresh": "10s",

@@ -9,7 +9,7 @@ SELECT
     d.full_date                     AS order_date,
     d.year,
     d.month,
-    d.day,
+    EXTRACT(DAY FROM d.full_date)::SMALLINT AS day,
     d.day_name,
     d.is_weekend,
     d.is_mega_sale,
@@ -25,7 +25,7 @@ JOIN Dim_Dates d ON f.date_key = d.date_key
 JOIN Dim_Shops s ON f.shop_key = s.shop_key
 WHERE f.is_cancelled = FALSE
 GROUP BY
-    d.full_date, d.year, d.month, d.day, d.day_name, d.is_weekend, d.is_mega_sale, s.platform;
+    d.full_date, d.year, d.month, d.day_name, d.is_weekend, d.is_mega_sale, s.platform;
 
 
 -- 2. View Ma trận 9 ô ABC/XYZ (ABC/XYZ Segmentation Matrix)

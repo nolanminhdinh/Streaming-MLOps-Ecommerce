@@ -1,5 +1,7 @@
 # BÁO CÁO SỬA LỖI & TỐI ƯU HÓA HỆ THỐNG — LẦN 2
 
+> **Ghi chú lịch sử:** Kết quả 72/72 tests là kết quả được ghi tại thời điểm Lần 2. Báo cáo runtime ngày 2026-10-09 sau đó ghi 71 passed, 1 failed, 1 warning; xem [baseline mới hơn](../03-testing-and-benchmark/test_report_2026-10-09.md) và [khắc phục Lần 3](lan-03-e2e-remediation-2026-10-09.md).
+
 > **Mã báo cáo**: `PIPE-UPDATE-RUN-02`
 > **Thời điểm cập nhật**: 06/10/2026
 > **Phiên bản hệ thống**: `v1.1.0` → `v1.2.0` (End-to-end Data Correctness & Honest Serving)

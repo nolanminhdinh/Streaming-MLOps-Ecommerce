@@ -13,12 +13,7 @@ Chạy script tự động trích xuất các bảng dữ liệu chuẩn hóa sa
 python powerbi/export_powerbi_dataset.py
 ```
 
-> **Kỳ vọng:** Các tệp sau được tạo thành công trong `powerbi/data/`:
-> - `Dim_Products.csv`: 19 SKU kèm phân loại ngành hàng và phân khúc ma trận.
-> - `Dim_Geography.csv`: Dữ liệu phân bổ địa lý 10 tỉnh thành lớn.
-> - `Fact_Orders_Summary.csv`: Lịch sử doanh thu và đơn hàng 60 ngày đa kênh.
-> - `Inventory_Health_Alerts.csv`: Tình trạng tồn kho, mức tồn kho an toàn và cảnh báo ROP.
-> - `Forecast_vs_Actual.csv`: Dữ liệu 60 ngày đối chiếu sản lượng thực tế vs dự báo.
+> Các file được xuất từ facts hiện có trong PostgreSQL; số SKU/ngày phụ thuộc dữ liệu đã nạp. `Forecast_vs_Actual.csv` có thể chỉ có header nếu chưa có ML forecast được lưu và actual khớp.
 
 ---
 
@@ -32,7 +27,7 @@ python powerbi/export_powerbi_dataset.py
    - Kéo liên kết: `Inventory_Health_Alerts[sku]` ➔ `Dim_Products[sku]` (1-to-1).
    - Kéo liên kết: `Forecast_vs_Actual[sku]` ➔ `Dim_Products[sku]` (Many-to-1).
 4. **Tạo DAX Measures**:
-   - Tham khảo đầy đủ danh sách công thức đã soạn sẵn tại: [`powerbi/dax_measures.md`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/powerbi/dax_measures.md).
+   - Tham khảo danh sách công thức tại: [`powerbi/dax_measures.md`](../../powerbi/dax_measures.md).
    - Tạo các measures chính: `Total Revenue`, `Total Orders`, `AOV`, `WAPE %`, `Safety Stock Dynamic`, `Reorder Point Dynamic`.
 5. **Xây dựng 3 trang Báo cáo trực quan**:
    - **Trang 1: Executive Overview**: KPI Cards, Donut Chart doanh thu Shopee/TikTok, Area Chart xu hướng doanh thu, Bar Chart Top sản phẩm.
@@ -56,15 +51,16 @@ python tests/load_testing/run_load_test.py
   - Độ trễ phân vị: Min, Average, P50, P90, P95, P99, Max.
   - Tỷ lệ lỗi (% Error).
 - **Xem kết quả báo cáo thực nghiệm:**
-  - Báo cáo tổng hợp: [`data/load_test_summary.md`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/data/load_test_summary.md) (bảng Markdown sẵn sàng đưa vào đồ án tốt nghiệp).
-  - Dữ liệu chi tiết: `data/load_test_results.json`.
+  - Báo cáo tổng hợp: [`data/load_test_summary.md`](../../data/load_test_summary.md) (số đo của lần chạy gần nhất, không phải SLO đã được nghiệm thu).
+  - Dữ liệu chi tiết: [`data/load_test_results.json`](../../data/load_test_results.json).
+  - Kiểm tra `test_mode`: khi server offline, script đo in-process thay vì HTTP.
 
 ---
 
 ### Cách 2: Chạy Kiểm thử Tải bằng Giao diện Trực quan của Locust
 Nếu môi trường ảo của bạn đã cài đặt thư viện `locust`:
 
-1. Đảm bảo container FastAPI đang hoạt động:
+1. Đảm bảo container FastAPI đang hoạt động và `/ready` trả HTTP 200:
    ```bash
    docker compose up -d fastapi
    ```
@@ -93,5 +89,5 @@ python -m unittest tests/test_load_test.py
 python -m unittest discover tests
 ```
 
-> **Kỳ vọng:** Toàn bộ 47 test cases của dự án đều đạt trạng thái **OK**.
+> Không dùng con số test cũ trong hướng dẫn làm kết quả hiện hành. Xem [báo cáo kiểm thử mới nhất](../03-testing-and-benchmark/test_report_2026-10-09.md); mã đã sửa sau baseline nhưng chưa có lượt chạy lại.
 

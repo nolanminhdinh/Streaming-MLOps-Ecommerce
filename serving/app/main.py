@@ -8,7 +8,7 @@ Cung cấp REST API dự báo nhu cầu và cảnh báo nhập hàng thông minh
   - Endpoint POST /predict/batch: Dự báo sản lượng hàng loạt cho nhiều SKU.
   - Endpoint GET /inventory/reorder-alert: Quét toàn bộ kho hàng và sinh cảnh báo ROP / Safety Stock.
   - Endpoint POST /inventory/reorder-alert: Thẩm định tồn kho tùy biến theo số lượng thực tế.
-  - Endpoint GET /health & GET /model/metadata: Giám sát trạng thái sẵn sàng của dịch vụ.
+  - Endpoint GET /health & GET /ready: Phân biệt liveness với readiness model + warehouse.
   - Endpoint GET /metrics: Chỉ số Prometheus (prometheus_client: counter, histogram độ trễ, gauge).
 """
 
@@ -160,7 +160,7 @@ app = FastAPI(
         "Hệ thống API phục vụ mô hình dự báo nhu cầu chuỗi thời gian đa kênh (Shopee, TikTok) "
         "và cảnh báo điểm đặt hàng lại (Reorder Point) / Tồn kho an toàn (Safety Stock)."
     ),
-    version="1.1.0",
+    version="1.2.0",
     lifespan=lifespan if HAS_FASTAPI else None,
 )
 
@@ -208,7 +208,7 @@ def root() -> Dict[str, Any]:
     return {
         "service": "E-Commerce Demand Forecasting API",
         "status": "online",
-        "version": "1.1.0",
+        "version": "1.2.0",
         "champion_model": meta.get("model_registry_name"),
         "model_version": meta.get("version"),
         "model_stage": meta.get("stage"),
@@ -221,8 +221,8 @@ def root() -> Dict[str, Any]:
 @app.get("/health", response_model=HealthResponse, tags=["Monitoring"])
 def health_check() -> HealthResponse:
     """
-    Trạng thái sẵn sàng: "healthy" chỉ khi đang phục vụ bằng mô hình ML thật;
-    "degraded" khi rơi về heuristic dự phòng (API vẫn trả lời, nhưng không phải dự báo ML).
+    Liveness/status: "degraded" khi rơi về heuristic dự phòng; dùng /ready để
+    xác nhận có cả model ML và lịch sử kho trước khi nhận traffic dự báo.
     """
     manager = get_model_manager()
     meta = manager.get_metadata()
@@ -231,7 +231,7 @@ def health_check() -> HealthResponse:
     return HealthResponse(
         status="healthy" if manager.has_model else "degraded",
         service="fastapi-demand-serving",
-        version="1.1.0",
+        version="1.2.0",
         model_loaded=manager.has_model,
         model_name=meta.get("model_registry_name", "ECommerceDemandForecastModel"),
         model_version=str(meta.get("version", "0")),
@@ -241,6 +241,27 @@ def health_check() -> HealthResponse:
         model_source=manager.model_source,
         warehouse_connected=get_repository().available(),
     )
+
+
+@app.get("/ready", tags=["Monitoring"])
+def readiness_check() -> Dict[str, Any]:
+    """Readiness chỉ xanh khi model ML và dữ liệu kho cần cho dự báo đều sẵn sàng."""
+    manager = get_model_manager()
+    repository = get_repository()
+    warehouse_connected = repository.available()
+    last_order_date = repository.get_last_order_date() if warehouse_connected else None
+    warehouse_connected = repository.available()
+    ready = manager.has_model and warehouse_connected and last_order_date is not None
+    payload = {
+        "status": "ready" if ready else "not_ready",
+        "model_loaded": manager.has_model,
+        "warehouse_connected": warehouse_connected,
+        "history_available": last_order_date is not None,
+        "history_end": last_order_date.isoformat() if last_order_date else None,
+    }
+    if not ready:
+        return JSONResponse(status_code=503, content=payload) if HAS_FASTAPI else payload
+    return payload
 
 
 @app.get("/model/metadata", response_model=ModelMetadataResponse, tags=["Model Registry"])
@@ -276,7 +297,11 @@ def reload_model(request: Request) -> Dict[str, Any]:
     if token and request.headers.get("X-Reload-Token") != token:
         raise HTTPException(status_code=403, detail="Sai hoặc thiếu X-Reload-Token")
     manager = get_model_manager()
-    manager.load_model()
+    if not manager.load_model():
+        raise HTTPException(
+            status_code=503,
+            detail="Không tải được model mới; model đang phục vụ được giữ nguyên nếu có.",
+        )
     _ALERT_CACHE["summary"] = None  # cảnh báo tồn kho phải tính lại theo mô hình mới
     meta = manager.get_metadata()
     logger.info("✓ Đã nạp lại mô hình: v%s (%s)", meta.get("version"), manager.model_source)

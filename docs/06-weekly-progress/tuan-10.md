@@ -1,5 +1,7 @@
 ﻿# Tuần 10: Tổng kết Toàn diện Hệ thống, Hoàn thiện Báo cáo ĐATN & Kịch bản Bảo vệ
 
+> **Ghi chú đối chiếu hiện trạng:** Nội dung dưới đây ghi lại trạng thái tài liệu tại thời điểm lập, không phải nghiệm thu runtime mới. Baseline 2026-10-09 là 71 passed, 1 failed, 1 warning và API Serving `degraded`; xem [báo cáo Lần 3](../04-pipeline-updates/lan-03-e2e-remediation-2026-10-09.md) để biết các sửa mã chưa xác nhận trên Docker.
+
 ## Mục tiêu
 Tổng kết và nghiệm thu toàn diện toàn bộ chu trình kỹ thuật của hệ thống **Streaming MLOps E-Commerce Demand Forecasting & Inventory Optimization**; đồng bộ hóa toàn bộ tài liệu học thuật theo chuẩn Cẩm nang Đồ án Tốt nghiệp (ĐATN); đóng gói kịch bản trình diễn trực tiếp (Live Demo Script) và cấu trúc slide bảo vệ trước Hội đồng chấm tốt nghiệp.
 

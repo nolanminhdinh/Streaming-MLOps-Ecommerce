@@ -17,6 +17,7 @@ import logging
 import math
 import os
 from datetime import date, datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 from typing import Any, Dict, List, Optional, Tuple
 
 try:
@@ -29,6 +30,12 @@ except ImportError:
     from app.schemas import ReorderAlertItem, ReorderAlertResponse
 
 logger = logging.getLogger("mlops.serving.inventory")
+BUSINESS_TZ = os.getenv("BUSINESS_TZ", "Asia/Ho_Chi_Minh")
+
+
+def _business_today() -> date:
+    """Lấy ngày nghiệp vụ thống nhất với ETL và partition Data Lake."""
+    return datetime.now(ZoneInfo(BUSINESS_TZ)).date()
 
 # Bảng tra Z-Score theo Service Level chuẩn trong Logistics & Supply Chain
 SERVICE_LEVEL_Z_TABLE = {
@@ -87,7 +94,7 @@ class InventoryService:
           - "warehouse_history": d, σ = thống kê 28 ngày gần nhất từ Fact_Orders
           - "fallback_catalog":  bảng demo (khi không có Data Warehouse)
         """
-        today = date.today()
+        today = _business_today()
         fc = self.model_manager.forecast(sku, today, today + timedelta(days=max(lead_time_days, 1) - 1))
         qtys = [it["predicted_quantity"] for it in fc["items"]]
         if fc["history_source"] == "warehouse":

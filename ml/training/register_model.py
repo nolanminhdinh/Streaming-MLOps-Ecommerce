@@ -14,8 +14,10 @@ Tuần 6: Đăng ký và quản lý vòng đời mô hình trên MLflow Model Re
 import argparse
 import json
 import logging
+import math
 import os
 import sys
+import time
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 
@@ -131,7 +133,7 @@ def _feature_count() -> int:
 
 
 def register_champion_model(
-    experiment_name: str = "demand-forecasting-model-comparison",
+    experiment_name: str = "demand-forecasting-baseline",
     model_name: str = REGISTERED_MODEL_NAME,
     stage: str = "Staging",
     manifest_dir: Optional[str] = None,
@@ -144,7 +146,14 @@ def register_champion_model(
     logger.info("  Tên mô hình: %s | Mục tiêu Stage: %s", model_name, stage)
     logger.info("═" * 60)
 
-    configure_mlflow(experiment_name=experiment_name)
+    tracking_uri = configure_mlflow(experiment_name=experiment_name)
+    if tracking_uri.startswith("file:"):
+        logger.error(
+            "MLflow đang chạy ở local file store (%s), nơi không hỗ trợ Model Registry. "
+            "Không tạo manifest triển khai.",
+            tracking_uri,
+        )
+        return {}
     best_info = find_best_run(experiment_name)
 
     if not best_info:
@@ -154,15 +163,40 @@ def register_champion_model(
     logger.info("🏆 Mô hình Champion được lựa chọn: %s (WAPE: %.2f%%, Run ID: %s)",
                 best_info["model_name"], best_info["wape"], best_info["run_id"])
 
-    # 1. Đăng ký vào MLflow Model Registry nếu server khả dụng
-    registered_version = "1"
     try:
         import mlflow
         from mlflow.tracking import MlflowClient
 
-        client = MlflowClient()
+        if best_info["run_id"] in {"local_champion_run", "default_champion_run", None}:
+            raise RuntimeError("Champion không tham chiếu tới một MLflow run có artifact thật.")
+        if best_info.get("wape") is None or not math.isfinite(float(best_info["wape"])):
+            raise RuntimeError("Champion run không có cv_wape hữu hạn để xác nhận chất lượng.")
 
-        # Tạo registered model nếu chưa tồn tại
+        model_file = str(best_info.get("model_file") or "")
+        if not model_file or os.path.basename(model_file) != model_file:
+            raise RuntimeError("Run champion thiếu tên model_file hợp lệ.")
+
+        model_uri = f"runs:/{best_info['run_id']}/model"
+        artifact_dir = mlflow.artifacts.download_artifacts(
+            artifact_uri=model_uri,
+            tracking_uri=tracking_uri,
+        )
+        if not os.path.isfile(os.path.join(artifact_dir, model_file)):
+            raise FileNotFoundError(f"Run artifact không có {model_file}.")
+        feature_spec_path = os.path.join(artifact_dir, "feature_spec.json")
+        if not os.path.isfile(feature_spec_path):
+            raise FileNotFoundError("Run artifact không có feature_spec.json.")
+        with open(feature_spec_path, "r", encoding="utf-8") as spec_file:
+            feature_spec = json.load(spec_file)
+        if feature_spec.get("data_source") != "warehouse":
+            raise RuntimeError(
+                "Chỉ cho đăng ký model được train từ Feature Store có nguồn warehouse thật; "
+                f"artifact ghi data_source={feature_spec.get('data_source', 'unknown')}."
+            )
+        if not feature_spec.get("feature_columns"):
+            raise RuntimeError("Feature spec không có feature_columns.")
+
+        client = MlflowClient(tracking_uri=tracking_uri)
         try:
             client.create_registered_model(
                 name=model_name,
@@ -170,33 +204,51 @@ def register_champion_model(
                 tags={"project": "streaming-mlops-ecommerce", "task": "demand_forecasting"},
             )
             logger.info("✓ Đã tạo Registered Model mới: %s", model_name)
-        except Exception:
-            logger.info("Registered Model '%s' đã tồn tại trong Registry.", model_name)
+        except Exception as create_error:
+            try:
+                client.get_registered_model(model_name)
+                logger.info("Registered Model '%s' đã tồn tại trong Registry.", model_name)
+            except Exception:
+                raise create_error
 
-        # Đăng ký version mới từ run artifact
-        if best_info["run_id"] != "local_champion_run" and best_info["run_id"] != "default_champion_run":
-            model_uri = f"runs:/{best_info['run_id']}/model"
-            model_version = client.create_model_version(
-                name=model_name,
-                source=model_uri,
-                run_id=best_info["run_id"],
-                description=f"Champion model {best_info['model_name']} với CV WAPE = {best_info['wape']}%.",
-                tags={"framework": str(best_info["model_name"]), "wape": str(best_info["wape"])},
+        model_version = client.create_model_version(
+            name=model_name,
+            source=model_uri,
+            run_id=best_info["run_id"],
+            description=f"Champion model {best_info['model_name']} với CV WAPE = {best_info['wape']}%.",
+            tags={"framework": str(best_info["model_name"]), "wape": str(best_info["wape"])},
+        )
+        registered_version = str(model_version.version)
+        deadline = time.monotonic() + 60
+        while True:
+            model_version = client.get_model_version(model_name, registered_version)
+            model_status = str(model_version.status).upper()
+            if model_status.endswith("READY"):
+                break
+            if model_status.endswith("FAILED"):
+                raise RuntimeError(
+                    f"MLflow đăng ký version {registered_version} thất bại: "
+                    f"{getattr(model_version, 'status_message', '')}"
+                )
+            if time.monotonic() >= deadline:
+                raise TimeoutError(f"MLflow chưa hoàn tất đăng ký version {registered_version} sau 60 giây.")
+            time.sleep(1)
+
+        client.transition_model_version_stage(
+            name=model_name,
+            version=registered_version,
+            stage=stage,
+            archive_existing_versions=True,
+        )
+        model_version = client.get_model_version(model_name, registered_version)
+        if str(model_version.current_stage).lower() != stage.lower():
+            raise RuntimeError(
+                f"Version {registered_version} chưa chuyển được sang stage {stage}."
             )
-            registered_version = str(model_version.version)
-            logger.info("✓ Đã tạo phiên bản: Version %s", registered_version)
-
-            # Chuyển trạng thái sang Staging
-            client.transition_model_version_stage(
-                name=model_name,
-                version=registered_version,
-                stage=stage,
-                archive_existing_versions=True,
-            )
-            logger.info("✓ Đã chuyển Version %s sang trạng thái: %s", registered_version, stage)
-
+        logger.info("✓ Đã đăng ký và chuyển Version %s sang trạng thái: %s", registered_version, stage)
     except Exception as e:
-        logger.warning("Không thể đăng ký trực tiếp qua MLflow Client (%s), ghi nhận Manifest...", e)
+        logger.error("Đăng ký model thất bại (%s); giữ nguyên manifest hiện tại.", e)
+        return {}
 
     # 2. Tạo Model Manifest JSON phục vụ trực tiếp cho FastAPI Serving (Tuần 7)
     manifest = {
@@ -207,7 +259,7 @@ def register_champion_model(
         "metrics": {
             k: float(best_info[src])
             for k, src in (("cv_wape", "wape"), ("cv_mae", "mae"), ("cv_rmse", "rmse"))
-            if best_info.get(src) is not None
+            if best_info.get(src) is not None and math.isfinite(float(best_info[src]))
         },
         "run_id": best_info["run_id"],
         "model_file": best_info.get("model_file"),
@@ -225,8 +277,12 @@ def register_champion_model(
     os.makedirs(manifest_dir, exist_ok=True)
     manifest_path = os.path.join(manifest_dir, "model_manifest.json")
 
-    with open(manifest_path, "w", encoding="utf-8") as f:
-        json.dump(manifest, f, indent=2, ensure_ascii=False)
+    temp_path = manifest_path + ".tmp"
+    with open(temp_path, "w", encoding="utf-8") as f:
+        json.dump(manifest, f, indent=2, ensure_ascii=False, allow_nan=False)
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(temp_path, manifest_path)
 
     logger.info("✓ Đã xuất Model Manifest tại: %s", manifest_path)
     logger.info("═" * 60)
@@ -239,10 +295,15 @@ def register_champion_model(
 def main():
     parser = argparse.ArgumentParser(description="Đăng ký Champion Model vào MLflow Registry")
     parser.add_argument("--stage", type=str, default="Staging", choices=["Staging", "Production"])
-    parser.add_argument("--experiment-name", type=str, default="demand-forecasting-model-comparison")
+    parser.add_argument("--experiment-name", type=str, default="demand-forecasting-baseline")
     args = parser.parse_args()
 
-    register_champion_model(experiment_name=args.experiment_name, stage=args.stage)
+    manifest = register_champion_model(
+        experiment_name=args.experiment_name,
+        stage=args.stage,
+    )
+    if not manifest:
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

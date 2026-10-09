@@ -1,6 +1,8 @@
 # BÁO CÁO TOÀN DIỆN HIỆU NĂNG HỆ THỐNG STREAMING MLOPS & ĐỐI CHIẾU KIẾN TRÚC
 ## ĐỀ TÀI: HỆ THỐNG MLOPS THỜI GIAN THỰC DỰ BÁO NHU CẦU & TỐI ƯU HÓA TỒN KHO ĐA KÊNH TMĐT (SHOPEE & TIKTOK SHOP)
 
+> **Ghi chú kiểm chứng:** Các số liệu và nhãn “Production-Grade Verified” dưới đây là ghi chép lịch sử, chưa được tái xác nhận. Báo cáo runtime 2026-10-09 ghi API `degraded` và HTTP P95 719,03 ms ở 200 users; xem [báo cáo baseline mới hơn](test_report_2026-10-09.md).
+
 > **Mã văn bản**: `PERF-EVAL-FULL-2026`  
 > **Chuyên ngành**: Khoa học Dữ liệu / Kỹ thuật Dữ liệu & AI — Đồ án Tốt nghiệp Đại học  
 > **Tác giả**: Đinh Công Minh  

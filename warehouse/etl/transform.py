@@ -131,7 +131,9 @@ def _unify_tiktok_row(row: dict | pd.Series) -> dict:
         "sku": row.get("seller_sku"),
         "product_name": row.get("product_name"),
         "category": None,  # TikTok không có category trong simulator hiện tại
-        "shop_id": "",
+        # Simulator/source TikTok hiện cung cấp shop_name thay vì shop_id.
+        # Dùng tên shop làm business key ổn định để khớp seed_dim_tables và load.py.
+        "shop_id": row.get("shop_id") or row.get("shop_name") or "",
         "shop_name": row.get("shop_name"),
         "order_status": row.get("order_status"),
         "is_cancelled": row.get("order_status") == "CANCELLED",
@@ -187,8 +189,9 @@ def clean_data(df: pd.DataFrame, return_report: bool = False):
     original_count = len(df)
     report = {"original_rows": original_count}
 
-    # 2a. Loại bỏ duplicates theo order_id
-    df = df.drop_duplicates(subset=["order_id"], keep="last")
+    # 2a. order_id chỉ duy nhất trong phạm vi sàn; hai nền tảng có thể trùng mã.
+    dedupe_keys = ["order_id", "platform"] if "platform" in df.columns else ["order_id"]
+    df = df.drop_duplicates(subset=dedupe_keys, keep="last")
     report["duplicates_removed"] = original_count - len(df)
 
     # 2b. Loại bỏ rows thiếu order_id hoặc sku

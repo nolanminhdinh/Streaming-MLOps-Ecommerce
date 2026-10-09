@@ -1,5 +1,7 @@
 # BÁO CÁO KIỂM THỬ HIỆU NĂNG & ĐỘ ỔN ĐỊNH LUỒNG DỮ LIỆU STREAMING MLOPS (LẦN 1)
 
+> **Ghi chú lịch sử:** Kết quả và kết luận trong báo cáo này thuộc lần đo ngày 2026-10-01. Chúng không xác nhận trạng thái hiện tại; báo cáo runtime 2026-10-09 ghi serving `degraded` và HTTP P95 719,03 ms tại 200 users. Xem [baseline mới hơn](test_report_2026-10-09.md).
+
 > **Mã báo cáo**: `PERF-TEST-RUN-01`  
 > **Ngày thực hiện**: 01/10/2026  
 > **Môi trường**: Trạm kiểm thử cục bộ tích hợp Docker Container (PostgreSQL 16, MinIO S3, Feature Store, Model Serving FastAPI)  
@@ -161,7 +163,7 @@ Trong quá trình thực nghiệm với dữ liệu lớn 10,000 bản ghi, hệ
 | **3** | Nghẽn hiệu năng nghiêm trọng tại `DataValidator` (mất 49.6s cho 10k dòng) | Phương thức `validate()` sử dụng vòng lặp `for row in df.iterrows()` và gọi `pd.to_datetime()` riêng rẽ cho từng dòng, tạo ra hơn 50,000 lần phân tích chuỗi thời gian đơn lẻ. | Viết lại bằng kỹ thuật Vectorized Pre-parsing trên toàn cột trước vòng lặp, thay `iterrows()` bằng `to_dict(orient="records")`. Thời gian kiểm định giảm từ **49.6s xuống 2.7s (tăng tốc gấp 18 lần)**! |
 | **4** | Sai lệch chữ ký hàm tại `TimeSeriesFeatureExtractor` & `ABCXYZClassifier` | Tham số gọi hàm `create_features()` và tham số ngưỡng `a_threshold` không khớp với chữ ký lớp `extract_features()` và `pareto_a`. | Đồng bộ hóa hoàn toàn chữ ký phương thức chuẩn trong `scripts/run_heavy_pipeline_benchmark.py`. |
 
-> *Ghi chú chi tiết về phân tích nguyên nhân gốc rễ (RCA) và mã nguồn khắc phục cho từng lỗi, vui lòng xem tại:* [`docs/pipeline-updates/lan-01-khac-phuc-loi-va-toi-uu-luong.md`](../pipeline-updates/lan-01-khac-phuc-loi-va-toi-uu-luong.md).
+> *Ghi chú chi tiết về RCA của lần 1:* [`lan-01-khac-phuc-loi-va-toi-uu-luong.md`](../04-pipeline-updates/lan-01-khac-phuc-loi-va-toi-uu-luong.md).
 
 ---
 

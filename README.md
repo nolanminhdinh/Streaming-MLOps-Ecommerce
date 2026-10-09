@@ -96,16 +96,25 @@ Xem chi tiết đề cương tuần tại [docs/06-weekly-progress](docs/06-week
 
 ## 6. Hướng dẫn chạy nhanh
 
-```bash
-# Bước 1: tạo file .env từ file mẫu (không commit .env lên Git)
-cp .env.example .env
+```powershell
+# Tạo file .env từ file mẫu (không commit .env lên Git)
+Copy-Item .env.example .env
 
-# Bước 2: khởi động hạ tầng dữ liệu luồng (Kafka, Zookeeper, MinIO, PostgreSQL)
-docker compose up -d
+# Môi trường Python cho producer/consumer, ETL, training
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
 
-# Kiểm tra các service đang chạy (kỳ vọng ở trạng thái "healthy")
+# Khởi tạo warehouse trên PostgreSQL; lệnh này không xóa dữ liệu
+docker compose up -d postgres
+python scripts/init_warehouse.py
+
+# Khởi động các hạ tầng còn lại
+docker compose up -d --build zookeeper kafka minio mlflow nifi prometheus grafana
 docker compose ps
 ```
+
+Producer, hai Kafka consumer, ETL, huấn luyện và đăng ký model chạy riêng trên host. Xem [hướng dẫn nghiệm thu end-to-end](docs/05-how-to-run/how-to-run-week10.md) để chạy đúng thứ tự. `/health` xác nhận tiến trình API còn sống; `/ready` chỉ trả HTTP 200 khi model ML và lịch sử warehouse sẵn sàng.
 
 Hướng dẫn chi tiết từng bước cho từng giai đoạn:
 - Tuần 2 (Hạ tầng Docker & Kafka): xem [docs/05-how-to-run/how-to-run-week2.md](docs/05-how-to-run/how-to-run-week2.md).
@@ -121,8 +130,9 @@ Hướng dẫn chi tiết từng bước cho từng giai đoạn:
 - **Kiểm thử Hiệu năng Luồng Dữ liệu**: xem [docs/03-testing-and-benchmark/bao_cao_kiem_thu_hieu_nang_lan_1.md](docs/03-testing-and-benchmark/bao_cao_kiem_thu_hieu_nang_lan_1.md).
 - **Nhật ký Khắc phục Lỗi & Tối ưu hóa Luồng (Changelog)**: xem [docs/04-pipeline-updates/lan-01-khac-phuc-loi-va-toi-uu-luong.md](docs/04-pipeline-updates/lan-01-khac-phuc-loi-va-toi-uu-luong.md).
 - **Báo cáo Sửa lỗi & Tối ưu Hệ thống Lần 2 (rà soát end-to-end)**: xem [docs/04-pipeline-updates/lan-02-sua-loi-va-toi-uu-he-thong.md](docs/04-pipeline-updates/lan-02-sua-loi-va-toi-uu-he-thong.md).
+- **Báo cáo Khắc phục Lần 3 (rà soát liên kết và vận hành)**: xem [docs/04-pipeline-updates/lan-03-e2e-remediation-2026-10-09.md](docs/04-pipeline-updates/lan-03-e2e-remediation-2026-10-09.md).
 
-> Ghi chú: Repo đã hoàn thành trọn vẹn toàn bộ chu trình 10 tuần — từ hạ tầng Streaming Data Lake, Star Schema ETL, Feature Store, Model Serving FastAPI, Giám sát Prometheus/Grafana, Data Drift Closed-Loop Retraining, phân hệ trực quan hóa Executive Dashboard trên Power BI, thực nghiệm kiểm thử tải đồng thời 200 concurrent users đạt độ ổn định 100%, đến kịch bản demo, báo cáo công nghệ lý thuyết và tài liệu chuẩn bị bảo vệ ĐATN.
+> **Trạng thái kiểm chứng ngày 2026-10-09:** Ingestion, ETL, Power BI export, monitoring và load HTTP đã chạy trên Docker; 1.200 request có 0% lỗi, P95 là 396 ms ở 200 users trên chế độ fallback. Serving vẫn `degraded` và `/ready` trả 503 vì warehouse chỉ phủ 10 ngày lịch, chưa đủ lag 28 để tạo dữ liệu huấn luyện. Chưa nghiệm thu nhánh model ML/retraining; xem báo cáo [Lần 3](docs/04-pipeline-updates/lan-03-e2e-remediation-2026-10-09.md).
 
 ## 7. Minh bạch sử dụng AI
 

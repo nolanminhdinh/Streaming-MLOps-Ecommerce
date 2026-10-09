@@ -1,8 +1,12 @@
 # Tài Liệu Thiết Kế Kiến Trúc Hệ Thống & Tech Stack
 ## Streaming MLOps E-Commerce (Shopee & TikTok Shop)
 
+> **Phạm vi minh chứng:** Đây là kiến trúc mục tiêu, không phải bằng chứng tích hợp Shopee/TikTok API hoặc hiệu năng production. Nghiệm thu runtime 2026-10-09 xác nhận data path, Power BI, monitoring và HTTP fallback; P95 ở 200 users là 396,25 ms. Model ML vẫn chưa sẵn sàng do warehouse chưa đủ lịch sử; baseline trước sửa có P95 719,03 ms. Xem [báo cáo kiểm thử](../03-testing-and-benchmark/test_report_2026-10-09.md).
+
 > **Mục tiêu hệ thống**: Xây dựng nền tảng luồng dữ liệu (Data Streaming) kết hợp Vận hành Học máy (MLOps) phục vụ bài toán **Dự báo Nhu cầu (Demand Forecasting)** và **Tối ưu Quản trị Tồn kho Động (Stochastic Inventory Control)** cho ngành bán lẻ đa kênh tại Việt Nam.  
 > **Nguyên tắc cốt lõi (Source-Agnostic Plug-and-Play)**: Mô phỏng chuẩn xác 100% cấu trúc đơn hàng của Shopee (84 cột) và TikTok Shop (71 cột). Khi tiếp nhận dữ liệu thật từ doanh nghiệp, **chỉ cần thay đổi đầu vào Ingestion Connector**, toàn bộ 6 phân tầng và 9 microservices phía sau tiếp tục vận hành bình thường mà không cần sửa đổi bất kỳ logic nào.
+
+> **Phạm vi minh chứng:** Tài liệu mô tả kiến trúc mục tiêu; không phải bằng chứng tích hợp Shopee/TikTok API hoặc hiệu năng production. Nghiệm thu runtime 2026-10-09 xác nhận data path, Power BI, monitoring và HTTP fallback; P95 ở 200 users là 396,25 ms. Model ML vẫn chưa sẵn sàng do warehouse chưa đủ lịch sử; baseline trước sửa có P95 719,03 ms. Xem [báo cáo kiểm thử](../03-testing-and-benchmark/test_report_2026-10-09.md).
 >
 > 🌐 **Công cụ trực quan hóa tương tác**: Có thể mở file [`docs/system_architecture_visualizer.html`](system_architecture_visualizer.html) trên bất kỳ trình duyệt nào để xem, phóng to/thu nhỏ và xuất sơ đồ đồ họa.
 
@@ -332,7 +336,7 @@ flowchart TD
     S_BUF2 -->|"Snappy Parquet Upload<br/>Commit Offset ONLY on Success"| MINIO
 ```
 
-> 📘 **Tài liệu thiết kế chi tiết**: Xem [docs/thiet_ke_buoc_dem_hung_du_lieu.md](thiet_ke_buoc_dem_hung_du_lieu.md) để nắm rõ cơ chế Backpressure, At-Least-Once Delivery, Idempotency và thực nghiệm chịu tải 10,000 đơn hàng.
+> 📘 **Tài liệu thiết kế chi tiết**: Xem [thiet_ke_buoc_dem_hung_du_lieu.md](../01-ingestion-buffering/thiet_ke_buoc_dem_hung_du_lieu.md) để nắm cơ chế Backpressure, At-Least-Once Delivery và Idempotency.
 
 ---
 

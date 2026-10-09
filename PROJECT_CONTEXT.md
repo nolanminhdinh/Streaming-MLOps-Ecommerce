@@ -4,6 +4,8 @@
 > Tài liệu này là **Nguồn Sự thật Duy nhất (Single Source of Truth - SSOT)** mô tả toàn bộ kiến trúc, bài toán nghiệp vụ, cơ sở toán học, lược đồ dữ liệu, tiến độ thực hiện theo tuần (từ Tuần 1 đến Tuần 9), cấu trúc mã nguồn, và hướng dẫn vận hành của dự án **Streaming MLOps E-Commerce Demand Forecasting & Inventory Optimization**.
 > Khi bạn (AI) tiếp nhận dự án này để tiếp tục phát triển, sửa lỗi, viết báo cáo hay mở rộng tính năng, hãy đọc kỹ toàn bộ văn bản này trước khi đưa ra bất kỳ đề xuất hoặc thay đổi mã nguồn nào.
 
+> **Ghi đè trạng thái vận hành ngày 2026-10-09:** Các khẳng định lịch sử bên dưới về 47/47 tests, model Champion đang phục vụ, P95 dưới 2 ms và hoàn tất end-to-end không được xem là trạng thái hiện tại. Nghiệm thu runtime sau sửa mã xác nhận ingestion → MinIO/PostgreSQL, ETL, Power BI export, monitoring và 1.200 HTTP requests hoạt động; P95 ở 200 users là 396,25 ms trên serving fallback. Model ML chưa ready vì warehouse chỉ có 10 ngày lịch, không đủ lag 28; `/ready` trả 503. Xem [báo cáo kiểm thử](docs/03-testing-and-benchmark/test_report_2026-10-09.md) và [khắc phục lần 3](docs/04-pipeline-updates/lan-03-e2e-remediation-2026-10-09.md).
+
 ---
 
 ## 1. THÔNG TIN ĐỀ TÀI & BỐI CẢNH HỌC THUẬT
@@ -12,9 +14,9 @@
 - **Loại hình**: Đồ án Tốt nghiệp Đại học (ĐATN) - Chuyên ngành Khoa học Dữ liệu / Kỹ thuật Dữ liệu & AI.
 - **Tiêu chuẩn học thuật**: Tuân thủ nghiêm ngặt **Cẩm nang Đồ án Tốt nghiệp (ĐATN)** của Nhà trường:
   - Cấu trúc mã nguồn chuẩn hóa module hóa cao (`ingestion/`, `warehouse/`, `ml/`, `serving/`, `monitoring/`, `powerbi/`, `tests/`, `docs/`).
-  - Toàn bộ các mốc tiến độ theo tuần (`docs/weekly-progress/tuan-0*.md`) đều có tài liệu vận hành tương ứng (`docs/how-to-run/how-to-run-week*.md`).
+  - Tiến độ tuần nằm tại `docs/06-weekly-progress/`; hướng dẫn vận hành nằm tại `docs/05-how-to-run/`.
   - Mọi báo cáo tiến độ đều bắt buộc có mục **Minh bạch sử dụng AI** (Phần AI hỗ trợ vs Phần sinh viên tự thực hiện).
-  - Tỷ lệ bao phủ kiểm thử tự động (Unit test suite) đạt 100% qua mọi tuần (47/47 tests hiện tại hoàn toàn PASS).
+  - Các số test trong ghi chép theo tuần là kết quả tại thời điểm đó, không thay thế báo cáo runtime mới nhất.
 
 ---
 
@@ -33,7 +35,7 @@ Trong thị trường TMĐT đa kênh tại Việt Nam (đặc biệt là Shopee
 - **Phân khúc tồn kho ma trận 9 ô ABC/XYZ**: Phân loại mức độ đóng góp doanh thu (Pareto A-80%, B-15%, C-5%) và độ ổn định nhu cầu ($CV \le 0.5$ cho X, $0.5 < CV \le 1.0$ cho Y, $CV > 1.0$ cho Z).
 - **Tối ưu hóa tồn kho động (Dynamic Inventory Optimization)**: Tự động tính toán Tồn kho an toàn ($SS$) và Điểm đặt hàng lại ($ROP$) theo biến động nhu cầu thời gian thực.
 - **Vòng lặp MLOps khép kín (Closed-Loop MLOps)**: Giám sát Trôi dạt Dữ liệu (Data Drift) và Trôi dạt Khái niệm (Concept Drift) bằng kiểm định thống kê Kolmogorov-Smirnov (KS-test) và PSI. Tự động kích hoạt tái huấn luyện (Trigger Retraining) và cập nhật phiên bản mô hình không gián đoạn dịch vụ (Zero-Downtime Serving).
-- **Trực quan hóa & Kiểm thử hiệu năng**: Báo cáo kinh doanh điều hành trên Power BI Desktop và kiểm thử tải đồng thời (Locust Load Testing) lên đến 200 người dùng với thông lượng hàng ngàn yêu cầu/giây.
+- **Trực quan hóa & Kiểm thử hiệu năng**: Dự án có exporter Power BI và benchmark tải; chưa xác nhận một lượt hiện hành đạt 200 người dùng với mục tiêu latency/RPS.
 
 ---
 
@@ -43,9 +45,9 @@ Trong thị trường TMĐT đa kênh tại Việt Nam (đặc biệt là Shopee
 flowchart TB
     subgraph S1["TẦNG 1: MÔ PHỎNG & LUỒNG DỮ LIỆU (STREAMING INGESTION)"]
         DS["Data Simulator<br/>(Shopee 84 cols / TikTok 71 cols)"]
-        KP["Kafka Producer<br/>(orders-stream topic)"]
+        KP["Kafka Producer<br/>(ecom.orders.raw topic)"]
         KC["Kafka Consumer<br/>(Batch Accumulator)"]
-        MINIO[("MinIO S3 Data Lake<br/>Bronze Bucket: raw-orders")]
+        MINIO[("MinIO S3 Data Lake<br/>Bucket: ecom-raw-lake")]
         DS --> KP --> KC --> MINIO
     end
 
@@ -94,7 +96,7 @@ flowchart TB
     end
 ```
 
-> 📘 **Kiến trúc Bước đệm Đa tầng Chống tràn (Multi-Tier Buffering)**: Chi tiết thiết kế và sơ đồ chuỗi 3 tầng đệm liên hoàn từ Client tới Storage (Producer Buffer $\rightarrow$ Kafka Distributed Broker $\rightarrow$ Consumer Micro-batching Buffer $\rightarrow$ MinIO/Postgres) được mô tả tại [`docs/thiet_ke_buoc_dem_hung_du_lieu.md`](docs/thiet_ke_buoc_dem_hung_du_lieu.md) và [`docs/architecture.md`](docs/architecture.md).
+> 📘 **Kiến trúc Bước đệm Đa tầng Chống tràn (Multi-Tier Buffering)**: Chi tiết tại [`docs/01-ingestion-buffering/thiet_ke_buoc_dem_hung_du_lieu.md`](docs/01-ingestion-buffering/thiet_ke_buoc_dem_hung_du_lieu.md) và [`docs/00-architecture-overview/architecture.md`](docs/00-architecture-overview/architecture.md).
 
 ---
 
@@ -184,77 +186,78 @@ Mô phỏng dựa trên cấu trúc dữ liệu thực tế tại Việt Nam t�
 - Lập bảng kế hoạch tiến độ 10 tuần bám sát Cẩm nang ĐATN.
 
 ### Tuần 2: Data Simulator & Streaming Ingestion (Kafka + MinIO)
-- **Mã nguồn**: [`data_simulator/data_simulator.py`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/data_simulator/data_simulator.py), [`ingestion/producer.py`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ingestion/producer.py), [`ingestion/consumer_to_minio.py`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ingestion/consumer_to_minio.py).
+- **Mã nguồn**: [`data_simulator/data_simulator.py`](data_simulator/data_simulator.py), [`ingestion/producer.py`](ingestion/producer.py), [`ingestion/consumer_to_minio.py`](ingestion/consumer_to_minio.py).
 - **Thực hiện**:
   - Trình giả lập 19 SKU thực tế với phân phối nhu cầu Poisson, xen kẽ hiệu ứng Mega Flash Sale ngày đôi, ngày trả lương (15, 25), cuối tuần và phiên Live TikTok.
-  - Kafka Producer đẩy dữ liệu vào topic `orders-stream`.
-  - Kafka Consumer gom batch và lưu trữ dữ liệu thô (Bronze Layer) vào MinIO S3 bucket `raw-orders`.
-- **Tài liệu**: [`docs/weekly-progress/tuan-02.md`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/docs/weekly-progress/tuan-02.md).
+  - Kafka Producer đẩy orders vào topic `ecom.orders.raw` và inventory snapshots vào `inventory.logs`.
+  - Hai consumer ghi orders thành Parquet vào MinIO bucket `ecom-raw-lake` và inventory snapshots vào `Fact_Inventory_Daily`.
+- **Tài liệu**: [`docs/weekly-progress/tuan-02.md`](docs/06-weekly-progress/tuan-02.md).
 
 ### Tuần 3: Star Schema Data Warehouse & ETL Pipeline
-- **Mã nguồn**: [`warehouse/ddl/01_star_schema.sql`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/warehouse/ddl/01_star_schema.sql), thư mục [`warehouse/etl/`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/warehouse/etl/) (`extract.py`, `data_validation.py`, `transform.py`, `load.py`, `pipeline.py`).
+- **Mã nguồn**: [`warehouse/ddl/01_star_schema.sql`](warehouse/ddl/01_star_schema.sql), thư mục [`warehouse/etl/`](warehouse/etl) (`extract.py`, `data_validation.py`, `transform.py`, `load.py`, `pipeline.py`).
 - **Thực hiện**:
   - Khởi tạo Data Warehouse `ecom_warehouse` trên PostgreSQL với mô hình Star Schema chuẩn gồm 1 Fact và 5 Dimension.
   - Pipeline ETL module hóa: Trích xuất từ MinIO/local, kiểm tra tính hợp lệ dữ liệu (Data Validation chống Null/âm), chuyển đổi khớp lược đồ chiều, và nạp (Bulk Load) vào PostgreSQL.
-- **Tài liệu & Vận hành**: [`docs/how-to-run/how-to-run-week3.md`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/docs/how-to-run/how-to-run-week3.md), [`docs/weekly-progress/tuan-03.md`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/docs/weekly-progress/tuan-03.md).
+- **Tài liệu & Vận hành**: [`docs/how-to-run/how-to-run-week3.md`](docs/05-how-to-run/how-to-run-week3.md), [`docs/weekly-progress/tuan-03.md`](docs/06-weekly-progress/tuan-03.md).
 
 ### Tuần 4: EDA & Kỹ nghệ Đặc trưng (Feature Engineering)
-- **Mã nguồn**: [`ml/features/abc_xyz.py`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/features/abc_xyz.py), [`ml/features/time_series_features.py`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/features/time_series_features.py), [`notebooks/eda.ipynb`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/notebooks/eda.ipynb), [`notebooks/abc_xyz_classification.ipynb`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/notebooks/abc_xyz_classification.ipynb).
+- **Mã nguồn**: [`ml/features/abc_xyz.py`](ml/features/abc_xyz.py), [`ml/features/time_series_features.py`](ml/features/time_series_features.py), [`notebooks/eda.ipynb`](notebooks/eda.ipynb), [`notebooks/abc_xyz_classification.ipynb`](notebooks/abc_xyz_classification.ipynb).
 - **Thực hiện**:
   - Phân tích khám phá dữ liệu (EDA): Phân tích phân phối doanh thu đa kênh, tỷ trọng hủy/trả hàng.
   - Xây dựng thuật toán ma trận 9 ô ABC/XYZ phân loại danh mục sản phẩm.
   - Trích xuất đặc trưng chuỗi thời gian: Lags ($t-1, t-7, t-14, t-30$), Rolling Window Statistics (Mean, Std 7, 14, 30 ngày), Calendar Fourier Cyclical features ($\sin/\cos$ của thứ trong tuần, tháng trong năm), Flags sự kiện khuyến mãi.
-- **Tài liệu**: [`docs/weekly-progress/tuan-04.md`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/docs/weekly-progress/tuan-04.md).
+- **Tài liệu**: [`docs/weekly-progress/tuan-04.md`](docs/06-weekly-progress/tuan-04.md).
 
 ### Tuần 5: MLflow Tracking & Huấn luyện Mô hình Baseline
-- **Mã nguồn**: [`ml/mlflow/Dockerfile`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/mlflow/Dockerfile), [`ml/features/feature_pipeline.py`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/features/feature_pipeline.py), [`ml/training/train_baseline.py`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/training/train_baseline.py).
+- **Mã nguồn**: [`ml/mlflow/Dockerfile`](ml/mlflow/Dockerfile), [`ml/features/feature_pipeline.py`](ml/features/feature_pipeline.py), [`ml/training/train_baseline.py`](ml/training/train_baseline.py).
 - **Thực hiện**:
   - Dựng container MLflow Tracking Server tích hợp backend store PostgreSQL và artifact store MinIO.
   - Đóng gói Feature Pipeline tự động tiền xử lý dữ liệu.
   - Huấn luyện 4 mô hình Baseline: Prophet, ARIMA, XGBoost, LightGBM.
   - Tự động ghi nhận siêu tham số và chỉ số đánh giá (MAE, RMSE, WAPE) lên MLflow.
-- **Tài liệu & Vận hành**: [`docs/how-to-run/how-to-run-week5.md`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/docs/how-to-run/how-to-run-week5.md), [`docs/weekly-progress/tuan-05.md`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/docs/weekly-progress/tuan-05.md).
+- **Tài liệu & Vận hành**: [`docs/how-to-run/how-to-run-week5.md`](docs/05-how-to-run/how-to-run-week5.md), [`docs/weekly-progress/tuan-05.md`](docs/06-weekly-progress/tuan-05.md).
 
 ### Tuần 6: Deep Learning (LSTM/GRU), Tinh chỉnh Siêu tham số & Model Registry
-- **Mã nguồn**: [`ml/training/deep_learning_models.py`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/training/deep_learning_models.py), [`ml/training/tune_hyperparams.py`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/training/tune_hyperparams.py), [`ml/training/compare_models.py`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/training/compare_models.py), [`ml/training/register_model.py`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/training/register_model.py), [`data/model_manifest.json`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/data/model_manifest.json).
+- **Mã nguồn**: [`ml/training/deep_learning_models.py`](ml/training/deep_learning_models.py), [`ml/training/tune_hyperparams.py`](ml/training/tune_hyperparams.py), [`ml/training/compare_models.py`](ml/training/compare_models.py), [`ml/training/register_model.py`](ml/training/register_model.py), [`data/model_manifest.json`](data/model_manifest.json).
 - **Thực hiện**:
   - Xây dựng mạng nơ-ron hồi quy tuần tự sâu (Deep RNNs: LSTM và GRU 2 lớp với Dropout) bằng PyTorch.
   - Tinh chỉnh siêu tham số (Hyperparameter Tuning): Learning rate, hidden units, sequence length.
   - Bảng so sánh hiệu năng tự động (Leaderboard) chọn ra mô hình tốt nhất (Champion Model: WAPE thấp nhất).
   - Đăng ký mô hình vào Model Registry và xuất bản tệp `data/model_manifest.json` chuẩn hóa siêu dữ liệu cho tầng Serving.
-- **Tài liệu & Vận hành**: [`docs/how-to-run/how-to-run-week6.md`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/docs/how-to-run/how-to-run-week6.md), [`docs/weekly-progress/tuan-06.md`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/docs/weekly-progress/tuan-06.md).
+- **Tài liệu & Vận hành**: [`docs/how-to-run/how-to-run-week6.md`](docs/05-how-to-run/how-to-run-week6.md), [`docs/weekly-progress/tuan-06.md`](docs/06-weekly-progress/tuan-06.md).
 
 ### Tuần 7: FastAPI Model Serving & Quản trị Tồn kho Động
-- **Mã nguồn**: [`serving/app/schemas.py`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/serving/app/schemas.py), [`serving/app/model_loader.py`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/serving/app/model_loader.py), [`serving/app/inventory_service.py`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/serving/app/inventory_service.py), [`serving/app/main.py`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/serving/app/main.py), [`serving/Dockerfile`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/serving/Dockerfile).
+- **Mã nguồn**: [`serving/app/schemas.py`](serving/app/schemas.py), [`serving/app/model_loader.py`](serving/app/model_loader.py), [`serving/app/inventory_service.py`](serving/app/inventory_service.py), [`serving/app/main.py`](serving/app/main.py), [`serving/Dockerfile`](serving/Dockerfile).
 - **Thực hiện**:
   - Dựng REST API hiệu năng cao với FastAPI:
-    - `/health`: Sức khỏe container.
+    - `/health`: Liveness/status của API.
+    - `/ready`: Readiness yêu cầu model ML và lịch sử warehouse.
     - `/model/metadata`: Thông tin Champion model đang phục vụ.
     - `/predict/demand` & `/predict/batch`: Dự báo sản lượng theo SKU trong $H$ ngày tới.
     - `/inventory/reorder-alert`: Tính toán tự động $SS$, $ROP$ và phân loại cảnh báo tồn kho.
     - `/metrics`: Cung cấp số liệu giám sát.
-  - Cơ chế **In-Memory Singleton Model Cache**: Nạp mô hình một lần khi khởi động, dự báo thời gian thực với độ trễ sub-millisecond, clamp $\hat{y} \ge 0$.
-- **Tài liệu & Vận hành**: [`docs/how-to-run/how-to-run-week7.md`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/docs/how-to-run/how-to-run-week7.md), [`docs/weekly-progress/tuan-07.md`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/docs/weekly-progress/tuan-07.md).
+  - Cơ chế **In-Memory Singleton Model Cache**: Nạp model theo version đã ghim trong manifest; nếu thiếu model, API báo `degraded` và `/ready` trả 503.
+- **Tài liệu & Vận hành**: [`docs/how-to-run/how-to-run-week7.md`](docs/05-how-to-run/how-to-run-week7.md), [`docs/weekly-progress/tuan-07.md`](docs/06-weekly-progress/tuan-07.md).
 
 ### Tuần 8: Hệ thống Giám sát (Monitoring), Evidently AI & Closed-Loop Retraining
-- **Mã nguồn**: [`monitoring/prometheus/prometheus.yml`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/monitoring/prometheus/prometheus.yml), [`monitoring/grafana/provisioning/`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/monitoring/grafana/provisioning/), [`monitoring/evidently/drift_detector.py`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/monitoring/evidently/drift_detector.py), [`monitoring/evidently/trigger_retraining.py`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/monitoring/evidently/trigger_retraining.py).
+- **Mã nguồn**: [`monitoring/prometheus/prometheus.yml`](monitoring/prometheus/prometheus.yml), [`monitoring/grafana/provisioning/`](monitoring/grafana/provisioning), [`monitoring/evidently/drift_detector.py`](monitoring/evidently/drift_detector.py), [`monitoring/evidently/trigger_retraining.py`](monitoring/evidently/trigger_retraining.py).
 - **Thực hiện**:
   - Chuẩn hóa endpoint `/metrics` theo định dạng **Prometheus Text Exposition format v0.0.4** (đo lường Request Count, Error Count, Latency Histogram, Prediction Value Distribution, Active Alerts).
   - Cấu hình Prometheus scraper (cổng 9090) và Grafana Dashboard tự động nạp (cổng 3000).
   - Phân hệ kiểm định Trôi dạt Dữ liệu (Data Drift) và Trôi dạt Khái niệm (Concept Drift) bằng kiểm định KS-test và PSI, xuất báo cáo tương tác `data/monitoring_reports/data_drift_report.html`.
-  - Bộ điều phối **Closed-Loop Retraining**: Khi tỷ lệ trôi dạt đặc trưng $\ge 30\%$ hoặc target drift xuất hiện, tự động kích hoạt tái huấn luyện mô hình, kiểm tra điều kiện nâng cấp và cập nhật phiên bản mới (`Version 2`, `Version 3`) vào `model_manifest.json` cho tầng Serving mà không cần khởi động lại ứng dụng.
-- **Tài liệu & Vận hành**: [`docs/how-to-run/how-to-run-week8.md`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/docs/how-to-run/how-to-run-week8.md), [`docs/weekly-progress/tuan-08.md`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/docs/weekly-progress/tuan-08.md).
+  - Bộ điều phối **Closed-Loop Retraining**: Chỉ summary drift từ dữ liệu warehouse thật mới tự kích hoạt. Chỉ ghi `SUCCESS` sau khi Registry đăng ký artifact và Serving reload báo `model_ready=true`; version tùy Registry.
+- **Tài liệu & Vận hành**: [`docs/how-to-run/how-to-run-week8.md`](docs/05-how-to-run/how-to-run-week8.md), [`docs/weekly-progress/tuan-08.md`](docs/06-weekly-progress/tuan-08.md).
 
 ### Tuần 9: Power BI Executive Dashboard & Kiểm thử Tải Đồng thời (Load Testing)
-- **Mã nguồn**: [`powerbi/views_for_powerbi.sql`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/powerbi/views_for_powerbi.sql), [`powerbi/dax_measures.md`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/powerbi/dax_measures.md), [`powerbi/export_powerbi_dataset.py`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/powerbi/export_powerbi_dataset.py), [`powerbi/data/`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/powerbi/data/), [`tests/load_testing/locustfile.py`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/tests/load_testing/locustfile.py), [`tests/load_testing/run_load_test.py`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/tests/load_testing/run_load_test.py).
+- **Mã nguồn**: [`powerbi/views_for_powerbi.sql`](powerbi/views_for_powerbi.sql), [`powerbi/dax_measures.md`](powerbi/dax_measures.md), [`powerbi/export_powerbi_dataset.py`](powerbi/export_powerbi_dataset.py), [`powerbi/data/`](powerbi/data), [`tests/load_testing/locustfile.py`](tests/load_testing/locustfile.py), [`tests/load_testing/run_load_test.py`](tests/load_testing/run_load_test.py).
 - **Thực hiện**:
   - Thiết kế 4 SQL Views tổng hợp chuyên sâu cho Power BI.
   - Biên soạn cẩm nang đầy đủ các công thức DAX chia 3 nhóm (Tài chính & Doanh số, Quản trị Tồn kho Động, Độ chính xác Mô hình).
   - Tự động xuất 5 tệp dữ liệu CSV phẳng mã hóa UTF-8-BOM vào `powerbi/data/` sẵn sàng import vào Power BI Desktop không cần cài thêm DB.
   - Kịch bản mô phỏng hành vi người dùng TMĐT bằng Locust (50% dự báo, 30% quét tồn kho khẩn, 15% kiểm tra tồn kho tùy biến, 5% kiểm tra hệ thống).
   - Trình benchmark đa luồng độc lập đo lường Throughput (RPS) và các phân vị độ trễ (P50, P90, P95, P99) trên các mức tải 10, 50, 100, 200 người dùng đồng thời.
-  - Kết quả kiểm thử: **Throughput đạt 2,400 – 5,600+ req/s, P95 Latency < 0.3ms, Tỷ lệ lỗi 0.0%**.
-- **Tài liệu & Vận hành**: [`docs/how-to-run/how-to-run-week9.md`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/docs/how-to-run/how-to-run-week9.md), [`docs/weekly-progress/tuan-09.md`](file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/docs/weekly-progress/tuan-09.md).
+  - Baseline HTTP ngày 2026-10-09: lỗi 0% trong lượt đo, P95 719,03 ms tại 200 users; API khi đó `degraded`. Chưa chạy lại sau sửa mã.
+- **Tài liệu & Vận hành**: [`docs/how-to-run/how-to-run-week9.md`](docs/05-how-to-run/how-to-run-week9.md), [`docs/weekly-progress/tuan-09.md`](docs/06-weekly-progress/tuan-09.md).
 
 ---
 
@@ -491,15 +494,15 @@ docker-compose up -d
 
 ---
 
-## 9. TRẠNG THÁI HIỆN TẠI & KẾT QUẢ NGHIỆM THU TUẦN 10 (HOÀN THÀNH TOÀN DIỆN)
+## 9. HỒ SƠ TIẾN ĐỘ VÀ TRẠNG THÁI KIỂM CHỨNG HIỆN TẠI
 
-- **Trạng thái hiện tại**: Đã hoàn thành xuất sắc 100% công việc của toàn bộ **10 Tuần** theo lộ trình ĐATN.
-- **Hồ sơ nghiệm thu Tuần 10 đã hoàn tất**:
-  1. **Báo cáo Tiến độ Tuần 10 (`docs/weekly-progress/tuan-10.md`)**: Nghiệm thu toàn bộ hệ thống, bảng so sánh định lượng, minh bạch sử dụng AI theo Cẩm nang ĐATN.
-  2. **Bộ Slide Thuyết trình Bảo vệ ĐATN (`docs/presentation_slides.md`)**: Cấu trúc 18 slide thuyết trình chuẩn học thuật bảo vệ trước Hội đồng.
-  3. **Kịch bản Trình diễn Trực tiếp (Live Demo Script: `docs/how-to-run/live_demo_script.md`)**: Kịch bản 5 bước demo liên hoàn trong 15 phút.
-  4. **Hướng dẫn Nghiệm thu & Chạy nhanh (`docs/how-to-run/how-to-run-week10.md`)**: Sổ tay kiểm thử hệ thống trước buổi bảo vệ.
-  5. **Chất lượng mã nguồn**: Toàn bộ 47/47 Unit & Integration Tests đạt trạng thái **PASS (100% OK)**.
+- **Trạng thái hiện tại:** Có hướng dẫn và báo cáo cho các module, nhưng chu trình chưa được xác nhận end-to-end sau đợt sửa mới nhất.
+- **Hồ sơ dự án:**
+  1. **Báo cáo Tuần 10 (`docs/06-weekly-progress/tuan-10.md`)**: nhật ký tiến độ; chưa phải xác nhận runtime mới.
+  2. **Bộ Slide (`docs/00-architecture-overview/presentation_slides.md`)**: dàn ý, cần thay số liệu bằng kết quả đã đo.
+  3. **Kịch bản Demo (`docs/05-how-to-run/live_demo_script.md`)**: kịch bản có kiểm tra nguồn dữ liệu/model.
+  4. **Hướng dẫn end-to-end (`docs/05-how-to-run/how-to-run-week10.md`)**: thứ tự chạy và điều kiện readiness.
+  5. **Chất lượng mã nguồn:** báo cáo ngày 2026-10-09 ghi nhận 71 pass, 1 fail, 1 warning trước đợt sửa mới; chưa chạy lại test suite.
 
 ---
 *Tài liệu này được biên soạn đầy đủ, hệ thống hóa và sẵn sàng cung cấp ngữ cảnh toàn diện cho bất kỳ mô hình AI hoặc kỹ sư nào tiếp quản hệ thống.*

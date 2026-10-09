@@ -81,3 +81,18 @@ Endpoint `/health` trả `status=degraded`, `model_loaded=false`, `model_source=
 - Soak test dùng topic riêng `ecom.soak.codex.2c9493c` và bucket riêng `ecom-soak-codex-20261009-2c9493c`; chúng được giữ lại làm dữ liệu kiểm chứng.
 - Container FastAPI đã được build/recreate từ workspace để kiểm tra serving hiện tại. Các gói test được cài trong `.venv`.
 - Không chỉnh sửa mã nguồn như một phần của hoạt động kiểm thử.
+
+## 6. Ghi chú sau baseline
+
+Đây là kết quả baseline trước đợt sửa mã. Các hành động mục 4 đã được xử lý trong phạm vi mã ở [báo cáo khắc phục Lần 3](../04-pipeline-updates/lan-03-e2e-remediation-2026-10-09.md). Đã có một lượt nghiệm thu runtime sau sửa mã ngày 2026-10-09; bảng phía trên vẫn là baseline cũ. Kết quả mới được ghi riêng dưới đây để không trộn hai lần đo.
+
+## 7. Nghiệm thu runtime sau sửa mã — 2026-10-09
+
+- **Ingestion:** producer gửi 29 orders và 20 inventory snapshots; consumer PostgreSQL upsert 20 SKU. Consumer MinIO flush Parquet batch mới cùng backlog Kafka.
+- **ETL:** extract 18.233 rows từ 133 Parquet; clean 9.132, quarantine 0; load 9.132 vào `Fact_Orders`.
+- **Feature/training/Registry:** warehouse chỉ có 10 ngày lịch; `lag_28` cần tối thiểu 30 ngày để tạo một dòng train. Feature Store có 0 dòng, training dừng với exit code 1, MLflow chưa có run/model và register dừng với exit code 1. Đây là blocker dữ liệu, không phải lỗi kết nối MLflow.
+- **Serving:** `/health` HTTP 200 `degraded`; `/ready` HTTP 503 vì không có model ML. Forecast fallback trả 200 và `history_source=warehouse`; inventory trả 200 với `stock_source=warehouse_snapshot`.
+- **Power BI/Monitoring:** export thành công: 1.095 Dim Dates, 20 products, 20 geography, 8 order-summary rows, 20 inventory alerts, 0 forecast rows. Prometheus query `up` ghi nhận FastAPI = 1; Grafana API health `database=ok`.
+- **HTTP load:** 1.200 requests, 0% lỗi. P95: 55,91 ms (10 users), 180,32 ms (50), 236,07 ms (100), 396,25 ms (200). Ở 200 users throughput 479,3 RPS. Đo ở chế độ fallback; không dùng làm số đo hiệu năng model ML. Raw output: `data/load_test_results.json`.
+- **Giới hạn:** chưa chạy drift/retraining closed-loop vì chưa có Feature Store/model đủ điều kiện. FastAPI Compose healthcheck `unhealthy` là hệ quả đúng của `/ready` 503; API liveness vẫn trả 200. Toàn tuyến chỉ có thể nghiệm thu model sau khi nạp thêm lịch sử warehouse đủ dài và lặp lại feature → train → register → `/ready`.
+- **Nguồn dữ liệu:** orders được tạo bởi `ECommerceSimulator` của dự án và backlog Kafka hiện có; không dùng API thật Shopee/TikTok. Kết quả này xác nhận plumbing demo trên Docker, không phải nghiệm thu production data/integration.

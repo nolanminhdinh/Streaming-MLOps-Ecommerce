@@ -73,6 +73,7 @@ def load_orders_data() -> pd.DataFrame:
         """
         df = pd.read_sql(query, engine)
         if not df.empty:
+            df.attrs["data_source"] = "warehouse"
             logger.info("✓ Nạp thành công %d đơn hàng từ PostgreSQL Fact_Orders.", len(df))
             return df
     except Exception as e:
@@ -85,12 +86,14 @@ def load_orders_data() -> pd.DataFrame:
 
     if os.path.exists(clean_p):
         df = pd.read_parquet(clean_p)
+        df.attrs["data_source"] = "local_clean_parquet"
         logger.info("✓ Nạp thành công %d đơn hàng từ file: %s", len(df), clean_p)
         return df
     elif os.path.exists(raw_p):
         from warehouse.etl.transform import unify_schema, clean_data
         raw_df = pd.read_parquet(raw_p)
         df = clean_data(unify_schema(raw_df))
+        df.attrs["data_source"] = "local_raw_parquet"
         logger.info("✓ Nạp và làm sạch %d đơn hàng từ file: %s", len(df), raw_p)
         return df
 
@@ -100,6 +103,7 @@ def load_orders_data() -> pd.DataFrame:
     from warehouse.etl.transform import unify_schema, clean_data
     raw_df = generate_historical_orders(days=60, base_orders_per_day=150)
     df = clean_data(unify_schema(raw_df))
+    df.attrs["data_source"] = "synthetic_demo"
     return df
 
 
@@ -224,6 +228,16 @@ def build_feature_store(
     max_lag = max(lags)
     valid_features = merged_features.dropna(subset=[f"lag_{max_lag}", TARGET_COL]).copy()
 
+    if valid_features.empty:
+        dates = pd.to_datetime(daily_df["date"])
+        calendar_days = (dates.max().normalize() - dates.min().normalize()).days + 1
+        minimum_days = max_lag + 2  # lag burn-in plus the next-day target
+        raise ValueError(
+            "Feature Store không có dòng huấn luyện hợp lệ: warehouse chỉ có "
+            f"{calendar_days} ngày lịch, trong khi lag lớn nhất là {max_lag}. "
+            f"Cần ít nhất {minimum_days} ngày liên tục để tạo lag và target t+1."
+        )
+
     logger.info(
         "✓ Hoàn tất trích xuất đặc trưng. Dữ liệu hợp lệ sẵn sàng huấn luyện: %d dòng, %d cột.",
         len(valid_features), len(valid_features.columns),
@@ -254,6 +268,7 @@ def build_feature_store(
         category_mappings=category_mappings,
         merged_features=merged_features,
         segment_cutoff=cutoff,
+        data_source=str(orders_df.attrs.get("data_source", "unknown")),
     )
 
     return valid_features
@@ -268,6 +283,7 @@ def save_feature_spec(
     category_mappings: dict,
     merged_features: pd.DataFrame,
     segment_cutoff: pd.Timestamp,
+    data_source: str = "unknown",
 ) -> dict:
     """Ghi hợp đồng đặc trưng (feature contract) dùng chung giữa huấn luyện và serving."""
     profile_cols = [c for c in ["sku", "product_name", "category", "abc_class", "xyz_class",
@@ -290,6 +306,7 @@ def save_feature_spec(
         "category_mappings": category_mappings,
         "sku_profiles": sku_profiles,
         "segment_cutoff_date": str(segment_cutoff.date()),
+        "data_source": data_source,
         "generated_at": pd.Timestamp.now(tz="UTC").isoformat(),
     }
     with open(spec_path, "w", encoding="utf-8") as f:

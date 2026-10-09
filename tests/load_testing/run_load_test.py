@@ -32,7 +32,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(na
 
 # Cho phép import serving
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from serving.app.model_loader import CATALOG_METADATA, get_model_manager
+from serving.app.model_loader import get_model_manager
 from serving.app.inventory_service import get_inventory_service
 from tests.load_testing.locustfile import SKU_LIST
 
@@ -60,6 +60,8 @@ class LoadTestRunner:
         self.is_live_server: bool = self._check_live_server()
         self.manager = get_model_manager()
         self.inv_service = get_inventory_service()
+        catalog, _catalog_source = self.manager.get_catalog()
+        self.sku_list = list(catalog) or list(SKU_LIST)
 
     def _check_live_server(self) -> bool:
         """Kiểm tra xem FastAPI server có đang trực tuyến tại localhost:8000 hay không."""
@@ -84,7 +86,7 @@ class LoadTestRunner:
             # Gửi HTTP request thật tới FastAPI Server
             try:
                 if task_type == "predict":
-                    sku = random.choice(SKU_LIST)
+                    sku = random.choice(self.sku_list)
                     payload = json.dumps({
                         "sku": sku,
                         "from_date": "2026-10-01",
@@ -101,7 +103,7 @@ class LoadTestRunner:
                         success = (resp.status == 200)
 
                 elif task_type == "reorder_post":
-                    sampled = random.sample(SKU_LIST, k=4)
+                    sampled = random.sample(self.sku_list, k=min(4, len(self.sku_list)))
                     payload = json.dumps({
                         "skus": sampled,
                         "current_stocks": {s: random.randint(10, 80) for s in sampled}
@@ -122,7 +124,7 @@ class LoadTestRunner:
             # Thực thi in-process phục vụ đo lường thông lượng thuật toán
             try:
                 if task_type == "predict":
-                    sku = random.choice(SKU_LIST)
+                    sku = random.choice(self.sku_list)
                     self.manager.predict_range(
                         sku=sku,
                         from_date=date(2026, 10, 1),
@@ -132,7 +134,7 @@ class LoadTestRunner:
                 elif task_type == "reorder_get":
                     self.inv_service.evaluate_all(lead_time_days=3, service_level=0.95)
                 elif task_type == "reorder_post":
-                    sampled = random.sample(SKU_LIST, k=4)
+                    sampled = random.sample(self.sku_list, k=min(4, len(self.sku_list)))
                     stocks = {s: random.randint(10, 80) for s in sampled}
                     self.inv_service.evaluate_all(skus=sampled, custom_stocks=stocks)
                 else:
@@ -234,7 +236,17 @@ class LoadTestRunner:
                 f"{s['latency_p99_ms']} ms | {s['error_rate_pct']}% |"
             )
 
-        md_content = f"""# Báo cáo Kiểm thử Tải & Hiệu năng Serving (Tuần 9)
+        levels = summary["concurrency_results"]
+        total_requests = sum(s["total_requests"] for s in levels.values())
+        failed_requests = sum(s["failed_requests"] for s in levels.values())
+        max_users, max_load = max(levels.items(), key=lambda item: int(item[0]))
+        error_text = (
+            f"{failed_requests}/{total_requests} request lỗi trong lượt chạy này."
+            if failed_requests
+            else f"Không ghi nhận request lỗi trong {total_requests} request của lượt chạy này."
+        )
+
+        md_content = f"""# Báo cáo Kiểm thử Tải & Hiệu năng Serving
 
 - **Môi trường thử nghiệm**: {summary['test_mode']}
 - **Thời điểm**: {summary['benchmarked_at']}
@@ -247,8 +259,9 @@ class LoadTestRunner:
 {chr(10).join(rows)}
 
 ## Đánh giá & Kết luận Chuyên môn
-1. **Khả năng chịu tải**: Hệ thống duy trì tỷ lệ lỗi 0.0% trên toàn bộ các ngưỡng tải từ 10 đến 200 người dùng đồng thời.
-2. **Độ trễ P95**: Ngay cả ở mức 200 concurrent users, độ trễ P95 vẫn được duy trì ở mức tối ưu (< 50ms đối với in-process và < 150ms qua mạng HTTP), đáp ứng hoàn hảo tiêu chuẩn vận hành thời gian thực của hệ thống thương mại điện tử.
+1. **Kết quả request**: {error_text}
+2. **Mức tải cao nhất đã đo**: {max_users} người dùng đồng thời; P95 = {max_load['latency_p95_ms']} ms, P99 = {max_load['latency_p99_ms']} ms, throughput = {max_load['throughput_rps']} request/giây.
+3. **Phạm vi kết luận**: Đây là số đo của chế độ `{summary['test_mode']}` trong lượt chạy này. Chế độ in-process không đo độ trễ mạng HTTP; cần so với SLO đã thống nhất trước khi kết luận đạt hay không đạt.
 """
         with open(md_path, "w", encoding="utf-8") as f:
             f.write(md_content)

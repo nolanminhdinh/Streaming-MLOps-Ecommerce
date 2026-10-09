@@ -3,7 +3,7 @@ verify_pipeline_effectiveness.py
 ---------------------------------
 Script Tự động Đo lường & Đánh giá Toàn diện Tính Hiệu quả của Luồng Dữ liệu MLOps:
 1. Thông lượng sinh & chuẩn hóa dữ liệu (Throughput - records/sec)
-2. Điểm số chất lượng & Tỉ lệ toàn vẹn (Data Quality Score & Zero Loss Rate)
+2. Điểm số chất lượng & tỉ lệ bản ghi bị cách ly (Data Quality Score & Quarantine Rate)
 3. Độ trễ xử lý từng mắt xích (Latency Breakdown - ms)
 4. Độ chính xác phân loại ABC/XYZ & Quản trị tồn kho
 5. Độ nhạy kiểm định phân phối Data Drift (KS-Test p-value)
@@ -81,12 +81,12 @@ def run_effectiveness_benchmark(sample_size: int = 1000):
 
     total_records = report.total_records
     valid_records = report.valid_records
-    loss_rate = ((total_records - valid_records) / total_records) * 100.0 if total_records else 0.0
+    quarantine_rate = (len(invalid_df) / total_records) * 100.0 if total_records else 0.0
     quality_score = report.pass_rate * 100.0
 
     print(f"  ✓ Tổng số bản ghi tiếp nhận: {total_records:,}")
-    print(f"  ✓ Số bản ghi hợp lệ 100%:    {valid_records:,}")
-    print(f"  ✓ Tỉ lệ thất thoát (Data Loss): {BOLD}{GREEN}{loss_rate:.2f}% (Zero-Loss){RESET}")
+    print(f"  ✓ Số bản ghi hợp lệ:          {valid_records:,}")
+    print(f"  ✓ Số bản ghi bị cách ly:      {len(invalid_df):,} ({quarantine_rate:.2f}%) — chưa nạp vào warehouse")
     print(f"  ✓ Điểm chất lượng schema:    {BOLD}{GREEN}{quality_score:.1f}/100 điểm{RESET}")
 
     # -------------------------------------------------------------
@@ -133,7 +133,7 @@ def run_effectiveness_benchmark(sample_size: int = 1000):
     p99_latency = np.percentile(latencies, 99)
 
     print(f"  ✓ Độ trễ trung vị (P50): {BOLD}{GREEN}{p50_latency:.3f} ms{RESET}")
-    print(f"  ✓ Độ trễ P95:           {BOLD}{GREEN}{p95_latency:.3f} ms{RESET}")
+    print(f"  ✓ Độ trễ P95 in-process: {BOLD}{p95_latency:.3f} ms{RESET} (model_source={model_mgr.model_source})")
     print(f"  ✓ Độ trễ P99:           {BOLD}{GREEN}{p99_latency:.3f} ms{RESET}")
 
     # -------------------------------------------------------------
@@ -147,7 +147,7 @@ def run_effectiveness_benchmark(sample_size: int = 1000):
     drift_share = drift_report.get("drift_share", 0.0)
 
     print(f"  ✓ Tỷ lệ đặc trưng phát hiện trôi dạt: {drift_share * 100:.1f}%")
-    print(f"  ✓ Trạng thái phát hiện Drift: {BOLD}{GREEN}{'CHÍNH XÁC (CÓ TRÔI DẠT)' if drift_detected else 'ỔN ĐỊNH'}{RESET}")
+    print(f"  ✓ Kết quả trên mẫu drift tổng hợp đã cấy: {BOLD}{'DETECTED' if drift_detected else 'NOT DETECTED'}{RESET}")
 
     # -------------------------------------------------------------
     # BẢNG ĐIỂM TỔNG KẾT HIỆU QUẢ (SCORECARD)
@@ -156,16 +156,16 @@ def run_effectiveness_benchmark(sample_size: int = 1000):
     print(f"{BOLD}{CYAN}        BẢNG TỔNG KẾT ĐÁNH GIÁ TÍNH HIỆU QUẢ LUỒNG DỮ LIỆU (SCORECARD){RESET}")
     print(f"{BOLD}{CYAN}══════════════════════════════════════════════════════════════════════════{RESET}")
     print(f"┌──────────────────────────────────┬─────────────────┬──────────────┬────────────┐")
-    print(f"│ TIÊU CHÍ ĐÁNH GIÁ                │ KẾT QUẢ ĐẠT ĐƯỢC│ CHUẨN MLOPS  │ TRẠNG THÁI │")
+    print(f"│ CHỈ SỐ ĐO ĐƯỢC                   │ GIÁ TRỊ         │ MỤC TIÊU MẪU│ TRẠNG THÁI │")
     print(f"├──────────────────────────────────┼─────────────────┼──────────────┼────────────┤")
-    print(f"│ 1. Thông lượng thu nạp           │ {ingestion_throughput:>7,.0f} rec/s │ > 2,000 rec/s│ {GREEN}✓ XUẤT SẮC{RESET}  │")
-    print(f"│ 2. Tỉ lệ thất thoát dữ liệu      │ {loss_rate:>13.2f} % │ 0.00 %       │ {GREEN}✓ ZERO-LOSS{RESET} │")
-    print(f"│ 3. Điểm số chất lượng Schema     │ {quality_score:>11.1f} / 100│ > 90.0 / 100 │ {GREEN}✓ ĐẠT CHUẨN{RESET} │")
-    print(f"│ 4. Độ trễ suy luận P95           │ {p95_latency:>11.3f} ms │ < 50.0 ms    │ {GREEN}✓ SIÊU TỐC{RESET}  │")
-    print(f"│ 5. Độ nhạy phát hiện Data Drift  │ {drift_share*100:>11.1f} % │ >= 30.0 %    │ {GREEN}✓ CHÍNH XÁC{RESET} │")
-    print(f"│ 6. Phân tích ABC/XYZ (50 SKUs)   │ {abc_time:>11.2f} ms │ < 200 ms     │ {GREEN}✓ HOÀN HẢO{RESET} │")
+    print(f"│ 1. Chuẩn hóa in-process          │ {ingestion_throughput:>10,.0f} rec/s│ 2,000 rec/s  │ {'PASS' if ingestion_throughput >= 2000 else 'REVIEW':>10} │")
+    print(f"│ 2. Bản ghi bị cách ly            │ {quarantine_rate:>10.2f} % │ 0.00 %       │ {'PASS' if quarantine_rate == 0 else 'REVIEW':>10} │")
+    print(f"│ 3. Điểm chất lượng schema        │ {quality_score:>10.1f} /100│ 90.0 / 100   │ {'PASS' if quality_score >= 90 else 'REVIEW':>10} │")
+    print(f"│ 4. P95 inference in-process      │ {p95_latency:>10.3f} ms│ 50.0 ms      │ {'PASS' if p95_latency < 50 else 'REVIEW':>10} │")
+    print(f"│ 5. Drift trên dữ liệu tổng hợp   │ {drift_share*100:>10.1f} % │ detected     │ {'PASS' if drift_detected else 'REVIEW':>10} │")
+    print(f"│ 6. ABC/XYZ (50 SKUs)             │ {abc_time:>10.2f} ms│ 200 ms       │ {'PASS' if abc_time < 200 else 'REVIEW':>10} │")
     print(f"└──────────────────────────────────┴─────────────────┴──────────────┴────────────┘")
-    print(f"{BOLD}{GREEN}  KẾT LUẬN: Luồng dữ liệu đạt đầy đủ tiêu chuẩn High-Throughput & Low-Latency!{RESET}\n")
+    print(f"{BOLD}{YELLOW}  Các chỉ số trên là benchmark cục bộ; không đại diện cho độ trễ HTTP hay toàn tuyến Kafka → MinIO → PostgreSQL → MLflow → Serving. Các mục tiêu trong bảng là ngưỡng tham khảo của script.{RESET}\n")
 
 if __name__ == "__main__":
     run_effectiveness_benchmark(1000)

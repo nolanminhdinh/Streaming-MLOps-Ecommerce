@@ -16,7 +16,7 @@ docker compose up -d fastapi
 docker compose ps fastapi
 ```
 
-> **Kỳ vọng:** Container `fastapi-serving` ở trạng thái **Up (healthy)** và mở cổng **`8000`**.
+> `/health` là liveness của tiến trình. Docker readiness check dùng `/ready`, chỉ xanh khi có model ML đã nạp và có ngày đơn hàng gần nhất trong warehouse. Trước khi nạp dữ liệu/model, container có thể đang chạy nhưng chưa ready.
 
 Nếu muốn chạy trực tiếp bằng Python cục bộ (trong môi trường ảo `.venv`):
 ```bash
@@ -35,24 +35,13 @@ Mở trình duyệt web và truy cập một trong hai địa chỉ sau để t�
 
 ## 3. Kiểm thử các API Endpoints bằng `curl`
 
-### 3.1. Kiểm tra sức khỏe dịch vụ & Model Registry (`GET /health`)
+### 3.1. Kiểm tra liveness (`GET /health`) và readiness (`GET /ready`)
 ```bash
 curl -s http://localhost:8000/health
+curl -i http://localhost:8000/ready
 ```
-**Kết quả mẫu:**
-```json
-{
-  "status": "healthy",
-  "service": "fastapi-demand-serving",
-  "version": "1.0.0",
-  "model_loaded": true,
-  "model_name": "ECommerceDemandForecastModel",
-  "model_version": "1",
-  "model_stage": "Staging",
-  "champion_algorithm": "LightGBM_Tuned",
-  "uptime_seconds": 12.5
-}
-```
+
+`/health` có thể trả `status=degraded`, `model_loaded=false`; `/ready` trả HTTP 503 cho tới khi model và warehouse history sẵn sàng. Không coi `200` từ `/health` là bằng chứng model đã hoạt động.
 
 ---
 
@@ -60,25 +49,7 @@ curl -s http://localhost:8000/health
 ```bash
 curl -s http://localhost:8000/model/metadata
 ```
-**Kết quả mẫu:**
-```json
-{
-  "model_registry_name": "ECommerceDemandForecastModel",
-  "version": "1",
-  "stage": "Staging",
-  "champion_algorithm": "LightGBM_Tuned",
-  "status": "READY_FOR_SERVING",
-  "metrics": {
-    "cv_wape": 24.5,
-    "cv_mae": 1.85,
-    "cv_rmse": 2.6
-  },
-  "inventory_defaults": {
-    "lead_time_days": 3,
-    "service_level": 0.95
-  }
-}
-```
+Metadata phản ánh manifest/version được nạp trong môi trường hiện tại. Không dùng các metric hoặc version mẫu cũ trong báo cáo làm số đo model đang chạy; kiểm tra `model_source` và metric thật.
 
 ---
 
@@ -96,7 +67,7 @@ curl -X POST http://localhost:8000/predict/demand \
   }'
 ```
 
-**Kết quả mẫu:**
+**Dạng response minh họa** (các giá trị thay đổi theo dữ liệu và model đang chạy):
 ```json
 {
   "sku": "OL-IP15PM",
@@ -104,18 +75,19 @@ curl -X POST http://localhost:8000/predict/demand \
   "category": "Phụ kiện điện thoại",
   "from_date": "2026-10-01",
   "to_date": "2026-10-07",
-  "total_predicted_demand": 218.4,
+  "total_predicted_demand": 0.0,
   "forecast": [
-    {"date": "2026-10-01", "predicted_quantity": 28.5, "lower_bound": 20.3, "upper_bound": 36.7},
-    {"date": "2026-10-02", "predicted_quantity": 31.4, "lower_bound": 23.2, "upper_bound": 39.6},
-    {"date": "2026-10-03", "predicted_quantity": 38.5, "lower_bound": 30.3, "upper_bound": 46.7},
-    {"date": "2026-10-04", "predicted_quantity": 35.6, "lower_bound": 27.4, "upper_bound": 43.8}
+    {"date": "2026-10-01", "predicted_quantity": 0.0, "lower_bound": 0.0, "upper_bound": 0.0}
   ],
   "model_name": "ECommerceDemandForecastModel",
   "model_version": "1",
-  "model_stage": "Staging"
+  "model_stage": "Staging",
+  "model_source": "mlflow_registry",
+  "history_source": "warehouse"
 }
 ```
+
+Danh sách `forecast` có một phần tử cho mỗi ngày trong khoảng yêu cầu. Nếu `model_source` là `heuristic_history` thì API đang dùng fallback, không phải ML model.
 
 ---
 

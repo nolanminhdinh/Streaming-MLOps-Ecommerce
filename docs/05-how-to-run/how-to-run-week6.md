@@ -60,13 +60,16 @@ python ml/training/compare_models.py --seq-len 14 --epochs 25
 
 ---
 
-## 4. Đăng ký Mô hình Champion vào MLflow Model Registry
+## 4. Tạo run có artifact và đăng ký vào MLflow Model Registry
 
-Sau khi đánh giá so sánh, chạy kịch bản để tự động chọn mô hình có $WAPE$ thấp nhất và đăng ký vào MLflow Model Registry:
+`compare_models.py` chỉ ghi metrics so sánh; các run đó không chứa artifact model để Serving tải. Trước khi train, nạp dữ liệu thật vào `Fact_Orders` và tạo Feature Store từ warehouse. Hãy log model và `feature_spec.json` có `data_source=warehouse`, rồi đăng ký từ cùng experiment:
 
 ```bash
-# Đăng ký mô hình vào Registry ở stage Staging
-python ml/training/register_model.py --stage Staging
+# Ghi các run, model artifact và feature spec vào experiment triển khai
+python ml/training/train_baseline.py --experiment-name demand-forecasting-baseline
+
+# Đăng ký run hợp lệ có artifact vào Registry ở stage Staging
+python ml/training/register_model.py --experiment-name demand-forecasting-baseline --stage Staging
 ```
 
 - Mô hình được đăng ký vào Registry với tên định danh: **`ECommerceDemandForecastModel`**.
@@ -80,14 +83,14 @@ python ml/training/register_model.py --stage Staging
 
 1. Mở trình duyệt web truy cập: **`http://localhost:5000`**
 2. **Tab Experiments**:
-   - Chọn Experiment `demand-forecasting-comparison`.
-   - Xem chi tiết từng Run (`lightgbm_tuned`, `deep_learning_lstm`, `deep_learning_gru`).
-   - Kiểm tra các metrics chi tiết: `wape_overall`, `wape_segment_AX_AY`, `wape_segment_AZ_BZ`, `wape_segment_C`.
+   - Chọn Experiment `demand-forecasting-baseline` để xem các run có artifact triển khai.
+   - Experiment `demand-forecasting-model-comparison` dùng để xem metrics so sánh, không dùng trực tiếp để đăng ký artifact.
+   - Kiểm tra metrics `cv_wape`, `cv_mae`, `cv_rmse` cùng thư mục `model/` có model và `feature_spec.json`.
    - Xem các biểu đồ so sánh trong mục Artifacts của Run.
 3. **Tab Models (Model Registry)**:
    - Nhấp vào tab **Models** trên thanh menu điều hướng trên cùng.
    - Chọn mô hình **`ECommerceDemandForecastModel`**.
-   - Kiểm tra **Version 1** đang ở nhãn trạng thái **Staging**, kèm đầy đủ tags và mô tả chuyên môn.
+   - Kiểm tra version mới được gán nhãn **Staging** sau khi Registry hoàn tất đăng ký.
 
 ---
 

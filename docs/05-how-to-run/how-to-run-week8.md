@@ -19,7 +19,7 @@ docker compose ps prometheus grafana fastapi
 > **Kỳ vọng:**
 > - `prometheus` đang chạy tại: **`http://localhost:9090`**
 > - `grafana` đang chạy tại: **`http://localhost:3000`**
-> - `fastapi` đang phục vụ metrics tại: **`http://localhost:8000/metrics`**
+> - `/metrics` có thể scrape dù model chưa ready; kiểm tra `http://localhost:8000/ready` riêng để xác nhận readiness.
 
 ---
 
@@ -47,9 +47,10 @@ docker compose ps prometheus grafana fastapi
    E-Commerce Streaming MLOps: Serving & Inventory Dashboard
    ```
 4. **Các tính năng nổi bật trên Dashboard**:
-   - **Hàng 1**: Trạng thái Model Registry (`LightGBM_Tuned`), Uptime, Tổng số request, và chỉ số Data Drift.
+   - **Hàng 1**: Trạng thái model, Uptime, Tổng số request, và chỉ số Data Drift.
    - **Hàng 2**: 3 chỉ số Stat thẻ màu hiển thị số SKU báo động đỏ 🔴 **CRITICAL**, vàng 🟡 **WARNING**, và xanh 🟢 **NORMAL**.
-   - **Hàng 3**: Biểu đồ Time-series lưu lượng Request Rate (RPS by Endpoint) và biểu đồ tròn tỷ lệ phân bổ trạng thái kho hàng.
+   - **Hàng 3**: Biểu đồ Request Rate và trạng thái tồn kho.
+   - **Hàng 4**: Model Ready, tốc độ dự báo fallback heuristic, API latency P95/P99 theo endpoint.
    - Chế độ tự động làm mới (**Auto-refresh**): 10 giây/lần.
 
 ---
@@ -80,13 +81,12 @@ Khi hệ thống phát hiện trôi dạt dữ liệu hoặc trôi dạt khái n
 python monitoring/evidently/trigger_retraining.py
 ```
 
-### Các bước được thực thi tự động:
+### Điều kiện và trạng thái của chu trình:
 1. Đọc báo cáo drift gần nhất.
-2. Nếu `drift_share >= 30%` hoặc `target_drift_detected == True`:
-   - Thực thi huấn luyện lại mô hình Champion với cửa sổ dữ liệu mới.
-   - Tự động nâng cấp phiên bản mô hình trong `data/model_manifest.json` (từ Version 1 ➔ Version 2).
-   - Ghi lại nhật ký kiểm toán tại: `data/monitoring_reports/retraining_log.json`.
-3. Khi service FastAPI tiếp nhận các request tiếp theo, mô hình phiên bản mới sẽ được phục vụ tự động mà không cần can thiệp thủ công.
+2. Summary `synthetic_demo` không kích hoạt retraining tự động. Khi drift thật vượt ngưỡng, trainer dùng experiment `demand-forecasting-retraining`, rồi Registry phải có artifact model + feature spec hợp lệ.
+3. Manifest được cập nhật atomically. Serving ghim version trong manifest; reload thất bại trả HTTP error, giữ lại model đang chạy và coordinator khôi phục manifest cũ. Chỉ có audit `SUCCESS` khi response báo `model_ready=true`.
+
+Version không cố định thành 1 hoặc 2; nó phụ thuộc số version đã đăng ký trong Registry. Nếu chưa có ML model hay warehouse history, `/ready` vẫn trả HTTP 503.
 
 ---
 
@@ -102,5 +102,5 @@ python -m unittest tests/test_monitoring.py
 python -m unittest discover tests
 ```
 
-> **Kỳ vọng:** Toàn bộ 42 test cases của dự án đều đạt trạng thái **OK**.
+> Kết quả kiểm thử hiện tại được theo dõi trong [báo cáo ngày 2026-10-09](../03-testing-and-benchmark/test_report_2026-10-09.md); không dùng kỳ vọng số test cũ trong tài liệu này làm kết quả xác nhận.
 

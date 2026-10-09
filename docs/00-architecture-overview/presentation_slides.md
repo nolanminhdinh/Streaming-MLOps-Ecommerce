@@ -4,6 +4,8 @@
 > **Khuyến nghị định dạng**: 18 – 20 slide trình chiếu PowerPoint / Canva / Marp.  
 > **Thời gian thuyết trình**: 15 – 20 phút (trước khi chuyển sang 10 phút Live Demo và Q&A).
 
+> **Ghi chú số liệu tại 2026-10-09:** Các metric model/latency và số test ở bản nháp cũ chưa được xác nhận ở runtime hiện tại. Báo cáo gần nhất ghi 71 passed, 1 failed, 1 warning; Serving `degraded`; P95 HTTP tại 200 users là 719,03 ms. Dùng bảng kết quả mới từ MLflow/benchmark sau khi chạy lại; không trình bày các số placeholder dưới đây như số đo.
+
 ---
 
 ### SLIDE 1: TRANG TIÊU ĐỀ (TITLE SLIDE)
@@ -78,24 +80,18 @@
 ---
 
 ### SLIDE 8: THỰC NGHIỆM MÔ HÌNH: BASELINE VS DEEP LEARNING
-- **Phương pháp thực nghiệm**: Walk-Forward Time Series Split (5 folds), tránh rò rỉ dữ liệu tương lai (Data Leakage).
-- **Bảng so sánh kết quả thực nghiệm**:
-  | Thuật toán | WAPE (%) | MAE | RMSE | Thời gian huấn luyện | Độ trễ suy diễn (ms) |
-  |---|---|---|---|---|---|
-  | Naive / Moving Avg | 45.2% | 3.65 | 5.12 | < 1s | < 0.1ms |
-  | XGBoost Default | 28.1% | 2.15 | 3.05 | 12s | 1.8ms |
-  | **LightGBM Tuned (Optuna)** | **24.5%** | **1.85** | **2.60** | **8s** | **1.2ms** |
-  | PyTorch LSTM (Deep Learning) | 29.8% | 2.30 | 3.25 | 145s | 8.5ms |
-  | PyTorch GRU | 28.9% | 2.22 | 3.14 | 120s | 7.2ms |
+- **Phương pháp thực nghiệm**: Walk-Forward Validation với dự báo đệ quy; báo cáo số fold và metric thực tế từ run tương ứng.
+- Chèn bảng WAPE/MAE/RMSE trực tiếp từ MLflow sau khi xác nhận run có `evaluation_strategy=recursive_multi_step` và artifact.
+- Metric 24,5% trong bản nháp chưa được đối chiếu với model artifact hiện có; không xem đây là kết quả đã xác nhận.
 
 ---
 
 ### SLIDE 9: LUẬN GIẢI CHỌN MÔ HÌNH CHAMPION
 - **Tại sao chọn LightGBM Tuned làm mô hình triển khai chính thức?**
-  1. *Độ chính xác cao nhất*: Đạt WAPE 24.5% (thấp nhất trong tất cả các mô hình khảo nghiệm).
-  2. *Thời gian suy diễn cực thấp*: Chỉ 1.2ms cho mỗi yêu cầu dự báo (nhanh gấp 7 lần mạng nơ-ron sâu LSTM).
-  3. *Khả năng học tương tác phi tuyến*: Bắt trọn vẹn đặc trưng hiệu ứng Flash Sale và chu kỳ tuần.
-  4. *Quản lý vòng đời qua MLflow*: Tự động đăng ký vào Model Registry ở trạng thái `Production`.
+  1. Chọn champion theo run MLflow có metric hợp lệ và artifact tương thích serving.
+  2. Trình bày latency từ benchmark đo được; phân biệt in-process với HTTP.
+  3. Xác nhận version/stage thực tế trong Registry và `model_source` của API.
+  4. Hiện chưa có model artifact trong workspace; chưa thể tuyên bố model đang Production.
 
 ---
 
@@ -129,8 +125,9 @@
   - Kiểm định Kolmogorov-Smirnov (KS-test) cho các biến liên tục.
   - Chỉ số độ ổn định quần thể (Population Stability Index - PSI).
   - Tự động sinh báo cáo HTML trực quan hóa phân phối biến (`data_drift_report.html`).
-- **Closed-Loop Retraining**:
-  - Khi tỷ lệ đặc trưng trôi dạt vượt quá ngưỡng (Drift Share > 0.3), hệ thống tự động kích hoạt pipeline huấn luyện lại trên tập dữ liệu mới, cập nhật `data/model_manifest.json` và thăng cấp Version 2 không gián đoạn dịch vụ.
+- **Retraining**:
+  - Dữ liệu tổng hợp chỉ minh họa detector. Summary drift từ dữ liệu thật mới đủ điều kiện tự kích hoạt.
+  - Chỉ báo thành công sau khi Registry tạo artifact, Serving reload thành công và API vẫn ready; version phụ thuộc Registry.
 
 ---
 
@@ -149,11 +146,9 @@
 - **Kịch bản kiểm thử Locust**:
   - Kiểm thử các mức tải đồng thời: 10, 50, 100 và 200 concurrent users.
 - **Kết quả đo lường**:
-  - Thông lượng tối đa: **> 1,500 requests/giây (RPS)**.
-  - Độ trễ phản hồi trung bình: **0.13ms - 0.45ms**.
-  - Độ trễ phân vị P95: **< 2ms**.
-  - Tỷ lệ lỗi (Error Rate): **0.0%** trên toàn bộ các mức tải.
-  - Chứng minh hệ thống sẵn sàng đáp ứng lưu lượng truy cập cao trong các khung giờ Flash Sale cao điểm.
+  - Báo cáo HTTP ngày 2026-10-09: 300 requests ở mỗi mức, lỗi 0% trong lượt đo.
+  - P95 tại 200 users là 719,03 ms; P95 tăng theo concurrency.
+  - Đây không phải chứng minh khả năng chịu tải Flash Sale ở môi trường production.
 
 ---
 
@@ -166,14 +161,13 @@
   - `test_serving.py`: Kiểm tra API endpoints và logic Reorder Point.
   - `test_monitoring.py`: Kiểm tra phát hiện drift và trigger retraining (được cô lập hoàn toàn).
   - `test_load_test.py`: Kiểm tra thuật toán đo phân vị và dữ liệu Power BI.
-- Kết quả: **47/47 tests PASS (100% OK)**.
+- Baseline ngày 2026-10-09: **71 passed, 1 failed, 1 warning** trước sửa mã mới nhất; chưa chạy lại sau sửa.
 
 ---
 
 ### SLIDE 16: TỔNG KẾT ĐÁNH GIÁ MỨC ĐỘ HOÀN THÀNH
-- Đã hoàn thành 100% các mục tiêu đề ra trong đề cương 10 tuần.
-- Xây dựng thành công chu trình khép kín hoàn chỉnh từ Streaming Ingestion đến Executive Dashboard.
-- Đáp ứng đầy đủ các yêu cầu khắt khe của Cẩm nang Đồ án Tốt nghiệp (ĐATN).
+- Chu trình có module cho ingestion, ETL, training, serving, monitoring và BI; trạng thái runtime end-to-end sau sửa chưa được xác nhận.
+- Hoàn tất nghiệm thu khi `/ready`, source fields, retraining audit và Power BI export được kiểm tra trên cùng một lượt triển khai có thể lặp lại.
 
 ---
 

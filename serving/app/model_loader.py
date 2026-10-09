@@ -135,6 +135,26 @@ class ModelManager:
     # ─────────────────────────────────────────────────────────
 
     def load_model(self) -> bool:
+        """Nạp model vào trạng thái tạm rồi đổi nguyên khối khi artifact hợp lệ.
+
+        Khi reload thất bại, model đang phục vụ tiếp tục được giữ nguyên. Điều này
+        tránh request đồng thời nhìn thấy trạng thái rỗng trong lúc tải artifact.
+        """
+        candidate = ModelManager(manifest_path=self.manifest_path)
+        candidate._load_model_candidate()
+
+        if not candidate.has_model and self.has_model:
+            logger.error(
+                "Reload model thất bại; giữ nguyên model %s v%s đang phục vụ.",
+                self.model_source,
+                self.manifest.get("version", "unknown"),
+            )
+            return False
+
+        self.__dict__ = candidate.__dict__.copy()
+        return self.has_model
+
+    def _load_model_candidate(self) -> None:
         logger.info("Đang nạp Champion Model từ manifest: %s", self.manifest_path)
         if os.path.exists(self.manifest_path):
             try:
@@ -150,7 +170,12 @@ class ModelManager:
             self.manifest = self._default_manifest()
 
         self.model, self.model_source, self.model_artifact = None, SOURCE_HEURISTIC_CATALOG, None
-        spec_dir = self._try_load_mlflow() or self._try_load_local_joblib()
+        spec_dir = self._try_load_mlflow()
+        if not spec_dir and not os.getenv("MLFLOW_TRACKING_URI"):
+            # Chỉ dùng artifact cục bộ khi người vận hành chủ động chạy không có
+            # Registry. Khi đã cấu hình Registry, không tráo sang một file có thể
+            # thuộc version khác nếu server/artifact của version được ghim bị lỗi.
+            spec_dir = self._try_load_local_joblib()
         self._load_feature_spec(spec_dir)
 
         if self.model is None:
@@ -160,7 +185,6 @@ class ModelManager:
             )
         self.is_loaded = True
         self.load_timestamp = datetime.now(timezone.utc)
-        return True
 
     def _default_manifest(self) -> Dict[str, Any]:
         return {
@@ -204,11 +228,17 @@ class ModelManager:
             from mlflow.tracking import MlflowClient
 
             client = MlflowClient(tracking_uri=tracking_uri)
-            versions = client.get_latest_versions(name, stages=[stage])
-            if not versions:
-                logger.info("MLflow Registry chưa có version nào của %s ở stage %s.", name, stage)
-                return None
-            mv = versions[0]
+            version = str(self.manifest.get("version", "0"))
+            if version.isdigit() and int(version) > 0:
+                # Manifest là phiên bản triển khai đã được xác nhận; không tự ý
+                # chuyển sang version mới nhất chỉ vì Registry có version khác.
+                mv = client.get_model_version(name, version)
+            else:
+                versions = client.get_latest_versions(name, stages=[stage])
+                if not versions:
+                    logger.info("MLflow Registry chưa có version nào của %s ở stage %s.", name, stage)
+                    return None
+                mv = versions[0]
             local_dir = mlflow.artifacts.download_artifacts(artifact_uri=mv.source, tracking_uri=tracking_uri)
         except Exception as e:
             logger.warning("Không tải được mô hình từ MLflow Registry (%s): %s", tracking_uri, e)

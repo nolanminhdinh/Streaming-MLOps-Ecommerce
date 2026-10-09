@@ -107,7 +107,9 @@ class WarehouseRepository:
         from sqlalchemy import text
 
         def run(conn):
-            return conn.execute(text("SELECT MAX(create_time)::date FROM Fact_Orders")).scalar()
+            return conn.execute(text(
+                "SELECT MAX(create_time)::date FROM Fact_Orders WHERE is_cancelled = FALSE"
+            )).scalar()
 
         return self._query("last_order_date", run)
 

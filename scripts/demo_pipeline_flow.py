@@ -1,13 +1,13 @@
 """
 demo_pipeline_flow.py
 ---------------------
-Kịch bản Trình diễn Trực tiếp Toàn bộ Luồng Dữ liệu MLOps (End-to-End Live Demo):
+Kịch bản minh họa logic nội bộ MLOps (không kết nối Kafka/MinIO/PostgreSQL/MLflow):
   Tầng 1: Data Simulator (Shopee 84 cột & TikTok 71 cột)
   Tầng 2: Data Unification & Validation (Adapter + Data Quality Scorecard)
   Tầng 3: Feature Engineering & Ma trận 9 ô ABC/XYZ
   Tầng 4: Model Serving & Quản trị Tồn kho Động (SS & ROP Alert)
-  Tầng 5: Giám sát Data Drift (KS-Test) & Closed-Loop Retraining
-  Tầng 6: Minh chứng "Cắm Dữ liệu Thật" (Source-Agnostic Plug-and-Play)
+  Tầng 5: Minh họa phát hiện drift trên dữ liệu tổng hợp (không chạy retraining)
+  Tầng 6: Minh họa chuẩn hóa payload mẫu trong bộ nhớ (không gọi webhook thật)
 """
 
 import json
@@ -69,7 +69,7 @@ def step_1_streaming_simulation():
     tiktok_event = asdict(sim._generate_tiktok_event(now))
 
     print(f"\n{GREEN}✔ Đã phát sinh 2 sự kiện đơn hàng chuẩn XomData Schema:{RESET}")
-    print(f"  • {BOLD}Đơn Shopee ({len(shopee_event)} thuộc tính / 84 cột chuẩn):{RESET}")
+    print(f"  • {BOLD}Payload Shopee ({len(shopee_event)} trường trong simulator):{RESET}")
     print(f"    - Mã đơn:          {shopee_event.get('order_sn')}")
     print(f"    - Sản phẩm (SKU):  {shopee_event.get('item_name')} ({shopee_event.get('item_sku')})")
     print(f"    - Trạng thái:      {shopee_event.get('order_status')}")
@@ -77,14 +77,14 @@ def step_1_streaming_simulation():
     print(f"    - Khuyến mãi:      Người bán trợ giá {shopee_event.get('voucher_from_seller', 0):,} VND | Sàn trợ giá {shopee_event.get('voucher_from_shopee', 0):,} VND")
     print(f"    - Địa chỉ giao:    {shopee_event.get('district')}, {shopee_event.get('state')} (ĐVVC: {shopee_event.get('shipping_carrier')})")
 
-    print(f"\n  • {BOLD}Đơn TikTok Shop ({len(tiktok_event)} thuộc tính / 71 cột chuẩn):{RESET}")
+    print(f"\n  • {BOLD}Payload TikTok Shop ({len(tiktok_event)} trường trong simulator):{RESET}")
     print(f"    - Mã đơn:          {tiktok_event.get('order_id')}")
     print(f"    - Sản phẩm (SKU):  {tiktok_event.get('product_name')} ({tiktok_event.get('seller_sku')})")
     print(f"    - Trạng thái:      {tiktok_event.get('order_status')}")
     print(f"    - Tổng thanh toán: {tiktok_event.get('total_amount', 0):,} VND")
     print(f"    - Địa chỉ giao:    {tiktok_event.get('district')}, {tiktok_event.get('region_state')} (ĐVVC: {tiktok_event.get('shipping_provider')})")
 
-    print(f"\n{YELLOW}➔ Cơ chế Kafka:{RESET} Cả 2 JSON payload này được Producer bắn vào topic {BOLD}'ecom.orders.raw'{RESET} và lưu vào MinIO Data Lake Bronze Layer.")
+    print(f"\n{YELLOW}➔ Phạm vi bước này:{RESET} chỉ tạo 2 payload trong bộ nhớ. Script demo này không gửi chúng tới Kafka hoặc MinIO.")
     return [shopee_event, tiktok_event]
 
 
@@ -95,7 +95,7 @@ def step_2_unify_and_validate(raw_events):
     raw_df = pd.DataFrame(raw_events)
     unified_df = unify_schema(raw_df)
 
-    print(f"{GREEN}✔ Đã chuẩn hóa 84 cột Shopee và 71 cột TikTok về 1 lược đồ chung duy nhất:{RESET}")
+    print(f"{GREEN}✔ Đã chuyển payload mẫu Shopee/TikTok sang lược đồ trung gian của ETL:{RESET}")
     display_cols = ["order_id", "platform", "sku", "quantity", "buyer_total_amount", "order_status", "carrier_name"]
     print(unified_df[display_cols].to_string(index=False))
 
@@ -112,7 +112,7 @@ def step_2_unify_and_validate(raw_events):
 
 def step_3_feature_store_and_abc_xyz():
     print_banner("Feature Store & Phân hạng ma trận 9 ô ABC/XYZ", 3)
-    print("▶ Tổng hợp chuỗi thời gian tiêu thụ 30 ngày gần nhất cho các SKU đại diện...")
+    print("▶ Dựng chuỗi thời gian TỔNG HỢP 30 ngày trong bộ nhớ cho vài SKU minh họa...")
 
     # Tạo dữ liệu giả lập 30 ngày cho 3 nhóm SKU đặc trưng
     dates = pd.date_range(end=datetime.now(), periods=30, freq="D")
@@ -163,14 +163,16 @@ def step_3_feature_store_and_abc_xyz():
 
 def step_4_model_serving_and_inventory():
     print_banner("FastAPI Model Serving & Quản trị Tồn kho Động", 4)
-    print("▶ Khởi tạo Model Manager và nạp mô hình Champion (LightGBM_Tuned)...")
+    print("▶ Đọc trạng thái hiện tại của Model Manager...")
 
     model_mgr = get_model_manager()
     meta = model_mgr.get_metadata()
     algo = meta.get('champion_algorithm', 'LightGBM_Tuned')
-    wape = meta.get('metrics', {}).get('cv_wape', 24.5)
-    version = meta.get('version', '1')
-    print(f"{GREEN}✔ Mô hình Champion đang phục vụ:{RESET} {algo} | WAPE: {wape}% | Version: {version}")
+    wape = meta.get('metrics', {}).get('cv_wape')
+    version = meta.get('version', '0')
+    model_state = "ML model" if model_mgr.has_model else "heuristic fallback"
+    wape_text = f" | CV WAPE: {wape}%" if wape is not None else " | CV WAPE: unavailable"
+    print(f"{GREEN}• Model state: {model_state} | source: {model_mgr.model_source} | {algo} | Version: {version}{wape_text}{RESET}")
 
     # Dự báo sản lượng cho SKU 'DRS-MD-001' trong 7 ngày tới
     from datetime import date
@@ -217,12 +219,12 @@ def step_5_monitoring_and_retraining():
         status_str = f"{RED}DRIFTED{RESET}" if d_info.get("drift_detected") else f"{GREEN}STABLE{RESET}"
         print(f"    - {col:25s}: p-value={d_info.get('p_value', 0):.4f} | PSI={d_info.get('psi', 0):.4f} -> [{status_str}]")
 
-    print(f"\n{YELLOW}➔ Cơ chế Closed-Loop Retraining:{RESET} Khi tỷ lệ drift >= 30%, hệ thống tự động gọi {BOLD}trigger_retraining.py{RESET}, tái huấn luyện mô hình trên dữ liệu mới và cập nhật tệp model_manifest.json mà không gây gián đoạn Serving.")
+    print(f"\n{YELLOW}➔ Đây là dữ liệu drift tổng hợp để minh họa detector. Script này không gọi trigger_retraining.py, không huấn luyện, không đăng ký model và không reload Serving.{RESET}")
 
 
 def step_6_plug_and_play_demo():
-    print_banner("Minh chứng Tính 'Cắm-Rút' Nguồn Dữ liệu Thật (Plug-and-Play)", 6)
-    print("▶ GIẢ LẬP: Doanh nghiệp cắm nguồn Webhook thật từ Shopee Open API vào hệ thống:")
+    print_banner("Minh họa Chuẩn hóa Payload Mẫu Trong Bộ Nhớ", 6)
+    print("▶ Dữ liệu dưới đây là payload giả lập; chưa kết nối webhook Shopee hoặc nguồn thật:")
 
     real_webhook_payload = {
         "order_sn": "REAL_SHOPEE_20261001_9988",
@@ -258,8 +260,8 @@ def step_6_plug_and_play_demo():
     print(f"\n{GREEN}✔ KẾT QUẢ XỬ LÝ:{RESET}")
     print(f"  • Đã tiếp nhận và nhận diện đúng: Platform = {valid_df.iloc[0]['platform']}, Order ID = {valid_df.iloc[0]['order_id']}")
     print(f"  • Kiểm định chất lượng:           Pass Rate = {val_report.pass_rate * 100:.0f}% (Hợp lệ hoàn toàn)")
-    print(f"  • Dữ liệu chuẩn sẵn sàng:         Sẵn sàng nạp thẳng vào Fact_Orders!")
-    print(f"\n{BOLD}{GREEN}★ KẾT LUẬN: Toàn bộ tầng Transformer, Validator, Feature Store, Model Serving, Drift Detector, và Power BI GIỮ NGUYÊN 100%, không cần sửa đổi dù chỉ 1 dòng code!{RESET}\n")
+    print(f"  • Dữ liệu đã chuẩn hóa trong bộ nhớ; chưa ghi vào Kafka, MinIO hoặc Fact_Orders.")
+    print(f"\n{BOLD}{YELLOW}★ Đây là demo logic từng module. Muốn trình diễn end-to-end cần chạy riêng các service và kiểm tra trạng thái /ready, model_source, history_source cùng dữ liệu xuất ra.{RESET}\n")
 
 
 def main():

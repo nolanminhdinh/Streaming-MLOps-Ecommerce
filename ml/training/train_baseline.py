@@ -57,6 +57,11 @@ def get_feature_data() -> pd.DataFrame:
     if os.path.exists(data_path):
         logger.info("Nạp dữ liệu từ Feature Store: %s", data_path)
         df = pd.read_parquet(data_path)
+        if df.empty:
+            raise ValueError(
+                "Feature Store đang rỗng; cần chạy lại feature pipeline với đủ lịch sử "
+                "warehouse trước khi huấn luyện."
+            )
         if "target_date" not in df.columns:
             df["target_date"] = pd.to_datetime(df["date"]).dt.date + pd.Timedelta(days=1)
         return df

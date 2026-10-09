@@ -1,5 +1,7 @@
 ﻿# Tuần 9: Xây dựng Power BI Executive Dashboard & Kiểm thử Tải Hệ thống (Load Testing)
 
+> **Ghi chú đối chiếu hiện trạng:** Các kết luận latency/RPS dưới đây là số liệu cũ chưa khớp báo cáo runtime ngày 2026-10-09. Lần đo HTTP gần nhất ghi P95 719,03 ms tại 200 users; benchmark đã được sửa để không tự sinh kết luận đạt chuẩn nhưng chưa chạy lại.
+
 ## Mục tiêu
 Thiết kế và đóng gói toàn diện phân hệ báo cáo kinh doanh điều hành (**Executive Dashboard**) trên nền tảng **Power BI Desktop**, cung cấp cái nhìn 360 độ về hiệu quả bán hàng đa kênh, độ chính xác dự báo và bản đồ rủi ro tồn kho; đồng thời tiến hành thực nghiệm kiểm thử tải và khả năng chịu lỗi (Load & Concurrency Testing) với kịch bản mô phỏng từ 10 đến 200 người dùng đồng thời, đo lường thông lượng Throughput (RPS) và độ trễ P95/P99 nhằm hoàn thiện Chương Thực nghiệm Đánh giá của Đồ án tốt nghiệp.
 

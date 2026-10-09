@@ -38,7 +38,13 @@ def default_train_fn() -> Dict[str, Any]:
     from ml.features.feature_pipeline import build_feature_store, load_orders_data
     from ml.training.train_baseline import run_training_pipeline
 
-    build_feature_store(load_orders_data())
+    orders_df = load_orders_data()
+    if orders_df.attrs.get("data_source") != "warehouse":
+        raise RuntimeError(
+            "Retraining requires real Fact_Orders data from the warehouse; "
+            f"received {orders_df.attrs.get('data_source', 'unknown')} instead."
+        )
+    build_feature_store(orders_df)
     summary_df = run_training_pipeline(
         experiment_name=RETRAIN_EXPERIMENT,
         models_to_run=["lightgbm", "moving_average"],
@@ -63,7 +69,7 @@ def default_register_fn(manifest_dir: str) -> Dict[str, Any]:
 
 
 def notify_serving_reload(url: Optional[str] = None) -> bool:
-    """Yêu cầu FastAPI nạp lại mô hình (POST /model/reload). Lỗi chỉ được log, không làm hỏng retrain."""
+    """Yêu cầu FastAPI reload; trả true chỉ khi response xác nhận model_ready."""
     url = url or os.getenv("SERVING_RELOAD_URL")
     if not url:
         logger.info("Chưa cấu hình SERVING_RELOAD_URL — hãy restart / gọi /model/reload thủ công.")
@@ -76,7 +82,8 @@ def notify_serving_reload(url: Optional[str] = None) -> bool:
         if token:
             req.add_header("X-Reload-Token", token)
         with urllib.request.urlopen(req, timeout=10) as resp:
-            ok = 200 <= resp.status < 300
+            payload = json.loads(resp.read().decode("utf-8"))
+            ok = 200 <= resp.status < 300 and bool(payload.get("model_ready"))
         logger.info("✓ Đã yêu cầu serving nạp lại mô hình: %s (HTTP %s)", url, resp.status)
         return ok
     except Exception as e:
@@ -117,9 +124,37 @@ class ClosedLoopRetrainer:
 
     def _write_audit(self, entry: Dict[str, Any]) -> None:
         os.makedirs(os.path.dirname(self.retraining_log_path), exist_ok=True)
-        with open(self.retraining_log_path, "w", encoding="utf-8") as f:
+        temp_path = self.retraining_log_path + ".tmp"
+        with open(temp_path, "w", encoding="utf-8") as f:
             json.dump(entry, f, indent=2, ensure_ascii=False)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(temp_path, self.retraining_log_path)
         logger.info("✓ Đã ghi Retraining Audit Log tại: %s", self.retraining_log_path)
+
+    def _write_manifest(self, manifest: Dict[str, Any]) -> None:
+        os.makedirs(os.path.dirname(self.manifest_path), exist_ok=True)
+        temp_path = self.manifest_path + ".tmp"
+        with open(temp_path, "w", encoding="utf-8") as f:
+            json.dump(manifest, f, indent=2, ensure_ascii=False)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(temp_path, self.manifest_path)
+
+    def _restore_manifest(self, previous_bytes: Optional[bytes]) -> None:
+        if previous_bytes is None:
+            try:
+                os.remove(self.manifest_path)
+            except FileNotFoundError:
+                pass
+            return
+        os.makedirs(os.path.dirname(self.manifest_path), exist_ok=True)
+        temp_path = self.manifest_path + ".rollback.tmp"
+        with open(temp_path, "wb") as f:
+            f.write(previous_bytes)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(temp_path, self.manifest_path)
 
     def evaluate_and_trigger(self, force_retrain: bool = False) -> Dict[str, Any]:
         """Kiểm tra điều kiện drift và tiến hành tái huấn luyện nếu cần thiết."""
@@ -153,6 +188,10 @@ class ClosedLoopRetrainer:
         logger.warning("🚨 KÍCH HOẠT TÁI HUẤN LUYỆN (%s) | drift_share=%.1f%% | target_drift=%s | nguồn=%s",
                        trigger, float(drift_share) * 100, target_drift, data_source)
 
+        previous_manifest_bytes = None
+        if os.path.exists(self.manifest_path):
+            with open(self.manifest_path, "rb") as f:
+                previous_manifest_bytes = f.read()
         old_manifest = self._read_json(self.manifest_path)
         current_version = str(old_manifest.get("version", "0"))
         started_at = datetime.now(timezone.utc).isoformat()
@@ -184,14 +223,22 @@ class ClosedLoopRetrainer:
             new_manifest = {}
             logger.error("✗ Đăng ký mô hình thất bại: %s", e)
         if not new_manifest:
+            self._restore_manifest(previous_manifest_bytes)
             audit_entry.update({"status": "FAILED", "stage": "registration", "train_metrics": train_metrics})
             self._write_audit(audit_entry)
             return {"status": "FAILED", "stage": "registration", "audit_log": audit_entry}
 
-        # Registry offline → register_model trả version "1"; vẫn phải tăng so với bản đang chạy
-        new_version = str(new_manifest.get("version", "1"))
-        if new_manifest.get("run_id") in (None, "local_champion_run") and current_version.isdigit():
-            new_version = str(int(current_version) + 1)
+        new_version = str(new_manifest.get("version", ""))
+        if not new_version or new_version == current_version or not new_manifest.get("run_id"):
+            self._restore_manifest(previous_manifest_bytes)
+            audit_entry.update({
+                "status": "FAILED",
+                "stage": "registration",
+                "error": "Registry did not provide a new version tied to a real run.",
+                "train_metrics": train_metrics,
+            })
+            self._write_audit(audit_entry)
+            return {"status": "FAILED", "stage": "registration", "audit_log": audit_entry}
         new_manifest["version"] = new_version
         new_manifest["retraining_metadata"] = {
             "triggered_by": trigger,
@@ -201,12 +248,27 @@ class ClosedLoopRetrainer:
             "previous_version": current_version,
             "train_metrics": train_metrics,
         }
-        with open(self.manifest_path, "w", encoding="utf-8") as f:
-            json.dump(new_manifest, f, indent=2, ensure_ascii=False)
+        self._write_manifest(new_manifest)
         logger.info("✓ Đã cập nhật Model Manifest: version %s → %s", current_version, new_version)
 
         # 3. Báo serving nạp lại mô hình
-        reloaded = self.reload_fn()
+        try:
+            reloaded = bool(self.reload_fn())
+        except Exception as e:
+            logger.error("✗ Serving reload phát sinh lỗi: %s", e)
+            reloaded = False
+
+        if not reloaded:
+            self._restore_manifest(previous_manifest_bytes)
+            audit_entry.update({
+                "status": "FAILED",
+                "stage": "serving_reload",
+                "error": "Serving did not confirm that the registered model is ready.",
+                "new_version": new_version,
+                "serving_reloaded": False,
+            })
+            self._write_audit(audit_entry)
+            return {"status": "FAILED", "stage": "serving_reload", "audit_log": audit_entry}
 
         audit_entry.update({
             "status": "SUCCESS",

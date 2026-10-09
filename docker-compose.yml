@@ -180,6 +180,11 @@ services:
       AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin}
     ports:
       - "${MLFLOW_PORT:-5000}:5000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
     networks:
       - ecom-net
 
@@ -194,7 +199,7 @@ services:
       minio:
         condition: service_healthy
       mlflow:
-        condition: service_started
+        condition: service_healthy
     environment:
       MLFLOW_TRACKING_URI: http://mlflow:5000
       MLFLOW_S3_ENDPOINT_URL: http://minio:9000
@@ -207,12 +212,13 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-ecom}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ecom_password}
       MODEL_MANIFEST_PATH: /app/data/model_manifest.json
+      MODEL_RELOAD_TOKEN: ${MODEL_RELOAD_TOKEN:-}
     volumes:
       - ./data:/app/data:ro
     ports:
       - "${API_PORT:-8000}:8000"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/ready"]
       interval: 10s
       timeout: 5s
       retries: 5
