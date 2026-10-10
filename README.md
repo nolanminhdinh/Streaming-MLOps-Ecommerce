@@ -131,8 +131,10 @@ Hướng dẫn chi tiết từng bước cho từng giai đoạn:
 - **Nhật ký Khắc phục Lỗi & Tối ưu hóa Luồng (Changelog)**: xem [docs/04-pipeline-updates/lan-01-khac-phuc-loi-va-toi-uu-luong.md](docs/04-pipeline-updates/lan-01-khac-phuc-loi-va-toi-uu-luong.md).
 - **Báo cáo Sửa lỗi & Tối ưu Hệ thống Lần 2 (rà soát end-to-end)**: xem [docs/04-pipeline-updates/lan-02-sua-loi-va-toi-uu-he-thong.md](docs/04-pipeline-updates/lan-02-sua-loi-va-toi-uu-he-thong.md).
 - **Báo cáo Khắc phục Lần 3 (rà soát liên kết và vận hành)**: xem [docs/04-pipeline-updates/lan-03-e2e-remediation-2026-10-09.md](docs/04-pipeline-updates/lan-03-e2e-remediation-2026-10-09.md).
+- **Báo cáo kiểm thử hệ thống mới nhất (76 pytest đạt)**: xem [docs/03-testing-and-benchmark/test_report_2026-10-10.md](docs/03-testing-and-benchmark/test_report_2026-10-10.md).
+- **Báo cáo nâng cấp Lần 4 — data readiness và cảnh báo supervisor**: xem [docs/04-pipeline-updates/lan-04-training-data-readiness-2026-10-10.md](docs/04-pipeline-updates/lan-04-training-data-readiness-2026-10-10.md).
 
-> **Trạng thái kiểm chứng ngày 2026-10-09:** Ingestion, ETL, Power BI export, monitoring và load HTTP đã chạy trên Docker; 1.200 request có 0% lỗi, P95 là 396 ms ở 200 users trên chế độ fallback. Serving vẫn `degraded` và `/ready` trả 503 vì warehouse chỉ phủ 10 ngày lịch, chưa đủ lag 28 để tạo dữ liệu huấn luyện. Chưa nghiệm thu nhánh model ML/retraining; xem báo cáo [Lần 3](docs/04-pipeline-updates/lan-03-e2e-remediation-2026-10-09.md).
+> **Trạng thái kiểm chứng ngày 2026-10-10:** 76 pytest đạt; Docker `/ready` trả 200 với model ML v2 từ Registry và lịch sử CSV đến 2026-08-11. Model vẫn ở `Staging` vì WAPE 126,08%; không xem readiness là tiêu chí chất lượng Production. Nhánh thiếu dữ liệu có 4 unit test, status API/Prometheus alert đã được cấu hình; webhook bên ngoài chưa được xác nhận vì chưa cấu hình URL.
 
 ## 7. Minh bạch sử dụng AI
 

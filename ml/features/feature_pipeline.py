@@ -29,6 +29,7 @@ from typing import Optional, Tuple
 import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
+from sqlalchemy import text
 
 load_dotenv()
 
@@ -45,10 +46,57 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 logger = logging.getLogger("ml.feature_pipeline")
+PUBLIC_HISTORY_ORIGIN = "public_anonymized_historical_csv"
+DEFAULT_LAGS = (1, 2, 3, 7, 14, 21, 28)
 
 
-def load_orders_data() -> pd.DataFrame:
+def load_orders_data(data_origin: Optional[str] = None) -> pd.DataFrame:
     """Nạp dữ liệu đơn hàng sạch từ PostgreSQL hoặc file Parquet dự phòng."""
+    if data_origin == PUBLIC_HISTORY_ORIGIN:
+        # CSV đã ẩn danh có hạt là dòng sản phẩm và order_id có thể bị tái sử dụng.
+        # Đọc bảng lịch sử riêng, không áp dụng dedupe theo order_id của luồng sự kiện.
+        try:
+            engine = get_engine()
+            query = """
+                SELECT
+                    source_order_id AS order_id,
+                    platform,
+                    sku,
+                    product_name,
+                    NULL::VARCHAR AS category,
+                    create_time,
+                    quantity,
+                    0::NUMERIC AS original_price,
+                    0::NUMERIC AS buyer_total_amount,
+                    0::NUMERIC AS seller_discount,
+                    is_cancelled,
+                    order_status,
+                    data_origin,
+                    source_dataset
+                FROM Fact_Historical_Order_Lines
+                WHERE data_origin = :data_origin
+                ORDER BY create_time ASC, platform, source_dataset, source_record_id
+            """
+            df = pd.read_sql(text(query), engine, params={"data_origin": data_origin})
+        except Exception as exc:
+            raise RuntimeError(
+                "Không đọc được Fact_Historical_Order_Lines. Hãy chạy init_warehouse.py "
+                "và import CSV trước khi tạo Feature Store."
+            ) from exc
+        if df.empty:
+            raise ValueError(
+                f"Warehouse chưa có dòng lịch sử với data_origin={data_origin!r}. "
+                "Hãy import hai CSV trước khi huấn luyện."
+            )
+        df.attrs["data_source"] = "warehouse"
+        df.attrs["data_origin"] = data_origin
+        df.attrs["source_datasets"] = sorted(df["source_dataset"].dropna().astype(str).unique())
+        logger.info(
+            "Nạp %d dòng SKU từ Fact_Historical_Order_Lines (origin=%s, %d dataset).",
+            len(df), data_origin, len(df.attrs["source_datasets"]),
+        )
+        return df
+
     # 1. Thử nạp từ PostgreSQL
     try:
         engine = get_engine()
@@ -74,6 +122,7 @@ def load_orders_data() -> pd.DataFrame:
         df = pd.read_sql(query, engine)
         if not df.empty:
             df.attrs["data_source"] = "warehouse"
+            df.attrs["data_origin"] = "unverified_warehouse"
             logger.info("✓ Nạp thành công %d đơn hàng từ PostgreSQL Fact_Orders.", len(df))
             return df
     except Exception as e:
@@ -87,6 +136,7 @@ def load_orders_data() -> pd.DataFrame:
     if os.path.exists(clean_p):
         df = pd.read_parquet(clean_p)
         df.attrs["data_source"] = "local_clean_parquet"
+        df.attrs["data_origin"] = "local_clean_parquet"
         logger.info("✓ Nạp thành công %d đơn hàng từ file: %s", len(df), clean_p)
         return df
     elif os.path.exists(raw_p):
@@ -94,6 +144,7 @@ def load_orders_data() -> pd.DataFrame:
         raw_df = pd.read_parquet(raw_p)
         df = clean_data(unify_schema(raw_df))
         df.attrs["data_source"] = "local_raw_parquet"
+        df.attrs["data_origin"] = "local_raw_parquet"
         logger.info("✓ Nạp và làm sạch %d đơn hàng từ file: %s", len(df), raw_p)
         return df
 
@@ -104,6 +155,7 @@ def load_orders_data() -> pd.DataFrame:
     raw_df = generate_historical_orders(days=60, base_orders_per_day=150)
     df = clean_data(unify_schema(raw_df))
     df.attrs["data_source"] = "synthetic_demo"
+    df.attrs["data_origin"] = "synthetic_demo"
     return df
 
 
@@ -174,7 +226,7 @@ def _encode_categories(df: pd.DataFrame) -> dict:
 
 def build_feature_store(
     orders_df: pd.DataFrame,
-    lags: list[int] = [1, 2, 3, 7, 14, 21, 28],
+    lags: Optional[list[int]] = None,
     rolling_windows: list[int] = [7, 14, 28],
     save_path: Optional[str] = None,
     holdout_days: int = DEFAULT_HOLDOUT_DAYS,
@@ -190,6 +242,7 @@ def build_feature_store(
     logger.info("  BẮT ĐẦU FEATURE ENGINEERING PIPELINE")
     logger.info("  Tổng số đơn hàng đầu vào: %d", len(orders_df))
     logger.info("═" * 60)
+    lags = list(DEFAULT_LAGS if lags is None else lags)
 
     # 1. Phân loại ABC/XYZ CHỈ trên dữ liệu trước vùng holdout (chống data leakage)
     cutoff = _resolve_segment_cutoff(orders_df, holdout_days)
@@ -269,6 +322,8 @@ def build_feature_store(
         merged_features=merged_features,
         segment_cutoff=cutoff,
         data_source=str(orders_df.attrs.get("data_source", "unknown")),
+        data_origin=str(orders_df.attrs.get("data_origin", "unknown")),
+        source_datasets=list(orders_df.attrs.get("source_datasets", [])),
     )
 
     return valid_features
@@ -284,6 +339,8 @@ def save_feature_spec(
     merged_features: pd.DataFrame,
     segment_cutoff: pd.Timestamp,
     data_source: str = "unknown",
+    data_origin: str = "unknown",
+    source_datasets: Optional[list[str]] = None,
 ) -> dict:
     """Ghi hợp đồng đặc trưng (feature contract) dùng chung giữa huấn luyện và serving."""
     profile_cols = [c for c in ["sku", "product_name", "category", "abc_class", "xyz_class",
@@ -307,6 +364,8 @@ def save_feature_spec(
         "sku_profiles": sku_profiles,
         "segment_cutoff_date": str(segment_cutoff.date()),
         "data_source": data_source,
+        "data_origin": data_origin,
+        "source_datasets": sorted(set(source_datasets or [])),
         "generated_at": pd.Timestamp.now(tz="UTC").isoformat(),
     }
     with open(spec_path, "w", encoding="utf-8") as f:
@@ -319,9 +378,15 @@ def save_feature_spec(
 def main():
     parser = argparse.ArgumentParser(description="Tạo Feature Store cho chuỗi thời gian")
     parser.add_argument("--output", type=str, default=None, help="Đường dẫn file parquet đầu ra")
+    parser.add_argument(
+        "--data-origin",
+        choices=[PUBLIC_HISTORY_ORIGIN],
+        default=None,
+        help="Chọn đúng nguồn dữ liệu huấn luyện thay vì trộn mọi dòng trong warehouse.",
+    )
     args = parser.parse_args()
 
-    orders_df = load_orders_data()
+    orders_df = load_orders_data(data_origin=args.data_origin)
     build_feature_store(orders_df, save_path=args.output)
 
 

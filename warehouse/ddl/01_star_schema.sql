@@ -167,6 +167,33 @@ CREATE TABLE IF NOT EXISTS Fact_Forecast_Predictions (
     )
 );
 
+-- Fact_Historical_Order_Lines: lịch sử order-line đã khử định danh, chỉ dùng cho demand forecasting.
+-- Bảng riêng giữ đúng hạt SKU × dòng nguồn, không ép order_id đã ẩn vào khóa đơn duy nhất
+-- và không đưa các trường khách hàng/tài chính không cần thiết vào báo cáo Power BI.
+CREATE TABLE IF NOT EXISTS Fact_Historical_Order_Lines (
+    historical_line_id BIGSERIAL PRIMARY KEY,
+    source_dataset      VARCHAR(80) NOT NULL,
+    source_record_id    VARCHAR(80) NOT NULL,
+    data_origin         VARCHAR(80) NOT NULL,
+    source_order_id     VARCHAR(128),
+    platform            VARCHAR(20) NOT NULL,
+    sku                 VARCHAR(128) NOT NULL,
+    product_name        VARCHAR(500),
+    order_status        VARCHAR(40) NOT NULL,
+    is_cancelled        BOOLEAN NOT NULL DEFAULT FALSE,
+    quantity            INTEGER NOT NULL CHECK (quantity > 0),
+    create_time         TIMESTAMP NOT NULL,
+    loaded_at           TIMESTAMP NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_historical_order_line_source UNIQUE (
+        source_dataset, platform, source_record_id
+    )
+);
+
+CREATE INDEX IF NOT EXISTS idx_historical_lines_sku_date
+    ON Fact_Historical_Order_Lines(sku, create_time);
+CREATE INDEX IF NOT EXISTS idx_historical_lines_origin_date
+    ON Fact_Historical_Order_Lines(data_origin, create_time);
+
 
 -- ========== INDEXES ==========
 

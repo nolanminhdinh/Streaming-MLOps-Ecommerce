@@ -132,6 +132,20 @@ DATA_DRIFT_RATIO = Gauge(
     "ecommerce_data_drift_ratio", "Share of input features detected with statistical drift",
     registry=REGISTRY,
 )
+TRAINING_DATA_SUFFICIENT = Gauge(
+    "ecommerce_training_data_sufficient",
+    "Training data readiness: 1=ready, 0=insufficient, -1=not evaluated",
+    registry=REGISTRY,
+)
+TRAINING_HISTORY_DAYS = Gauge(
+    "ecommerce_training_history_days",
+    "Training history coverage by kind: available, required, or missing calendar days",
+    ["kind"], registry=REGISTRY,
+)
+TRAINING_STATUS = Gauge(
+    "ecommerce_training_status", "Latest training pipeline status (one active status series)",
+    ["status"], registry=REGISTRY,
+)
 for _ep in TRACKED_ENDPOINTS:
     REQUESTS_TOTAL.labels(endpoint=_ep)  # khởi tạo series = 0 để dashboard có dữ liệu ngay
 
@@ -249,7 +263,8 @@ def readiness_check() -> Dict[str, Any]:
     manager = get_model_manager()
     repository = get_repository()
     warehouse_connected = repository.available()
-    last_order_date = repository.get_last_order_date() if warehouse_connected else None
+    data_origin = manager.feature_spec.get("data_origin")
+    last_order_date = repository.get_last_order_date(data_origin=data_origin) if warehouse_connected else None
     warehouse_connected = repository.available()
     ready = manager.has_model and warehouse_connected and last_order_date is not None
     payload = {
@@ -258,10 +273,48 @@ def readiness_check() -> Dict[str, Any]:
         "warehouse_connected": warehouse_connected,
         "history_available": last_order_date is not None,
         "history_end": last_order_date.isoformat() if last_order_date else None,
+        "history_data_origin": data_origin or "unverified_warehouse",
     }
     if not ready:
         return JSONResponse(status_code=503, content=payload) if HAS_FASTAPI else payload
     return payload
+
+
+def _read_training_status() -> Dict[str, Any]:
+    status_path = os.getenv(
+        "TRAINING_STATUS_PATH",
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", "training_status.json")),
+    )
+    try:
+        with open(status_path, "r", encoding="utf-8") as status_file:
+            value = json.load(status_file)
+        return value if isinstance(value, dict) else {}
+    except FileNotFoundError:
+        return {}
+    except Exception as exc:
+        logger.warning("Không đọc được training readiness status: %s", exc)
+        return {}
+
+
+@app.get("/training/status", tags=["Monitoring"])
+def get_training_status() -> Dict[str, Any]:
+    """Cho supervisor xem lần đánh giá dữ liệu huấn luyện gần nhất."""
+    report = _read_training_status()
+    if not report:
+        return {
+            "status": "NOT_EVALUATED",
+            "data_sufficient": None,
+            "message": "Chưa có lần chạy training readiness nào.",
+        }
+    # Chỉ xuất trạng thái giao nhận, không trả lỗi HTTP có thể chứa URL webhook.
+    notification = report.get("notification") or {}
+    safe_notification = {
+        key: notification[key]
+        for key in ("configured", "attempted", "delivered", "http_status", "reason")
+        if key in notification
+    }
+    report["notification"] = safe_notification
+    return report
 
 
 @app.get("/model/metadata", response_model=ModelMetadataResponse, tags=["Model Registry"])
@@ -284,6 +337,7 @@ def get_model_metadata() -> ModelMetadataResponse:
             "service_level": meta.get("service_level", 0.95),
         },
         model_source=manager.model_source,
+        training_data_origin=meta.get("training_data_origin"),
     )
 
 
@@ -387,7 +441,7 @@ def _predict_one(request: DemandPredictRequest) -> DemandPredictResponse:
 def predict_demand(request: DemandPredictRequest) -> DemandPredictResponse:
     """
     Dự báo nhu cầu cho 1 SKU trong khoảng thời gian [from_date, to_date]:
-      - Đặc trưng lag/rolling/EMA dựng từ lịch sử nhu cầu thật (Fact_Orders), dự báo đệ quy nhiều ngày.
+      - Đặc trưng lag/rolling/EMA dựng từ lịch sử warehouse theo data_origin của model, dự báo đệ quy nhiều ngày.
       - Đảm bảo toàn bộ giá trị dự báo không âm (predicted_quantity >= 0).
       - Tùy chọn trả về cận trên/dưới (±1.96σ nhu cầu lịch sử).
       - `model_source` cho biết kết quả đến từ mô hình ML hay heuristic dự phòng.
@@ -457,12 +511,41 @@ def _read_drift_ratio() -> float:
     return 0.0
 
 
+def _refresh_training_gauges() -> Dict[str, Any]:
+    report = _read_training_status()
+    if not report:
+        TRAINING_DATA_SUFFICIENT.set(-1)
+        available = required = missing = 0
+        state = "not_evaluated"
+    else:
+        sufficient = report.get("data_sufficient")
+        TRAINING_DATA_SUFFICIENT.set(-1 if sufficient is None else (1 if sufficient else 0))
+        available = int(report.get("available_history_days", 0) or 0)
+        required = int(report.get("required_history_days", 0) or 0)
+        missing = int(report.get("missing_history_days", 0) or 0)
+        state = str(report.get("status", "unknown")).lower()
+    TRAINING_HISTORY_DAYS.labels(kind="available").set(available)
+    TRAINING_HISTORY_DAYS.labels(kind="required").set(required)
+    TRAINING_HISTORY_DAYS.labels(kind="missing").set(missing)
+    TRAINING_STATUS.clear()
+    TRAINING_STATUS.labels(status=state).set(1)
+    return {
+        "status": state,
+        "data_sufficient": None if state == "not_evaluated" else bool(report.get("data_sufficient")),
+        "available_history_days": available,
+        "required_history_days": required,
+        "missing_history_days": missing,
+        "report": report,
+    }
+
+
 def _refresh_gauges() -> Dict[str, Any]:
     """Cập nhật các gauge trạng thái ngay trước khi Prometheus scrape."""
     alert_summary = _get_cached_alert_summary(get_inventory_service())
     manager = get_model_manager()
     meta = manager.get_metadata()
     drift_ratio = _read_drift_ratio()
+    training_status = _refresh_training_gauges()
 
     UPTIME.set(round(time.time() - START_TIME, 1))
     INVENTORY_ALERTS.labels(level="critical").set(alert_summary.critical_count)
@@ -478,7 +561,13 @@ def _refresh_gauges() -> Dict[str, Any]:
     ).set(1)
     MODEL_READY.set(1 if manager.has_model else 0)
     DATA_DRIFT_RATIO.set(drift_ratio)
-    return {"alert_summary": alert_summary, "meta": meta, "drift_ratio": drift_ratio, "manager": manager}
+    return {
+        "alert_summary": alert_summary,
+        "meta": meta,
+        "drift_ratio": drift_ratio,
+        "manager": manager,
+        "training_status": training_status,
+    }
 
 
 @app.get("/metrics", tags=["Monitoring"])
@@ -511,6 +600,16 @@ def get_metrics(
             },
             "data_drift": {
                 "drift_ratio": state["drift_ratio"],
+            },
+            "training_readiness": {
+                key: state["training_status"][key]
+                for key in (
+                    "status",
+                    "data_sufficient",
+                    "available_history_days",
+                    "required_history_days",
+                    "missing_history_days",
+                )
             },
         }
 

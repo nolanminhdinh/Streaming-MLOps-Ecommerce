@@ -213,6 +213,10 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ecom_password}
       MODEL_MANIFEST_PATH: /app/data/model_manifest.json
       MODEL_RELOAD_TOKEN: ${MODEL_RELOAD_TOKEN:-}
+      TRAINING_STATUS_PATH: /app/data/training_status.json
+      TRAINING_ALERT_WEBHOOK_URL: ${TRAINING_ALERT_WEBHOOK_URL:-}
+      TRAINING_ALERT_WEBHOOK_TOKEN: ${TRAINING_ALERT_WEBHOOK_TOKEN:-}
+      TRAINING_MIN_FIT_DAYS: ${TRAINING_MIN_FIT_DAYS:-14}
     volumes:
       - ./data:/app/data:ro
     ports:
@@ -225,12 +229,50 @@ services:
     networks:
       - ecom-net
 
+  # Chạy tác vụ training/retraining một lần, tách khỏi container serving chỉ đọc data.
+  # Ví dụ: docker compose run --rm trainer ml/training/train_baseline.py
+  trainer:
+    build: ./serving
+    image: streaming-mlops-ecommerce-fastapi
+    profiles: ["training"]
+    working_dir: /workspace
+    entrypoint: ["python"]
+    environment:
+      PYTHONPATH: /workspace
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+      AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER:-minioadmin}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-ecom_warehouse}
+      POSTGRES_USER: ${POSTGRES_USER:-ecom}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ecom_password}
+      TRAINING_STATUS_PATH: /workspace/data/training_status.json
+      TRAINING_ALERT_WEBHOOK_URL: ${TRAINING_ALERT_WEBHOOK_URL:-}
+      TRAINING_ALERT_WEBHOOK_TOKEN: ${TRAINING_ALERT_WEBHOOK_TOKEN:-}
+      TRAINING_MIN_FIT_DAYS: ${TRAINING_MIN_FIT_DAYS:-14}
+      SERVING_HISTORY_DAYS: ${SERVING_HISTORY_DAYS:-120}
+      SERVING_PUBLIC_HISTORY_DAYS: ${SERVING_PUBLIC_HISTORY_DAYS:-240}
+    volumes:
+      - ./:/workspace
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      mlflow:
+        condition: service_healthy
+    networks:
+      - ecom-net
+
   # --- Monitoring (Kích hoạt Tuần 8: Prometheus & Grafana) ---
   prometheus:
     image: prom/prometheus:v2.52.0
     container_name: prometheus
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro
       - prometheus-data:/prometheus
     ports:
       - "9090:9090"

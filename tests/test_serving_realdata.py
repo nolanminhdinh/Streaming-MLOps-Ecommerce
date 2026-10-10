@@ -72,13 +72,13 @@ class FakeRepository:
     def available(self) -> bool:
         return True
 
-    def get_catalog(self):
+    def get_catalog(self, data_origin=None):
         return {s: {"name": f"Sản phẩm {s}", "category": "Test"} for s in self.daily["sku"].unique()}
 
-    def get_last_order_date(self):
+    def get_last_order_date(self, data_origin=None):
         return max(self.daily["date"])
 
-    def get_daily_history(self, sku, end_date, days=120):
+    def get_daily_history(self, sku, end_date, days=120, data_origin=None):
         sub = self.daily[(self.daily["sku"] == sku) & (self.daily["date"] <= end_date)].tail(days)
         if sub.empty:
             return None
@@ -134,7 +134,11 @@ class TestServingWithWarehouseHistory(unittest.TestCase):
 
         cls.patches = [
             mock.patch.object(model_loader, "DATA_DIR", data_dir),
-            mock.patch.dict(os.environ, {"FEATURE_SPEC_PATH": os.path.join(data_dir, "feature_spec.json")}),
+            mock.patch.dict(os.environ, {
+                "FEATURE_SPEC_PATH": os.path.join(data_dir, "feature_spec.json"),
+                # The test explicitly exercises the local artifact fallback, independent of .env.
+                "MLFLOW_TRACKING_URI": "",
+            }),
         ]
         for p in cls.patches:
             p.start()

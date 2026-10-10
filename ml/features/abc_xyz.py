@@ -141,6 +141,22 @@ class ABCXYZClassifier:
         )
 
         total_rev_all = sku_revenue["total_revenue"].sum()
+        if not np.isfinite(total_rev_all) or total_rev_all <= 0:
+            # Historical sources may omit prices or mix currencies. In that
+            # case classify ABC by units sold instead of assigning every SKU
+            # to A from an all-zero revenue series.
+            logger.warning(
+                "Không có doanh thu dương để phân loại ABC; chuyển sang tổng số lượng bán theo SKU."
+            )
+            sku_revenue = (
+                df.groupby(sku_col)[quantity_col]
+                .sum()
+                .reset_index()
+                .rename(columns={quantity_col: "total_revenue"})
+                .sort_values(by="total_revenue", ascending=False)
+            )
+            total_rev_all = sku_revenue["total_revenue"].sum()
+
         if total_rev_all > 0:
             sku_revenue["rev_share"] = sku_revenue["total_revenue"] / total_rev_all
             sku_revenue["cum_rev_share"] = sku_revenue["rev_share"].cumsum()

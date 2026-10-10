@@ -44,6 +44,8 @@ class TestLoadTestRunner(unittest.TestCase):
 
     def setUp(self):
         self.runner = LoadTestRunner()
+        # Unit benchmark must not change behavior when a local API happens to be running.
+        self.runner.is_live_server = False
 
     def test_single_request_execution(self):
         """Kiểm tra thực thi 1 request trả về đúng tuple (success, elapsed_ms, task_type)."""

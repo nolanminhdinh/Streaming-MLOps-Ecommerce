@@ -47,6 +47,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(na
 
 DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data"))
 HISTORY_DAYS = int(os.getenv("SERVING_HISTORY_DAYS", "120"))
+PUBLIC_HISTORY_DAYS = int(os.getenv("SERVING_PUBLIC_HISTORY_DAYS", "240"))
 MAX_FORECAST_STEPS = int(os.getenv("SERVING_MAX_FORECAST_STEPS", "180"))
 STATS_WINDOW_DAYS = 28
 
@@ -306,7 +307,8 @@ class ModelManager:
 
     def get_catalog(self) -> Tuple[Dict[str, Dict[str, Any]], str]:
         """Danh mục SKU: Data Warehouse → Feature Spec → bảng demo. Trả về (catalog, source)."""
-        catalog = get_repository().get_catalog()
+        data_origin = self.feature_spec.get("data_origin")
+        catalog = get_repository().get_catalog(data_origin=data_origin)
         if catalog:
             return catalog, "warehouse"
         profiles = self.feature_spec.get("sku_profiles") or {}
@@ -321,7 +323,7 @@ class ModelManager:
     def get_product_info(self, sku: str) -> Dict[str, Any]:
         info = dict(CATALOG_METADATA.get(sku) or {**DEFAULT_PRODUCT, "name": f"Sản phẩm {sku}"})
         profile = (self.feature_spec.get("sku_profiles") or {}).get(sku) or {}
-        catalog = get_repository().get_catalog() or {}
+        catalog = get_repository().get_catalog(data_origin=self.feature_spec.get("data_origin")) or {}
         if sku in catalog:
             info.update(catalog[sku])
         elif profile:
@@ -340,11 +342,19 @@ class ModelManager:
         repo = get_repository()
         if not repo.available():
             return None, None
-        last_known = repo.get_last_order_date()
+        data_origin = self.feature_spec.get("data_origin")
+        last_known = repo.get_last_order_date(data_origin=data_origin)
         if last_known is None:
             return None, None
         hist_end = min(from_date - timedelta(days=1), last_known)
-        history = repo.get_daily_history(sku, hist_end, days=HISTORY_DAYS)
+        history_days = (
+            max(HISTORY_DAYS, PUBLIC_HISTORY_DAYS)
+            if data_origin == "public_anonymized_historical_csv"
+            else HISTORY_DAYS
+        )
+        history = repo.get_daily_history(
+            sku, hist_end, days=history_days, data_origin=data_origin
+        )
         return (history, hist_end) if history else (None, None)
 
     def _model_predict_one(self, history: List[Dict[str, Any]], row_date: date, sku: str) -> float:
@@ -475,6 +485,7 @@ class ModelManager:
         meta = self.manifest.copy()
         meta["model_source"] = self.model_source
         meta["model_ready"] = self.has_model
+        meta["training_data_origin"] = self.feature_spec.get("data_origin", "unknown")
         if self.feature_spec.get("feature_columns"):
             meta["input_feature_count"] = len(self.feature_spec["feature_columns"])
         return meta

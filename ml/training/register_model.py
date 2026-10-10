@@ -44,7 +44,11 @@ REGISTERED_MODEL_NAME = "ECommerceDemandForecastModel"
 REQUIRED_EVALUATION_STRATEGY = "recursive_multi_step"
 
 
-def find_best_run(experiment_name: str) -> Optional[Dict[str, Any]]:
+def find_best_run(
+    experiment_name: str,
+    required_data_origin: Optional[str] = None,
+    required_source_datasets: Optional[list[str]] = None,
+) -> Optional[Dict[str, Any]]:
     """Tìm Run có WAPE thấp nhất theo giao thức đánh giá đệ quy hiện tại."""
     try:
         import mlflow
@@ -76,21 +80,67 @@ def find_best_run(experiment_name: str) -> Optional[Dict[str, Any]]:
             return None
         runs = compatible_runs
 
+        if required_data_origin:
+            origin_col = "params.data_origin"
+            if origin_col not in runs.columns:
+                logger.warning("Experiment chưa có run ghi data_origin=%s.", required_data_origin)
+                return None
+            runs = runs[runs[origin_col] == required_data_origin]
+        if required_source_datasets is not None:
+            import json
+            datasets_col = "params.source_datasets"
+            expected_datasets = json.dumps(sorted(required_source_datasets), separators=(",", ":"))
+            if datasets_col not in runs.columns:
+                logger.warning("Experiment chưa có run ghi fingerprint source_datasets hiện hành.")
+                return None
+            runs = runs[runs[datasets_col] == expected_datasets]
+
         if runs.empty:
-            logger.warning("Experiment '%s' chưa có run nào.", experiment_name)
+            logger.warning(
+                "Experiment '%s' không có run khớp evaluation strategy và nguồn dữ liệu hiện hành.",
+                experiment_name,
+            )
             return None
 
-        best_run = runs.iloc[0]
-        model_name = best_run.get("params.model_name", "lightgbm")
-        return {
-            "run_id": best_run["run_id"],
-            "model_name": model_name,
-            "wape": best_run.get("metrics.cv_wape"),
-            "mae": best_run.get("metrics.cv_mae"),
-            "rmse": best_run.get("metrics.cv_rmse"),
-            "artifact_uri": best_run.get("artifact_uri", ""),
-            "model_file": f"{str(model_name).lower()}_model.joblib",
-        }
+        from mlflow.tracking import MlflowClient
+        client = MlflowClient(tracking_uri=mlflow.get_tracking_uri())
+        for _, candidate in runs.iterrows():
+            model_name = candidate.get("params.model_name", "lightgbm")
+            model_file = f"{str(model_name).lower()}_model.joblib"
+            run_id = candidate["run_id"]
+            try:
+                artifacts = client.list_artifacts(run_id, path="model")
+                artifact_names = {os.path.basename(item.path) for item in artifacts if not item.is_dir}
+            except Exception as artifact_error:
+                logger.warning("Bỏ run %s vì không đọc được model artifacts (%s).", run_id, artifact_error)
+                continue
+            if model_file not in artifact_names or "feature_spec.json" not in artifact_names:
+                logger.warning("Bỏ run %s vì thiếu model artifact hoặc feature_spec.json.", run_id)
+                continue
+            try:
+                import joblib
+                model_dir = mlflow.artifacts.download_artifacts(
+                    artifact_uri=f"runs:/{run_id}/model",
+                    tracking_uri=mlflow.get_tracking_uri(),
+                )
+                loaded_model = joblib.load(os.path.join(model_dir, model_file))
+                if not hasattr(loaded_model, "predict"):
+                    raise TypeError("Artifact thiếu phương thức predict.")
+                del loaded_model
+            except Exception as artifact_error:
+                logger.warning("Bỏ run %s vì model artifact không nạp được (%s).", run_id, artifact_error)
+                continue
+            return {
+                "run_id": run_id,
+                "model_name": model_name,
+                "wape": candidate.get("metrics.cv_wape"),
+                "mae": candidate.get("metrics.cv_mae"),
+                "rmse": candidate.get("metrics.cv_rmse"),
+                "artifact_uri": candidate.get("artifact_uri", ""),
+                "model_file": model_file,
+            }
+        logger.warning("Không có run khớp dữ liệu hiện hành nào lưu đủ model artifact và feature spec.")
+        return None
     except Exception as e:
         logger.warning("Không thể truy vấn MLflow Server (%s), chuyển sang đọc bảng so sánh cục bộ...", e)
 
@@ -132,6 +182,16 @@ def _feature_count() -> int:
         return 0
 
 
+def _current_feature_spec() -> Dict[str, Any]:
+    spec_path = os.path.join(os.path.dirname(__file__), "..", "..", "data", "feature_spec.json")
+    try:
+        with open(spec_path, "r", encoding="utf-8") as f:
+            spec = json.load(f)
+        return spec if isinstance(spec, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
 def register_champion_model(
     experiment_name: str = "demand-forecasting-baseline",
     model_name: str = REGISTERED_MODEL_NAME,
@@ -146,6 +206,16 @@ def register_champion_model(
     logger.info("  Tên mô hình: %s | Mục tiêu Stage: %s", model_name, stage)
     logger.info("═" * 60)
 
+    current_spec = _current_feature_spec()
+    expected_origin = str(current_spec.get("data_origin", "")).strip()
+    expected_datasets = sorted(set(current_spec.get("source_datasets") or []))
+    if not expected_origin or current_spec.get("data_source") != "warehouse":
+        logger.error("Feature Spec hiện hành thiếu nguồn warehouse đã xác định; chưa đăng ký model.")
+        return {}
+    if expected_origin == "public_anonymized_historical_csv" and not expected_datasets:
+        logger.error("Feature Spec CSV hiện hành thiếu fingerprints source_datasets; chưa đăng ký model.")
+        return {}
+
     tracking_uri = configure_mlflow(experiment_name=experiment_name)
     if tracking_uri.startswith("file:"):
         logger.error(
@@ -154,7 +224,11 @@ def register_champion_model(
             tracking_uri,
         )
         return {}
-    best_info = find_best_run(experiment_name)
+    best_info = find_best_run(
+        experiment_name,
+        required_data_origin=expected_origin,
+        required_source_datasets=expected_datasets,
+    )
 
     if not best_info:
         logger.error("Không tìm thấy thông tin mô hình Champion.")
@@ -193,6 +267,23 @@ def register_champion_model(
                 "Chỉ cho đăng ký model được train từ Feature Store có nguồn warehouse thật; "
                 f"artifact ghi data_source={feature_spec.get('data_source', 'unknown')}."
             )
+        data_origin = str(feature_spec.get("data_origin", "")).strip().lower()
+        artifact_datasets = sorted(set(feature_spec.get("source_datasets") or []))
+        if data_origin != expected_origin or artifact_datasets != expected_datasets:
+            raise RuntimeError(
+                "Run artifact không khớp nguồn Feature Spec hiện hành; "
+                "hãy train lại sau khi dựng Feature Store đúng nguồn."
+            )
+        blocked_origins = {"", "unknown", "unverified_warehouse", "synthetic_demo", "simulator"}
+        if data_origin in blocked_origins or data_origin.startswith("local_"):
+            raise RuntimeError(
+                "Không đăng ký model nếu Feature Spec thiếu nguồn gốc dữ liệu đã xác định "
+                f"hoặc dùng dữ liệu mô phỏng/local (data_origin={data_origin or 'unknown'})."
+            )
+        if data_origin == "public_anonymized_historical_csv" and not feature_spec.get("source_datasets"):
+            raise RuntimeError(
+                "Feature Spec từ CSV lịch sử phải ghi source_datasets để truy vết đúng bộ dữ liệu."
+            )
         if not feature_spec.get("feature_columns"):
             raise RuntimeError("Feature spec không có feature_columns.")
 
@@ -216,7 +307,11 @@ def register_champion_model(
             source=model_uri,
             run_id=best_info["run_id"],
             description=f"Champion model {best_info['model_name']} với CV WAPE = {best_info['wape']}%.",
-            tags={"framework": str(best_info["model_name"]), "wape": str(best_info["wape"])},
+            tags={
+                "framework": str(best_info["model_name"]),
+                "wape": str(best_info["wape"]),
+                "data_origin": data_origin,
+            },
         )
         registered_version = str(model_version.version)
         deadline = time.monotonic() + 60
@@ -269,6 +364,7 @@ def register_champion_model(
         "lead_time_days": 3,
         "service_level": 0.95,
         "status": "READY_FOR_SERVING",
+        "data_origin": data_origin,
     }
 
     manifest_dir = os.path.abspath(

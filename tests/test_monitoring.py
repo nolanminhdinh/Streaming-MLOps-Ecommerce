@@ -95,8 +95,8 @@ class TestClosedLoopRetraining(unittest.TestCase):
                 json.dump({"model_registry_name": "TestModel", "version": "1"}, f)
 
             def fake_register(manifest_dir):
-                return {"model_registry_name": "TestModel", "version": "1", "stage": "Staging",
-                        "run_id": "local_champion_run", "metrics": {"cv_wape": 20.0}}
+                return {"model_registry_name": "TestModel", "version": "2", "stage": "Staging",
+                        "run_id": "registered-run-2", "metrics": {"cv_wape": 20.0}}
 
             reload_calls = []
             retrainer = ClosedLoopRetrainer(

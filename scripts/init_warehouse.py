@@ -47,6 +47,7 @@ TABLES_TO_VERIFY = [
     "dim_payment",
     "dim_carriers",
     "fact_orders",
+    "fact_historical_order_lines",
     "fact_inventory_daily",
 ]
 
@@ -104,6 +105,7 @@ def init_warehouse(drop_first: bool = False):
             logger.warning("CẢNH BÁO: Đang xóa các bảng hiện có (--drop-first)...")
             conn.execute(text("""
                 DROP TABLE IF EXISTS Fact_Orders CASCADE;
+                DROP TABLE IF EXISTS Fact_Historical_Order_Lines CASCADE;
                 DROP TABLE IF EXISTS Fact_Inventory_Daily CASCADE;
                 DROP TABLE IF EXISTS Dim_Products CASCADE;
                 DROP TABLE IF EXISTS Dim_Shops CASCADE;

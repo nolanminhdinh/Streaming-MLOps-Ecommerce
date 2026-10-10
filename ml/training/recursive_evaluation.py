@@ -154,6 +154,7 @@ def forecast_fold_recursively(
     feature_cols: Sequence[str],
     target_col: str,
     daily_history: Optional[pd.DataFrame] = None,
+    history_days: Optional[int] = None,
     predict_one: Optional[PredictOne] = None,
 ) -> Tuple[pd.DataFrame, np.ndarray, np.ndarray]:
     """Dự báo lần lượt toàn bộ kỳ test; mỗi dự báo làm đầu vào cho ngày kế tiếp.
@@ -177,7 +178,10 @@ def forecast_fold_recursively(
         (int(column[4:]) for column in feature_cols if column.startswith("lag_") and column[4:].isdigit()),
         default=1,
     )
-    history_days = max(1, int(os.getenv("SERVING_HISTORY_DAYS", str(DEFAULT_HISTORY_DAYS))))
+    history_days = max(
+        1,
+        int(history_days if history_days is not None else os.getenv("SERVING_HISTORY_DAYS", str(DEFAULT_HISTORY_DAYS))),
+    )
     mappings = _category_mappings(feature_df)
     predictions: Dict[Tuple[str, date], float] = {}
     skipped_skus = []

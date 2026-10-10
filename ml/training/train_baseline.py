@@ -17,10 +17,12 @@ Tuần 5: Huấn luyện Baseline & MLflow Experiment Tracking.
 """
 
 import argparse
+import json
 import logging
 import os
 import sys
 import time
+from datetime import datetime, timezone
 from typing import Dict, List, Optional, Tuple
 
 try:
@@ -40,8 +42,20 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from ml.mlflow.setup_tracking import configure_mlflow
 from ml.training.metrics import calculate_all_metrics
 from ml.features.time_series_features import TimeSeriesFeatureExtractor
-from ml.features.feature_pipeline import load_orders_data, build_feature_store
+from serving.app.baseline_models import NaiveModel, SeasonalNaiveModel, MovingAverageModel
+from ml.features.feature_pipeline import (
+    DEFAULT_LAGS,
+    PUBLIC_HISTORY_ORIGIN,
+    load_orders_data,
+    build_feature_store,
+)
 from ml.training.recursive_evaluation import forecast_fold_recursively
+from ml.training.data_readiness import (
+    InsufficientTrainingDataError,
+    assess_feature_history,
+    assess_order_history,
+    publish_training_status,
+)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -51,10 +65,33 @@ logging.basicConfig(
 logger = logging.getLogger("ml.train_baseline")
 
 
-def get_feature_data() -> pd.DataFrame:
+def _feature_spec_path() -> str:
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", "feature_spec.json"))
+
+
+def _read_feature_spec() -> dict:
+    try:
+        with open(_feature_spec_path(), "r", encoding="utf-8") as f:
+            value = json.load(f)
+        return value if isinstance(value, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+def get_feature_data(data_origin: Optional[str] = None) -> pd.DataFrame:
     """Nạp Feature Store, tự động tạo mới nếu chưa tồn tại."""
     data_path = os.path.join(os.path.dirname(__file__), "..", "..", "data", "features_daily.parquet")
     if os.path.exists(data_path):
+        existing_origin = _read_feature_spec().get("data_origin")
+        if data_origin and existing_origin != data_origin:
+            logger.info(
+                "Feature Store hiện tại dùng origin=%s; dựng lại từ origin được yêu cầu: %s",
+                existing_origin or "unknown",
+                data_origin,
+            )
+            df = build_feature_store(load_orders_data(data_origin=data_origin), save_path=data_path)
+            df["target_date"] = pd.to_datetime(df["date"]).dt.date + pd.Timedelta(days=1)
+            return df
         logger.info("Nạp dữ liệu từ Feature Store: %s", data_path)
         df = pd.read_parquet(data_path)
         if df.empty:
@@ -67,7 +104,7 @@ def get_feature_data() -> pd.DataFrame:
         return df
 
     logger.info("Chưa có file Feature Store. Đang tự động chạy feature_pipeline...")
-    orders_df = load_orders_data()
+    orders_df = load_orders_data(data_origin=data_origin)
     df = build_feature_store(orders_df, save_path=data_path)
     df["target_date"] = pd.to_datetime(df["date"]).dt.date + pd.Timedelta(days=1)
     return df
@@ -132,44 +169,6 @@ def select_feature_columns(df: pd.DataFrame) -> Tuple[List[str], str]:
 # ─────────────────────────────────────────────────────────────
 # CÁC MÔ HÌNH DỰ BÁO
 # ─────────────────────────────────────────────────────────────
-
-class NaiveModel:
-    """Dự báo ngày mai = hôm nay (Lag 1)."""
-    def __init__(self, lag_col: str = "daily_demand"):
-        self.lag_col = lag_col
-
-    def fit(self, X, y):
-        return self
-
-    def predict(self, X: pd.DataFrame) -> np.ndarray:
-        if "lag_1" in X.columns:
-            return X["lag_1"].fillna(0).values
-        elif self.lag_col in X.columns:
-            return X[self.lag_col].fillna(0).values
-        return np.zeros(len(X))
-
-
-class SeasonalNaiveModel:
-    """Dự báo ngày mai = cùng thứ tuần trước (Lag 7)."""
-    def fit(self, X, y):
-        return self
-
-    def predict(self, X: pd.DataFrame) -> np.ndarray:
-        if "lag_7" in X.columns:
-            return X["lag_7"].fillna(0).values
-        return np.zeros(len(X))
-
-
-class MovingAverageModel:
-    """Dự báo ngày mai = trung bình trượt 7 ngày gần nhất."""
-    def fit(self, X, y):
-        return self
-
-    def predict(self, X: pd.DataFrame) -> np.ndarray:
-        if "rolling_mean_7" in X.columns:
-            return X["rolling_mean_7"].fillna(0).values
-        return np.zeros(len(X))
-
 
 def get_ml_model(model_name: str, params: Optional[dict] = None):
     """Khởi tạo mô hình Machine Learning với thư viện khả dụng."""
@@ -242,6 +241,7 @@ def evaluate_walk_forward(
     test_days: int = 14,
     val_days: int = 7,
     daily_history: Optional[pd.DataFrame] = None,
+    history_days: Optional[int] = None,
 ) -> Tuple[Dict[str, float], np.ndarray, np.ndarray]:
     """
     Đánh giá walk-forward theo ngày target bằng dự báo đệ quy hết từng test horizon.
@@ -277,6 +277,7 @@ def evaluate_walk_forward(
             feature_cols=feature_cols,
             target_col=target_col,
             daily_history=daily_history,
+            history_days=history_days,
         )
         if len(y_test) == 0:
             logger.warning("  [%s] Fold %d không có SKU đủ lịch sử để đánh giá.", model_name.upper(), fold_idx)
@@ -367,6 +368,8 @@ def run_training_pipeline(
     experiment_name: str = "demand-forecasting-baseline",
     models_to_run: Optional[List[str]] = None,
     n_splits: int = 3,
+    data_origin: Optional[str] = None,
+    orders_df: Optional[pd.DataFrame] = None,
 ) -> pd.DataFrame:
     """
     Chạy toàn bộ pipeline huấn luyện và log kết quả lên MLflow.
@@ -375,14 +378,65 @@ def run_training_pipeline(
     logger.info("║         HUẤN LUYỆN BASELINE & EXPERIMENT TRACKING        ║")
     logger.info("╚" + "═" * 58 + "╝")
 
-    # 1. Cấu hình MLflow
+    # 1. Nạp nguồn hiện tại và chặn sớm trước khi feature engineering/model training
+    # nếu lịch sử chưa đủ cho lag_28 + walk-forward CV.
+    orders_df = orders_df if orders_df is not None else load_orders_data(data_origin=data_origin)
+    min_train_days = max(14, int(os.getenv("TRAINING_MIN_FIT_DAYS", "14")))
+    max_lag_days = max(DEFAULT_LAGS)
+    readiness = assess_order_history(
+        orders_df,
+        n_splits=n_splits,
+        min_train_days=min_train_days,
+        max_lag_days=max_lag_days,
+    )
+    if not readiness["data_sufficient"]:
+        readiness = publish_training_status(readiness)
+        raise InsufficientTrainingDataError(readiness)
+
+    df = build_feature_store(orders_df)
+    feature_spec = _read_feature_spec()
+    recorded_origin = str(feature_spec.get("data_origin", "unknown"))
+    if data_origin and recorded_origin != data_origin:
+        raise ValueError(
+            f"Feature Spec ghi data_origin={recorded_origin!r}, khác nguồn được yêu cầu {data_origin!r}."
+        )
+    feature_readiness = assess_feature_history(
+        df,
+        data_origin=recorded_origin,
+        source_type=str(feature_spec.get("data_source", "unknown")),
+        n_splits=n_splits,
+        min_train_days=min_train_days,
+        max_lag_days=max_lag_days,
+    )
+    if not feature_readiness["data_sufficient"]:
+        feature_readiness = publish_training_status(feature_readiness)
+        raise InsufficientTrainingDataError(feature_readiness)
+    readiness.update({
+        "status": "TRAINING_STARTED",
+        "severity": "info",
+        "data_sufficient": True,
+        "evaluation_days_available": feature_readiness["evaluation_days_available"],
+        "evaluation_days_required": feature_readiness["evaluation_days_required"],
+        "feature_row_count": feature_readiness["row_count"],
+        "feature_sku_count": feature_readiness["sku_count"],
+        "action": "Training đang chạy; model hiện tại vẫn tiếp tục phục vụ đến khi có version mới hợp lệ.",
+    })
+    readiness = publish_training_status(readiness)
+
+    # 2. Chỉ khởi tạo MLflow sau khi readiness gate xác nhận đủ dữ liệu.
     tracking_uri = configure_mlflow(experiment_name=experiment_name)
     logger.info("MLflow Tracking URI: %s", tracking_uri)
 
     import mlflow
 
-    # 2. Chuẩn bị dữ liệu
-    df = get_feature_data()
+    # 3. Chuẩn bị đặc trưng huấn luyện.
+    history_days = int(os.getenv("SERVING_HISTORY_DAYS", "120"))
+    if recorded_origin == PUBLIC_HISTORY_ORIGIN:
+        history_days = max(
+            history_days,
+            int(os.getenv("SERVING_PUBLIC_HISTORY_DAYS", "240")),
+        )
+    logger.info("Cửa sổ lịch sử dùng cho walk-forward: %d ngày.", history_days)
     feature_cols, target_col = select_feature_columns(df)
     daily_history = get_daily_history_data(df)
 
@@ -390,6 +444,8 @@ def run_training_pipeline(
         models_to_run = ["naive", "seasonal_naive", "moving_average", "ridge", "lightgbm"]
 
     artifacts_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", "mlflow_artifacts"))
+    # Artifact output must not depend on optional plotting libraries being installed.
+    os.makedirs(artifacts_dir, exist_ok=True)
 
     results_table = []
 
@@ -425,6 +481,7 @@ def run_training_pipeline(
             target_col=target_col,
             n_splits=n_splits,
             daily_history=daily_history,
+            history_days=history_days,
         )
 
         # Fit lại trên TOÀN BỘ dữ liệu trước khi lưu artifact phục vụ serving.
@@ -450,6 +507,13 @@ def run_training_pipeline(
                 mlflow.log_param("n_features", len(feature_cols))
                 mlflow.log_param("n_walk_forward_splits", n_splits)
                 mlflow.log_param("evaluation_strategy", "recursive_multi_step")
+                mlflow.log_param("data_origin", recorded_origin)
+                mlflow.log_param("data_source", str(feature_spec.get("data_source", "unknown")))
+                mlflow.log_param("history_days", history_days)
+                mlflow.log_param(
+                    "source_datasets",
+                    json.dumps(sorted(feature_spec.get("source_datasets", [])), separators=(",", ":")),
+                )
                 for pk, pv in params.items():
                     mlflow.log_param(pk, pv)
 
@@ -504,6 +568,17 @@ def run_training_pipeline(
     best_model = summary_df.iloc[0]["Mô hình"]
     logger.info("🏆 MÔ HÌNH TỐI ƯU NHẤT TRÊN TEST SPLITS: %s (WAPE = %.2f%%)", best_model, summary_df.iloc[0]["WAPE (%)"])
 
+    readiness.update({
+        "status": "TRAINING_SUCCEEDED",
+        "severity": "info",
+        "data_sufficient": True,
+        "best_model": str(best_model),
+        "trained_models": summary_df["Mô hình"].astype(str).tolist(),
+        "completed_at": datetime.now(timezone.utc).isoformat(),
+        "action": "Huấn luyện hoàn tất. Model chỉ được đăng ký sau khi qua bước kiểm tra registry.",
+    })
+    publish_training_status(readiness)
+
     return summary_df
 
 
@@ -512,13 +587,25 @@ def main():
     parser.add_argument("--experiment-name", type=str, default="demand-forecasting-baseline")
     parser.add_argument("--n-splits", type=int, default=3)
     parser.add_argument("--models", nargs="+", default=["naive", "seasonal_naive", "moving_average", "ridge", "lightgbm"])
+    parser.add_argument(
+        "--data-origin",
+        choices=[PUBLIC_HISTORY_ORIGIN],
+        default=None,
+        help="Yêu cầu Feature Store đúng nguồn này; tự dựng lại nếu Feature Spec hiện tại dùng nguồn khác.",
+    )
     args = parser.parse_args()
 
-    run_training_pipeline(
-        experiment_name=args.experiment_name,
-        models_to_run=args.models,
-        n_splits=args.n_splits,
-    )
+    try:
+        run_training_pipeline(
+            experiment_name=args.experiment_name,
+            models_to_run=args.models,
+            n_splits=args.n_splits,
+            data_origin=args.data_origin,
+        )
+    except InsufficientTrainingDataError as exc:
+        logger.error("⛔ %s", exc)
+        logger.error("Hành động: %s", exc.report.get("action", "Nạp thêm dữ liệu lịch sử rồi chạy lại."))
+        raise SystemExit(2) from None
 
 
 if __name__ == "__main__":

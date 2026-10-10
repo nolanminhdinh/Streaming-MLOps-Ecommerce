@@ -35,20 +35,23 @@ RETRAIN_EXPERIMENT = "demand-forecasting-retraining"
 def default_train_fn() -> Dict[str, Any]:
     """Dựng lại Feature Store từ dữ liệu mới nhất rồi huấn luyện lại; trả về metrics của mô hình tốt nhất."""
     sys.path.insert(0, PROJECT_ROOT)
-    from ml.features.feature_pipeline import build_feature_store, load_orders_data
+    from ml.features.feature_pipeline import load_orders_data
     from ml.training.train_baseline import run_training_pipeline
+    from ml.training.data_readiness import require_sufficient_order_history
 
     orders_df = load_orders_data()
+    min_train_days = max(14, int(os.getenv("TRAINING_MIN_FIT_DAYS", "14")))
+    require_sufficient_order_history(orders_df, n_splits=2, min_train_days=min_train_days)
     if orders_df.attrs.get("data_source") != "warehouse":
         raise RuntimeError(
             "Retraining requires real Fact_Orders data from the warehouse; "
             f"received {orders_df.attrs.get('data_source', 'unknown')} instead."
         )
-    build_feature_store(orders_df)
     summary_df = run_training_pipeline(
         experiment_name=RETRAIN_EXPERIMENT,
         models_to_run=["lightgbm", "moving_average"],
         n_splits=2,
+        orders_df=orders_df,
     )
     if summary_df is None or summary_df.empty:
         raise RuntimeError("Pipeline huấn luyện không trả về kết quả")
@@ -210,6 +213,29 @@ class ClosedLoopRetrainer:
             train_metrics = self.train_fn()
             logger.info("✓ Huấn luyện lại thành công: %s", train_metrics)
         except Exception as e:
+            if e.__class__.__name__ == "InsufficientTrainingDataError":
+                readiness = getattr(e, "report", {})
+                audit_entry.update({
+                    "status": "BLOCKED_INSUFFICIENT_DATA",
+                    "stage": "data_readiness",
+                    "data_readiness": readiness,
+                    "action": readiness.get(
+                        "action",
+                        "Nạp thêm dữ liệu lịch sử rồi chạy lại pipeline.",
+                    ),
+                })
+                self._write_audit(audit_entry)
+                logger.warning(
+                    "Retraining bị chặn vì thiếu dữ liệu; giữ nguyên model v%s. %s",
+                    current_version,
+                    readiness.get("action", ""),
+                )
+                return {
+                    "status": "BLOCKED_INSUFFICIENT_DATA",
+                    "stage": "data_readiness",
+                    "data_readiness": readiness,
+                    "audit_log": audit_entry,
+                }
             logger.error("✗ Huấn luyện lại THẤT BẠI: %s — giữ nguyên mô hình v%s.", e, current_version)
             audit_entry.update({"status": "FAILED", "stage": "training", "error": str(e)})
             self._write_audit(audit_entry)

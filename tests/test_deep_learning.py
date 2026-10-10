@@ -87,19 +87,64 @@ class TestDeepLearningTrainer(unittest.TestCase):
 class TestModelRegistry(unittest.TestCase):
 
     def test_register_model_manifest(self):
-        """Kiểm tra đăng ký mô hình và tạo tệp manifest chuẩn cho FastAPI Serving."""
+        """Kiểm tra manifest chỉ được tạo sau khi artifact được đăng ký thật."""
         import json
         import tempfile
+        import types
         from unittest import mock
 
         fake_run = {
-            "run_id": "local_champion_run", "model_name": "LIGHTGBM",
+            "run_id": "run-7f31", "model_name": "LIGHTGBM",
             "wape": 21.3, "mae": 1.7, "rmse": 2.4,
-            "artifact_uri": "data/champion_model.joblib", "model_file": "lightgbm_model.joblib",
+            "artifact_uri": "runs:/run-7f31/model", "model_file": "lightgbm_model.joblib",
         }
-        with tempfile.TemporaryDirectory() as tmp_dir, \
-                mock.patch("ml.training.register_model.find_best_run", return_value=fake_run):
-            manifest = register_champion_model(stage="Staging", manifest_dir=tmp_dir)
+        feature_spec = {
+            "data_source": "warehouse",
+            "data_origin": "warehouse_live",
+            "source_datasets": [],
+            "feature_columns": ["lag_1"],
+        }
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            artifact_dir = os.path.join(tmp_dir, "artifact")
+            os.makedirs(artifact_dir)
+            with open(os.path.join(artifact_dir, "lightgbm_model.joblib"), "wb") as model_file:
+                model_file.write(b"test artifact")
+            with open(os.path.join(artifact_dir, "feature_spec.json"), "w", encoding="utf-8") as spec_file:
+                json.dump(feature_spec, spec_file)
+
+            class FakeMlflowClient:
+                def __init__(self, **kwargs):
+                    self.tracking_uri = kwargs.get("tracking_uri")
+
+                def create_registered_model(self, **kwargs):
+                    return None
+
+                def create_model_version(self, **kwargs):
+                    return types.SimpleNamespace(version="7")
+
+                def get_model_version(self, name, version):
+                    return types.SimpleNamespace(version=version, status="READY", current_stage="Staging")
+
+                def transition_model_version_stage(self, **kwargs):
+                    return None
+
+            fake_mlflow = types.ModuleType("mlflow")
+            fake_mlflow.artifacts = types.SimpleNamespace(
+                download_artifacts=lambda **kwargs: artifact_dir
+            )
+            fake_tracking = types.ModuleType("mlflow.tracking")
+            fake_tracking.MlflowClient = FakeMlflowClient
+
+            with mock.patch.dict(sys.modules, {
+                "mlflow": fake_mlflow,
+                "mlflow.tracking": fake_tracking,
+            }), \
+                    mock.patch("ml.training.register_model.configure_mlflow", return_value="http://mlflow.test"), \
+                    mock.patch("ml.training.register_model._current_feature_spec", return_value=feature_spec), \
+                    mock.patch("ml.training.register_model._feature_count", return_value=1), \
+                    mock.patch("ml.training.register_model.find_best_run", return_value=fake_run):
+                manifest = register_champion_model(stage="Staging", manifest_dir=tmp_dir)
+
             with open(os.path.join(tmp_dir, "model_manifest.json"), encoding="utf-8") as f:
                 self.assertEqual(json.load(f)["model_file"], "lightgbm_model.joblib")
 
@@ -110,6 +155,7 @@ class TestModelRegistry(unittest.TestCase):
         self.assertEqual(manifest["status"], "READY_FOR_SERVING")
         self.assertIn("metrics", manifest)
         self.assertEqual(manifest["metrics"]["cv_wape"], 21.3)
+        self.assertEqual(manifest["version"], "7")
 
     def test_register_without_runs_writes_nothing(self):
         """Không có run nào → không sinh manifest với metrics bịa."""

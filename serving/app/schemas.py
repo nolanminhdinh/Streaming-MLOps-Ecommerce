@@ -78,7 +78,7 @@ class DemandPredictResponse(BaseModel):
     model_version: str = Field(..., description="Phiên bản mô hình")
     model_stage: str = Field(..., description="Trạng thái triển khai (Staging/Production)")
     model_source: Optional[str] = Field(None, description="mlflow_registry | local_joblib | heuristic_history | heuristic_catalog")
-    history_source: Optional[str] = Field(None, description="warehouse (lịch sử thật từ Fact_Orders) | none")
+    history_source: Optional[str] = Field(None, description="warehouse (lịch sử từ nguồn theo data_origin) | none")
 
     model_config = {"protected_namespaces": ()}
 
@@ -155,6 +155,7 @@ class ModelMetadataResponse(BaseModel):
     metrics: Dict[str, float]
     inventory_defaults: Dict[str, Any]
     model_source: Optional[str] = None
+    training_data_origin: Optional[str] = None
 
 
 class HealthResponse(BaseModel):

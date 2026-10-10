@@ -89,31 +89,52 @@ class WarehouseRepository:
 
     # ─── truy vấn nghiệp vụ ───
 
-    def get_catalog(self) -> Optional[Dict[str, Dict[str, Any]]]:
-        """{sku: {name, category}} từ Dim_Products."""
+    def get_catalog(self, data_origin: Optional[str] = None) -> Optional[Dict[str, Dict[str, Any]]]:
+        """{sku: {name, category}} từ đúng bảng lịch sử của model đang phục vụ."""
         from sqlalchemy import text
 
         def run(conn):
+            if data_origin == "public_anonymized_historical_csv":
+                rows = conn.execute(text("""
+                    SELECT sku, COALESCE(MAX(product_name), sku), 'Khác'
+                    FROM Fact_Historical_Order_Lines
+                    WHERE data_origin = :data_origin AND is_cancelled = FALSE
+                    GROUP BY sku
+                    ORDER BY sku
+                """), {"data_origin": data_origin})
+                return {r[0]: {"name": r[1] or r[0], "category": r[2]} for r in rows}
             rows = conn.execute(text(
                 "SELECT sku, product_name, category FROM Dim_Products ORDER BY sku"
             ))
             return {r[0]: {"name": r[1] or r[0], "category": r[2] or "Khác"} for r in rows}
 
-        catalog = self._query("catalog", run, ttl=300)
+        catalog = self._query(("catalog", data_origin), run, ttl=300)
         return catalog or None
 
-    def get_last_order_date(self) -> Optional[date]:
+    def get_last_order_date(self, data_origin: Optional[str] = None) -> Optional[date]:
         """Ngày gần nhất có đơn hàng trong kho — mốc cuối của dữ liệu 'đã biết'."""
         from sqlalchemy import text
 
         def run(conn):
+            if data_origin == "public_anonymized_historical_csv":
+                return conn.execute(text("""
+                    SELECT MAX(create_time)::date
+                    FROM Fact_Historical_Order_Lines
+                    WHERE data_origin = :data_origin AND is_cancelled = FALSE
+                """), {"data_origin": data_origin}).scalar()
             return conn.execute(text(
                 "SELECT MAX(create_time)::date FROM Fact_Orders WHERE is_cancelled = FALSE"
             )).scalar()
 
-        return self._query("last_order_date", run)
+        return self._query(("last_order_date", data_origin), run)
 
-    def get_daily_history(self, sku: str, end_date: date, days: int = 120) -> Optional[List[Dict[str, Any]]]:
+    def get_daily_history(
+        self,
+        sku: str,
+        end_date: date,
+        days: int = 120,
+        data_origin: Optional[str] = None,
+    ) -> Optional[List[Dict[str, Any]]]:
         """
         Chuỗi nhu cầu theo ngày LIÊN TỤC của 1 SKU trong (end_date - days, end_date].
         Ngày không có đơn → 0 (giống aggregate_daily lúc huấn luyện); giá đơn vị ffill.
@@ -124,6 +145,45 @@ class WarehouseRepository:
         start_date = end_date - timedelta(days=days - 1)
 
         def run(conn):
+            if data_origin == "public_anonymized_historical_csv":
+                rows = conn.execute(text("""
+                    WITH days AS (
+                        SELECT generate_series(CAST(:start AS DATE), CAST(:end AS DATE), INTERVAL '1 day')::date AS d
+                    ),
+                    agg AS (
+                        SELECT f.create_time::date AS d,
+                               SUM(f.quantity) AS daily_demand,
+                               COUNT(*) AS order_count
+                        FROM Fact_Historical_Order_Lines f
+                        WHERE f.sku = :sku
+                          AND f.data_origin = :data_origin
+                          AND f.is_cancelled = FALSE
+                          AND f.create_time >= CAST(:start AS DATE)
+                          AND f.create_time < CAST(:end AS DATE) + 1
+                        GROUP BY 1
+                    )
+                    SELECT days.d, COALESCE(agg.daily_demand, 0), 0::NUMERIC,
+                           0::NUMERIC, 0::NUMERIC, COALESCE(agg.order_count, 0)
+                    FROM days LEFT JOIN agg ON agg.d = days.d
+                    ORDER BY days.d
+                """), {
+                    "sku": sku,
+                    "start": start_date,
+                    "end": end_date,
+                    "data_origin": data_origin,
+                })
+                return [
+                    {
+                        "date": r[0],
+                        "daily_demand": float(r[1]),
+                        "daily_revenue": float(r[2]),
+                        "avg_unit_price": float(r[3]),
+                        "total_discount": float(r[4]),
+                        "order_count": float(r[5]),
+                    }
+                    for r in rows
+                ]
+
             rows = conn.execute(text("""
                 WITH days AS (
                     SELECT generate_series(CAST(:start AS DATE), CAST(:end AS DATE), INTERVAL '1 day')::date AS d
@@ -160,7 +220,7 @@ class WarehouseRepository:
                 for r in rows
             ]
 
-        history = self._query(("history", sku, end_date, days), run)
+        history = self._query(("history", sku, end_date, days, data_origin), run)
         if not history or not any(h["daily_demand"] > 0 for h in history):
             return None
 

@@ -297,6 +297,76 @@
         { "expr": "histogram_quantile(0.99, sum by (le, endpoint) (rate(ecommerce_api_request_duration_seconds_bucket[5m])))", "format": "time_series", "legendFormat": "{{endpoint}}" }
       ],
       "fieldConfig": { "defaults": { "unit": "s", "color": { "mode": "palette-classic" } } }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 25 },
+      "id": 104,
+      "title": "TRAINING DATA READINESS",
+      "type": "row"
+    },
+    {
+      "id": 14,
+      "title": "Trạng thái dữ liệu huấn luyện",
+      "type": "stat",
+      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 26 },
+      "targets": [
+        { "expr": "ecommerce_training_data_sufficient", "format": "time_series", "legendFormat": "Training readiness" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "options": { "-1": { "text": "CHƯA ĐÁNH GIÁ", "color": "gray" }, "0": { "text": "THIẾU LỊCH SỬ", "color": "red" }, "1": { "text": "ĐỦ DỮ LIỆU", "color": "green" } }, "type": "value" }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "gray", "value": null },
+              { "color": "red", "value": 0 },
+              { "color": "green", "value": 1 }
+            ]
+          },
+          "unit": "short"
+        }
+      },
+      "options": {
+        "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" },
+        "textMode": "value"
+      }
+    },
+    {
+      "id": 15,
+      "title": "Coverage lịch sử: hiện có / yêu cầu (ngày)",
+      "type": "timeseries",
+      "gridPos": { "h": 5, "w": 10, "x": 8, "y": 26 },
+      "targets": [
+        { "expr": "ecommerce_training_history_days{kind=\"available\"}", "format": "time_series", "legendFormat": "Hiện có" },
+        { "expr": "ecommerce_training_history_days{kind=\"required\"}", "format": "time_series", "legendFormat": "Yêu cầu tối thiểu" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "d", "color": { "mode": "palette-classic" } } }
+    },
+    {
+      "id": 16,
+      "title": "Cần nạp thêm (ngày)",
+      "type": "stat",
+      "gridPos": { "h": 5, "w": 6, "x": 18, "y": 26 },
+      "targets": [
+        { "expr": "ecommerce_training_history_days{kind=\"missing\"}", "format": "time_series", "legendFormat": "Ngày còn thiếu" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 1 }
+            ]
+          },
+          "unit": "d"
+        }
+      },
+      "options": { "reduceOptions": { "values": false, "calcs": ["lastNotNull"] }, "textMode": "value" }
     }
   ],
   "refresh": "10s",
@@ -311,7 +381,7 @@
     "refresh_intervals": ["5s", "10s", "30s", "1m", "5m"]
   },
   "timezone": "browser",
-  "title": "E-Commerce Streaming MLOps: Serving & Inventory Dashboard",
+  "title": "E-Commerce Streaming MLOps: Serving, Inventory & Training Readiness Dashboard",
   "uid": "ecom-mlops-dashboard",
   "version": 1
 }

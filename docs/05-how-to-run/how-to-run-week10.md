@@ -4,9 +4,30 @@ Tài liệu này cung cấp quy trình kiểm tra toàn diện (End-to-End Rehea
 
 ---
 
-## 1. Trạng thái kiểm chứng trước nghiệm thu
+## 1. Trạng thái kiểm chứng mới nhất
 
-Không dùng số lượng test mẫu trong tài liệu cũ làm kết quả hiện tại. Baseline ngày 2026-10-09 ghi 71 pass, 1 fail và 1 warning; lỗi Power BI `Dim_Dates.day` đã được sửa và export runtime đã chạy thành công. Nghiệm thu hiện tại xác nhận data path, serving fallback, monitoring, Power BI và HTTP load; nhánh model ML đang bị chặn vì warehouse mới phủ 10 ngày lịch, chưa đủ lag 28 để tạo mẫu train. Xem [báo cáo kiểm thử](../03-testing-and-benchmark/test_report_2026-10-09.md) và [báo cáo sửa lần 3](../04-pipeline-updates/lan-03-e2e-remediation-2026-10-09.md).
+Ngày 2026-10-10, toàn bộ **76 pytest đạt**, Docker `/ready` trả 200 và Prometheus đã nạp alert thiếu dữ liệu. Hai CSV lịch sử gồm 7.000 dòng hợp lệ đã được nạp; model v2 đang ở `Staging`, nguồn `mlflow_registry`, WAPE 126,08%. Readiness xác nhận API/model/lịch sử được nạp, không thay thế đánh giá chất lượng dự báo; chưa nâng model lên Production. `GET /training/status` hiện `NOT_EVALUATED` vì runtime chưa có lần train bị chặn. Xem [báo cáo kiểm thử mới nhất](../03-testing-and-benchmark/test_report_2026-10-10.md), [báo cáo nâng cấp Lần 4](../04-pipeline-updates/lan-04-training-data-readiness-2026-10-10.md) và [báo cáo sửa Lần 3](../04-pipeline-updates/lan-03-e2e-remediation-2026-10-09.md).
+
+### 1.1. P1 — Nạp lịch sử CSV và huấn luyện model (đã thực hiện)
+
+Hai CSV đã được lưu theo hạt dòng SKU trong `Fact_Historical_Order_Lines`, không qua `Fact_Orders` có khóa đơn không phù hợp với các ID đã ẩn danh. Importer chỉ đọc allowlist các cột cần thiết cho forecast. Để nạp lại vào môi trường khác, chạy từ thư mục gốc repo, thay `<SHOPEE_CSV>` và `<TIKTOK_CSV>` bằng đường dẫn hai file:
+
+```bash
+docker compose up -d postgres minio minio-init
+python scripts/init_warehouse.py
+docker compose up -d mlflow
+
+python scripts/import_public_historical_orders.py \
+  --shopee-csv "<SHOPEE_CSV>" \
+  --tiktok-csv "<TIKTOK_CSV>" \
+  --load-db
+
+python ml/features/feature_pipeline.py --data-origin public_anonymized_historical_csv
+python ml/training/train_baseline.py --experiment-name demand-forecasting-baseline --data-origin public_anonymized_historical_csv
+python ml/training/register_model.py --experiment-name demand-forecasting-baseline --stage Staging
+```
+
+Importer có chế độ preview mặc định (bỏ `--load-db`) và upsert idempotent theo fingerprint file + số dòng nguồn. Dữ liệu CSV không có giá trị tài chính đáng tin cậy dùng được chung giữa hai nền tảng, nên pipeline đặt các đặc trưng tài chính bằng 0 và phân nhóm ABC theo số lượng bán khi doanh thu không có giá trị dương. Walk-forward và Serving dùng cửa sổ tối đa 240 ngày cho origin này. Trước khi train, data readiness kiểm tra coverage lịch sử; nếu thiếu, pipeline lưu trạng thái, phát webhook tùy cấu hình và dừng mà không đăng ký model. Xem `/training/status` để biết số ngày cần nạp thêm. Sau khi train/register, `/ready` phải truy vấn đúng nguồn lịch sử theo `data_origin` của feature spec.
 
 ---
 
@@ -105,7 +126,7 @@ Response forecast có `model_source` và `history_source`; chỉ `mlflow_registr
 
 ## 4. Khởi động dashboard & giám sát
 
-Prometheus scrape `/metrics`; Grafana hiển thị model readiness, fallback rate, request rate và P95/P99. Power BI export đọc facts đã lưu trong warehouse; API chỉ lưu forecast ML có lịch sử warehouse đủ điều kiện.
+Prometheus scrape `/metrics`; Grafana hiển thị model readiness, fallback rate, request rate, P95/P99 và training data readiness. Supervisor xem lần đánh giá gần nhất tại `GET /training/status`; alert `EcommerceTrainingDataInsufficient` báo khi pipeline bị chặn do thiếu ngày lịch sử. Muốn gửi thông báo tới hệ thống ngoài, cấu hình `TRAINING_ALERT_WEBHOOK_URL` và tùy chọn `TRAINING_ALERT_WEBHOOK_TOKEN` trong secret store/.env. Khi chưa cấu hình webhook, trạng thái vẫn được lưu và nhìn thấy trong API/dashboard. Power BI export đọc facts đã lưu trong warehouse; API chỉ lưu forecast ML có lịch sử warehouse đủ điều kiện.
 
 ## 5. Chạy Kiểm định Drift & Kích hoạt Tái huấn luyện Closed-Loop
 

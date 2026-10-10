@@ -1,0 +1,16 @@
+groups:
+  - name: ecommerce-training-readiness
+    rules:
+      - alert: EcommerceTrainingDataInsufficient
+        expr: ecommerce_training_history_days{kind="missing"} > 0
+        for: 30s
+        labels:
+          severity: warning
+          team: mlops
+        annotations:
+          summary: "Thiếu dữ liệu lịch sử để huấn luyện model"
+          description: >-
+            Pipeline đang bị chặn vì thiếu {{ $value }} ngày lịch sử tối thiểu.
+            Mở dashboard E-Commerce MLOps để xem coverage hiện tại/yêu cầu và
+            nạp thêm dữ liệu lịch sử vào warehouse.
+          runbook_url: "http://localhost:3000/d/ecom-mlops-dashboard"
