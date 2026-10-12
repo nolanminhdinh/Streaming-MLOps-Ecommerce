@@ -162,17 +162,22 @@ def flush_batch_to_minio(
     # Hậu tố ngẫu nhiên: 2 lần flush cùng giây (hoặc nhiều consumer song song) không ghi đè file nhau
     batch_id = uuid.uuid4().hex[:8]
 
-    # Xác định ngày cho từng dòng thay vì lấy đại diện dòng đầu tiên
-    time_col = "create_time" if "create_time" in df.columns else ("created_time" if "created_time" in df.columns else None)
-    if time_col:
-        parsed_dates = pd.to_datetime(df[time_col], errors="coerce", utc=True).dt.tz_convert(BUSINESS_TZ)
-        df["_year"] = parsed_dates.dt.year.fillna(now.year).astype(int)
-        df["_month"] = parsed_dates.dt.month.fillna(now.month).astype(int)
-        df["_day"] = parsed_dates.dt.day.fillna(now.day).astype(int)
-    else:
-        df["_year"] = now.year
-        df["_month"] = now.month
-        df["_day"] = now.day
+    # Batch có thể trộn Shopee (create_time) và TikTok (created_time).
+    # Parse từng cột rồi kết hợp theo dòng; không chọn một cột cho cả batch.
+    # format="mixed" hỗ trợ ISO timestamps có/không có phần mili giây và offset.
+    # Timestamp không có offset vẫn được hiểu là UTC, giống tầng ETL.
+    parsed_dates = pd.Series(pd.NaT, index=df.index, dtype="datetime64[ns, UTC]")
+    for time_col in ("create_time", "created_time"):
+        if time_col in df.columns:
+            parsed_dates = parsed_dates.combine_first(
+                pd.to_datetime(df[time_col], format="mixed", errors="coerce", utc=True)
+            )
+    # Đổi sang giờ Việt Nam trước khi lấy ngày, kể cả đơn đến muộn/replay.
+    # Chỉ dùng ngày nhận khi cả hai timestamp đều thiếu hoặc không hợp lệ.
+    parsed_dates = parsed_dates.dt.tz_convert(BUSINESS_TZ).fillna(now)
+    df["_year"] = parsed_dates.dt.year.astype(int)
+    df["_month"] = parsed_dates.dt.month.astype(int)
+    df["_day"] = parsed_dates.dt.day.astype(int)
 
     files_uploaded = 0
 
