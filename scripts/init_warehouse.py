@@ -49,6 +49,8 @@ TABLES_TO_VERIFY = [
     "fact_orders",
     "fact_historical_order_lines",
     "fact_inventory_daily",
+    "fact_forecast_predictions",
+    "warehouse_daily_coverage",
 ]
 
 

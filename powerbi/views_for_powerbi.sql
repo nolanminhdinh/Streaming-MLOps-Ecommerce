@@ -28,85 +28,69 @@ GROUP BY
     d.full_date, d.year, d.month, d.day_name, d.is_weekend, d.is_mega_sale, s.platform;
 
 
--- 2. View Ma trận 9 ô ABC/XYZ (ABC/XYZ Segmentation Matrix)
-CREATE OR REPLACE VIEW vw_powerbi_abc_xyz_matrix AS
-WITH sku_revenue AS (
-    SELECT
-        p.sku,
-        p.product_name,
-        p.category,
-        SUM(f.buyer_total_amount) AS revenue,
-        SUM(f.quantity)           AS total_units,
-        COUNT(DISTINCT f.date_key) AS active_days
-    FROM Fact_Orders f
-    JOIN Dim_Products p ON f.product_key = p.product_key
-    WHERE f.is_cancelled = FALSE
-    GROUP BY p.sku, p.product_name, p.category
-),
-sku_cumulative AS (
-    SELECT
-        sku,
-        product_name,
-        category,
-        revenue,
-        total_units,
-        SUM(revenue) OVER (ORDER BY revenue DESC) AS cum_revenue,
-        SUM(revenue) OVER ()                      AS total_revenue
-    FROM sku_revenue
-),
-sku_abc AS (
-    SELECT
-        sku,
-        product_name,
-        category,
-        revenue,
-        total_units,
-        ROUND((cum_revenue / NULLIF(total_revenue, 0)) * 100, 2) AS cum_share_pct,
-        CASE
-            WHEN (cum_revenue / NULLIF(total_revenue, 0)) <= 0.80 THEN 'A'
-            WHEN (cum_revenue / NULLIF(total_revenue, 0)) <= 0.95 THEN 'B'
-            ELSE 'C'
-        END AS abc_class
-    FROM sku_cumulative
-),
-sku_daily_stats AS (
-    SELECT
-        p.sku,
-        AVG(daily_q) AS mean_demand,
-        COALESCE(STDDEV_SAMP(daily_q), 0) AS std_demand
-    FROM (
-        SELECT f.product_key, f.date_key, SUM(f.quantity) AS daily_q
-        FROM Fact_Orders f
-        WHERE f.is_cancelled = FALSE
-        GROUP BY f.product_key, f.date_key
-    ) d_agg
-    JOIN Dim_Products p ON d_agg.product_key = p.product_key
-    GROUP BY p.sku
-)
-SELECT
-    a.sku,
-    a.product_name,
-    a.category,
-    a.revenue,
-    a.total_units,
-    a.cum_share_pct,
-    a.abc_class,
-    ROUND(s.mean_demand, 2) AS avg_daily_demand,
-    ROUND(s.std_demand, 2)  AS std_daily_demand,
-    ROUND((s.std_demand / NULLIF(s.mean_demand, 0)), 2) AS cv_volatility,
-    CASE
-        WHEN (s.std_demand / NULLIF(s.mean_demand, 0)) < 0.50 THEN 'X'
-        WHEN (s.std_demand / NULLIF(s.mean_demand, 0)) <= 1.00 THEN 'Y'
-        ELSE 'Z'
-    END AS xyz_class,
-    (a.abc_class || CASE
-        WHEN (s.std_demand / NULLIF(s.mean_demand, 0)) < 0.50 THEN 'X'
-        WHEN (s.std_demand / NULLIF(s.mean_demand, 0)) <= 1.00 THEN 'Y'
-        ELSE 'Z'
-    END) AS matrix_segment
-FROM sku_abc a
-LEFT JOIN sku_daily_stats s ON a.sku = s.sku;
+-- 2. Demand rows are separated by origin, with Vietnam-local timestamps in the warehouse.
+CREATE OR REPLACE VIEW vw_powerbi_demand_rows AS
+SELECT 'unverified_warehouse'::TEXT AS data_origin, ''::TEXT AS source_dataset,
+       p.sku::TEXT, p.product_name::TEXT, p.category::TEXT,
+       f.create_time::DATE AS order_date, f.quantity::NUMERIC AS quantity,
+       f.buyer_total_amount::NUMERIC AS revenue
+FROM Fact_Orders f JOIN Dim_Products p ON p.product_key = f.product_key
+WHERE f.is_cancelled = FALSE
+UNION ALL
+SELECT h.data_origin, h.source_dataset::TEXT, h.sku::TEXT, h.product_name::TEXT,
+       NULL::TEXT AS category, h.create_time::DATE, h.quantity::NUMERIC, 0::NUMERIC
+FROM Fact_Historical_Order_Lines h WHERE h.is_cancelled = FALSE;
 
+CREATE OR REPLACE VIEW vw_powerbi_abc_xyz_by_origin AS
+WITH bounds AS (
+    SELECT data_origin, MIN(order_date) AS first_day, MAX(order_date) AS last_day
+    FROM vw_powerbi_demand_rows GROUP BY data_origin
+), totals AS (
+    SELECT data_origin, sku, MAX(product_name) AS product_name, MAX(category) AS category,
+           SUM(revenue) AS revenue, SUM(quantity) AS total_units
+    FROM vw_powerbi_demand_rows GROUP BY data_origin, sku
+), weights AS (
+    SELECT *, CASE WHEN SUM(revenue) OVER (PARTITION BY data_origin) > 0
+                   THEN revenue ELSE total_units END AS abc_weight
+    FROM totals
+), cumulative AS (
+    SELECT *, SUM(abc_weight) OVER (PARTITION BY data_origin) AS total_weight,
+           SUM(abc_weight) OVER (PARTITION BY data_origin ORDER BY abc_weight DESC, sku
+               ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS cum_weight
+    FROM weights
+), daily AS (
+    SELECT data_origin, sku, order_date, SUM(quantity) AS daily_q
+    FROM vw_powerbi_demand_rows GROUP BY data_origin, sku, order_date
+), stats AS (
+    SELECT t.data_origin, t.sku, AVG(COALESCE(d.daily_q, 0)) AS mean_demand,
+           COALESCE(STDDEV_SAMP(COALESCE(d.daily_q, 0)), 0) AS std_demand
+    FROM totals t JOIN bounds b ON b.data_origin = t.data_origin
+    CROSS JOIN LATERAL generate_series(b.first_day, b.last_day, INTERVAL '1 day') AS days(day)
+    LEFT JOIN daily d ON d.data_origin = t.data_origin AND d.sku = t.sku AND d.order_date = days.day::DATE
+    GROUP BY t.data_origin, t.sku
+), classified AS (
+    SELECT c.*, s.mean_demand, s.std_demand,
+           CASE WHEN s.mean_demand > 0 THEN s.std_demand / s.mean_demand ELSE 999 END AS cv,
+           CASE WHEN COALESCE((cum_weight - abc_weight) / NULLIF(total_weight, 0), 0) < 0.80 THEN 'A'
+                WHEN COALESCE((cum_weight - abc_weight) / NULLIF(total_weight, 0), 0) < 0.95 THEN 'B'
+                ELSE 'C' END AS abc_class
+    FROM cumulative c JOIN stats s ON s.data_origin = c.data_origin AND s.sku = c.sku
+)
+SELECT sku, product_name, category, revenue, total_units,
+       ROUND(COALESCE(cum_weight / NULLIF(total_weight, 0), 0) * 100, 2) AS cum_share_pct,
+       abc_class, ROUND(mean_demand, 2) AS avg_daily_demand,
+       ROUND(std_demand, 2) AS std_daily_demand, ROUND(cv, 2) AS cv_volatility,
+       CASE WHEN cv <= 0.50 THEN 'X' WHEN cv <= 1.00 THEN 'Y' ELSE 'Z' END AS xyz_class,
+       abc_class || CASE WHEN cv <= 0.50 THEN 'X' WHEN cv <= 1.00 THEN 'Y' ELSE 'Z' END AS matrix_segment,
+       data_origin, mean_demand AS mean_demand_exact, std_demand AS std_demand_exact
+FROM classified;
+
+-- Existing financial/inventory dashboards remain scoped to the streaming origin.
+CREATE OR REPLACE VIEW vw_powerbi_abc_xyz_matrix AS
+SELECT sku::VARCHAR(50), product_name::VARCHAR(500), category::VARCHAR(100),
+       revenue, total_units::BIGINT, cum_share_pct, abc_class,
+       avg_daily_demand, std_daily_demand, cv_volatility, xyz_class, matrix_segment
+FROM vw_powerbi_abc_xyz_by_origin WHERE data_origin = 'unverified_warehouse';
 
 -- 3. View Giám sát Tồn kho & Cảnh báo Nhập hàng (Inventory Health & ROP Alerts)
 CREATE OR REPLACE VIEW vw_powerbi_inventory_health AS
@@ -127,14 +111,14 @@ WITH latest_inv AS (
 matrix_params AS (
     SELECT
         sku,
-        avg_daily_demand,
-        std_daily_demand,
+        mean_demand_exact AS avg_daily_demand,
+        std_demand_exact AS std_daily_demand,
         matrix_segment,
-        -- Safety Stock = ceil(1.645 * std * sqrt(3))
-        CEIL(1.645 * std_daily_demand * SQRT(3)) AS safety_stock,
+        -- Safety Stock = ceil(1.65 * std * sqrt(3)), khớp Python service level 0.95.
+        CEIL(1.65 * std_demand_exact * SQRT(3)) AS safety_stock,
         -- ROP = ceil(avg * 3 + SS)
-        CEIL((avg_daily_demand * 3) + CEIL(1.645 * std_daily_demand * SQRT(3))) AS reorder_point
-    FROM vw_powerbi_abc_xyz_matrix
+        CEIL((mean_demand_exact * 3) + CEIL(1.65 * std_demand_exact * SQRT(3))) AS reorder_point
+    FROM vw_powerbi_abc_xyz_by_origin WHERE data_origin = 'unverified_warehouse'
 )
 SELECT
     inv.sku,
@@ -180,72 +164,54 @@ WHERE f.is_cancelled = FALSE
 GROUP BY g.state, g.region, s.platform;
 
 
--- 5. Dự báo do API thực sự phát ra, ghép với đơn hàng thật sau khi ngày mục tiêu kết thúc.
--- Dự báo heuristic/demo bị loại. Accuracy chỉ tính những ngày đã hoàn tất.
+-- 5. Accuracy requires matching provenance and explicitly confirmed daily coverage.
 CREATE OR REPLACE VIEW vw_powerbi_forecast_vs_actual AS
-WITH actual_daily AS (
-    SELECT
-        f.product_key,
-        f.create_time::date AS target_date,
-        SUM(f.quantity)::NUMERIC AS actual_demand
-    FROM Fact_Orders f
-    WHERE f.is_cancelled = FALSE
-    GROUP BY f.product_key, f.create_time::date
-), ranked_forecasts AS (
-    SELECT
-        fp.forecast_id,
-        fp.product_key,
-        fp.target_date,
-        fp.predicted_quantity,
-        fp.model_name,
-        fp.model_version,
-        fp.model_source,
-        fp.forecast_generated_at,
-        ROW_NUMBER() OVER (
-            PARTITION BY fp.product_key, fp.target_date
-            ORDER BY fp.forecast_generated_at DESC, fp.forecast_id DESC
-        ) AS forecast_rank
+WITH ranked_forecasts AS (
+    SELECT fp.*, ROW_NUMBER() OVER (
+        PARTITION BY product_key, target_date, data_origin, source_datasets
+        ORDER BY forecast_generated_at DESC, forecast_id DESC
+    ) AS forecast_rank
     FROM Fact_Forecast_Predictions fp
-    WHERE fp.model_source IN ('mlflow_registry', 'local_joblib')
-      AND fp.history_source = 'warehouse'
-      -- Chỉ chấm forecast được phát trước ngày cần dự báo (giờ nghiệp vụ Việt Nam).
-      AND fp.target_date > (fp.forecast_generated_at AT TIME ZONE 'Asia/Ho_Chi_Minh')::date
+    WHERE model_source IN ('mlflow_registry', 'local_joblib') AND history_source = 'warehouse'
+      AND target_date > (forecast_generated_at AT TIME ZONE 'Asia/Ho_Chi_Minh')::DATE
+), evaluated AS (
+    SELECT rf.*, p.sku, p.product_name, p.category, d.date_key,
+           CASE WHEN rf.target_date < (NOW() AT TIME ZONE 'Asia/Ho_Chi_Minh')::DATE AND
+               CASE
+                   WHEN rf.data_origin IN ('unverified_warehouse', 'warehouse_live') THEN EXISTS (
+                       SELECT 1 FROM Warehouse_Daily_Coverage c
+                       WHERE c.data_origin = rf.data_origin AND c.source_dataset = '' AND c.full_date = rf.target_date
+                   )
+                   WHEN rf.data_origin = 'public_anonymized_historical_csv' THEN
+                       jsonb_array_length(rf.source_datasets) > 0 AND NOT EXISTS (
+                           SELECT 1 FROM jsonb_array_elements_text(rf.source_datasets) AS ds(dataset)
+                           WHERE NOT EXISTS (
+                               SELECT 1 FROM Warehouse_Daily_Coverage c
+                               WHERE c.data_origin = rf.data_origin AND c.source_dataset = ds.dataset AND c.full_date = rf.target_date
+                           )
+                       )
+                   ELSE FALSE
+               END THEN TRUE ELSE FALSE END AS actual_complete,
+           CASE WHEN rf.data_origin IN ('unverified_warehouse', 'warehouse_live') THEN (
+                    SELECT SUM(f.quantity)::NUMERIC FROM Fact_Orders f
+                    WHERE f.product_key = rf.product_key AND f.create_time::DATE = rf.target_date AND f.is_cancelled = FALSE
+                ) WHEN rf.data_origin = 'public_anonymized_historical_csv' THEN (
+                    SELECT SUM(h.quantity)::NUMERIC FROM Fact_Historical_Order_Lines h
+                    WHERE h.sku = p.sku AND h.create_time::DATE = rf.target_date AND h.is_cancelled = FALSE
+                      AND h.data_origin = rf.data_origin AND rf.source_datasets ? h.source_dataset::TEXT
+                ) ELSE NULL::NUMERIC END AS observed_demand
+    FROM ranked_forecasts rf
+    JOIN Dim_Products p ON p.product_key = rf.product_key
+    JOIN Dim_Dates d ON d.full_date = rf.target_date
+    WHERE rf.forecast_rank = 1
 )
-SELECT
-    d.date_key,
-    p.product_key,
-    d.full_date AS date,
-    p.sku,
-    p.product_name,
-    p.category,
-    COALESCE(m.matrix_segment, 'NA') AS matrix_segment,
-    CASE
-        WHEN rf.target_date < (NOW() AT TIME ZONE 'Asia/Ho_Chi_Minh')::date
-        THEN COALESCE(a.actual_demand, 0)::NUMERIC
-        ELSE NULL::NUMERIC
-    END AS actual_demand,
-    rf.predicted_quantity AS forecast_demand,
-    -- API hiện trả khoảng xấp xỉ từ sigma lịch sử, chưa hiệu chuẩn thành prediction interval.
-    NULL::NUMERIC AS lower_bound,
-    NULL::NUMERIC AS upper_bound,
-    CASE
-        WHEN rf.target_date < (NOW() AT TIME ZONE 'Asia/Ho_Chi_Minh')::date
-        THEN ABS(COALESCE(a.actual_demand, 0) - rf.predicted_quantity)
-        ELSE NULL::NUMERIC
-    END AS absolute_error,
-    CASE
-        WHEN rf.target_date < (NOW() AT TIME ZONE 'Asia/Ho_Chi_Minh')::date
-        THEN POWER(COALESCE(a.actual_demand, 0) - rf.predicted_quantity, 2)
-        ELSE NULL::NUMERIC
-    END AS squared_error,
-    rf.model_name,
-    rf.model_version,
-    rf.model_source,
-    rf.forecast_generated_at
-FROM ranked_forecasts rf
-JOIN Dim_Products p ON p.product_key = rf.product_key
-JOIN Dim_Dates d ON d.full_date = rf.target_date
-LEFT JOIN actual_daily a
-       ON a.product_key = rf.product_key AND a.target_date = rf.target_date
-LEFT JOIN vw_powerbi_abc_xyz_matrix m ON m.sku = p.sku
-WHERE rf.forecast_rank = 1;
+SELECT e.date_key, e.product_key, e.target_date AS date, e.sku, e.product_name, e.category,
+       COALESCE(m.matrix_segment, 'NA') AS matrix_segment,
+       CASE WHEN actual_complete THEN COALESCE(observed_demand, 0) ELSE NULL::NUMERIC END AS actual_demand,
+       predicted_quantity AS forecast_demand, NULL::NUMERIC AS lower_bound, NULL::NUMERIC AS upper_bound,
+       CASE WHEN actual_complete THEN ABS(COALESCE(observed_demand, 0) - predicted_quantity) ELSE NULL::NUMERIC END AS absolute_error,
+       CASE WHEN actual_complete THEN POWER(COALESCE(observed_demand, 0) - predicted_quantity, 2) ELSE NULL::NUMERIC END AS squared_error,
+       model_name, model_version, model_source, forecast_generated_at,
+       e.data_origin, e.source_datasets, actual_complete
+FROM evaluated e LEFT JOIN vw_powerbi_abc_xyz_by_origin m ON m.sku = e.sku
+    AND m.data_origin = CASE WHEN e.data_origin = 'warehouse_live' THEN 'unverified_warehouse' ELSE e.data_origin END;

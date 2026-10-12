@@ -137,7 +137,7 @@ class ABCXYZClassifier:
             .sum()
             .reset_index()
             .rename(columns={revenue_col: "total_revenue"})
-            .sort_values(by="total_revenue", ascending=False)
+            .sort_values(by=["total_revenue", sku_col], ascending=[False, True])
         )
 
         total_rev_all = sku_revenue["total_revenue"].sum()
@@ -153,7 +153,7 @@ class ABCXYZClassifier:
                 .sum()
                 .reset_index()
                 .rename(columns={quantity_col: "total_revenue"})
-                .sort_values(by="total_revenue", ascending=False)
+                .sort_values(by=["total_revenue", sku_col], ascending=[False, True])
             )
             total_rev_all = sku_revenue["total_revenue"].sum()
 
@@ -211,6 +211,7 @@ class ABCXYZClassifier:
             )
             .reset_index()
         )
+        sku_stats["std_daily_demand"] = sku_stats["std_daily_demand"].fillna(0)
 
         # Tránh chia cho 0
         sku_stats["cv"] = np.where(

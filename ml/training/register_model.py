@@ -365,6 +365,7 @@ def register_champion_model(
         "service_level": 0.95,
         "status": "READY_FOR_SERVING",
         "data_origin": data_origin,
+        "source_datasets": artifact_datasets,
     }
 
     manifest_dir = os.path.abspath(

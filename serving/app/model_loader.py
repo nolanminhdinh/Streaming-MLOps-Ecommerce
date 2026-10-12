@@ -308,7 +308,7 @@ class ModelManager:
     def get_catalog(self) -> Tuple[Dict[str, Dict[str, Any]], str]:
         """Danh mục SKU: Data Warehouse → Feature Spec → bảng demo. Trả về (catalog, source)."""
         data_origin = self.feature_spec.get("data_origin")
-        catalog = get_repository().get_catalog(data_origin=data_origin)
+        catalog = get_repository().get_catalog(data_origin=data_origin, source_datasets=self.feature_spec.get("source_datasets"))
         if catalog:
             return catalog, "warehouse"
         profiles = self.feature_spec.get("sku_profiles") or {}
@@ -323,7 +323,7 @@ class ModelManager:
     def get_product_info(self, sku: str) -> Dict[str, Any]:
         info = dict(CATALOG_METADATA.get(sku) or {**DEFAULT_PRODUCT, "name": f"Sản phẩm {sku}"})
         profile = (self.feature_spec.get("sku_profiles") or {}).get(sku) or {}
-        catalog = get_repository().get_catalog(data_origin=self.feature_spec.get("data_origin")) or {}
+        catalog = get_repository().get_catalog(data_origin=self.feature_spec.get("data_origin"), source_datasets=self.feature_spec.get("source_datasets")) or {}
         if sku in catalog:
             info.update(catalog[sku])
         elif profile:
@@ -343,7 +343,7 @@ class ModelManager:
         if not repo.available():
             return None, None
         data_origin = self.feature_spec.get("data_origin")
-        last_known = repo.get_last_order_date(data_origin=data_origin)
+        last_known = repo.get_last_order_date(data_origin=data_origin, source_datasets=self.feature_spec.get("source_datasets"))
         if last_known is None:
             return None, None
         hist_end = min(from_date - timedelta(days=1), last_known)
@@ -353,7 +353,7 @@ class ModelManager:
             else HISTORY_DAYS
         )
         history = repo.get_daily_history(
-            sku, hist_end, days=history_days, data_origin=data_origin
+            sku, hist_end, days=history_days, data_origin=data_origin, source_datasets=self.feature_spec.get("source_datasets")
         )
         return (history, hist_end) if history else (None, None)
 
@@ -486,6 +486,7 @@ class ModelManager:
         meta["model_source"] = self.model_source
         meta["model_ready"] = self.has_model
         meta["training_data_origin"] = self.feature_spec.get("data_origin", "unknown")
+        meta["source_datasets"] = sorted(set(self.feature_spec.get("source_datasets") or []))
         if self.feature_spec.get("feature_columns"):
             meta["input_feature_count"] = len(self.feature_spec["feature_columns"])
         return meta

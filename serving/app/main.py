@@ -264,7 +264,7 @@ def readiness_check() -> Dict[str, Any]:
     repository = get_repository()
     warehouse_connected = repository.available()
     data_origin = manager.feature_spec.get("data_origin")
-    last_order_date = repository.get_last_order_date(data_origin=data_origin) if warehouse_connected else None
+    last_order_date = repository.get_last_order_date(data_origin=data_origin, source_datasets=manager.feature_spec.get("source_datasets")) if warehouse_connected else None
     warehouse_connected = repository.available()
     ready = manager.has_model and warehouse_connected and last_order_date is not None
     payload = {
@@ -411,6 +411,8 @@ def _predict_one(request: DemandPredictRequest) -> DemandPredictResponse:
             model_source=result["model_source"],
             history_source=result["history_source"],
             history_end=result.get("history_end"),
+            data_origin=manager.feature_spec.get("data_origin"),
+            source_datasets=manager.feature_spec.get("source_datasets"),
         )
 
     return DemandPredictResponse(

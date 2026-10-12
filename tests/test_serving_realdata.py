@@ -72,13 +72,13 @@ class FakeRepository:
     def available(self) -> bool:
         return True
 
-    def get_catalog(self, data_origin=None):
+    def get_catalog(self, data_origin=None, source_datasets=None):
         return {s: {"name": f"Sản phẩm {s}", "category": "Test"} for s in self.daily["sku"].unique()}
 
-    def get_last_order_date(self, data_origin=None):
+    def get_last_order_date(self, data_origin=None, source_datasets=None):
         return max(self.daily["date"])
 
-    def get_daily_history(self, sku, end_date, days=120, data_origin=None):
+    def get_daily_history(self, sku, end_date, days=120, data_origin=None, source_datasets=None):
         sub = self.daily[(self.daily["sku"] == sku) & (self.daily["date"] <= end_date)].tail(days)
         if sub.empty:
             return None

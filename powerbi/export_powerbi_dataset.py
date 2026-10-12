@@ -36,11 +36,15 @@ DATASETS: dict[str, Sequence[str]] = {
         "date_key", "product_key", "date", "sku", "product_name", "category", "matrix_segment",
         "actual_demand", "forecast_demand", "lower_bound", "upper_bound", "absolute_error",
         "squared_error", "model_name", "model_version", "model_source", "forecast_generated_at",
+        "data_origin", "source_datasets", "actual_complete",
     ),
     "Inventory_Health_Alerts.csv": (
         "date_key", "product_key", "sku", "product_name", "category", "matrix_segment",
         "current_stock", "avg_daily_demand", "safety_stock", "reorder_point", "needs_reorder",
         "alert_level", "days_until_stockout", "recommended_reorder_qty",
+    ),
+    "Historical_Demand_Daily.csv": (
+        "date_key", "order_date", "sku", "product_name", "platform", "units_sold", "data_origin", "source_dataset",
     ),
 }
 
@@ -141,7 +145,7 @@ def export_powerbi_data(output_dir: str | None = None) -> str:
             SELECT date_key, product_key, date, sku, product_name, category, matrix_segment,
                    actual_demand, forecast_demand, lower_bound, upper_bound,
                    absolute_error, squared_error, model_name, model_version,
-                   model_source, forecast_generated_at
+                   model_source, forecast_generated_at, data_origin, source_datasets, actual_complete
             FROM vw_powerbi_forecast_vs_actual
             ORDER BY date, sku
         """,
@@ -152,6 +156,16 @@ def export_powerbi_data(output_dir: str | None = None) -> str:
             FROM vw_powerbi_inventory_health
             ORDER BY CASE alert_level WHEN 'CRITICAL' THEN 1 WHEN 'WARNING' THEN 2 ELSE 3 END,
                      days_until_stockout
+        """,
+        "Historical_Demand_Daily.csv": """
+            SELECT d.date_key, h.create_time::DATE AS order_date, h.sku,
+                   MAX(h.product_name) AS product_name, h.platform, SUM(h.quantity) AS units_sold,
+                   h.data_origin, h.source_dataset
+            FROM Fact_Historical_Order_Lines h
+            JOIN Dim_Dates d ON d.full_date = h.create_time::DATE
+            WHERE h.is_cancelled = FALSE
+            GROUP BY d.date_key, h.create_time::DATE, h.sku, h.platform, h.data_origin, h.source_dataset
+            ORDER BY order_date, h.sku
         """,
     }
 
@@ -168,9 +182,9 @@ def export_powerbi_data(output_dir: str | None = None) -> str:
     finally:
         engine.dispose()
 
-    if not datasets["Fact_Orders_Summary.csv"]:
+    if not datasets["Fact_Orders_Summary.csv"] and not datasets["Historical_Demand_Daily.csv"]:
         raise RuntimeError(
-            "Data Warehouse chưa có đơn hàng hợp lệ trong Fact_Orders; chưa thể tạo dashboard thực."
+            "Data Warehouse chưa có đơn hàng hợp lệ trong Fact_Orders hoặc Fact_Historical_Order_Lines."
         )
 
     logger.info("Đang ghi dữ liệu Power BI lấy từ PostgreSQL vào %s", out_dir)

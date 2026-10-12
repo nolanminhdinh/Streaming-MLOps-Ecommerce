@@ -476,6 +476,15 @@ def load_feature_store_windows(
         "reference_rows": int(len(ref_df)),
         "current_rows": int(len(curr_df)),
     }
+    spec_path = os.path.join(os.path.dirname(os.path.abspath(features_path)), "feature_spec.json")
+    if os.path.exists(spec_path):
+        with open(spec_path, encoding="utf-8") as spec_file:
+            spec = json.load(spec_file)
+        meta.update({
+            "feature_data_source": spec.get("data_source", "unknown"),
+            "data_origin": spec.get("data_origin", "unknown"),
+            "source_datasets": sorted(set(spec.get("source_datasets") or [])),
+        })
     return ref, curr, meta
 
 

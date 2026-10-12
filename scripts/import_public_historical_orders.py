@@ -103,7 +103,7 @@ def _normalize_file(path: Path, platform: str) -> tuple[list[dict[str, Any]], di
     if missing:
         raise ValueError(f"CSV {platform} thiếu các cột bắt buộc: {missing}")
 
-    timestamps = pd.to_datetime(df[time_col].str.strip(), errors="coerce", utc=True)
+    timestamps = pd.to_datetime(df[time_col].str.strip(), format="mixed", errors="coerce", utc=True)
     local_times = timestamps.dt.tz_convert(ZoneInfo(BUSINESS_TZ)).dt.tz_localize(None)
     quantities = pd.to_numeric(df["quantity"].str.strip(), errors="coerce")
     skus = df[sku_col].str.strip()

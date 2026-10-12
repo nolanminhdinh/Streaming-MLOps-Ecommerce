@@ -162,6 +162,15 @@ class TestETLPipeline(unittest.TestCase):
         self.assertEqual(len(quarantine_df), 0)
         self.assertEqual(report.pass_rate, 1.0)
 
+    def test_mixed_iso_formats_preserve_vietnam_dates(self):
+        df = pd.DataFrame([
+            {"order_id": "A", "sku": "A", "quantity": 1, "original_price": 1, "create_time": "2026-12-31T17:00:00Z"},
+            {"order_id": "B", "sku": "B", "quantity": 1, "original_price": 1, "create_time": "2027-01-01T00:00:00.123+07:00"},
+        ])
+        cleaned = clean_data(df)
+        self.assertEqual(len(cleaned), 2)
+        self.assertEqual(cleaned["order_date"].astype(str).tolist(), ["2027-01-01", "2027-01-01"])
+
     def test_data_validator_quarantine_corrupted(self):
         """Kiểm tra DataValidator phát hiện và cách ly các bản ghi sai sót."""
         corrupted = pd.DataFrame([

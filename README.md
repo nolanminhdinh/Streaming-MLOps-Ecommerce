@@ -136,6 +136,8 @@ Hướng dẫn chi tiết từng bước cho từng giai đoạn:
 
 > **Trạng thái kiểm chứng ngày 2026-10-10:** 76 pytest đạt; Docker `/ready` trả 200 với model ML v2 từ Registry và lịch sử CSV đến 2026-08-11. Model vẫn ở `Staging` vì WAPE 126,08%; không xem readiness là tiêu chí chất lượng Production. Nhánh thiếu dữ liệu có 4 unit test, status API/Prometheus alert đã được cấu hình; webhook bên ngoài chưa được xác nhận vì chưa cấu hình URL.
 
+> **Bản sửa ngày 2026-10-12:** 96 pytest đạt và 8 kiểm tra SQL trên PostgreSQL cô lập (PGlite). Đã sửa partition hỗn hợp, provenance retraining/forecast, ABC/XYZ và lỗi đọc MinIO bị che. Docker Desktop hiện lỗi socket `sailor-ingest.sock`, nên migration và kiểm chứng runtime Docker chưa được thực hiện. Xem [hướng dẫn áp dụng bản sửa](docs/04-pipeline-updates/lan-05-pipeline-integrity-2026-10-12.md).
+
 ## 7. Minh bạch sử dụng AI
 
 Theo yêu cầu của Cẩm nang ĐATN, các phần có sử dụng AI hỗ trợ (Claude) sẽ được ghi chú

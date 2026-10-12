@@ -224,7 +224,7 @@ def clean_data(df: pd.DataFrame, return_report: bool = False):
     timestamp_cols = ["create_time", "pay_time", "shipped_time", "completed_time", "cancel_time"]
     for col in timestamp_cols:
         if col in df.columns:
-            ts = pd.to_datetime(df[col], errors="coerce", utc=True)
+            ts = pd.to_datetime(df[col], format="mixed", errors="coerce", utc=True)
             df[col] = ts.dt.tz_convert(BUSINESS_TZ).dt.tz_localize(None)
 
     # Ngày đặt hàng theo giờ nghiệp vụ → dùng để lookup Dim_Dates.date_key khi load.

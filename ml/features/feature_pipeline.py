@@ -50,7 +50,7 @@ PUBLIC_HISTORY_ORIGIN = "public_anonymized_historical_csv"
 DEFAULT_LAGS = (1, 2, 3, 7, 14, 21, 28)
 
 
-def load_orders_data(data_origin: Optional[str] = None) -> pd.DataFrame:
+def load_orders_data(data_origin: Optional[str] = None, source_datasets: Optional[list[str]] = None) -> pd.DataFrame:
     """Nạp dữ liệu đơn hàng sạch từ PostgreSQL hoặc file Parquet dự phòng."""
     if data_origin == PUBLIC_HISTORY_ORIGIN:
         # CSV đã ẩn danh có hạt là dòng sản phẩm và order_id có thể bị tái sử dụng.
@@ -75,9 +75,13 @@ def load_orders_data(data_origin: Optional[str] = None) -> pd.DataFrame:
                     source_dataset
                 FROM Fact_Historical_Order_Lines
                 WHERE data_origin = :data_origin
+                  AND (:filter_datasets = FALSE OR source_dataset = ANY(CAST(:source_datasets AS TEXT[])))
                 ORDER BY create_time ASC, platform, source_dataset, source_record_id
             """
-            df = pd.read_sql(text(query), engine, params={"data_origin": data_origin})
+            df = pd.read_sql(text(query), engine, params={
+                "data_origin": data_origin, "filter_datasets": source_datasets is not None,
+                "source_datasets": source_datasets or [],
+            })
         except Exception as exc:
             raise RuntimeError(
                 "Không đọc được Fact_Historical_Order_Lines. Hãy chạy init_warehouse.py "

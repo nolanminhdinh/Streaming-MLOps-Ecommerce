@@ -81,9 +81,11 @@ def read_parquet_from_minio(client: Minio, bucket: str, object_name: str) -> pd.
     """Đọc 1 file Parquet từ MinIO, trả về DataFrame."""
     try:
         response = client.get_object(bucket, object_name)
-        data = response.read()
-        response.close()
-        response.release_conn()
+        try:
+            data = response.read()
+        finally:
+            response.close()
+            response.release_conn()
 
         buf = io.BytesIO(data)
         table = pq.read_table(buf)
@@ -99,7 +101,7 @@ def read_parquet_from_minio(client: Minio, bucket: str, object_name: str) -> pd.
 
     except S3Error as e:
         logger.error("Lỗi đọc %s: %s", object_name, e)
-        return pd.DataFrame()
+        raise
 
 
 from concurrent.futures import ThreadPoolExecutor

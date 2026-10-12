@@ -14,6 +14,7 @@ ghi rõ nguồn dữ liệu (`*_source`) trong response.
 from __future__ import annotations
 
 import logging
+import json
 import os
 import threading
 import time
@@ -89,7 +90,7 @@ class WarehouseRepository:
 
     # ─── truy vấn nghiệp vụ ───
 
-    def get_catalog(self, data_origin: Optional[str] = None) -> Optional[Dict[str, Dict[str, Any]]]:
+    def get_catalog(self, data_origin: Optional[str] = None, source_datasets: Optional[List[str]] = None) -> Optional[Dict[str, Dict[str, Any]]]:
         """{sku: {name, category}} từ đúng bảng lịch sử của model đang phục vụ."""
         from sqlalchemy import text
 
@@ -99,19 +100,20 @@ class WarehouseRepository:
                     SELECT sku, COALESCE(MAX(product_name), sku), 'Khác'
                     FROM Fact_Historical_Order_Lines
                     WHERE data_origin = :data_origin AND is_cancelled = FALSE
+                      AND (:filter_datasets = FALSE OR source_dataset = ANY(CAST(:source_datasets AS TEXT[])))
                     GROUP BY sku
                     ORDER BY sku
-                """), {"data_origin": data_origin})
+                """), {"data_origin": data_origin, "filter_datasets": source_datasets is not None, "source_datasets": source_datasets or []})
                 return {r[0]: {"name": r[1] or r[0], "category": r[2]} for r in rows}
             rows = conn.execute(text(
                 "SELECT sku, product_name, category FROM Dim_Products ORDER BY sku"
             ))
             return {r[0]: {"name": r[1] or r[0], "category": r[2] or "Khác"} for r in rows}
 
-        catalog = self._query(("catalog", data_origin), run, ttl=300)
+        catalog = self._query(("catalog", data_origin, None if source_datasets is None else tuple(sorted(source_datasets))), run, ttl=300)
         return catalog or None
 
-    def get_last_order_date(self, data_origin: Optional[str] = None) -> Optional[date]:
+    def get_last_order_date(self, data_origin: Optional[str] = None, source_datasets: Optional[List[str]] = None) -> Optional[date]:
         """Ngày gần nhất có đơn hàng trong kho — mốc cuối của dữ liệu 'đã biết'."""
         from sqlalchemy import text
 
@@ -121,12 +123,13 @@ class WarehouseRepository:
                     SELECT MAX(create_time)::date
                     FROM Fact_Historical_Order_Lines
                     WHERE data_origin = :data_origin AND is_cancelled = FALSE
-                """), {"data_origin": data_origin}).scalar()
+                      AND (:filter_datasets = FALSE OR source_dataset = ANY(CAST(:source_datasets AS TEXT[])))
+                """), {"data_origin": data_origin, "filter_datasets": source_datasets is not None, "source_datasets": source_datasets or []}).scalar()
             return conn.execute(text(
                 "SELECT MAX(create_time)::date FROM Fact_Orders WHERE is_cancelled = FALSE"
             )).scalar()
 
-        return self._query(("last_order_date", data_origin), run)
+        return self._query(("last_order_date", data_origin, None if source_datasets is None else tuple(sorted(source_datasets))), run)
 
     def get_daily_history(
         self,
@@ -134,6 +137,7 @@ class WarehouseRepository:
         end_date: date,
         days: int = 120,
         data_origin: Optional[str] = None,
+        source_datasets: Optional[List[str]] = None,
     ) -> Optional[List[Dict[str, Any]]]:
         """
         Chuỗi nhu cầu theo ngày LIÊN TỤC của 1 SKU trong (end_date - days, end_date].
@@ -157,6 +161,7 @@ class WarehouseRepository:
                         FROM Fact_Historical_Order_Lines f
                         WHERE f.sku = :sku
                           AND f.data_origin = :data_origin
+                          AND (:filter_datasets = FALSE OR f.source_dataset = ANY(CAST(:source_datasets AS TEXT[])))
                           AND f.is_cancelled = FALSE
                           AND f.create_time >= CAST(:start AS DATE)
                           AND f.create_time < CAST(:end AS DATE) + 1
@@ -171,6 +176,8 @@ class WarehouseRepository:
                     "start": start_date,
                     "end": end_date,
                     "data_origin": data_origin,
+                    "filter_datasets": source_datasets is not None,
+                    "source_datasets": source_datasets or [],
                 })
                 return [
                     {
@@ -220,7 +227,7 @@ class WarehouseRepository:
                 for r in rows
             ]
 
-        history = self._query(("history", sku, end_date, days, data_origin), run)
+        history = self._query(("history", sku, end_date, days, data_origin, None if source_datasets is None else tuple(sorted(source_datasets))), run)
         if not history or not any(h["daily_demand"] > 0 for h in history):
             return None
 
@@ -263,6 +270,8 @@ class WarehouseRepository:
         model_source: str,
         history_source: str,
         history_end: Optional[str],
+        data_origin: Optional[str] = None,
+        source_datasets: Optional[List[str]] = None,
     ) -> int:
         """Lưu dự báo ML đã phát ra để đối chiếu với nhu cầu thực tế sau này.
 
@@ -275,6 +284,8 @@ class WarehouseRepository:
             or model_source not in {"mlflow_registry", "local_joblib"}
             or history_source != "warehouse"
             or not history_end
+            or data_origin not in {"public_anonymized_historical_csv", "unverified_warehouse", "warehouse_live"}
+            or (data_origin == "public_anonymized_historical_csv" and not source_datasets)
         ):
             return 0
 
@@ -294,6 +305,8 @@ class WarehouseRepository:
                     "model_source": model_source,
                     "history_source": history_source,
                     "history_end_date": history_end_date,
+                    "data_origin": data_origin,
+                    "source_datasets": json.dumps(sorted(set(source_datasets or []))),
                 })
         except (KeyError, TypeError, ValueError) as e:
             logger.warning("Không thể chuẩn hóa dự báo để lưu Power BI (%s).", e.__class__.__name__)
@@ -306,16 +319,24 @@ class WarehouseRepository:
 
         try:
             with self._get_engine().begin() as conn:
+                if data_origin == "public_anonymized_historical_csv":
+                    conn.execute(text("""
+                        INSERT INTO Dim_Products (sku, product_name)
+                        SELECT sku, MAX(product_name) FROM Fact_Historical_Order_Lines
+                        WHERE sku = :sku AND data_origin = :data_origin
+                          AND source_dataset = ANY(CAST(:source_datasets AS TEXT[]))
+                        GROUP BY sku ON CONFLICT (sku) DO NOTHING
+                    """), {"sku": sku, "data_origin": data_origin, "source_datasets": source_datasets})
                 result = conn.execute(text("""
                     INSERT INTO Fact_Forecast_Predictions (
                         product_key, target_date, predicted_quantity, model_name,
-                        model_version, model_source, history_source, history_end_date
+                        model_version, model_source, history_source, history_end_date, data_origin, source_datasets
                     )
                     SELECT p.product_key, :target_date, :predicted_quantity, :model_name,
-                           :model_version, :model_source, :history_source, :history_end_date
+                           :model_version, :model_source, :history_source, :history_end_date, :data_origin, CAST(:source_datasets AS JSONB)
                     FROM Dim_Products p
                     WHERE p.sku = :sku
-                    ON CONFLICT (product_key, target_date, model_version, history_end_date)
+                    ON CONFLICT ON CONSTRAINT uq_fact_forecasts_issue
                     DO NOTHING
                 """), rows)
             return int(result.rowcount or 0)

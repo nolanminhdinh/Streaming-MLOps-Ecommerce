@@ -32,19 +32,25 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..
 RETRAIN_EXPERIMENT = "demand-forecasting-retraining"
 
 
-def default_train_fn() -> Dict[str, Any]:
+def default_train_fn(data_origin: str, source_datasets: Optional[list[str]] = None) -> Dict[str, Any]:
     """Dựng lại Feature Store từ dữ liệu mới nhất rồi huấn luyện lại; trả về metrics của mô hình tốt nhất."""
     sys.path.insert(0, PROJECT_ROOT)
     from ml.features.feature_pipeline import load_orders_data
     from ml.training.train_baseline import run_training_pipeline
     from ml.training.data_readiness import require_sufficient_order_history
 
-    orders_df = load_orders_data()
+    if data_origin not in {"public_anonymized_historical_csv", "unverified_warehouse", "warehouse_live"}:
+        raise RuntimeError(f"Unsupported deployment data_origin: {data_origin!r}")
+    if data_origin == "public_anonymized_historical_csv" and not source_datasets:
+        raise RuntimeError("Historical CSV retraining requires deployment dataset fingerprints.")
+    orders_df = load_orders_data(data_origin=data_origin, source_datasets=source_datasets)
+    if orders_df.attrs.get("data_origin") != data_origin or sorted(orders_df.attrs.get("source_datasets") or []) != sorted(source_datasets or []):
+        raise RuntimeError("Retraining dataset provenance differs from the deployed model.")
     min_train_days = max(14, int(os.getenv("TRAINING_MIN_FIT_DAYS", "14")))
     require_sufficient_order_history(orders_df, n_splits=2, min_train_days=min_train_days)
     if orders_df.attrs.get("data_source") != "warehouse":
         raise RuntimeError(
-            "Retraining requires real Fact_Orders data from the warehouse; "
+            "Retraining requires data from the deployed warehouse origin; "
             f"received {orders_df.attrs.get('data_source', 'unknown')} instead."
         )
     summary_df = run_training_pipeline(
@@ -112,7 +118,7 @@ class ClosedLoopRetrainer:
         self.manifest_path = os.path.abspath(manifest_path or os.path.join(base_data, "model_manifest.json"))
         self.retraining_log_path = os.path.abspath(
             retraining_log_path or os.path.join(base_data, "monitoring_reports", "retraining_log.json"))
-        self.train_fn = train_fn or default_train_fn
+        self.train_fn = train_fn
         self.register_fn = register_fn or default_register_fn
         self.reload_fn = reload_fn or notify_serving_reload
 
@@ -196,6 +202,13 @@ class ClosedLoopRetrainer:
             with open(self.manifest_path, "rb") as f:
                 previous_manifest_bytes = f.read()
         old_manifest = self._read_json(self.manifest_path)
+        # Legacy manifests may omit fingerprints: recover only from a matching spec.
+        data_origin = old_manifest.get("data_origin")
+        datasets = old_manifest.get("source_datasets")
+        if datasets is None:
+            spec = self._read_json(os.path.join(os.path.dirname(self.manifest_path), "feature_spec.json"))
+            if spec.get("data_origin") == data_origin:
+                datasets = spec.get("source_datasets") or []
         current_version = str(old_manifest.get("version", "0"))
         started_at = datetime.now(timezone.utc).isoformat()
         audit_entry: Dict[str, Any] = {
@@ -210,7 +223,18 @@ class ClosedLoopRetrainer:
 
         # 1. Huấn luyện lại — lỗi thì dừng, giữ nguyên mô hình đang phục vụ
         try:
-            train_metrics = self.train_fn()
+            if self.train_fn is None:
+                if not data_origin:
+                    raise RuntimeError("Deployment manifest has no data_origin; cannot choose retraining data.")
+                if not force_retrain and (
+                    drift_info.get("data_origin") != data_origin
+                    or sorted(drift_info.get("source_datasets") or []) != sorted(datasets or [])
+                    or drift_info.get("feature_data_source") != "warehouse"
+                ):
+                    raise RuntimeError("Drift summary provenance differs from the deployed model; regenerate it.")
+                train_metrics = default_train_fn(data_origin, datasets)
+            else:
+                train_metrics = self.train_fn()
             logger.info("✓ Huấn luyện lại thành công: %s", train_metrics)
         except Exception as e:
             if e.__class__.__name__ == "InsufficientTrainingDataError":
@@ -255,6 +279,14 @@ class ClosedLoopRetrainer:
             return {"status": "FAILED", "stage": "registration", "audit_log": audit_entry}
 
         new_version = str(new_manifest.get("version", ""))
+        if data_origin and (
+            new_manifest.get("data_origin") != data_origin
+            or sorted(new_manifest.get("source_datasets") or []) != sorted(datasets or [])
+        ):
+            self._restore_manifest(previous_manifest_bytes)
+            audit_entry.update({"status": "FAILED", "stage": "registration", "error": "Registered model changed deployment data provenance."})
+            self._write_audit(audit_entry)
+            return {"status": "FAILED", "stage": "registration", "audit_log": audit_entry}
         if not new_version or new_version == current_version or not new_manifest.get("run_id"):
             self._restore_manifest(previous_manifest_bytes)
             audit_entry.update({
@@ -321,4 +353,5 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Closed-loop retraining theo kết quả drift")
     parser.add_argument("--force", action="store_true", help="Bắt buộc huấn luyện lại (demo)")
     args = parser.parse_args()
-    run_trigger(force_retrain=args.force)
+    result = run_trigger(force_retrain=args.force)
+    sys.exit(0 if result["status"] in {"RETRAINED", "SKIPPED"} else 1)

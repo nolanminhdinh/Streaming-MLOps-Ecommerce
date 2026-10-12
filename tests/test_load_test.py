@@ -69,21 +69,35 @@ class TestLoadTestRunner(unittest.TestCase):
 class TestPowerBIExport(unittest.TestCase):
 
     def test_export_powerbi_csv_files(self):
-        """Kiểm tra xuất đầy đủ các tệp CSV cho Power BI Desktop."""
-        out_dir = export_powerbi_data()
-        self.assertTrue(os.path.exists(out_dir))
+        """CSV serialization with warehouse query fixtures, independent of live services."""
+        import csv
+        import tempfile
+        from unittest import mock
+        from powerbi.export_powerbi_dataset import DATASETS
 
-        expected_files = [
-            "Dim_Products.csv",
-            "Dim_Geography.csv",
-            "Inventory_Health_Alerts.csv",
-            "Forecast_vs_Actual.csv",
-            "Fact_Orders_Summary.csv",
-        ]
-        for fname in expected_files:
-            fpath = os.path.join(out_dir, fname)
-            self.assertTrue(os.path.exists(fpath), f"Thiếu tệp {fname}")
-            self.assertGreater(os.path.getsize(fpath), 0, f"Tệp {fname} bị rỗng")
+        fixture = {filename: [] for filename in DATASETS}
+        # CSV-only warehouse is valid: financial tables stay empty.
+        fixture["Historical_Demand_Daily.csv"] = [{
+            "date_key": 20260702, "order_date": "2026-07-02", "sku": "A", "product_name": "A",
+            "platform": "shopee", "units_sold": 7, "data_origin": "public_anonymized_historical_csv", "source_dataset": "file-a",
+        }]
+        fixture["Forecast_vs_Actual.csv"] = [{
+            "sku": "A", "forecast_demand": 5, "actual_demand": None,
+            "data_origin": "public_anonymized_historical_csv", "source_datasets": '["file-a"]', "actual_complete": False,
+        }]
+        with tempfile.TemporaryDirectory() as tmp, \
+             mock.patch("sqlalchemy.create_engine"), \
+             mock.patch("powerbi.export_powerbi_dataset._install_views"), \
+             mock.patch("powerbi.export_powerbi_dataset._query", side_effect=list(fixture.values())):
+            out_dir = export_powerbi_data(output_dir=tmp)
+            for filename in DATASETS:
+                self.assertTrue(os.path.exists(os.path.join(out_dir, filename)))
+            with open(os.path.join(out_dir, "Forecast_vs_Actual.csv"), encoding="utf-8-sig", newline="") as file:
+                forecast = next(csv.DictReader(file))
+            self.assertEqual(forecast["actual_demand"], "")
+            self.assertEqual(forecast["data_origin"], "public_anonymized_historical_csv")
+            with open(os.path.join(out_dir, "Fact_Orders_Summary.csv"), encoding="utf-8-sig", newline="") as file:
+                self.assertEqual(list(csv.DictReader(file)), [])
 
 
 if __name__ == "__main__":

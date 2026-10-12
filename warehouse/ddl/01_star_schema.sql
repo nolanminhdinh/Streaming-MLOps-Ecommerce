@@ -189,6 +189,24 @@ CREATE TABLE IF NOT EXISTS Fact_Historical_Order_Lines (
     )
 );
 
+-- Migration additive: forecasts cũ thiếu provenance được giữ là unknown, không chấm accuracy.
+ALTER TABLE Fact_Forecast_Predictions ADD COLUMN IF NOT EXISTS data_origin TEXT NOT NULL DEFAULT 'unknown';
+ALTER TABLE Fact_Forecast_Predictions ADD COLUMN IF NOT EXISTS source_datasets JSONB NOT NULL DEFAULT '[]'::JSONB;
+ALTER TABLE Fact_Forecast_Predictions DROP CONSTRAINT IF EXISTS uq_fact_forecasts_issue;
+ALTER TABLE Fact_Forecast_Predictions ADD CONSTRAINT uq_fact_forecasts_issue UNIQUE (
+    product_key, target_date, model_name, model_version, history_end_date, data_origin, source_datasets
+);
+
+-- Xác nhận ngày đã nạp đủ, độc lập với việc có/không có đơn bán.
+-- Streaming dùng source_dataset='', CSV xác nhận từng fingerprint.
+CREATE TABLE IF NOT EXISTS Warehouse_Daily_Coverage (
+    data_origin TEXT NOT NULL,
+    source_dataset TEXT NOT NULL DEFAULT '',
+    full_date DATE NOT NULL,
+    confirmed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (data_origin, source_dataset, full_date)
+);
+
 CREATE INDEX IF NOT EXISTS idx_historical_lines_sku_date
     ON Fact_Historical_Order_Lines(sku, create_time);
 CREATE INDEX IF NOT EXISTS idx_historical_lines_origin_date

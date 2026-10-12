@@ -2,6 +2,7 @@
 
 | Ngày | Tài liệu | Kết quả chính |
 |---|---|---|
+| 2026-10-12 | [Báo cáo chỉnh sửa hệ thống](../04-pipeline-updates/bao-cao-chinh-sua-he-thong-2026-10-12.md) | 96 pytest đạt, 8 kiểm tra PostgreSQL cô lập đạt; chờ migration và nghiệm thu Docker. |
 | 2026-10-10 | [Báo cáo kiểm thử hệ thống](test_report_2026-10-10.md) | 76 pytest passed; FastAPI Docker ready; alert readiness được Prometheus nạp; model v2 còn ở Staging. |
 | 2026-10-09 | [Baseline và nghiệm thu runtime](test_report_2026-10-09.md) | Baseline cũ 71 passed, 1 failed; có ghi riêng nghiệm thu runtime sau các sửa đổi Lần 3. |
 | 2026-10-01 | [Kiểm thử hiệu năng lần 1](bao_cao_kiem_thu_hieu_nang_lan_1.md) | Số đo lịch sử; không đại diện runtime hiện tại. |
