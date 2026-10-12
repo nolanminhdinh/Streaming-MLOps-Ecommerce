@@ -2,7 +2,11 @@
 Deploy E-Commerce Streaming Pipeline directly onto Apache NiFi Canvas via NiFi REST API.
 """
 import sys
+import os
 import httpx
+from dotenv import load_dotenv
+
+load_dotenv()
 
 NIFI_BASE_URL = "http://localhost:8080/nifi-api"
 
@@ -70,11 +74,12 @@ def deploy():
             "properties": {
                 "Destination": "flowfile-attribute",
                 "Return Type": "auto-detect",
-                "order_id": "$.order_id",
-                "user_id": "$.user_id",
-                "platform": "$.platform",
+                "shopee_order_id": "$.order_sn",
+                "tiktok_order_id": "$.order_id",
+                "platform": "$._platform",
                 "total_amount": "$.total_amount",
-                "created_at": "$.created_at"
+                "shopee_created_at": "$.create_time",
+                "tiktok_created_at": "$.created_time"
             },
             "autoTerminated": ["failure", "unmatched"]
         },
@@ -86,8 +91,8 @@ def deploy():
             "y": 200.0,
             "properties": {
                 "Routing Strategy": "Route to Property name",
-                "shopee": "${platform:equals('Shopee')}",
-                "tiktok": "${platform:equals('TikTok')}"
+                "shopee": "${platform:equals('shopee')}",
+                "tiktok": "${platform:equals('tiktok')}"
             },
             "autoTerminated": ["unmatched"]
         },
@@ -98,8 +103,8 @@ def deploy():
             "x": 1240.0,
             "y": 200.0,
             "properties": {
-                "s3.bucket": "ecom-raw-data",
-                "filename": "${platform:toLower()}/${now():format('yyyy/MM/dd')}/${order_id}.json",
+                "s3.bucket": os.getenv("MINIO_BUCKET_RAW", "ecom-raw-lake"),
+                "filename": "raw/nifi/orders/platform=${platform}/ingest_date=${now():format('yyyy-MM-dd', 'Asia/Ho_Chi_Minh')}/${shopee_order_id:isEmpty():ifElse(${tiktok_order_id},${shopee_order_id})}-${uuid}.json",
                 "mime.type": "application/json"
             },
             "autoTerminated": []

@@ -46,6 +46,11 @@ class TestLoadTestRunner(unittest.TestCase):
         self.runner = LoadTestRunner()
         # Unit benchmark must not change behavior when a local API happens to be running.
         self.runner.is_live_server = False
+        # Unit benchmarks must not replace the persisted runtime load report.
+        from unittest import mock
+        export = mock.patch.object(self.runner, "_export_results")
+        export.start()
+        self.addCleanup(export.stop)
 
     def test_single_request_execution(self):
         """Kiểm tra thực thi 1 request trả về đúng tuple (success, elapsed_ms, task_type)."""

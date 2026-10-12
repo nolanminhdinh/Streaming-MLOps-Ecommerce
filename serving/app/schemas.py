@@ -156,6 +156,7 @@ class ModelMetadataResponse(BaseModel):
     inventory_defaults: Dict[str, Any]
     model_source: Optional[str] = None
     training_data_origin: Optional[str] = None
+    source_datasets: List[str] = Field(default_factory=list)
 
 
 class HealthResponse(BaseModel):

@@ -1,0 +1,151 @@
+{
+  "date": "2026-10-13",
+  "streaming": {
+    "run_id": "E2E20261013889fdd",
+    "status": "PASS",
+    "business_timezone": "Asia/Ho_Chi_Minh",
+    "etl": [
+      {
+        "status": "SUCCESS",
+        "target_date": "2026-10-12",
+        "raw_records": 32,
+        "unified_records": 32,
+        "clean_records": 16,
+        "quarantined_records": 0,
+        "loaded_records": 16,
+        "elapsed_seconds": 0.53
+      },
+      {
+        "status": "SUCCESS",
+        "target_date": "2026-10-13",
+        "raw_records": 32,
+        "unified_records": 32,
+        "clean_records": 16,
+        "quarantined_records": 0,
+        "loaded_records": 16,
+        "elapsed_seconds": 0.52
+      }
+    ],
+    "kafka_orders_sent": 64,
+    "unique_orders": 32,
+    "parquet_rows": 64,
+    "parquet_objects": 32,
+    "mixed_batches": 8,
+    "warehouse": [
+      {
+        "platform": "shopee",
+        "rows": 16,
+        "units": 35
+      },
+      {
+        "platform": "tiktok",
+        "rows": 16,
+        "units": 27
+      }
+    ],
+    "inventory": [
+      {
+        "sku": "E2E20261013889fdd-S",
+        "stock_on_hand": 123,
+        "day": "2026-10-13"
+      },
+      {
+        "sku": "E2E20261013889fdd-T",
+        "stock_on_hand": 47,
+        "day": "2026-10-13"
+      }
+    ],
+    "warehouse_replay": "PASS",
+    "partition_check": "PASS",
+    "skus": {
+      "shopee": "E2E20261013889fdd-S",
+      "tiktok": "E2E20261013889fdd-T"
+    }
+  },
+  "readiness": {
+    "status": "ready",
+    "model_loaded": true,
+    "warehouse_connected": true,
+    "history_available": true,
+    "history_end": "2026-08-11",
+    "history_data_origin": "public_anonymized_historical_csv"
+  },
+  "deployed_model": {
+    "model_registry_name": "ECommerceDemandForecastModel",
+    "version": "2",
+    "stage": "Staging",
+    "model_source": "mlflow_registry",
+    "source_datasets": [
+      "shopee:sha256:6ae345e246481a2bd3b656838396e4fd31ce821c253945de6aa1370b2008f18d",
+      "tiktok:sha256:881e893f6b318bc6fbf42f518f4bacb7f74bb4002076c33d8e7e7452176656fb"
+    ],
+    "metrics": {
+      "cv_wape": 126.08,
+      "cv_mae": 0.1599,
+      "cv_rmse": 0.5253
+    }
+  },
+  "closed_loop": {
+    "status": "RETRAINED",
+    "new_version": "2",
+    "serving_reloaded": true
+  },
+  "drift": {
+    "data_source": "feature_store",
+    "data_origin": "public_anonymized_historical_csv",
+    "drift_detected": true,
+    "drift_share": 0.375,
+    "target_drift_detected": false,
+    "reference_window": [
+      "2026-07-07",
+      "2026-08-03"
+    ],
+    "current_window": [
+      "2026-08-04",
+      "2026-08-10"
+    ]
+  },
+  "http_smoke_load": {
+    "requests": 40,
+    "concurrency": 4,
+    "success": 40,
+    "failed": [],
+    "duration_seconds": 1.33,
+    "rps": 30.07,
+    "p50_ms": 125.67,
+    "p95_ms": 275.01,
+    "routes": {
+      "predict": 24,
+      "health": 8,
+      "inventory": 8
+    }
+  },
+  "nifi": {
+    "status": "PASS",
+    "run_id": "NIFIE2E202610137c9f93",
+    "kafka_messages": 4,
+    "minio_json_objects": 4,
+    "paths": [
+      "raw/nifi/orders/platform=shopee/ingest_date=2026-10-13/NIFIE2E202610137c9f93-S-0-ddd706d0-9ddd-437f-9364-3ef930264109.json",
+      "raw/nifi/orders/platform=shopee/ingest_date=2026-10-13/NIFIE2E202610137c9f93-S-2-82c8c3d5-97d1-4d82-946d-3355dcd5ffaf.json",
+      "raw/nifi/orders/platform=tiktok/ingest_date=2026-10-13/NIFIE2E202610137c9f93-T-1-2baaf3dd-cb24-4ff1-9eb0-00362feaa8f2.json",
+      "raw/nifi/orders/platform=tiktok/ingest_date=2026-10-13/NIFIE2E202610137c9f93-T-3-f3ed23c4-89c2-4db0-9625-c5ede4579b0a.json"
+    ]
+  },
+  "inventory_all": {
+    "http": 200,
+    "elapsed_seconds": 23.312,
+    "skus": 216,
+    "stock_sources": [
+      "simulated_demo"
+    ],
+    "demand_sources": [
+      "model_forecast"
+    ]
+  },
+  "pytest": {
+    "passed": 97,
+    "failed": 0,
+    "skipped": 0
+  }
+}

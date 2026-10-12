@@ -138,6 +138,8 @@ Hướng dẫn chi tiết từng bước cho từng giai đoạn:
 
 > **Bản sửa ngày 2026-10-12:** 96 pytest đạt và 8 kiểm tra SQL trên PostgreSQL cô lập (PGlite). Đã sửa partition hỗn hợp, provenance retraining/forecast, ABC/XYZ và lỗi đọc MinIO bị che. Docker Desktop hiện lỗi socket `sailor-ingest.sock`, nên migration và kiểm chứng runtime Docker chưa được thực hiện. Xem [hướng dẫn áp dụng bản sửa](docs/04-pipeline-updates/lan-05-pipeline-integrity-2026-10-12.md).
 
+> **Kiểm chứng runtime 2026-10-13:** Migration đã áp dụng và 9 dịch vụ Docker đang chạy. Kafka → MinIO → ETL đạt đối soát 64 message/32 đơn; training, Registry và reload đã thử thật trên model E2E riêng; API chính vẫn phục vụ v2 Staging. 97 pytest đạt. GET inventory toàn catalog mất 23,312 giây và các SKU lịch sử còn dùng tồn kho demo; chất lượng model chưa đủ Production. Xem [báo cáo runtime](docs/03-testing-and-benchmark/runtime_e2e_report_2026-10-13.md).
+
 ## 7. Minh bạch sử dụng AI
 
 Theo yêu cầu của Cẩm nang ĐATN, các phần có sử dụng AI hỗ trợ (Claude) sẽ được ghi chú

@@ -338,6 +338,7 @@ def get_model_metadata() -> ModelMetadataResponse:
         },
         model_source=manager.model_source,
         training_data_origin=meta.get("training_data_origin"),
+        source_datasets=meta.get("source_datasets") or [],
     )
 
 

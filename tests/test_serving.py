@@ -142,6 +142,18 @@ class TestInventoryService(unittest.TestCase):
 
 
 class TestFastAPIServing(unittest.TestCase):
+    def test_metadata_exposes_dataset_fingerprints(self):
+        from types import SimpleNamespace
+        from unittest import mock
+        manager = SimpleNamespace(
+            model_source="mlflow_registry",
+            get_metadata=lambda: {"version": "2", "source_datasets": ["shopee:sha256:test"], "training_data_origin": "public_anonymized_historical_csv"},
+        )
+        with mock.patch("serving.app.main.get_model_manager", return_value=manager):
+            response = TestClient(app).get("/model/metadata")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["source_datasets"], ["shopee:sha256:test"])
+
 
     def setUp(self):
         if not HAS_TEST_CLIENT:

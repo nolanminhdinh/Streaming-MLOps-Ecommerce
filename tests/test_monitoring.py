@@ -57,7 +57,10 @@ class TestStatisticalDriftFunctions(unittest.TestCase):
 class TestDriftDetector(unittest.TestCase):
 
     def setUp(self):
-        self.detector = DriftDetector(drift_share_threshold=0.30)
+        import tempfile
+        reports = tempfile.TemporaryDirectory()
+        self.addCleanup(reports.cleanup)
+        self.detector = DriftDetector(drift_share_threshold=0.30, reports_dir=reports.name)
 
     def test_detect_injected_drift(self):
         """Kiểm tra phát hiện trôi dạt khi có sự cố dịch chuyển phân phối."""
