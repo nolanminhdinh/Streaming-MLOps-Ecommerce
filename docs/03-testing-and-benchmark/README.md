@@ -1,5 +1,7 @@
 # Báo cáo kiểm thử và benchmark
 
+[Checklist kiểm thử trước vận hành production](checklist-truoc-van-hanh-production.md): 10 nhóm kiểm tra vận hành/mở rộng, cách thực hiện, tiêu chí đạt và trạng thái hiện tại; không đánh giá độ chính xác mô hình.
+
 | Ngày | Tài liệu | Kết quả chính |
 |---|---|---|
 | 2026-10-13 | [Bài 1 — Toàn vẹn dữ liệu](data_integrity_DI20261013ba6be6.md) | FAIL: MinIO đủ 18 sự kiện; warehouse chỉ giữ 12/16 dòng hợp lệ, mất SKU của đơn nhiều dòng; hai dòng lỗi không vào quarantine. 7/10 tiêu chí đạt. |
