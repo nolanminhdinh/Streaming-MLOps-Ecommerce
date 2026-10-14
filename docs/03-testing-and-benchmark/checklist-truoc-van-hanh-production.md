@@ -1,31 +1,32 @@
 # Checklist kiểm thử trước khi vận hành production
 
-Cập nhật: 13/10/2026. Phạm vi: khả năng vận hành, toàn vẹn dữ liệu, phục hồi và mở rộng của dự án Streaming MLOps E-Commerce. Không đánh giá độ chính xác mô hình hoặc dùng MAE/WAPE làm tiêu chí đạt trong tài liệu này.
+Cập nhật: 14/10/2026. Phạm vi: khả năng vận hành, toàn vẹn dữ liệu, phục hồi và mở rộng của dự án Streaming MLOps E-Commerce. Không đánh giá độ chính xác mô hình hoặc dùng MAE/WAPE làm tiêu chí đạt trong tài liệu này.
 
 Luồng cần nghiệm thu: Kafka → Python consumer → MinIO Parquet → ETL → PostgreSQL → features/MLflow/serving → API và báo cáo. Nhánh `inventory.logs` → PostgreSQL cần nghiệm thu riêng. Nhánh NiFi → MinIO JSON là nhánh riêng, không thay thế kiểm tra Parquet → warehouse.
 
 ## 1. Trạng thái hiện tại và thứ tự thực hiện
 
-**Chưa đủ bằng chứng để nghiệm thu production.** Bài 1 đã chạy qua dịch vụ thật và không đạt; các kiểm tra runtime trước đó là smoke test, không chứng minh sức tải hoặc khả năng chịu lỗi của hệ thống.
+**Chưa đủ bằng chứng để nghiệm thu production.** Bài 1 đã được sửa và đạt 12/12 tiêu chí trên dịch vụ thật ngày 14/10; các bài tải, chịu lỗi và phục hồi vẫn cần thực hiện.
 
 | Bài | Nhóm kiểm thử | Trạng thái tại ngày cập nhật |
 |---|---|---|
-| 1 | Toàn vẹn dữ liệu và grain dòng hàng | **FAIL**: mất 4/16 dòng hợp lệ; hai dòng lỗi không vào quarantine |
-| 2 | Idempotency, cập nhật trạng thái và dữ liệu đến trễ | Đã có smoke replay một SKU/đơn; chưa nghiệm thu đầy đủ |
-| 3 | Tải thường và độ trễ toàn tuyến | Chưa nghiệm thu; mới có 40 HTTP request/4 luồng |
+| 1 | Toàn vẹn dữ liệu và grain dòng hàng | **PASS 12/12**: 20 dòng hợp lệ, 2 dòng quarantine; replay và ngày Việt Nam đúng |
+| 2 | Idempotency, cập nhật trạng thái và dữ liệu đến trễ | Replay nhiều dòng đã đạt; đảo thứ tự cập nhật/late arrival chưa nghiệm thu |
+| 3 | Tải thường và độ trễ toàn tuyến | Inventory 216 SKU ~0,11–0,19 giây tuần tự sau tối ưu; chưa nghiệm thu tải thường |
 | 4 | Tải đột biến, backlog và backpressure | Chưa nghiệm thu |
 | 5 | Lỗi dịch vụ và khôi phục sau crash | Chưa nghiệm thu |
 | 6 | Mở rộng consumer, ETL và database | Chưa nghiệm thu |
 | 7 | Chạy bền dài hạn | Chưa nghiệm thu |
-| 8 | Schema, dữ liệu lỗi và quarantine | Chưa nghiệm thu; bài 1 đã phát hiện thiếu truy vết |
+| 8 | Schema, dữ liệu lỗi và quarantine | Đã có quarantine bền vững; schema evolution/poison message/replay sau sửa chưa nghiệm thu |
 | 9 | Monitoring, freshness và cảnh báo | Targets hoạt động; chưa kiểm tra đầy đủ cảnh báo và người nhận |
 | 10 | Backup/restore, bảo mật và phát hành | Chưa nghiệm thu |
 
-Thứ tự: sửa và chạy lại bài 1 → bài 2 và 8 → bài 3–7 → bài 9–10. Bài 9 cần được chuẩn bị sớm để thu metrics cho các bài tải và chịu lỗi. Có thể đo tải để tìm bottleneck khi bài 1 còn lỗi, nhưng không dùng throughput của pipeline đang làm mất dòng làm kết quả nghiệm thu.
+Thứ tự tiếp theo: bài 2 và 8 → bài 3–7 → bài 9–10. Bài 9 cần chuẩn bị sớm để thu metrics. Chạy lại bài 1 khi thay đổi schema/ingestion/ETL; không nghiệm thu throughput nếu đối soát phát hiện mất dòng.
 
 Bằng chứng hiện có:
 
-- [Bài 1 — Toàn vẹn dữ liệu](data_integrity_DI20261013ba6be6.md): 7/10 tiêu chí đạt; MinIO đủ 18 sự kiện, warehouse 12/16 dòng hợp lệ.
+- [Bài 1 chạy lại](data_integrity_DI2026101400c8fb.md): 12/12 đạt; 22 sự kiện, 20 dòng hợp lệ và 2 dòng quarantine.
+- [Báo cáo sửa ngày 14/10](../04-pipeline-updates/lan-06-order-line-quarantine-2026-10-14.md): 106 pytest đạt; migration/backfill/views và tối ưu inventory đã kiểm chứng.
 - [Báo cáo runtime](runtime_e2e_report_2026-10-13.md): 97 pytest đạt; GET inventory toàn catalog 216 SKU mất 23,312 giây; catalog CSV còn dùng tồn kho `simulated_demo`.
 
 ## 2. Chuẩn bị và thống nhất ngưỡng nghiệm thu
@@ -61,9 +62,9 @@ Thời gian nghiệp vụ dùng `Asia/Ho_Chi_Minh` (UTC+7). Dùng mốc ingest/a
 
 **Tiêu chí đạt:** mọi sự kiện đã ack có dấu vết bền vững; mọi dòng hợp lệ có đúng khóa dòng, SKU, quantity, tiền và ngày; không mất/cộng trùng dòng; các dimension có nguồn hợp lệ được ánh xạ; đơn hủy được giữ và loại khỏi chỉ số bán hàng theo quy tắc nghiệp vụ. Mỗi dòng lỗi có định danh nguồn và lý do để xử lý lại.
 
-**Lỗi đang chặn:** dedupe và UNIQUE/upsert của `Fact_Orders` dùng `(order_id, platform)`, làm mất SKU trong đơn nhiều dòng. Cần thống nhất grain dòng hàng và line ID ổn định; chỉ thêm SKU vào dedupe chưa giải quyết hai dòng cùng SKU hoặc khóa database. Hai dòng thiếu SKU/quantity=0 bị cleaning loại trước validator; pipeline chưa lưu quarantine bền vững.
+**Đã sửa ngày 14/10:** khóa dòng hàng `(order_id, platform, source_line_id)` và quarantine MinIO bền vững. Nguồn cũ fallback theo SKU; nguồn có hai dòng cùng SKU cần line ID ổn định. Khi chuyển contract khóa nguồn cũ phải migration đối soát.
 
-**Công cụ hiện có:** `scripts/run_data_integrity_check.py` kiểm tra 18 sự kiện qua dịch vụ thật, lọc ETL theo file của lượt chạy; lưu facts kiểm thử để đối soát. Script chưa bao phủ hai dòng cùng SKU có line ID khác nhau hoặc toàn bộ kịch bản inventory.
+**Công cụ hiện có:** `scripts/run_data_integrity_check.py` kiểm tra 22 sự kiện thật, gồm hai dòng cùng SKU có line ID khác nhau, kiểm tra nội dung quarantine bền vững và replay. ETL lọc theo file của lượt chạy; chưa bao phủ toàn bộ kịch bản inventory.
 
 ### Bài 2 — Idempotency, cập nhật và dữ liệu đến trễ
 
@@ -81,7 +82,7 @@ Thời gian nghiệp vụ dùng `Asia/Ho_Chi_Minh` (UTC+7). Dùng mốc ingest/a
 
 **Đo:** EPS ingest/complete, consumer lag, thời gian batch/ETL, tuổi dữ liệu, API latency/error theo endpoint, DB connections/locks, CPU/RAM/disk/network, số file và kích thước Parquet. Đo throughput dữ liệu hoàn tất, không chỉ tốc độ producer gửi.
 
-**Điểm cần xử lý:** GET inventory toàn catalog từng mất 23,312 giây; cần tối ưu và đo lại trên catalog lớn hơn. Kiểm thử vận hành inventory phải dùng snapshot warehouse đúng SKU, không lấy fallback demo làm bằng chứng dữ liệu thật.
+**Đã tối ưu:** inventory 216 SKU đo tuần tự ~0,11–0,19 giây, cần đo tiếp dưới tải và catalog lớn hơn. Dùng snapshot warehouse đúng SKU; không lấy fallback demo làm bằng chứng dữ liệu thật.
 
 ### Bài 4 — Burst, backlog và backpressure
 
@@ -121,7 +122,7 @@ Thời gian nghiệp vụ dùng `Asia/Ho_Chi_Minh` (UTC+7). Dùng mốc ingest/a
 
 **Tiêu chí đạt:** poison message không làm kẹt vô hạn cả partition; không biến dữ liệu sai thành số 0 hợp lệ một cách im lặng; field mới được xử lý theo contract. Dữ liệu lỗi được cách ly bền vững với payload, event/line ID, topic/partition/offset hoặc source object, lý do và run ID; xử lý lại không tạo duplicate. Mọi sự kiện có kết quả terminal được đối soát: hợp lệ, duplicate có lý do, hoặc từ chối có dấu vết.
 
-**Lỗi đã biết:** cleaning loại lỗi trước validator; `generate_quality_report()` tính toàn bộ chênh lệch trước/sau clean là duplicate. Cần tách counters theo lý do; pass rate chỉ trên dữ liệu còn lại không đại diện chất lượng toàn bộ đầu vào.
+**Đã sửa:** ETL validate toàn bộ trước dedupe; quarantine lưu payload và lý do; duplicate/rejected được đếm riêng. Cần nghiệm thu thêm schema evolution, poison message và công cụ replay/resolve.
 
 ### Bài 9 — Monitoring, freshness và cảnh báo
 
@@ -162,7 +163,7 @@ Chạy từ thư mục gốc dự án với Docker và dependencies đã sẵn s
 
 Script integrity trả exit code 1 nếu không đạt; báo cáo vẫn được lưu. Dữ liệu chi tiết ở `data/runtime_checks/<run_id>/`, báo cáo Markdown ở thư mục này. Scripts tạo test facts và để lại dữ liệu để đối soát. Script E2E xử lý toàn bộ file của những ngày mục tiêu trong lake, nên chạy trên staging riêng để tránh cập nhật dữ liệu nghiệp vụ đang hoạt động.
 
-`tests/load_testing/run_load_test.py` có chế độ HTTP và in-process: phải xác nhận báo cáo ghi đúng chế độ HTTP thật nếu dùng để nghiệm thu API. Lượt 300 request/mức tải chỉ là khảo sát ngắn; bài 3–7 cần tải theo thời gian và đo toàn tuyến. Runner hiện dùng timeout 5 giây, trong khi inventory toàn catalog đã đo chậm hơn ngưỡng này.
+`tests/load_testing/run_load_test.py` có chế độ HTTP và in-process: xác nhận báo cáo ghi HTTP thật nếu nghiệm thu API. Lượt 300 request/mức tải chỉ là khảo sát ngắn; bài 3–7 cần tải theo thời gian và toàn tuyến. Runner dùng timeout 5 giây; inventory đã tối ưu nhưng vẫn cần đo dưới tải.
 
 `scripts/verify_pipeline_effectiveness.py` và benchmark lịch sử giúp khảo sát thành phần; không lấy số records/giây của phép xử lý cục bộ làm throughput Kafka → MinIO → PostgreSQL. Chỉ bài 1 và smoke E2E đã có runner được dùng trong lượt runtime vừa qua; các bài crash, scale, soak, restore và cảnh báo cần bổ sung kịch bản/automation trước khi nghiệm thu.
 

@@ -122,6 +122,10 @@ class DataValidator:
                     row_errors.append(f"MISSING_{col.upper()}")
 
             # Platform domain check
+            for field, limit in (("order_id", 50), ("sku", 50), ("source_line_id", 128)):
+                value = row.get(field)
+                if value is not None and pd.notna(value) and len(str(value)) > limit:
+                    row_errors.append(f"TOO_LONG_{field.upper()}")
             plat = str(row.get("platform", "")).lower()
             if plat not in self.VALID_PLATFORMS:
                 row_errors.append("INVALID_PLATFORM")
@@ -139,12 +143,18 @@ class DataValidator:
                     row_errors.append("NON_POSITIVE_QUANTITY")
                 elif qty_val > self.max_qty:
                     row_errors.append("OUTLIER_QUANTITY")
+                elif not qty_val.is_integer():
+                    row_errors.append("NON_INTEGER_QUANTITY")
             except (ValueError, TypeError):
                 row_errors.append("INVALID_QUANTITY_TYPE")
 
             # Price & Amount checks (không âm, không vượt trần phi lý)
-            for amount_col in ["original_price", "subtotal", "buyer_total_amount"]:
+            for amount_col in ["original_price", "subtotal", "buyer_total_amount", "seller_discount",
+                               "platform_discount", "voucher_total", "commission_fee", "service_fee",
+                               "transaction_fee", "shipping_fee", "original_shipping", "tax_amount"]:
                 val = row.get(amount_col)
+                if amount_col in df_check and pd.isna(val):
+                    row_errors.append(f"INVALID_{amount_col.upper()}_TYPE")
                 if val is not None and not pd.isna(val):
                     try:
                         amt = float(val)

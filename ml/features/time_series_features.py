@@ -59,6 +59,12 @@ class TimeSeriesFeatureExtractor:
             df = df[df["order_status"] != "CANCELLED"].copy()
 
         df["date"] = pd.to_datetime(df[date_col]).dt.date
+        # Streaming has order-line grain; count orders once even with repeated SKU lines.
+        # Historical anonymized IDs can be reused, so retain their row-count semantics.
+        order_metric = (quantity_col, "count")
+        if "source_line_id" in df and "order_id" in df:
+            df["_order_business_key"] = list(zip(df.get("platform", pd.Series("", index=df.index)), df["order_id"]))
+            order_metric = ("_order_business_key", "nunique")
 
         # Tổng hợp các metrics theo ngày
         daily = (
@@ -68,7 +74,7 @@ class TimeSeriesFeatureExtractor:
                 daily_revenue=(revenue_col, "sum"),
                 avg_unit_price=(price_col, "mean"),
                 total_discount=(discount_col, "sum") if discount_col in df.columns else (quantity_col, "count"),
-                order_count=(quantity_col, "count"),
+                order_count=order_metric,
             )
             .reset_index()
         )

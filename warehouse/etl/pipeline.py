@@ -21,6 +21,7 @@ import logging
 import os
 import sys
 import time
+import uuid
 from datetime import datetime
 from typing import Optional
 
@@ -30,7 +31,8 @@ import pandas as pd
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from warehouse.etl.extract import build_minio_client, extract_orders
-from warehouse.etl.transform import BUSINESS_TZ, unify_schema, clean_data, generate_quality_report
+from warehouse.etl.transform import BUSINESS_TZ, unify_schema, clean_data, deduplicate_lines
+from warehouse.etl.quarantine import persist_quarantine
 from warehouse.etl.data_validation import DataValidator
 from warehouse.etl.load import get_engine, load
 
@@ -66,6 +68,7 @@ def run_etl_pipeline(
     logger.info("Target Date: %s | Dry Run: %s | Batch Size: %d", date_str, dry_run, batch_size)
 
     stats = {
+        "run_id": pd.Timestamp.now(tz=BUSINESS_TZ).strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex,
         "status": "FAILED",
         "target_date": date_str,
         "raw_records": 0,
@@ -104,8 +107,8 @@ def run_etl_pipeline(
     stats["unified_records"] = len(unified_df)
     logger.info("✓ Unify schema (Shopee + TikTok): %d records", len(unified_df))
 
-    transformed_df = clean_data(unified_df)
-    quality_report = generate_quality_report(unified_df, transformed_df)
+    # Normalize every source row; validation must see errors before filtering/dedupe.
+    transformed_df, quality_report = clean_data(unified_df, return_report=True, preserve_invalid=True)
     logger.info(
         "✓ Clean data hoàn tất: %d records giữ lại (%d duplicate bị loại)",
         len(transformed_df), quality_report.get("duplicates_removed", 0),
@@ -118,9 +121,19 @@ def run_etl_pipeline(
     validator = DataValidator()
     clean_df, quarantine_df, val_report = validator.validate(transformed_df)
     val_report.print_summary()
+    clean_df, duplicates = deduplicate_lines(clean_df)
+    stats["duplicates_removed"] = duplicates
+    stats["validation_errors"] = val_report.error_counts
+    stats["quarantine_object"] = None
+    if not dry_run:
+        # Propagate storage failures: no SUCCESS if the rejection audit could not be saved.
+        stats["quarantine_object"] = persist_quarantine(minio_client, quarantine_df, stats["run_id"])
 
     stats["clean_records"] = len(clean_df)
     stats["quarantined_records"] = len(quarantine_df)
+    stats["accounted_records"] = len(clean_df) + duplicates + len(quarantine_df)
+    if stats["accounted_records"] != stats["raw_records"]:
+        raise RuntimeError("ETL accounting mismatch: raw != valid + duplicates + rejected")
 
     if not quarantine_df.empty:
         logger.warning(

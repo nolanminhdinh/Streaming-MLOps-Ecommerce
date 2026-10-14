@@ -201,7 +201,7 @@ class WarehouseRepository:
                            SUM(f.buyer_total_amount)  AS daily_revenue,
                            AVG(f.original_price)      AS avg_unit_price,
                            SUM(f.seller_discount)     AS total_discount,
-                           COUNT(*)                   AS order_count
+                           COUNT(DISTINCT (f.platform, f.order_id)) AS order_count
                     FROM Fact_Orders f
                     JOIN Dim_Products p ON p.product_key = f.product_key
                     WHERE p.sku = :sku

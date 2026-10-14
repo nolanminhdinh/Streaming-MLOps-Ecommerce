@@ -49,3 +49,13 @@ class MovingAverageModel:
         if "rolling_mean_7" in X.columns:
             return X["rolling_mean_7"].fillna(0).values
         return np.zeros(len(X))
+
+    def predict_from_history(self, history, feature_columns):
+        """Same shifted rolling_mean_7 as training, without a one-row DataFrame."""
+        if "rolling_mean_7" not in feature_columns:
+            return 0.0
+        window = history[:-1][-7:]
+        if not window:
+            return 0.0
+        value = sum(float(row.get("daily_demand", 0.0) or 0.0) for row in window) / len(window)
+        return 0.0 if np.isnan(value) else value

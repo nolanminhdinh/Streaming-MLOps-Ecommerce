@@ -22,7 +22,7 @@ SUM(Fact_Orders[quantity])
 ```dax
 Total Orders = 
 CALCULATE(
-    DISTINCTCOUNT(Fact_Orders[order_sn]),
+    COUNTROWS(SUMMARIZE(Fact_Orders, Fact_Orders[platform], Fact_Orders[order_id])),
     Fact_Orders[is_cancelled] = FALSE()
 )
 ```

@@ -93,6 +93,7 @@ CREATE TABLE IF NOT EXISTS Fact_Orders (
 
     -- Định danh đơn hàng gốc
     order_id            VARCHAR(50) NOT NULL,      -- order_sn (Shopee) | order_id (TikTok)
+    source_line_id      VARCHAR(128) NOT NULL,
     platform            VARCHAR(20) NOT NULL,      -- 'shopee' | 'tiktok'
 
     -- Trạng thái
@@ -133,8 +134,18 @@ CREATE TABLE IF NOT EXISTS Fact_Orders (
     loaded_at           TIMESTAMP DEFAULT NOW(),
 
     -- Ràng buộc chống trùng lặp đơn hàng khi ETL chạy nhiều lần (Idempotency)
-    CONSTRAINT uq_fact_orders_order_platform UNIQUE (order_id, platform)
+    CONSTRAINT uq_fact_orders_order_platform_line UNIQUE (order_id, platform, source_line_id)
 );
+
+-- Upgrade existing installations without deleting facts. Legacy sources have one line per SKU.
+ALTER TABLE Fact_Orders ADD COLUMN IF NOT EXISTS source_line_id VARCHAR(128);
+UPDATE Fact_Orders f SET source_line_id = 'sku:' || p.sku
+FROM Dim_Products p WHERE f.product_key = p.product_key AND f.source_line_id IS NULL;
+UPDATE Fact_Orders SET source_line_id = 'legacy:' || order_fact_id::TEXT WHERE source_line_id IS NULL;
+ALTER TABLE Fact_Orders ALTER COLUMN source_line_id SET NOT NULL;
+ALTER TABLE Fact_Orders DROP CONSTRAINT IF EXISTS uq_fact_orders_order_platform;
+CREATE UNIQUE INDEX IF NOT EXISTS uq_fact_orders_order_platform_line
+ON Fact_Orders(order_id, platform, source_line_id);
 
 -- Fact_Inventory_Daily: ảnh chụp tồn kho hàng ngày, nạp từ topic Kafka `inventory.logs`
 -- (ingestion/consumer_inventory_to_postgres.py)

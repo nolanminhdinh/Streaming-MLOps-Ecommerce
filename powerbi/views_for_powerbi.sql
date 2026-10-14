@@ -14,12 +14,12 @@ SELECT
     d.is_weekend,
     d.is_mega_sale,
     s.platform,
-    COUNT(f.order_fact_id)          AS total_orders,
+    COUNT(DISTINCT (f.platform, f.order_id)) AS total_orders,
     SUM(f.quantity)                 AS total_units_sold,
     SUM(f.buyer_total_amount)       AS total_revenue,
     SUM(f.seller_discount)          AS total_seller_discount,
     SUM(f.platform_discount)        AS total_platform_discount,
-    ROUND(AVG(f.buyer_total_amount), 0) AS average_order_value
+    ROUND(SUM(f.buyer_total_amount) / NULLIF(COUNT(DISTINCT (f.platform, f.order_id)), 0), 0) AS average_order_value
 FROM Fact_Orders f
 JOIN Dim_Dates d ON f.date_key = d.date_key
 JOIN Dim_Shops s ON f.shop_key = s.shop_key
@@ -154,7 +154,7 @@ SELECT
     g.state,
     g.region,
     s.platform,
-    COUNT(f.order_fact_id)    AS order_count,
+    COUNT(DISTINCT (f.platform, f.order_id)) AS order_count,
     SUM(f.quantity)           AS total_units,
     SUM(f.buyer_total_amount) AS total_revenue
 FROM Fact_Orders f

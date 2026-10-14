@@ -358,6 +358,9 @@ class ModelManager:
         return (history, hist_end) if history else (None, None)
 
     def _model_predict_one(self, history: List[Dict[str, Any]], row_date: date, sku: str) -> float:
+        direct = getattr(self.model, "predict_from_history", None)
+        if callable(direct):
+            return max(0.0, float(direct(history, self.feature_spec["feature_columns"])))
         import pandas as pd
 
         spec = self.feature_spec

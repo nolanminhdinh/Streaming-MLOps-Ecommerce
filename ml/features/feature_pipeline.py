@@ -107,6 +107,7 @@ def load_orders_data(data_origin: Optional[str] = None, source_datasets: Optiona
         query = """
             SELECT
                 f.order_id,
+                f.source_line_id,
                 f.platform,
                 p.sku,
                 p.product_name,

@@ -90,6 +90,8 @@ def read_parquet_from_minio(client: Minio, bucket: str, object_name: str) -> pd.
         buf = io.BytesIO(data)
         table = pq.read_table(buf)
         df = table.to_pandas()
+        df["_source_object"] = object_name
+        df["_source_row"] = range(len(df))
 
         # Trích xuất platform từ object path
         if "platform=" in object_name:

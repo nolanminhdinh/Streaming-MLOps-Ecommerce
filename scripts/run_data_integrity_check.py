@@ -23,7 +23,7 @@ from sqlalchemy import text
 from data_simulator.data_simulator import ECommerceSimulator
 from ingestion import producer, consumer_to_minio as consumer_module
 from warehouse.etl import extract, pipeline
-from warehouse.etl.transform import unify_schema, clean_data
+from warehouse.etl.transform import unify_schema, clean_data, deduplicate_lines
 from warehouse.etl.data_validation import DataValidator
 from warehouse.etl.load import get_engine
 
@@ -39,12 +39,15 @@ def fixtures(run_id):
         for case, line in [("normal", 0), ("cancelled", 0), ("shared", 0),
                            ("before_midnight", 0), ("after_midnight", 0),
                            ("multi", 0), ("multi", 1), ("multi", 2),
+                           ("same_sku", 0), ("same_sku", 1),
                            ("invalid", 0)]:
             stamp = base + timedelta(hours=17, minutes=1)
             if case == "before_midnight":
                 stamp = base + timedelta(hours=16, minutes=59)
             order_id = f"{run_id}-{case}" + ("" if case == "shared" else f"-{platform[0]}")
             sku = f"{run_id}-{platform[0]}-{case}-{line}"
+            if case == "same_sku":
+                sku = f"{run_id}-{platform[0]}-{case}"
             qty, price = line + 2, 10000 + 1000 * line
             status = "CANCELLED" if case == "cancelled" else "COMPLETED"
             event = asdict(simulator._generate_shopee_event(stamp) if platform == "shopee"
@@ -80,7 +83,12 @@ def fixtures(run_id):
                 invalid.append({"order_id": order_id, "platform": platform,
                                 "reason": "missing SKU" if platform == "shopee" else "quantity=0"})
             else:
+                source_line_id = "sku:" + sku
+                if case == "same_sku":
+                    event["order_line_id"] = f"line-{line}"
+                    source_line_id = "id:" + event["order_line_id"]
                 expected.append({"order_id": order_id, "platform": platform, "sku": sku,
+                                 "source_line_id": source_line_id,
                                  "quantity": qty, "original_price": price,
                                  "subtotal": qty * price, "buyer_total_amount": qty * price,
                                  "order_status": status, "is_cancelled": status == "CANCELLED",
@@ -95,7 +103,7 @@ def main():
     output = Path("data/runtime_checks") / run_id
     output.mkdir(parents=True, exist_ok=True)
     result = {"run_id": run_id, "status": "RUNNING", "timezone": str(TZ),
-              "scope": "18 synthetic events; real services; isolated Parquet cohort; no model accuracy test",
+              "scope": "22 synthetic events; real services; isolated Parquet cohort; no model accuracy test",
               "checks": []}
     events, expected, invalid = fixtures(run_id)
     result.update(expected_lines=expected, invalid_inputs=invalid, kafka_acks=[])
@@ -180,8 +188,9 @@ def main():
                 partition_errors.append(name)
         check("vietnam_partition", not partition_errors, partition_errors)
         unified = unify_schema(raw.copy())
-        transformed, cleaning = clean_data(unified, return_report=True)
+        transformed, cleaning = clean_data(unified, return_report=True, preserve_invalid=True)
         valid, quarantine, validation = DataValidator().validate(transformed)
+        valid, cleaning["duplicates_removed"] = deduplicate_lines(valid)
         result["stages"] = {"raw": len(raw), "unified": len(unified), "after_cleaning": len(transformed),
                             "valid": len(valid), "quarantined": len(quarantine), "cleaning": cleaning,
                             "validation": asdict(validation)}
@@ -191,7 +200,7 @@ def main():
         engine = get_engine()
         with engine.connect() as conn:
             rows = [dict(row) for row in conn.execute(text("""
-                SELECT f.order_id, f.platform, p.sku, f.quantity, f.original_price,
+                SELECT f.order_id, f.source_line_id, f.platform, p.sku, f.quantity, f.original_price,
                        f.subtotal, f.buyer_total_amount, f.order_status, f.is_cancelled,
                        f.create_time, d.full_date::TEXT AS day,
                        f.product_key, f.shop_key, f.geo_key, f.date_key, f.payment_key, f.carrier_key
@@ -200,7 +209,7 @@ def main():
                 WHERE f.order_id LIKE :prefix ORDER BY f.platform, f.order_id, p.sku
             """), {"prefix": run_id + "%"}).mappings()]
         result["warehouse_rows"] = rows
-        key = lambda row: (row["platform"], row["order_id"], row["sku"])
+        key = lambda row: (row["platform"], row["order_id"], row["source_line_id"])
         observed = {key(row): row for row in rows}
         missing = [row for row in expected if key(row) not in observed]
         check("all_valid_order_lines_preserved", len(rows) == len(expected) and not missing,
@@ -242,9 +251,28 @@ def main():
         check("no_unexpected_warehouse_lines", all(key(row) in expected_keys for row in rows), [])
         invalid_keys = {(row["platform"], row["order_id"]) for row in invalid}
         rejection_keys = {(row["platform"], row["order_id"]) for row in quarantine.to_dict("records")}
-        check("invalid_records_reach_quarantine_with_reason", invalid_keys <= rejection_keys,
+        durable_rejects = []
+        for stats in result["etl"]:
+            if stats["quarantine_object"]:
+                response = client.get_object(consumer_module.MINIO_BUCKET, stats["quarantine_object"])
+                try:
+                    durable_rejects.extend(json.loads(line) for line in response.read().decode("utf-8").splitlines())
+                finally:
+                    response.close()
+                    response.release_conn()
+        durable_keys = {(row["platform"], row["order_id"]) for row in durable_rejects}
+        check("invalid_records_reach_quarantine_with_reason", invalid_keys <= rejection_keys and invalid_keys == durable_keys
+              and all(row.get("rejection_reasons") and row.get("raw_payload") and row.get("source_object") for row in durable_rejects),
               {"invalid_inputs": invalid, "quarantine": quarantine.to_dict("records"),
-               "note": "Raw records remain in MinIO. Pre-validation cleaning drops these inputs; pipeline currently does not persist quarantine."})
+               "durable_rejections": durable_rejects})
+        with patch.object(extract, "list_parquet_files", cohort_listing):
+            result["replay_etl"] = [pipeline.run_etl_pipeline(datetime.fromisoformat(day))
+                                    for day in sorted({row["day"] for row in expected})]
+        with engine.connect() as conn:
+            replay = conn.execute(text("SELECT COUNT(*), SUM(quantity), SUM(subtotal) FROM Fact_Orders WHERE order_id LIKE :prefix"),
+                                  {"prefix": run_id + "%"}).one()
+        check("warehouse_replay", tuple(replay) == (len(rows), sum(row["quantity"] for row in rows), sum(row["subtotal"] for row in rows)), list(replay))
+        check("etl_accounting", all(stats["raw_records"] == stats["accounted_records"] for stats in result["etl"]), result["etl"])
         result["status"] = "PASS" if all(row["status"] == "PASS" for row in result["checks"]) else "FAIL"
     except Exception as exc:
         result.update(status="ERROR", error=f"{type(exc).__name__}: {exc}")
@@ -255,7 +283,7 @@ def main():
         report = [f"# Bài 1 — Toàn vẹn dữ liệu: {result['status']}", "", f"Run ID: `{run_id}`",
                   f"Thời gian Việt Nam: {result['completed_at_vietnam']}", "",
                   "Kafka → consumer thật → MinIO Parquet → ETL thật → PostgreSQL. Chỉ chọn các file của lượt thử này khi chạy ETL.",
-                  "18 sự kiện tổng hợp: 16 dòng hợp lệ và 2 dòng lỗi. Đây là kiểm tra chức năng toàn vẹn, chưa phải kiểm tra tải production.", "",
+                  f"{len(events)} sự kiện tổng hợp: {len(expected)} dòng hợp lệ và {len(invalid)} dòng lỗi. Bao gồm hai dòng cùng SKU có line ID khác nhau. Đây là kiểm tra chức năng toàn vẹn, chưa phải kiểm tra tải production.", "",
                   "| Kiểm tra | Kết quả |", "|---|---|"]
         report += [f"| {row['name']} | {row['status']} |" for row in result["checks"]]
         report += ["", "Chi tiết bằng chứng:", "", "```json", json.dumps(result, indent=2, ensure_ascii=False, default=str), "```", ""]

@@ -1,0 +1,122 @@
+{
+  "schema": [
+    {
+      "indexdef": "CREATE UNIQUE INDEX fact_orders_pkey ON public.fact_orders USING btree (order_fact_id)"
+    },
+    {
+      "indexdef": "CREATE UNIQUE INDEX uq_fact_orders_order_platform_line ON public.fact_orders USING btree (order_id, platform, source_line_id)"
+    }
+  ],
+  "DI20261013f7b3a3": {
+    "etl": [
+      {
+        "run_id": "20261014T225334-462bbdad165e46bbaa127f18a3101366",
+        "status": "SUCCESS",
+        "target_date": "2026-10-12",
+        "raw_records": 2,
+        "unified_records": 2,
+        "clean_records": 2,
+        "quarantined_records": 0,
+        "loaded_records": 2,
+        "elapsed_seconds": 0.33,
+        "duplicates_removed": 0,
+        "validation_errors": {},
+        "quarantine_object": null,
+        "accounted_records": 2
+      },
+      {
+        "run_id": "20261014T225335-7470cb57ee4e42a0b3da3d4db1c34a8c",
+        "status": "SUCCESS",
+        "target_date": "2026-10-13",
+        "raw_records": 16,
+        "unified_records": 16,
+        "clean_records": 14,
+        "quarantined_records": 2,
+        "loaded_records": 14,
+        "elapsed_seconds": 0.39,
+        "duplicates_removed": 0,
+        "validation_errors": {
+          "MISSING_SKU": 1,
+          "NON_POSITIVE_QUANTITY": 1
+        },
+        "quarantine_object": "quarantine/orders/run_id=20261014T225335-7470cb57ee4e42a0b3da3d4db1c34a8c/rejected.jsonl",
+        "accounted_records": 16
+      }
+    ],
+    "rows": 16,
+    "units": 38,
+    "subtotal_vnd": "402000.00"
+  },
+  "DI20261013ba6be6": {
+    "etl": [
+      {
+        "run_id": "20261014T225335-530abe02629c4a87b2d7c097fad60c24",
+        "status": "SUCCESS",
+        "target_date": "2026-10-12",
+        "raw_records": 2,
+        "unified_records": 2,
+        "clean_records": 2,
+        "quarantined_records": 0,
+        "loaded_records": 2,
+        "elapsed_seconds": 0.3,
+        "duplicates_removed": 0,
+        "validation_errors": {},
+        "quarantine_object": null,
+        "accounted_records": 2
+      },
+      {
+        "run_id": "20261014T225335-83573789e6384f0b8179a0a9b5870e0d",
+        "status": "SUCCESS",
+        "target_date": "2026-10-13",
+        "raw_records": 16,
+        "unified_records": 16,
+        "clean_records": 14,
+        "quarantined_records": 2,
+        "loaded_records": 14,
+        "elapsed_seconds": 0.47,
+        "duplicates_removed": 0,
+        "validation_errors": {
+          "MISSING_SKU": 1,
+          "NON_POSITIVE_QUANTITY": 1
+        },
+        "quarantine_object": "quarantine/orders/run_id=20261014T225335-83573789e6384f0b8179a0a9b5870e0d/rejected.jsonl",
+        "accounted_records": 16
+      }
+    ],
+    "rows": 16,
+    "units": 38,
+    "subtotal_vnd": "402000.00"
+  },
+  "inventory_http": [
+    {
+      "seconds": 0.19437119999929564,
+      "skus": 216,
+      "simulated_stock_count": 216
+    },
+    {
+      "seconds": 0.1135982999985572,
+      "skus": 216,
+      "simulated_stock_count": 216
+    },
+    {
+      "seconds": 0.10897819999809144,
+      "skus": 216,
+      "simulated_stock_count": 216
+    }
+  ],
+  "ready": {
+    "status": "ready",
+    "model_loaded": true,
+    "warehouse_connected": true,
+    "history_available": true,
+    "history_end": "2026-08-11",
+    "history_data_origin": "public_anonymized_historical_csv"
+  },
+  "powerbi_reconciliation": {
+    "orders_view": "11598",
+    "orders_facts": "11598",
+    "revenue_view": "7590770770.00",
+    "revenue_facts": "7590770770.00",
+    "status": "PASS"
+  }
+}

@@ -26,7 +26,7 @@ from warehouse.etl.pipeline import run_etl_pipeline
 from warehouse.etl.load import get_engine
 
 
-def main():
+def main(publish_interval=0.0):
     run_id = "E2E" + datetime.now(ZoneInfo("Asia/Ho_Chi_Minh")).strftime("%Y%m%d") + uuid.uuid4().hex[:6]
     output = Path("data/runtime_checks") / run_id
     output.mkdir(parents=True, exist_ok=True)
@@ -66,6 +66,10 @@ def main():
             ready[index].set()
             return consumer
         module.KafkaConsumer = factory
+        # Assign partitions sequentially before transferring each consumer to its
+        # worker; avoid simultaneous Kafka selector startup on Windows.
+        prepared_consumer = module.build_consumer()
+        module.build_consumer = lambda: prepared_consumer
         def worker():
             try:
                 module.main()
@@ -103,6 +107,8 @@ def main():
         for event in events + events:
             key = (event.get("order_sn") or event["order_id"]).encode()
             kafka_producer.send(producer.TOPIC_ORDERS, key=key, value=event).get(timeout=15)
+            if publish_interval:
+                time.sleep(publish_interval)
         snapshots = [
             {"sku": skus["shopee"], "product_name": "E2E Shopee", "category": "E2E", "stock_on_hand": 123, "loaded_at": datetime.now(timezone.utc).isoformat()},
             {"sku": skus["tiktok"], "product_name": "E2E TikTok", "category": "E2E", "stock_on_hand": 47, "loaded_at": datetime.now(timezone.utc).isoformat()},
@@ -161,6 +167,7 @@ def main():
     result.update(status="PASS", kafka_orders_sent=64, unique_orders=32, parquet_rows=raw_count, parquet_objects=len(object_names), mixed_batches=sum(len(b["platforms"])==2 for b in batches), warehouse=first, inventory=stocks, warehouse_replay="PASS", partition_check="PASS", skus=skus)
     (output / "streaming_result.json").write_text(json.dumps(result, indent=2, default=str), encoding="utf-8")
     print("RUNTIME_RESULT", json.dumps(result, ensure_ascii=False, default=str))
+    return result
 
 
 if __name__ == "__main__":

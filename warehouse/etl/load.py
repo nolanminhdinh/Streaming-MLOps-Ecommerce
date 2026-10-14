@@ -252,6 +252,7 @@ def load_fact_orders(
             "payment_key": payment_key,
             "carrier_key": carrier_key,
             "order_id": str(row.get("order_id")),
+            "source_line_id": str(row["source_line_id"]),
             "platform": str(row.get("platform")),
             "order_status": _clean_val(row.get("order_status")),
             "is_cancelled": bool(row.get("is_cancelled", False)),
@@ -283,7 +284,7 @@ def load_fact_orders(
     insert_stmt = text("""
         INSERT INTO Fact_Orders (
             product_key, shop_key, geo_key, date_key, payment_key, carrier_key,
-            order_id, platform, order_status, is_cancelled, cancel_reason,
+            order_id, source_line_id, platform, order_status, is_cancelled, cancel_reason,
             quantity, original_price, discounted_price, subtotal, buyer_total_amount,
             seller_discount, platform_discount, voucher_total,
             commission_fee, service_fee, transaction_fee,
@@ -291,14 +292,33 @@ def load_fact_orders(
             create_time, pay_time, shipped_time, completed_time, cancel_time
         ) VALUES (
             :product_key, :shop_key, :geo_key, :date_key, :payment_key, :carrier_key,
-            :order_id, :platform, :order_status, :is_cancelled, :cancel_reason,
+            :order_id, :source_line_id, :platform, :order_status, :is_cancelled, :cancel_reason,
             :quantity, :original_price, :discounted_price, :subtotal, :buyer_total_amount,
             :seller_discount, :platform_discount, :voucher_total,
             :commission_fee, :service_fee, :transaction_fee,
             :shipping_fee, :original_shipping, :tax_amount,
             :create_time, :pay_time, :shipped_time, :completed_time, :cancel_time
         )
-        ON CONFLICT (order_id, platform) DO UPDATE SET
+        ON CONFLICT (order_id, platform, source_line_id) DO UPDATE SET
+            product_key = EXCLUDED.product_key,
+            shop_key = EXCLUDED.shop_key,
+            geo_key = EXCLUDED.geo_key,
+            payment_key = EXCLUDED.payment_key,
+            carrier_key = EXCLUDED.carrier_key,
+            quantity = EXCLUDED.quantity,
+            original_price = EXCLUDED.original_price,
+            discounted_price = EXCLUDED.discounted_price,
+            subtotal = EXCLUDED.subtotal,
+            buyer_total_amount = EXCLUDED.buyer_total_amount,
+            seller_discount = EXCLUDED.seller_discount,
+            platform_discount = EXCLUDED.platform_discount,
+            voucher_total = EXCLUDED.voucher_total,
+            commission_fee = EXCLUDED.commission_fee,
+            service_fee = EXCLUDED.service_fee,
+            transaction_fee = EXCLUDED.transaction_fee,
+            shipping_fee = EXCLUDED.shipping_fee,
+            original_shipping = EXCLUDED.original_shipping,
+            tax_amount = EXCLUDED.tax_amount,
             -- Đơn hàng có thể đổi trạng thái giữa các lần ETL (PAID → SHIPPED → COMPLETED/CANCELLED).
             -- DO NOTHING sẽ giữ mãi trạng thái cũ, nên cập nhật các cột vòng đời đơn hàng.
             order_status   = EXCLUDED.order_status,
@@ -374,13 +394,8 @@ def load(df: pd.DataFrame, batch_size: int = 5000) -> dict:
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    from extract import extract
-    from transform import transform
-
-    raw = extract(target_date=datetime.now(timezone.utc))
-    if not raw.empty:
-        clean, report = transform(raw)
-        load_result = load(clean)
-        print("Load result:", load_result)
-    else:
-        print("Không có dữ liệu")
+    import sys
+    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+    from warehouse.etl.pipeline import run_etl_pipeline
+    from warehouse.etl.transform import BUSINESS_TZ
+    print(run_etl_pipeline(target_date=pd.Timestamp.now(tz=BUSINESS_TZ).to_pydatetime()))

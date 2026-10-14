@@ -16,6 +16,7 @@ Tuần 3: Tầng Transform của pipeline ETL.
 
 import logging
 import os
+from numbers import Real
 from datetime import datetime
 
 import numpy as np
@@ -27,6 +28,28 @@ logger = logging.getLogger("etl.transform")
 # Timestamp gốc (ISO có offset, hoặc naive được coi là UTC) được quy đổi về múi giờ này
 # rồi bỏ tz trước khi nạp vào cột TIMESTAMP của PostgreSQL.
 BUSINESS_TZ = os.getenv("BUSINESS_TZ", "Asia/Ho_Chi_Minh")
+
+
+def source_line_key(row):
+    """Prefer an upstream order-line ID; legacy feeds have one line per SKU."""
+    for field in ("order_line_id", "line_id", "source_line_id"):
+        value = row.get(field)
+        if value is not None and pd.notna(value) and str(value).strip():
+            if isinstance(value, Real) and float(value).is_integer():
+                value = str(int(value))
+            return str(value) if field == "source_line_id" else "id:" + str(value)
+    sku = row.get("sku", row.get("item_sku") if row.get("_platform") == "shopee" else row.get("seller_sku"))
+    return "sku:" + str(sku) if sku is not None and pd.notna(sku) and str(sku).strip() else None
+
+
+def deduplicate_lines(df):
+    keys = ["order_id", "source_line_id"]
+    if "platform" in df:
+        keys.append("platform")
+    # Invalid identities must reach validation individually, not disappear as duplicates.
+    identified = df[keys].notna().all(axis=1)
+    duplicate = identified & df.duplicated(subset=keys, keep="last")
+    return df.loc[~duplicate].copy(), int(duplicate.sum())
 
 
 # ─────────────────────────────────────────────────────────────
@@ -65,11 +88,17 @@ def unify_schema(df: pd.DataFrame) -> pd.DataFrame:
         platform = row.get("_platform", "unknown")
 
         if platform == "shopee":
-            unified_rows.append(_unify_shopee_row(row))
+            unified = _unify_shopee_row(row)
         elif platform == "tiktok":
-            unified_rows.append(_unify_tiktok_row(row))
+            unified = _unify_tiktok_row(row)
         else:
-            logger.warning("Platform không xác định, bỏ qua row: %s", row.get("pkId"))
+            unified = {"platform": platform, "order_id": row.get("order_id") or row.get("order_sn"),
+                       "sku": row.get("sku"), "create_time": row.get("create_time"),
+                       "quantity": row.get("quantity"), "order_status": row.get("order_status")}
+        unified.update(source_line_id=source_line_key(row),
+                       source_object=row.get("_source_object"), source_row=row.get("_source_row"),
+                       raw_payload=row)
+        unified_rows.append(unified)
 
     if not unified_rows:
         return pd.DataFrame()
@@ -172,13 +201,14 @@ def _unify_tiktok_row(row: dict | pd.Series) -> dict:
 # 2. DATA CLEANING
 # ─────────────────────────────────────────────────────────────
 
-def clean_data(df: pd.DataFrame, return_report: bool = False):
+def clean_data(df: pd.DataFrame, return_report: bool = False, preserve_invalid: bool = False):
     """
     Làm sạch dữ liệu: xử lý missing values, outliers, duplicates.
 
     Args:
         df: DataFrame đầu vào.
         return_report: Nếu True trả về (cleaned_df, report). Mặc định False trả về cleaned_df.
+        preserve_invalid: Normalize only; production ETL validates every row before deduplication.
 
     Returns:
         pd.DataFrame (hoặc tuple[pd.DataFrame, dict] nếu return_report=True).
@@ -187,16 +217,20 @@ def clean_data(df: pd.DataFrame, return_report: bool = False):
         return (df, {}) if return_report else df
 
     original_count = len(df)
-    report = {"original_rows": original_count}
+    df = df.copy()
+    if "source_line_id" not in df:
+        df["source_line_id"] = [source_line_key(row) for row in df.to_dict("records")]
+    report = {"original_rows": original_count, "duplicates_removed": 0,
+              "missing_key_removed": 0, "quantity_outliers_removed": 0, "price_outliers_removed": 0}
 
-    # 2a. order_id chỉ duy nhất trong phạm vi sàn; hai nền tảng có thể trùng mã.
-    dedupe_keys = ["order_id", "platform"] if "platform" in df.columns else ["order_id"]
-    df = df.drop_duplicates(subset=dedupe_keys, keep="last")
-    report["duplicates_removed"] = original_count - len(df)
+    # Line identity belongs to an order and platform. Invalid rows must be validated first in ETL.
+    if not preserve_invalid:
+        df, report["duplicates_removed"] = deduplicate_lines(df)
 
     # 2b. Loại bỏ rows thiếu order_id hoặc sku
-    df = df.dropna(subset=["order_id", "sku"])
-    report["missing_key_removed"] = original_count - report["duplicates_removed"] - len(df)
+    if not preserve_invalid:
+        df = df.dropna(subset=["order_id", "sku"])
+        report["missing_key_removed"] = original_count - report["duplicates_removed"] - len(df)
 
     # 2c. Xử lý missing values
     numeric_cols = [
@@ -207,18 +241,23 @@ def clean_data(df: pd.DataFrame, return_report: bool = False):
     ]
     for col in numeric_cols:
         if col in df.columns:
-            df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
+            converted = pd.to_numeric(df[col], errors="coerce")
+            # An absent optional fee defaults to zero; a supplied malformed value stays invalid.
+            optional = col not in ("quantity", "original_price", "subtotal", "buyer_total_amount")
+            df[col] = converted.mask(df[col].isna(), 0) if optional else converted
 
     # 2d. Xử lý outliers (quantity và price)
-    if "quantity" in df.columns:
+    if "quantity" in df.columns and not preserve_invalid:
         # Giới hạn quantity hợp lý: 1-100
         before_outlier = len(df)
         df = df[(df["quantity"] >= 1) & (df["quantity"] <= 100)]
         report["quantity_outliers_removed"] = before_outlier - len(df)
 
-    if "original_price" in df.columns:
+    if "original_price" in df.columns and not preserve_invalid:
         # Giá phải >= 0
+        before_price = len(df)
         df = df[df["original_price"] >= 0]
+        report["price_outliers_removed"] = before_price - len(df)
 
     # 2e. Parse timestamps → quy đổi về giờ nghiệp vụ (naive local time)
     timestamp_cols = ["create_time", "pay_time", "shipped_time", "completed_time", "cancel_time"]
@@ -235,13 +274,14 @@ def clean_data(df: pd.DataFrame, return_report: bool = False):
 
     # 2f. Chuẩn hóa text
     if "order_status" in df.columns:
-        df["order_status"] = df["order_status"].str.upper().str.strip()
+        df["order_status"] = df["order_status"].astype("string").str.upper().str.strip()
+        df["is_cancelled"] = df["order_status"].eq("CANCELLED")
 
     if "payment_method" in df.columns:
-        df["payment_method"] = df["payment_method"].str.strip()
+        df["payment_method"] = df["payment_method"].astype("string").str.strip()
 
     if "carrier_name" in df.columns:
-        df["carrier_name"] = df["carrier_name"].str.strip()
+        df["carrier_name"] = df["carrier_name"].astype("string").str.strip()
 
     report["clean_rows"] = len(df)
     report["clean_pct"] = round(len(df) / original_count * 100, 1) if original_count > 0 else 0
@@ -253,7 +293,9 @@ def clean_data(df: pd.DataFrame, return_report: bool = False):
     )
 
     if return_report:
+        df.attrs["quality_report"] = report.copy()
         return df, report
+    df.attrs["quality_report"] = report.copy()
     return df
 
 
@@ -261,12 +303,13 @@ def generate_quality_report(raw_df: pd.DataFrame, clean_df: pd.DataFrame) -> dic
     """Tạo báo cáo chất lượng đối chiếu trước vs sau clean theo chuẩn ĐATN."""
     orig_len = len(raw_df) if raw_df is not None else 0
     clean_len = len(clean_df) if clean_df is not None else 0
-    dup_removed = max(0, orig_len - clean_len)
+    dup_removed = clean_df.attrs.get("quality_report", {}).get("duplicates_removed", 0) if clean_df is not None else 0
     clean_pct = round(clean_len / orig_len * 100, 1) if orig_len > 0 else 0.0
     return {
         "original_rows": orig_len,
         "clean_rows": clean_len,
         "duplicates_removed": dup_removed,
+        "removed_total": max(0, orig_len - clean_len),
         "clean_pct": clean_pct,
     }
 
