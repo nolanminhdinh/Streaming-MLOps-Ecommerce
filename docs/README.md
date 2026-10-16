@@ -9,6 +9,8 @@
 
 ## BẢN ĐỒ ĐIỀU HƯỚNG TÀI LIỆU (DOCUMENTATION ROADMAP)
 
+Tài liệu tổng hợp theo góc nhìn **DE, MLOps, PM và PO**: [Tài liệu dự án 5 phần](tai-lieu-du-an-5-phan.md), gồm Dataset and business requirement, Understand the data, Tech selection, Implementation và Documentation. Biên soạn ngày 16/10/2026, đối chiếu hồ sơ kiểm chứng đến 14/10/2026; phân biệt kết quả đã đo với tiêu chí đề xuất.
+
 Thư mục tài liệu `docs/` được phân nhóm theo từng phân hệ chức năng trong kiến trúc 6 phân tầng của hệ thống:
 
 ```
