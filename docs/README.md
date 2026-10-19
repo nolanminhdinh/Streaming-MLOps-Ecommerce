@@ -1,4 +1,7 @@
 # THƯ VIỆN TÀI LIỆU KỸ THUẬT & KIẾN TRÚC HỆ THỐNG
+
+> **Đợt rà soát 16–19/10/2026:** [Báo cáo tổng hợp đồ án](07-bao-cao-do-an/bao-cao-tong-hop-do-an.md) · [Sáu phần kiểm tra và bằng chứng](07-bao-cao-do-an/README.md). Kết quả kiểm thử, trạng thái runtime và các tồn đọng được ghi theo ngày, không thay thế bằng các tuyên bố nghiệm thu lịch sử.
+
 ## Streaming MLOps E-Commerce Demand Forecasting & Dynamic Inventory Optimization
 
 > **Tác giả**: Đinh Công Minh  

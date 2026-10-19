@@ -1,0 +1,15 @@
+{
+  "audit_date": "2026-10-19",
+  "source": "docker logs --since 2h fastapi-serving, filtered model loader messages",
+  "startup_manifest_time_utc": "2026-10-19T14:12:11.444",
+  "manifest_model": "ECommerceDemandForecastModel",
+  "manifest_version": "2",
+  "registry_failure_time_utc": "2026-10-19T14:12:22.474",
+  "registry_request": "http://mlflow:5000/api/2.0/mlflow/model-versions/get",
+  "registry_failure": "ReadTimeoutError; read timeout=5; max retries exceeded",
+  "fallback_feature_spec": "/app/data/feature_spec.json",
+  "fallback_feature_columns": 43,
+  "model_load_outcome": "no ML model loaded; heuristic fallback",
+  "code_observation": "is_loaded becomes true after initialization even when model loading fails; get_model_manager does not automatically reload that initialized manager",
+  "actions_performed": "read logs only; no restart, reload, registry update, or training"
+}

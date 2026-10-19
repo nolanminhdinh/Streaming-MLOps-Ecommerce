@@ -1,0 +1,18 @@
+{
+  "audit_date": "2026-10-19",
+  "differing_top_level_fields": [
+    "generated_at",
+    "sku_profiles"
+  ],
+  "model_contract_equal_except_generation_time": false,
+  "local_generated_at": "2026-10-12T18:03:15.886053+00:00",
+  "run_generated_at": "2026-10-10T15:33:25.300219+00:00",
+  "local_profiles": 216,
+  "run_profiles": 216,
+  "profile_keys_only_local": 0,
+  "profile_keys_only_run": 0,
+  "changed_profile_fields": {
+    "abc_class": 2,
+    "matrix_class": 2
+  }
+}
