@@ -101,7 +101,8 @@ def main():
     null_uploaded = orders.flush_batch_to_minio(
         [{"id": "null-platform", "_platform": None,
           "create_time": "2026-10-16T00:00:00+07:00"}], null_client)
-    assert null_uploaded == 0 and not null_client.objects
+    assert null_uploaded == 1 and len(null_client.objects) == 1
+    assert "platform=unknown/" in next(iter(null_client.objects))
 
     snapshots = inventory.prepare_snapshots([
         {"sku": "AUDIT", "loaded_at": "2026-10-15T18:00:00Z", "stock_on_hand": 10},
@@ -112,21 +113,21 @@ def main():
     assert str(snapshots.iloc[0]["snapshot_date"]) == "2026-10-16"
 
     result = {
-        "audit_date": "2026-10-16",
+        "audit_date": "2026-10-20",
         "mode": "offline_in_memory_no_service_connections",
         "verified_behaviors": {
             "producer_configuration": producer_settings,
             "successful_upload_commit_order": success_trace,
             "failed_upload_no_commit": failure_trace,
             "inventory_latest_in_batch_business_date": str(snapshots.iloc[0]["snapshot_date"]),
+            "null_platform_preserved_in_unknown_partition": {"input_rows": 1, "objects": null_uploaded},
         },
         "reproduced_risks": {
             "partial_upload_then_replay": {"input_rows": 2, "stored_rows": 3,
                                            "unique_ids": 2, "objects": 3},
-            "null_platform_dropped_without_exception": {"input_rows": 1, "objects": null_uploaded},
         },
     }
-    output = Path(__file__).resolve().parents[1] / "docs/07-bao-cao-do-an/evidence/ingestion_offline_2026-10-16.json"
+    output = Path(__file__).resolve().parents[1] / "docs/07-bao-cao-do-an/evidence/ingestion_offline_2026-10-20.json"
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(json.dumps(result, indent=2, ensure_ascii=False))

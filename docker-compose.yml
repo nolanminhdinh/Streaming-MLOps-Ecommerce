@@ -219,6 +219,7 @@ services:
       TRAINING_ALERT_WEBHOOK_URL: ${TRAINING_ALERT_WEBHOOK_URL:-}
       TRAINING_ALERT_WEBHOOK_TOKEN: ${TRAINING_ALERT_WEBHOOK_TOKEN:-}
       TRAINING_MIN_FIT_DAYS: ${TRAINING_MIN_FIT_DAYS:-14}
+      HISTORY_MAX_AGE_DAYS: ${HISTORY_MAX_AGE_DAYS:-7}
     volumes:
       - ./data:/app/data:ro
     ports:
@@ -269,6 +270,48 @@ services:
       - ecom-net
 
   # --- Monitoring (Kích hoạt Tuần 8: Prometheus & Grafana) ---
+  pipeline-worker:
+    build: ./ingestion
+    restart: unless-stopped
+    init: true
+    stop_grace_period: 45s
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS_HOST: kafka:9092
+      MINIO_ENDPOINT_HOST: minio:9000
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      MINIO_BUCKET_RAW: ${MINIO_BUCKET_RAW:-ecom-raw-lake}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-ecom_warehouse}
+      POSTGRES_USER: ${POSTGRES_USER:-ecom}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ecom_password}
+      KAFKA_TOPIC_ORDERS: ${KAFKA_TOPIC_ORDERS:-ecom.orders.raw}
+      KAFKA_TOPIC_INVENTORY: ${KAFKA_TOPIC_INVENTORY:-inventory.logs}
+      BUSINESS_TZ: ${BUSINESS_TZ:-Asia/Ho_Chi_Minh}
+      CONSUMER_BATCH_TIMEOUT: ${CONSUMER_BATCH_TIMEOUT:-10}
+      PIPELINE_POLL_SECONDS: ${PIPELINE_POLL_SECONDS:-30}
+      PIPELINE_OBJECT_BATCH_SIZE: ${PIPELINE_OBJECT_BATCH_SIZE:-100}
+    volumes:
+      - ./:/workspace:ro
+      - ./data:/workspace/data
+      - ./powerbi/data:/workspace/powerbi/data
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+      minio:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import json,time; s=json.load(open('/workspace/data/pipeline/status.json')); assert s['status']=='healthy' and time.time()-s['checked_at']<180"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+    networks:
+      - ecom-net
+
   prometheus:
     image: prom/prometheus:v2.52.0
     container_name: prometheus

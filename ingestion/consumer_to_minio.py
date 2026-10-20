@@ -33,6 +33,10 @@ from kafka.errors import KafkaError
 from minio import Minio
 from minio.error import S3Error
 
+# Keep this executable directly as well as through the package entry point.
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+from warehouse.etl.quarantine import json_value
+
 load_dotenv()  # đọc file .env nếu có
 
 # ─── Cấu hình ───
@@ -77,6 +81,16 @@ signal.signal(signal.SIGTERM, _signal_handler)
 
 # ─── Kafka Consumer ───
 
+def decode_event(payload):
+    """Keep malformed Kafka payloads auditable instead of blocking a partition."""
+    try:
+        value = json.loads(payload.decode("utf-8"))
+        if isinstance(value, dict):
+            return value
+    except (ValueError, UnicodeError):
+        pass
+    return {"_ingest_error": "INVALID_JSON_OBJECT", "_raw_message": payload.decode("utf-8", errors="replace")}
+
 def build_consumer(retries: int = 5, retry_delay: float = 3.0) -> KafkaConsumer:
     """Tạo KafkaConsumer có retry khi Kafka chưa sẵn sàng."""
     for attempt in range(1, retries + 1):
@@ -84,7 +98,7 @@ def build_consumer(retries: int = 5, retry_delay: float = 3.0) -> KafkaConsumer:
             consumer = KafkaConsumer(
                 TOPIC_ORDERS,
                 bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
-                value_deserializer=lambda v: json.loads(v.decode("utf-8")),
+                value_deserializer=decode_event,
                 auto_offset_reset="earliest",
                 group_id="minio-writer-group",
                 enable_auto_commit=False,  # Tắt auto commit để tránh mất dữ liệu khi crash
@@ -155,6 +169,10 @@ def flush_batch_to_minio(
     # Xác định platform từ trường _platform (shopee | tiktok)
     if "_platform" not in df.columns:
         df["_platform"] = "unknown"
+    # Never let groupby silently discard nulls or use untrusted values as paths.
+    df["_source_platform"] = df["_platform"].map(lambda value: None if pd.isna(value) else str(value))
+    df["_platform"] = df["_platform"].astype("string").str.strip().str.lower()
+    df["_platform"] = df["_platform"].where(df["_platform"].isin(["shopee", "tiktok"]), "unknown")
 
     # Lấy timestamp ghi nhận (theo giờ nghiệp vụ)
     now = pd.Timestamp.now(tz=BUSINESS_TZ)
@@ -186,7 +204,14 @@ def flush_batch_to_minio(
         write_df = group_df.drop(columns=["_platform", "_year", "_month", "_day"], errors="ignore")
 
         # Chuyển DataFrame → PyArrow Table → Parquet bytes
-        table = pa.Table.from_pandas(write_df, preserve_index=False)
+        try:
+            table = pa.Table.from_pandas(write_df, preserve_index=False)
+        except (pa.ArrowInvalid, pa.ArrowTypeError):
+            # Mixed types (e.g. quantity=2 alongside quantity="bad") must reach
+            # validation, not permanently poison the Kafka partition.
+            table = pa.Table.from_pydict({"_raw_payload_json": [
+                json.dumps(json_value(row), ensure_ascii=False, allow_nan=False)
+                for row in write_df.to_dict("records")]})
         buf = io.BytesIO()
         pq.write_table(table, buf, compression="snappy")
         parquet_bytes = buf.getvalue()

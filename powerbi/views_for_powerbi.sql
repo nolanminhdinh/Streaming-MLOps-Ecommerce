@@ -115,10 +115,11 @@ matrix_params AS (
         mean_demand_exact AS avg_daily_demand,
         std_demand_exact AS std_daily_demand,
         matrix_segment,
-        -- Safety Stock = ceil(1.65 * std * sqrt(3)), khớp Python service level 0.95.
-        CEIL(1.65 * std_demand_exact * SQRT(3)) AS safety_stock,
+        -- Same 95% service level and minimum floors as the Python policy.
+        GREATEST(1, CEIL(1.645 * std_demand_exact * SQRT(3))) AS safety_stock,
         -- ROP = ceil(avg * 3 + SS)
-        CEIL((mean_demand_exact * 3) + CEIL(1.65 * std_demand_exact * SQRT(3))) AS reorder_point
+        GREATEST(GREATEST(1, CEIL(1.645 * std_demand_exact * SQRT(3))) + 1,
+                 CEIL(mean_demand_exact * 3 + GREATEST(1, CEIL(1.645 * std_demand_exact * SQRT(3))))) AS reorder_point
     FROM vw_powerbi_abc_xyz_by_origin WHERE data_origin = 'unverified_warehouse'
 )
 SELECT
@@ -140,7 +141,9 @@ SELECT
         ELSE FALSE
     END AS needs_reorder,
     ROUND(inv.current_stock / NULLIF(m.avg_daily_demand, 0), 1) AS days_until_stockout,
-    GREATEST(0, (m.reorder_point + CEIL(m.avg_daily_demand * 7)) - inv.current_stock) AS recommended_reorder_qty,
+    CASE WHEN inv.current_stock <= m.reorder_point
+         THEN GREATEST(0, (m.reorder_point + CEIL(m.avg_daily_demand * 7)) - inv.current_stock)
+         ELSE 0 END AS recommended_reorder_qty,
     inv.inventory_date AS last_audited_date,
     inv.date_key,
     inv.product_key

@@ -66,7 +66,7 @@ class DataValidator:
     VALID_STATUSES = {
         "UNPAID", "READY_TO_SHIP", "SHIPPED", "COMPLETED", "CANCELLED",
         "IN_CANCEL", "TO_RETURN", "AWAITING_SHIPMENT", "AWAITING_COLLECTION",
-        "DELIVERED", "IN_TRANSIT",
+        "DELIVERED", "IN_TRANSIT", "CANCEL_REQUESTED",
     }
 
     def __init__(
@@ -114,6 +114,9 @@ class DataValidator:
         # 2. Kiểm tra từng bản ghi
         for idx, row in enumerate(records):
             row_errors = errors_per_row[idx]
+            for column in ("discounted_price", "voucher_total", "source_updated_at", "pay_time", "shipped_time", "completed_time", "cancel_time"):
+                if row.get("_invalid_" + column, False):
+                    row_errors.append("INVALID_" + column.upper() + "_TYPE")
 
             # Null checks
             for col in self.REQUIRED_COLUMNS:
@@ -122,7 +125,10 @@ class DataValidator:
                     row_errors.append(f"MISSING_{col.upper()}")
 
             # Platform domain check
-            for field, limit in (("order_id", 50), ("sku", 50), ("source_line_id", 128)):
+            for field, limit in (("order_id", 50), ("sku", 50), ("source_line_id", 128),
+                                 ("product_name", 500), ("category", 100), ("shop_id", 50), ("shop_name", 255),
+                                 ("state", 100), ("city", 100), ("district", 100), ("country", 10),
+                                 ("payment_method", 50), ("carrier_name", 100), ("cancel_reason", 500)):
                 value = row.get(field)
                 if value is not None and pd.notna(value) and len(str(value)) > limit:
                     row_errors.append(f"TOO_LONG_{field.upper()}")
@@ -149,11 +155,11 @@ class DataValidator:
                 row_errors.append("INVALID_QUANTITY_TYPE")
 
             # Price & Amount checks (không âm, không vượt trần phi lý)
-            for amount_col in ["original_price", "subtotal", "buyer_total_amount", "seller_discount",
+            for amount_col in ["original_price", "discounted_price", "subtotal", "buyer_total_amount", "seller_discount",
                                "platform_discount", "voucher_total", "commission_fee", "service_fee",
                                "transaction_fee", "shipping_fee", "original_shipping", "tax_amount"]:
                 val = row.get(amount_col)
-                if amount_col in df_check and pd.isna(val):
+                if amount_col != "discounted_price" and amount_col in df_check and pd.isna(val):
                     row_errors.append(f"INVALID_{amount_col.upper()}_TYPE")
                 if val is not None and not pd.isna(val):
                     try:
@@ -164,6 +170,15 @@ class DataValidator:
                             row_errors.append(f"OUTLIER_{amount_col.upper()}")
                     except (ValueError, TypeError):
                         row_errors.append(f"INVALID_{amount_col.upper()}_TYPE")
+
+            weight = row.get("weight_kg")
+            if weight is not None and pd.notna(weight):
+                try:
+                    weight = float(weight)
+                    if not np.isfinite(weight) or weight < 0 or weight >= 100000:
+                        row_errors.append("INVALID_WEIGHT_KG")
+                except (ValueError, TypeError):
+                    row_errors.append("INVALID_WEIGHT_KG")
 
             # Chronological Order checks
             c_time = row.get("create_time")

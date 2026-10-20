@@ -139,6 +139,7 @@ CREATE TABLE IF NOT EXISTS Fact_Orders (
 
 -- Upgrade existing installations without deleting facts. Legacy sources have one line per SKU.
 ALTER TABLE Fact_Orders ADD COLUMN IF NOT EXISTS source_line_id VARCHAR(128);
+ALTER TABLE Fact_Orders ADD COLUMN IF NOT EXISTS source_updated_at TIMESTAMP;
 UPDATE Fact_Orders f SET source_line_id = 'sku:' || p.sku
 FROM Dim_Products p WHERE f.product_key = p.product_key AND f.source_line_id IS NULL;
 UPDATE Fact_Orders SET source_line_id = 'legacy:' || order_fact_id::TEXT WHERE source_line_id IS NULL;
@@ -161,6 +162,7 @@ CREATE TABLE IF NOT EXISTS Fact_Inventory_Daily (
 );
 
 -- Fact_Forecast_Predictions: lưu dự báo thật đã được Model Serving phát ra.
+ALTER TABLE Fact_Inventory_Daily ADD COLUMN IF NOT EXISTS snapshot_at TIMESTAMPTZ;
 -- Fact này cho phép đối chiếu dự báo với đơn hàng thực tế sau khi ngày mục tiêu kết thúc.
 CREATE TABLE IF NOT EXISTS Fact_Forecast_Predictions (
     forecast_id          BIGSERIAL PRIMARY KEY,

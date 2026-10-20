@@ -10,6 +10,7 @@ Tuần 3: Tầng Extract của pipeline ETL.
 """
 
 import io
+import json
 import logging
 import os
 from datetime import datetime, timedelta, timezone
@@ -56,7 +57,7 @@ def list_parquet_files(
     if target_date:
         # Duyệt cả 2 platform
         all_files = []
-        for platform in ["shopee", "tiktok"]:
+        for platform in ["shopee", "tiktok", "unknown"]:
             day_prefix = (
                 f"{prefix}platform={platform}/"
                 f"year={target_date.year:04d}/"
@@ -90,6 +91,8 @@ def read_parquet_from_minio(client: Minio, bucket: str, object_name: str) -> pd.
         buf = io.BytesIO(data)
         table = pq.read_table(buf)
         df = table.to_pandas()
+        if "_raw_payload_json" in df:
+            df = pd.DataFrame([json.loads(value) for value in df["_raw_payload_json"]])
         df["_source_object"] = object_name
         df["_source_row"] = range(len(df))
 
@@ -113,6 +116,7 @@ def extract(
     target_date: Optional[datetime] = None,
     bucket: str = MINIO_BUCKET,
     client: Optional[Minio] = None,
+    object_names: Optional[list[str]] = None,
 ) -> pd.DataFrame:
     """
     Hàm extract chính: đọc song song tất cả Parquet files từ MinIO và merge.
@@ -127,7 +131,7 @@ def extract(
     """
     client = client or build_minio_client()
 
-    files = list_parquet_files(client, bucket, target_date=target_date)
+    files = list_parquet_files(client, bucket, target_date=target_date) if object_names is None else object_names
     if not files:
         logger.warning("Không tìm thấy file Parquet nào cho ngày %s", target_date)
         return pd.DataFrame()
@@ -160,11 +164,12 @@ def extract_orders(
     client: Optional[Minio] = None,
     target_date: Optional[datetime] = None,
     bucket: str = MINIO_BUCKET,
+    object_names: Optional[list[str]] = None,
 ) -> pd.DataFrame:
     """
     Hàm trích xuất đơn hàng (alias tương thích cho pipeline và các caller khác).
     """
-    return extract(client=client, target_date=target_date, bucket=bucket)
+    return extract(client=client, target_date=target_date, bucket=bucket, object_names=object_names)
 
 
 if __name__ == "__main__":

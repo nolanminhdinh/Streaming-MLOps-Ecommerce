@@ -1,5 +1,7 @@
 # Báo cáo tổng hợp đồ án Streaming MLOps E-Commerce
 
+> **Cập nhật lần 9, 20/10/2026:** Đã có worker Kafka → MinIO → ETL → PostgreSQL → CSV chạy liên tục, giữ checkpoint sau restart; sửa lưu lỗi/null platform, version đơn/tồn kho, validation và policy inventory. 145 test đạt; hai lượt đối soát thực tế đạt, API ready 200. [Báo cáo lần 9](../04-pipeline-updates/lan-09-on-dinh-end-to-end-2026-10-20.md) phân biệt các phần đã sửa và các mục ML/PBIX/coverage chưa nghiệm thu. Những con số audit cũ bên dưới giữ nguyên ngày đo.
+
 > **Cập nhật KPI 20/10/2026:** Đã sửa số đơn/AOV trong SQL view và exporter; dữ liệu runtime khớp 11.646 đơn không hủy, AOV tổng 653.440,57. Toàn suite gồm SQL integration đạt 114 test. Xem [báo cáo khắc phục lần 8](../04-pipeline-updates/lan-08-powerbi-orders-aov-2026-10-20.md). Chưa refresh/render PBIX; các kết quả audit cũ bên dưới giữ nguyên để đối chiếu.
 
 > **Cập nhật 20/10/2026:** Đã khắc phục lỗi phục hồi model sau startup timeout; API thực tế `/ready` 200, dùng `mlflow_registry` v2. Toàn suite sau sửa đạt 110 test. Xem [báo cáo khắc phục lần 7](../04-pipeline-updates/lan-07-model-startup-recovery-2026-10-20.md). Các trạng thái ngày 19/10 bên dưới được giữ làm bằng chứng trước sửa; giới hạn dữ liệu và chất lượng dự báo vẫn còn.
@@ -147,16 +149,16 @@ Không cộng các số test từng chương vì có tập trùng. Kết quả t
 | A-04 | Xác nhận coverage và phân biệt thiếu nguồn với zero demand | Hồ sơ kỳ vọng nguồn theo ngày; gate readiness/feature/scoring nhất quán |
 | A-05 | Chuẩn hóa baseline alignment và mốc so sánh nhu cầu thưa | Thử chuỗi có kỳ vọng; CV cùng protocol; holdout cuối chưa dùng chọn model |
 | A-06 | Xử lý metric khi actual toàn 0 và báo tỷ lệ được chấm | Metric không báo WAPE hoàn hảo sai nghĩa; theo SKU/segment/horizon |
-| A-07 | Giữ dòng null platform và nhánh lỗi NiFi | Fault injection, audit/DLQ và đối soát trước commit |
-| A-08 | Hoàn thiện validation tiền trước transform/load | Dữ liệu sai kiểu vào quarantine, không dừng trước audit hoặc lọt tới cast |
-| A-09 | Chốt line ID và version sự kiện | Đơn lặp SKU không mất dòng; replay bản cũ không ghi lùi trạng thái |
+| A-07 | Giữ dòng null platform và nhánh lỗi NiFi | Đã sửa lần 9: unknown partition, quarantine JSON/platform, retry PutS3; cohort AUTO đạt, NiFi 7 processor chạy/queue=0. Chưa thử mất MinIO toàn hệ thống |
+| A-08 | Hoàn thiện validation tiền trước transform/load | Đã sửa lần 9: sai voucher/discounted price/timestamp/weight/độ dài vào quarantine; batch trộn kiểu và số vô hạn có regression |
+| A-09 | Chốt line ID và version sự kiện | Đã chặn ghi lùi đơn/tồn kho trong batch và DB. Vẫn cần upstream line ID khi một SKU có nhiều dòng; cùng timestamp chưa có tie-break từ nguồn |
 | A-10 | Quản lý spec theo model và lookup dimension | Model/spec đúng cặp; SKU lịch sử có mapping; không silently NULL/mất join |
 | A-11 | Chặn hoặc gắn rõ dữ liệu stale và fallback trong sản phẩm | Threshold freshness, nhãn nguồn/tuổi dữ liệu, quy tắc SKU lạ |
-| A-12 | Đồng nhất validation inventory GET/POST và công thức API/BI | Giá trị âm/out-of-range bị từ chối; case kỳ vọng giữa hai tầng |
-| A-13 | Bổ sung alert model/readiness/fallback và đường giao nhận | Trigger thật, có người nhận; chứng minh scrape up khác readiness |
+| A-12 | Đồng nhất validation inventory GET/POST và công thức API/BI | Đã sửa lần 9: POST 422 khi ngoài miền; SS/ROP và NORMAL được đối chiếu bằng SQL integration. Nguồn demand hai tầng vẫn phân biệt |
+| A-13 | Bổ sung alert model/readiness/fallback và đường giao nhận | Lần 9 nạp sáu rule hợp lệ, thêm pipeline/freshness gauges. Chưa nghiệm thu Alertmanager/người nhận |
 | A-14 | Nghiệm thu scheduler drift/retrain và rollback | Provenance đúng, version live xác nhận, lịch sử audit và thử lỗi mạng |
 | A-15 | Nghiệm thu học sâu nếu giữ trong phạm vi kết quả | Chuỗi theo SKU, validation không chồng train, inference đúng seq_len |
-| A-16 | Đo lại hiệu năng và phục hồi sau khắc phục | HTTP model thật, request mix/horizon rõ, log lỗi, lag, P95/P99 và phạm vi soak |
+| A-16 | Đo lại hiệu năng và phục hồi sau khắc phục | Lần 9 có smoke HTTP model thật 20 request/concurrency 4, P95 37,80 ms; restart giữ 287 object và tổng kho. Chưa nghiệm thu tải hỗn hợp/soak/HA |
 | A-17 | Đồng bộ tài liệu và nguồn gốc dữ liệu | Schema/SKU, hình ảnh dashboard, giấy phép/nguồn CSV và thông tin môi trường |
 
 Các mục trên được ghi nhận; đợt này chưa sửa thuật toán production, dashboard hoặc cấu hình triển khai. Khi thực hiện khắc phục, cần lưu báo cáo trước/sau và không sửa ngược bằng chứng lịch sử.

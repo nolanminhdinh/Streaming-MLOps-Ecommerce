@@ -3,6 +3,8 @@
 Đồ án tốt nghiệp: Xây dựng kiến trúc hạ tầng dữ liệu luồng (Streaming Pipeline) và MLOps
 phục vụ dự báo nhu cầu hàng hóa trong Thương mại điện tử.
 
+**Vận hành liên tục (20/10/2026):** `docker compose up -d --build` khởi động thêm `pipeline-worker`, tự chạy consumer → ETL theo object mới → xuất CSV Power BI và lưu checkpoint. [Báo cáo sửa lỗi end-to-end, cách kiểm tra và giới hạn còn lại](docs/04-pipeline-updates/lan-09-on-dinh-end-to-end-2026-10-20.md).
+
 ## 1. Mục tiêu dự án
 
 - Xây dựng hạ tầng thu thập, lưu trữ và xử lý dữ liệu đơn hàng E-Commerce theo thời gian thực.

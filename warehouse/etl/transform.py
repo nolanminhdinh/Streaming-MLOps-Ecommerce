@@ -43,6 +43,8 @@ def source_line_key(row):
 
 
 def deduplicate_lines(df):
+    if "source_updated_at" in df:
+        df = df.sort_values("source_updated_at", kind="stable", na_position="first")
     keys = ["order_id", "source_line_id"]
     if "platform" in df:
         keys.append("platform")
@@ -96,6 +98,8 @@ def unify_schema(df: pd.DataFrame) -> pd.DataFrame:
                        "sku": row.get("sku"), "create_time": row.get("create_time"),
                        "quantity": row.get("quantity"), "order_status": row.get("order_status")}
         unified.update(source_line_id=source_line_key(row),
+                       source_updated_at=next((row.get(key) for key in ("update_time", "updated_time", "updatedAt")
+                                               if pd.notna(row.get(key)) and str(row.get(key)).strip()), None),
                        source_object=row.get("_source_object"), source_row=row.get("_source_row"),
                        raw_payload=row)
         unified_rows.append(unified)
@@ -127,8 +131,8 @@ def _unify_shopee_row(row: dict | pd.Series) -> dict:
         "seller_discount": row.get("seller_discount", 0),
         "platform_discount": row.get("shopee_discount", 0),
         "voucher_total": (
-            (row.get("voucher_from_seller") or 0) +
-            (row.get("voucher_from_shopee") or 0)
+            _optional_amount(row.get("voucher_from_seller")) +
+            _optional_amount(row.get("voucher_from_shopee"))
         ),
         "commission_fee": row.get("commission_fee", 0),
         "service_fee": row.get("service_fee", 0),
@@ -150,6 +154,11 @@ def _unify_shopee_row(row: dict | pd.Series) -> dict:
         "completed_time": row.get("completed_time"),
         "cancel_time": row.get("cancel_time"),
     }
+
+
+def _optional_amount(value):
+    """Missing fees default to zero; malformed supplied fees reach quarantine."""
+    return 0 if value is None or pd.isna(value) else pd.to_numeric(value, errors="coerce")
 
 
 def _unify_tiktok_row(row: dict | pd.Series) -> dict:
@@ -245,6 +254,15 @@ def clean_data(df: pd.DataFrame, return_report: bool = False, preserve_invalid: 
             # An absent optional fee defaults to zero; a supplied malformed value stays invalid.
             optional = col not in ("quantity", "original_price", "subtotal", "buyer_total_amount")
             df[col] = converted.mask(df[col].isna(), 0) if optional else converted
+    if "discounted_price" in df:
+        converted = pd.to_numeric(df["discounted_price"], errors="coerce")
+        df["_invalid_discounted_price"] = df["discounted_price"].notna() & converted.isna()
+        df["discounted_price"] = converted
+    # A malformed component must not turn into an absent optional total (zero).
+    if "raw_payload" in df:
+        df["_invalid_voucher_total"] = df["raw_payload"].map(
+            lambda row: any(pd.isna(_optional_amount(row.get(key)))
+                            for key in ("voucher_from_seller", "voucher_from_shopee")))
 
     # 2d. Xử lý outliers (quantity và price)
     if "quantity" in df.columns and not preserve_invalid:
@@ -260,11 +278,19 @@ def clean_data(df: pd.DataFrame, return_report: bool = False, preserve_invalid: 
         report["price_outliers_removed"] = before_price - len(df)
 
     # 2e. Parse timestamps → quy đổi về giờ nghiệp vụ (naive local time)
-    timestamp_cols = ["create_time", "pay_time", "shipped_time", "completed_time", "cancel_time"]
+    timestamp_cols = ["create_time", "pay_time", "shipped_time", "completed_time", "cancel_time", "source_updated_at"]
     for col in timestamp_cols:
         if col in df.columns:
             ts = pd.to_datetime(df[col], format="mixed", errors="coerce", utc=True)
+            df["_invalid_" + col] = df[col].notna() & ts.isna()
             df[col] = ts.dt.tz_convert(BUSINESS_TZ).dt.tz_localize(None)
+    lifecycle = [col for col in timestamp_cols[:-1] if col in df]
+    if lifecycle:
+        inferred = df[lifecycle].max(axis=1)
+        if "source_updated_at" not in df:
+            df["source_updated_at"] = inferred
+        else:
+            df["source_updated_at"] = df["source_updated_at"].fillna(inferred)
 
     # Ngày đặt hàng theo giờ nghiệp vụ → dùng để lookup Dim_Dates.date_key khi load.
     # (Trước đây chỉ transform() thêm cột này, còn pipeline.py gọi thẳng clean_data()
@@ -275,7 +301,7 @@ def clean_data(df: pd.DataFrame, return_report: bool = False, preserve_invalid: 
     # 2f. Chuẩn hóa text
     if "order_status" in df.columns:
         df["order_status"] = df["order_status"].astype("string").str.upper().str.strip()
-        df["is_cancelled"] = df["order_status"].eq("CANCELLED")
+        df["is_cancelled"] = df["order_status"].isin(["CANCELLED", "IN_CANCEL", "CANCEL_REQUESTED"])
 
     if "payment_method" in df.columns:
         df["payment_method"] = df["payment_method"].astype("string").str.strip()

@@ -47,7 +47,11 @@ def read_csv(path):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--audit-date", required=True, type=date.fromisoformat)
+    parser.add_argument("--evidence-tag", default="", help="Optional suffix to retain earlier evidence from the same date")
     args = parser.parse_args()
+    if args.evidence_tag and not all(character.isalnum() or character in "-_" for character in args.evidence_tag):
+        parser.error("evidence-tag must contain only letters, numbers, hyphens or underscores")
+    evidence_suffix = f"{args.audit_date}" + ("_" + args.evidence_tag if args.evidence_tag else "")
     load_dotenv()
     logging.disable(logging.CRITICAL)
     snapshots = {}
@@ -58,7 +62,7 @@ def main():
         snapshots[list(exporter.DATASETS)[len(snapshots)]] = rows
         return rows
 
-    output = ROOT / "docs/07-bao-cao-do-an/evidence" / f"powerbi_export_{args.audit_date}"
+    output = ROOT / "docs/07-bao-cao-do-an/evidence" / f"powerbi_export_{evidence_suffix}"
     with patch.object(exporter, "_install_views", side_effect=lambda conn: conn.exec_driver_sql("SET TRANSACTION READ ONLY")), \
          patch.object(exporter, "_query", side_effect=capture):
         exporter.export_powerbi_data(str(output))
@@ -144,7 +148,7 @@ def main():
                                         "historical_skus_absent_from_product_dimension": len(historical_skus-product_skus)},
             "existing_csv_comparison": old_differences,
         }
-        destination = output.parent / f"powerbi_{args.audit_date}.json"
+        destination = output.parent / f"powerbi_{evidence_suffix}.json"
         destination.write_text(json.dumps(result, ensure_ascii=False, indent=2, default=str) + "\n", encoding="utf-8")
         print(json.dumps(result, ensure_ascii=True, indent=2, default=str))
     finally:

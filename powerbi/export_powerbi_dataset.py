@@ -12,6 +12,7 @@ from __future__ import annotations
 import csv
 import logging
 import os
+import tempfile
 from typing import Any, Iterable, Sequence
 
 logger = logging.getLogger("mlops.powerbi.export")
@@ -58,6 +59,7 @@ def _database_url() -> str:
 
 
 def _install_views(conn: Any) -> None:
+    from sqlalchemy import text
     sql_path = os.path.join(os.path.dirname(__file__), "views_for_powerbi.sql")
     with open(sql_path, "r", encoding="utf-8") as sql_file:
         script = sql_file.read()
@@ -65,7 +67,7 @@ def _install_views(conn: Any) -> None:
     # Execute each separately so this also works with SQLAlchemy 2.x drivers.
     for statement in script.split(";"):
         if statement.strip():
-            conn.exec_driver_sql(statement)
+            conn.execute(text(statement))
 
 
 def _query(conn: Any, sql: str) -> list[dict[str, Any]]:
@@ -76,16 +78,22 @@ def _query(conn: Any, sql: str) -> list[dict[str, Any]]:
 
 def _write_csv(path: str, columns: Sequence[str], rows: Iterable[dict[str, Any]]) -> int:
     count = 0
-    with open(path, "w", newline="", encoding="utf-8-sig") as csv_file:
-        writer = csv.DictWriter(csv_file, fieldnames=columns, extrasaction="ignore")
-        writer.writeheader()
-        for row in rows:
-            writer.writerow(row)
-            count += 1
+    fd, temporary = tempfile.mkstemp(prefix=".powerbi-", suffix=".tmp", dir=os.path.dirname(os.path.abspath(path)))
+    try:
+        with os.fdopen(fd, "w", newline="", encoding="utf-8-sig") as csv_file:
+            writer = csv.DictWriter(csv_file, fieldnames=columns, extrasaction="ignore")
+            writer.writeheader()
+            for row in rows:
+                writer.writerow(row)
+                count += 1
+        os.replace(temporary, path)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
     return count
 
 
-def export_powerbi_data(output_dir: str | None = None) -> str:
+def export_powerbi_data(output_dir: str | None = None, *, install_views: bool = True) -> str:
     """Refresh the Power BI CSV data marts from PostgreSQL warehouse facts."""
     try:
         from dotenv import load_dotenv
@@ -165,7 +173,8 @@ def export_powerbi_data(output_dir: str | None = None) -> str:
 
     try:
         with engine.begin() as conn:
-            _install_views(conn)
+            if install_views:
+                _install_views(conn)
             datasets = {name: _query(conn, sql) for name, sql in queries.items()}
     except Exception as exc:
         raise RuntimeError(

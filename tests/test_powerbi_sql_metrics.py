@@ -101,3 +101,33 @@ def test_export_and_executive_view_have_identical_order_metrics(sql_cohort):
         original = by_key[(row["order_date"], row["platform"])]
         assert (row["total_orders"], row["net_revenue"], row["aov"]) == (
             original["total_orders"], original["total_revenue"], original["average_order_value"])
+
+
+def test_inventory_sql_policy_matches_api_and_normal_has_no_reorder():
+    from serving.app.inventory_service import InventoryService
+    service = object.__new__(InventoryService)
+    engine = create_engine(exporter._database_url())
+    with engine.connect() as conn:
+        transaction = conn.begin()
+        try:
+            for table in ["Dim_Products", "Dim_Dates", "Fact_Inventory_Daily"]:
+                conn.exec_driver_sql(f"CREATE TEMP TABLE {table} ON COMMIT DROP AS SELECT * FROM public.{table} WITH NO DATA")
+            conn.exec_driver_sql("INSERT INTO Dim_Products(product_key,sku) VALUES (1,'ZERO'),(2,'NORMAL')")
+            conn.exec_driver_sql("INSERT INTO Dim_Dates(date_key,full_date) VALUES (1,'2026-10-20')")
+            conn.exec_driver_sql("INSERT INTO Fact_Inventory_Daily(product_key,date_key,stock_on_hand) VALUES (1,1,0),(2,1,8)")
+            conn.exec_driver_sql("""CREATE TEMP VIEW vw_powerbi_abc_xyz_by_origin AS
+                SELECT * FROM (VALUES ('ZERO',0::NUMERIC,0::NUMERIC,'CX','unverified_warehouse'),
+                                      ('NORMAL',1::NUMERIC,1::NUMERIC,'BX','unverified_warehouse'))
+                v(sku,mean_demand_exact,std_demand_exact,matrix_segment,data_origin)""")
+            script = (Path(exporter.__file__).parent / "views_for_powerbi.sql").read_text(encoding="utf-8")
+            statement = next(part for part in script.split(";") if "CREATE OR REPLACE VIEW vw_powerbi_inventory_health AS" in part)
+            conn.execute(text(statement.replace("CREATE OR REPLACE VIEW", "CREATE TEMP VIEW")))
+            rows = {row["sku"]: row for row in conn.execute(text("SELECT * FROM vw_powerbi_inventory_health")).mappings()}
+            for sku, mean, sigma in [("ZERO", 0, 0), ("NORMAL", 1, 1)]:
+                assert (rows[sku]["safety_stock"], rows[sku]["reorder_point"]) == service.calculate_policy(mean, sigma)
+            assert rows["NORMAL"]["alert_level"] == "NORMAL"
+            assert rows["NORMAL"]["recommended_reorder_qty"] == 0
+            assert rows["ZERO"]["recommended_reorder_qty"] == 2
+        finally:
+            transaction.rollback()
+    engine.dispose()

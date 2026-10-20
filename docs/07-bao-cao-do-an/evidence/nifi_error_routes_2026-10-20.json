@@ -1,0 +1,127 @@
+{
+  "processors": [
+    {
+      "name": "6. LogAttribute (Provenance & Metrics)",
+      "state": "RUNNING",
+      "validation": "VALID",
+      "relationships": [
+        {
+          "name": "success",
+          "description": "All FlowFiles are routed to this relationship",
+          "autoTerminate": true,
+          "retry": false
+        }
+      ]
+    },
+    {
+      "name": "3. RouteOnAttribute (Branch Shopee/TikTok)",
+      "state": "RUNNING",
+      "validation": "VALID",
+      "relationships": [
+        {
+          "name": "shopee",
+          "description": "",
+          "autoTerminate": false,
+          "retry": false
+        },
+        {
+          "name": "tiktok",
+          "description": "",
+          "autoTerminate": false,
+          "retry": false
+        },
+        {
+          "name": "unmatched",
+          "description": "FlowFiles that do not match any user-define expression will be routed here",
+          "autoTerminate": false,
+          "retry": false
+        }
+      ]
+    },
+    {
+      "name": "7. Quarantine invalid JSON/platform",
+      "state": "RUNNING",
+      "validation": "VALID",
+      "relationships": [
+        {
+          "name": "success",
+          "description": "All successful FlowFiles are routed to this relationship",
+          "autoTerminate": false,
+          "retry": false
+        }
+      ]
+    },
+    {
+      "name": "5. PutS3Object (MinIO Data Lake)",
+      "state": "RUNNING",
+      "validation": "VALID",
+      "relationships": [
+        {
+          "name": "failure",
+          "description": "FlowFiles are routed to failure relationship",
+          "autoTerminate": false,
+          "retry": true
+        },
+        {
+          "name": "success",
+          "description": "FlowFiles are routed to success relationship",
+          "autoTerminate": false,
+          "retry": false
+        }
+      ]
+    },
+    {
+      "name": "4. UpdateAttribute (MinIO S3 Key)",
+      "state": "RUNNING",
+      "validation": "VALID",
+      "relationships": [
+        {
+          "name": "success",
+          "description": "All successful FlowFiles are routed to this relationship",
+          "autoTerminate": false,
+          "retry": false
+        }
+      ]
+    },
+    {
+      "name": "1. ConsumeKafka (ecom.orders.raw)",
+      "state": "RUNNING",
+      "validation": "VALID",
+      "relationships": [
+        {
+          "name": "success",
+          "description": "FlowFiles received from Kafka. Depending on demarcation strategy it is a flow file per message or a bundle of messages grouped by topic and partition.",
+          "autoTerminate": false,
+          "retry": false
+        }
+      ]
+    },
+    {
+      "name": "2. EvaluateJsonPath (Extract Fields)",
+      "state": "RUNNING",
+      "validation": "VALID",
+      "relationships": [
+        {
+          "name": "failure",
+          "description": "FlowFiles are routed to this relationship when the JsonPath cannot be evaluated against the content of the FlowFile; for instance, if the FlowFile is not valid JSON",
+          "autoTerminate": false,
+          "retry": false
+        },
+        {
+          "name": "matched",
+          "description": "FlowFiles are routed to this relationship when the JsonPath is successfully evaluated and the FlowFile is modified as a result",
+          "autoTerminate": false,
+          "retry": false
+        },
+        {
+          "name": "unmatched",
+          "description": "FlowFiles are routed to this relationship when the JsonPath does not match the content of the FlowFile and the Destination is set to flowfile-content",
+          "autoTerminate": false,
+          "retry": false
+        }
+      ]
+    }
+  ],
+  "connections": 9,
+  "existing_processors_and_queues_preserved": true
+}

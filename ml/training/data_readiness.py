@@ -145,8 +145,12 @@ def assess_order_history(
     else:
         available_days = int((distinct.iloc[-1] - distinct.iloc[0]).days + 1)
         start, end = distinct.iloc[0].date().isoformat(), distinct.iloc[-1].date().isoformat()
+    calendar_span_days = available_days
+    # A wide min/max range with only a few observed dates is not usable history.
+    # Missing dates are not confirmed zero-sales dates.
+    available_days = len(distinct)
     evaluation_available = max(0, available_days - max_lag_days - 1)
-    return _base_report(
+    report = _base_report(
         available_history_days=available_days,
         required_days=source_days,
         evaluation_days_available=evaluation_available,
@@ -164,6 +168,8 @@ def assess_order_history(
         history_start=start,
         history_end=end,
     )
+    report["calendar_span_days"] = calendar_span_days
+    return report
 
 
 def assess_feature_history(

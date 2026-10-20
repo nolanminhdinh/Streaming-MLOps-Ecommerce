@@ -1,0 +1,23 @@
+{
+  "audit_date": "2026-10-20",
+  "offline": {
+    "balanced_fixture": {
+      "raw": 6,
+      "valid": 2,
+      "duplicate": 2,
+      "rejected": 2
+    },
+    "verified_fixes": {
+      "dedupe_independent_of_input_order": [
+        "COMPLETED",
+        "COMPLETED"
+      ],
+      "same_sku_without_line_ids_collapses": {
+        "inputs": 2,
+        "remaining": 1
+      },
+      "malformed_voucher_quarantined": 1,
+      "malformed_discounted_price_quarantined": 1
+    }
+  }
+}

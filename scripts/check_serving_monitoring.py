@@ -40,8 +40,14 @@ def http(base, path, body=None):
 
 
 def offline():
-    request = ReorderAlertRequest(lead_time_days=-1, service_level=2.0, current_stocks={"X": -5})
-    assert request.lead_time_days == -1
+    from pydantic import ValidationError
+    try:
+        ReorderAlertRequest(lead_time_days=-1, service_level=2.0, current_stocks={"X": -5})
+    except ValidationError as exc:
+        invalid_parameters_rejected = len(exc.errors()) == 3
+    else:
+        invalid_parameters_rejected = False
+    assert invalid_parameters_rejected
     manager = ModelManager()
     marker = object()
     manager.model = marker
@@ -55,9 +61,7 @@ def offline():
     service = object.__new__(InventoryService)
     ss, rop = service.calculate_policy(0, 0)
     assert (ss, rop) == (1, 2)
-    return {"post_inventory_schema_accepts_negative_lead_time": request.lead_time_days,
-            "post_inventory_schema_accepts_service_level": request.service_level,
-            "post_inventory_schema_accepts_negative_stock": request.current_stocks["X"],
+    return {"post_inventory_schema_rejects_invalid_parameters": invalid_parameters_rejected,
             "failed_reload_preserves_existing_model": manager.model is marker,
             "zero_demand_zero_sigma_policy": {"safety_stock": ss, "reorder_point": rop}}
 

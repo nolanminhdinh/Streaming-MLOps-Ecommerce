@@ -95,7 +95,7 @@ class TimeSeriesFeatureExtractor:
         merged["total_discount"] = merged["total_discount"].fillna(0)
 
         # Forward fill giá đơn vị cho các ngày không bán
-        merged["avg_unit_price"] = merged.groupby(sku_col)["avg_unit_price"].ffill().bfill()
+        merged["avg_unit_price"] = merged.groupby(sku_col)["avg_unit_price"].ffill().fillna(0)
 
         # Thêm metadata nếu có
         meta_cols = [c for c in ["product_name", "category"] if c in df.columns]

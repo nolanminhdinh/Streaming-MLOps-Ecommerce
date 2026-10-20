@@ -37,13 +37,13 @@ def boundary_checks():
     tiny = pd.DataFrame({"sku": ["A", "A"], "create_time": ["2026-01-01", "2026-04-20"],
                          "quantity": [1, 1], "is_cancelled": [False, False]})
     readiness = assess_order_history(tiny)
-    assert readiness["data_sufficient"] and readiness["active_source_days"] == 2
+    assert not readiness["data_sufficient"] and readiness["active_source_days"] == 2
     price_input = pd.DataFrame({"sku": ["A", "B"], "create_time": ["2026-01-01", "2026-01-04"],
                                "quantity": [1, 1], "original_price": [10, 99],
                                "buyer_total_amount": [10, 99], "seller_discount": [0, 0]})
     daily = TimeSeriesFeatureExtractor().aggregate_daily(price_input)
     early_price = float(daily[(daily.sku == "B") & (daily.date == date(2026, 1, 1))].iloc[0].avg_unit_price)
-    assert early_price == 99
+    assert early_price == 0
     history = [{"daily_demand": float(i)} for i in range(1, 11)]
     row = build_feature_row(history, date(2026, 1, 10))
     baseline_values = {"latest_observed": 10, "naive_lag_1_prediction": row["lag_1"],

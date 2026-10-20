@@ -46,37 +46,26 @@ def offline_checks():
     forward, _, _ = normalize(pd.DataFrame([older, newer]))
     reverse, _, _ = normalize(pd.DataFrame([newer, older]))
     assert forward.iloc[0].order_status == "COMPLETED"
-    assert reverse.iloc[0].order_status == "READY_TO_SHIP"
+    assert reverse.iloc[0].order_status == "COMPLETED"
 
     no_ids, _, collapsed = normalize(pd.DataFrame([event(quantity=2), event(quantity=3)]))
     assert len(no_ids) == 1 and collapsed == 1
 
-    voucher_error = None
-    try:
-        normalize(pd.DataFrame([event(voucher_from_seller="bad", voucher_from_shopee=0)]))
-    except TypeError as exc:
-        voucher_error = type(exc).__name__
-    assert voucher_error == "TypeError"
+    voucher_valid, voucher_rejected, _ = normalize(pd.DataFrame([event(voucher_from_seller="bad", voucher_from_shopee=0)]))
+    assert voucher_valid.empty and len(voucher_rejected) == 1
 
     discounted, rejected_discounted, _ = normalize(
         pd.DataFrame([event(model_discounted_price="bad")]))
-    assert len(discounted) == 1 and rejected_discounted.empty
-    try:
-        float(discounted.iloc[0].discounted_price)
-    except ValueError:
-        discounted_conversion_fails = True
-    else:
-        discounted_conversion_fails = False
-    assert discounted_conversion_fails
+    assert discounted.empty and len(rejected_discounted) == 1
     return {
         "balanced_fixture": {"raw": len(raw), "valid": len(valid),
                              "duplicate": duplicates, "rejected": len(rejected)},
-        "reproduced_limits": {
-            "dedupe_depends_on_input_order": [str(forward.iloc[0].order_status),
+        "verified_fixes": {
+            "dedupe_independent_of_input_order": [str(forward.iloc[0].order_status),
                                                str(reverse.iloc[0].order_status)],
             "same_sku_without_line_ids_collapses": {"inputs": 2, "remaining": len(no_ids)},
-            "malformed_voucher_aborts_before_quarantine": voucher_error,
-            "malformed_discounted_price_passes_validation_but_float_conversion_fails": discounted_conversion_fails,
+            "malformed_voucher_quarantined": len(voucher_rejected),
+            "malformed_discounted_price_quarantined": len(rejected_discounted),
         },
     }
 

@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "mode": "live_http",
+  "requests": 20,
+  "concurrency": 4,
+  "horizon_days": 1,
+  "model_source": "mlflow_registry",
+  "model_version": "2",
+  "errors": 0,
+  "elapsed_seconds": 0.091,
+  "requests_per_second": 220.91,
+  "p50_ms": 12.48,
+  "p95_ms": 37.8,
+  "max_ms": 39.95,
+  "scope": "warm single-SKU existing target replay; not a soak or capacity claim"
+}

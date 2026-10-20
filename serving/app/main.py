@@ -128,6 +128,8 @@ MODEL_READY = Gauge(
     "ecommerce_model_ready", "1 nếu đang phục vụ bằng mô hình ML thật, 0 nếu heuristic dự phòng",
     registry=REGISTRY,
 )
+HISTORY_AGE_DAYS = Gauge("ecommerce_history_age_days", "Age of latest demand history; -1 when unavailable", registry=REGISTRY)
+PIPELINE_READY = Gauge("ecommerce_pipeline_ready", "Continuous pipeline heartbeat is healthy and recent", registry=REGISTRY)
 DATA_DRIFT_RATIO = Gauge(
     "ecommerce_data_drift_ratio", "Share of input features detected with statistical drift",
     registry=REGISTRY,
@@ -275,6 +277,10 @@ def readiness_check() -> Dict[str, Any]:
         "history_end": last_order_date.isoformat() if last_order_date else None,
         "history_data_origin": data_origin or "unverified_warehouse",
     }
+    age_days = max(0, (datetime.now(timezone.utc).date() - last_order_date).days) if last_order_date else None
+    payload["history_age_days"] = age_days
+    payload["history_stale"] = age_days is not None and age_days > int(os.getenv("HISTORY_MAX_AGE_DAYS", "7"))
+    HISTORY_AGE_DAYS.set(age_days if age_days is not None else -1)
     if not ready:
         return JSONResponse(status_code=503, content=payload) if HAS_FASTAPI else payload
     return payload
@@ -564,6 +570,15 @@ def _refresh_gauges() -> Dict[str, Any]:
     ).set(1)
     MODEL_READY.set(1 if manager.has_model else 0)
     DATA_DRIFT_RATIO.set(drift_ratio)
+    readiness_check()
+    try:
+        path = os.getenv("PIPELINE_STATUS_PATH", os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "pipeline", "status.json"))
+        with open(path, encoding="utf-8") as file:
+            pipeline_status = json.load(file)
+        pipeline_healthy = pipeline_status.get("status") == "healthy" and time.time() - float(pipeline_status["checked_at"]) < 180
+    except (OSError, ValueError, KeyError, TypeError):
+        pipeline_healthy = False
+    PIPELINE_READY.set(1 if pipeline_healthy else 0)
     return {
         "alert_summary": alert_summary,
         "meta": meta,

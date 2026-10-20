@@ -8,6 +8,8 @@ Thực hiện từ 16–19/10/2026. Đây là bản thảo kỹ thuật dựa tr
 
 ## Điểm bắt đầu
 
+**Lần 9, 20/10/2026:** Luồng chạy liên tục có checkpoint, nhánh lỗi được lưu, chặn ghi lùi đơn/tồn kho; 145 test đạt. Xem [báo cáo ổn định end-to-end](../04-pipeline-updates/lan-09-on-dinh-end-to-end-2026-10-20.md) và các điều kiện chưa đóng.
+
 Đọc [báo cáo tổng hợp](bao-cao-tong-hop-do-an.md) để nắm kết quả chính, trạng thái hiện tại và các việc cần hoàn thiện. Các chương chi tiết:
 
 1. [Bài toán và dữ liệu](01-bai-toan-va-du-lieu.md).

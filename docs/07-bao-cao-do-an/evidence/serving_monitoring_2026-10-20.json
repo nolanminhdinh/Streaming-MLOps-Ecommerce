@@ -1,0 +1,411 @@
+{
+  "audit_date": "2026-10-20",
+  "offline": {
+    "post_inventory_schema_rejects_invalid_parameters": true,
+    "failed_reload_preserves_existing_model": true,
+    "zero_demand_zero_sigma_policy": {
+      "safety_stock": 1,
+      "reorder_point": 2
+    }
+  },
+  "api": {
+    "/health": {
+      "http_status": 200,
+      "body": {
+        "status": "healthy",
+        "service": "fastapi-demand-serving",
+        "version": "1.2.0",
+        "model_loaded": true,
+        "model_name": "ECommerceDemandForecastModel",
+        "model_version": "2",
+        "model_stage": "Staging",
+        "champion_algorithm": "moving_average",
+        "uptime_seconds": 121.0,
+        "model_source": "mlflow_registry",
+        "warehouse_connected": true
+      }
+    },
+    "/ready": {
+      "http_status": 200,
+      "body": {
+        "status": "ready",
+        "model_loaded": true,
+        "warehouse_connected": true,
+        "history_available": true,
+        "history_end": "2026-08-11",
+        "history_data_origin": "public_anonymized_historical_csv",
+        "history_age_days": 70,
+        "history_stale": true
+      }
+    },
+    "/model/metadata": {
+      "http_status": 200,
+      "body": {
+        "model_registry_name": "ECommerceDemandForecastModel",
+        "version": "2",
+        "stage": "Staging",
+        "champion_algorithm": "moving_average",
+        "status": "READY_FOR_SERVING",
+        "registered_at": "2026-10-10T15:44:33.622483+00:00",
+        "input_feature_count": 43,
+        "metrics": {
+          "cv_wape": 126.08,
+          "cv_mae": 0.1599,
+          "cv_rmse": 0.5253
+        },
+        "inventory_defaults": {
+          "lead_time_days": 3,
+          "service_level": 0.95
+        },
+        "model_source": "mlflow_registry",
+        "training_data_origin": "public_anonymized_historical_csv",
+        "source_datasets": [
+          "shopee:sha256:6ae345e246481a2bd3b656838396e4fd31ce821c253945de6aa1370b2008f18d",
+          "tiktok:sha256:881e893f6b318bc6fbf42f518f4bacb7f74bb4002076c33d8e7e7452176656fb"
+        ]
+      }
+    },
+    "/training/status": {
+      "http_status": 200,
+      "body": {
+        "event": "MODEL_TRAINING_DATA_READINESS",
+        "status": "TRAINING_SUCCEEDED",
+        "severity": "info",
+        "data_sufficient": true,
+        "data_origin": "public_anonymized_historical_csv",
+        "source_type": "warehouse",
+        "available_history_days": 227,
+        "required_history_days": 78,
+        "missing_history_days": 0,
+        "active_source_days": 226,
+        "evaluation_days_available": 198,
+        "evaluation_days_required": 49,
+        "minimum_train_days": 14,
+        "validation_days": 7,
+        "test_days_per_fold": 14,
+        "walk_forward_splits": 2,
+        "max_lag_days": 28,
+        "row_count": 5734,
+        "sku_count": 216,
+        "history_start": "2025-12-28",
+        "history_end": "2026-08-11",
+        "action": "Huấn luyện hoàn tất. Model chỉ được đăng ký sau khi qua bước kiểm tra registry.",
+        "checked_at": "2026-10-12T18:03:12.986390+00:00",
+        "feature_row_count": 42768,
+        "feature_sku_count": 216,
+        "notification": {
+          "configured": false,
+          "attempted": false,
+          "delivered": false,
+          "reason": "webhook_not_configured"
+        },
+        "best_model": "MOVING_AVERAGE",
+        "trained_models": [
+          "MOVING_AVERAGE",
+          "LIGHTGBM"
+        ],
+        "completed_at": "2026-10-12T18:05:08.396266+00:00"
+      }
+    },
+    "/metrics?format=json": {
+      "http_status": 200,
+      "body": {
+        "uptime_seconds": 121.1,
+        "request_counts": {
+          "/predict/demand": 21.0,
+          "/predict/batch": 0.0,
+          "/inventory/reorder-alert": 0.0
+        },
+        "inventory_status": {
+          "total_skus": 216,
+          "critical_alerts": 20,
+          "warning_alerts": 0,
+          "normal_skus": 196
+        },
+        "model_status": {
+          "loaded": true,
+          "source": "mlflow_registry",
+          "name": "ECommerceDemandForecastModel",
+          "version": "2",
+          "stage": "Staging"
+        },
+        "data_drift": {
+          "drift_ratio": 0.375
+        },
+        "training_readiness": {
+          "status": "training_succeeded",
+          "data_sufficient": true,
+          "available_history_days": 227,
+          "required_history_days": 78,
+          "missing_history_days": 0
+        }
+      }
+    }
+  },
+  "model_forecast": {
+    "http_status": 200,
+    "body": {
+      "sku": "*****",
+      "product_name": "[Cỏ**************************************************************************ml",
+      "category": "Khác",
+      "from_date": "2026-10-17",
+      "to_date": "2026-10-17",
+      "total_predicted_demand": 0.0,
+      "forecast": [
+        {
+          "date": "2026-10-17",
+          "predicted_quantity": 0.0,
+          "lower_bound": 0.0,
+          "upper_bound": 0.0
+        }
+      ],
+      "model_name": "ECommerceDemandForecastModel",
+      "model_version": "2",
+      "model_stage": "Staging",
+      "model_source": "mlflow_registry",
+      "history_source": "warehouse"
+    },
+    "replayed_existing_audit_key": true
+  },
+  "simulator_forecast": {
+    "http_status": 200,
+    "body": {
+      "sku": "OL-IP15PM",
+      "product_name": "Ốp lưng iPhone 15 Pro Max",
+      "category": "Phụ kiện điện thoại",
+      "from_date": "2026-10-20",
+      "to_date": "2026-10-20",
+      "total_predicted_demand": 27.9,
+      "forecast": [
+        {
+          "date": "2026-10-20",
+          "predicted_quantity": 27.9,
+          "lower_bound": null,
+          "upper_bound": null
+        }
+      ],
+      "model_name": "ECommerceDemandForecastModel",
+      "model_version": "2",
+      "model_stage": "Staging",
+      "model_source": "heuristic_catalog",
+      "history_source": "none"
+    }
+  },
+  "unknown_forecast": {
+    "http_status": 200,
+    "body": {
+      "sku": "AUDIT-NOT-IN-CATALOG",
+      "product_name": "Sản phẩm AUDIT-NOT-IN-CATALOG",
+      "category": "Khác",
+      "from_date": "2026-10-20",
+      "to_date": "2026-10-20",
+      "total_predicted_demand": 9.8,
+      "forecast": [
+        {
+          "date": "2026-10-20",
+          "predicted_quantity": 9.8,
+          "lower_bound": null,
+          "upper_bound": null
+        }
+      ],
+      "model_name": "ECommerceDemandForecastModel",
+      "model_version": "2",
+      "model_stage": "Staging",
+      "model_source": "heuristic_catalog",
+      "history_source": "none"
+    }
+  },
+  "invalid_date_range": {
+    "http_status": 400,
+    "body": {
+      "detail": "Ngày bắt đầu (2026-10-20) không được lớn hơn ngày kết thúc (2026-10-19)."
+    }
+  },
+  "overlong_date_range": {
+    "http_status": 400,
+    "body": {
+      "detail": "Khoảng thời gian dự báo vượt quá 90 ngày (yêu cầu: 365 ngày)."
+    }
+  },
+  "inventory_selected": {
+    "http_status": 200,
+    "body": {
+      "total_skus_evaluated": 3,
+      "skus_needing_reorder": 1,
+      "critical_count": 1,
+      "warning_count": 0,
+      "normal_count": 2,
+      "alerts": [
+        {
+          "sku": "*****",
+          "product_name": "[Cỏ**************************************************************************ml",
+          "category": "Khác",
+          "matrix_segment": "AZ",
+          "current_stock": 0,
+          "avg_daily_demand": 0.0,
+          "lead_time_days": 3,
+          "safety_stock": 1,
+          "reorder_point": 2,
+          "needs_reorder": true,
+          "alert_level": "CRITICAL",
+          "days_until_stockout": 0.0,
+          "recommended_reorder_qty": 2,
+          "stock_source": "simulated_demo",
+          "demand_source": "model_forecast"
+        },
+        {
+          "sku": "AUTO202610207f50a8-A",
+          "product_name": "Sản phẩm AUTO202610207f50a8-A",
+          "category": "Khác",
+          "matrix_segment": "BX",
+          "current_stock": 50,
+          "avg_daily_demand": 10.0,
+          "lead_time_days": 3,
+          "safety_stock": 9,
+          "reorder_point": 39,
+          "needs_reorder": false,
+          "alert_level": "NORMAL",
+          "days_until_stockout": 5.0,
+          "recommended_reorder_qty": 0,
+          "stock_source": "warehouse_snapshot:2026-10-20",
+          "demand_source": "fallback_catalog"
+        },
+        {
+          "sku": "OL-IP15PM",
+          "product_name": "Ốp lưng iPhone 15 Pro Max",
+          "category": "Phụ kiện điện thoại",
+          "matrix_segment": "AX",
+          "current_stock": 350,
+          "avg_daily_demand": 28.5,
+          "lead_time_days": 3,
+          "safety_stock": 12,
+          "reorder_point": 98,
+          "needs_reorder": false,
+          "alert_level": "NORMAL",
+          "days_until_stockout": 12.3,
+          "recommended_reorder_qty": 0,
+          "stock_source": "warehouse_snapshot:2026-10-09",
+          "demand_source": "fallback_catalog"
+        }
+      ],
+      "generated_at": "2026-10-20T07:00:03.148781+00:00"
+    }
+  },
+  "stock_db_reference": {
+    "sku": "AUTO202610207f50a8-A",
+    "stock_on_hand": 50,
+    "full_date": "2026-10-20",
+    "age_days_at_audit": 0
+  },
+  "inventory_request_override": {
+    "http_status": 200,
+    "body": {
+      "total_skus_evaluated": 1,
+      "skus_needing_reorder": 1,
+      "critical_count": 1,
+      "warning_count": 0,
+      "normal_count": 0,
+      "alerts": [
+        {
+          "sku": "*****",
+          "product_name": "[Cỏ**************************************************************************ml",
+          "category": "Khác",
+          "matrix_segment": "AZ",
+          "current_stock": 0,
+          "avg_daily_demand": 0.0,
+          "lead_time_days": 3,
+          "safety_stock": 1,
+          "reorder_point": 2,
+          "needs_reorder": true,
+          "alert_level": "CRITICAL",
+          "days_until_stockout": 0.0,
+          "recommended_reorder_qty": 2,
+          "stock_source": "request",
+          "demand_source": "model_forecast"
+        }
+      ],
+      "generated_at": "2026-10-20T07:00:03.155437+00:00"
+    }
+  },
+  "forecast_audit_rows": {
+    "before": 6,
+    "after": 6,
+    "difference": 0
+  },
+  "history_age_days_at_audit": 70,
+  "prometheus_targets": [
+    {
+      "job": "fastapi-serving",
+      "health": "up",
+      "last_error": ""
+    },
+    {
+      "job": "prometheus",
+      "health": "up",
+      "last_error": ""
+    }
+  ],
+  "prometheus_rules": [
+    {
+      "name": "EcommerceServingDown",
+      "state": "inactive",
+      "health": "ok",
+      "query": "up{job=\"fastapi-serving\"} == 0"
+    },
+    {
+      "name": "EcommerceModelUnavailable",
+      "state": "inactive",
+      "health": "ok",
+      "query": "ecommerce_model_ready == 0"
+    },
+    {
+      "name": "EcommercePredictionFallback",
+      "state": "inactive",
+      "health": "ok",
+      "query": "sum(rate(ecommerce_predictions_total{model_source=~\"heuristic.*\"}[5m])) / clamp_min(sum(rate(ecommerce_predictions_total[5m])), 1e-06) > 0.1"
+    },
+    {
+      "name": "EcommercePipelineUnhealthy",
+      "state": "inactive",
+      "health": "ok",
+      "query": "ecommerce_pipeline_ready == 0"
+    },
+    {
+      "name": "EcommerceDemandHistoryStale",
+      "state": "firing",
+      "health": "ok",
+      "query": "ecommerce_history_age_days > 7"
+    },
+    {
+      "name": "EcommerceTrainingDataInsufficient",
+      "state": "inactive",
+      "health": "ok",
+      "query": "ecommerce_training_history_days{kind=\"missing\"} > 0"
+    }
+  ],
+  "active_alertmanagers": 0,
+  "grafana_health": {
+    "http_status": 200,
+    "body": {
+      "commit": "8e428858dd",
+      "database": "ok",
+      "version": "10.1.2"
+    }
+  },
+  "saved_reports": {
+    "drift_summary.json": {
+      "data_source": "feature_store",
+      "feature_data_source": "warehouse",
+      "data_origin": "public_anonymized_historical_csv",
+      "evaluated_at": "2026-10-12T18:10:04.453502+00:00",
+      "drift_detected": true,
+      "target_drift_detected": false,
+      "drift_share": 0.375
+    },
+    "retraining_log.json": {
+      "status": "SUCCESS",
+      "timestamp": "2026-09-24T15:34:54.813931+00:00",
+      "drift_share": 0.0
+    }
+  }
+}

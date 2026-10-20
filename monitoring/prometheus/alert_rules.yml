@@ -1,6 +1,41 @@
 groups:
   - name: ecommerce-training-readiness
     rules:
+      - alert: EcommerceServingDown
+        expr: up{job="fastapi-serving"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Không kết nối được dịch vụ dự báo"
+      - alert: EcommerceModelUnavailable
+        expr: ecommerce_model_ready == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "API chưa nạp được model ML"
+      - alert: EcommercePredictionFallback
+        expr: sum(rate(ecommerce_predictions_total{model_source=~"heuristic.*"}[5m])) / clamp_min(sum(rate(ecommerce_predictions_total[5m])), 0.000001) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Hơn 10% dự báo đang dùng heuristic dự phòng"
+      - alert: EcommercePipelineUnhealthy
+        expr: ecommerce_pipeline_ready == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Pipeline liên tục đang lỗi hoặc không cập nhật tiến độ"
+      - alert: EcommerceDemandHistoryStale
+        expr: ecommerce_history_age_days > 7
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Lịch sử nhu cầu của model đã cũ hơn 7 ngày"
       - alert: EcommerceTrainingDataInsufficient
         expr: ecommerce_training_history_days{kind="missing"} > 0
         for: 30s

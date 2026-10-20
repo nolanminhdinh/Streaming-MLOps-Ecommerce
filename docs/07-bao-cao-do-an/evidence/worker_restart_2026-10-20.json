@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "completed_objects_before": 287,
+  "completed_objects_after": 287,
+  "checkpoint_preserved": true,
+  "orders_unchanged": true,
+  "inventory_unchanged": true,
+  "fresh_healthy_heartbeat": {
+    "status": "healthy",
+    "checked_at": 1792479487.3429627,
+    "pending_objects": 0
+  }
+}

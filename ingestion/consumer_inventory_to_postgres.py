@@ -21,6 +21,7 @@ import os
 import signal
 import sys
 import time
+import uuid
 
 import pandas as pd
 from dotenv import load_dotenv
@@ -29,7 +30,10 @@ from kafka.errors import KafkaError
 from sqlalchemy import text
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from warehouse.etl.load import get_engine  # noqa: E402
+from warehouse.etl.load import get_engine, ensure_dim_dates, _clean_val  # noqa: E402
+from warehouse.etl.extract import build_minio_client  # noqa: E402
+from warehouse.etl.quarantine import persist_quarantine  # noqa: E402
+from ingestion.consumer_to_minio import decode_event  # noqa: E402
 
 load_dotenv()
 
@@ -65,7 +69,7 @@ def build_consumer(retries: int = 5, retry_delay: float = 3.0) -> KafkaConsumer:
             consumer = KafkaConsumer(
                 TOPIC_INVENTORY,
                 bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
-                value_deserializer=lambda v: json.loads(v.decode("utf-8")),
+                value_deserializer=decode_event,
                 auto_offset_reset="earliest",
                 group_id="inventory-postgres-writer-group",
                 enable_auto_commit=False,
@@ -85,11 +89,25 @@ def prepare_snapshots(records: list[dict]) -> pd.DataFrame:
     giữ snapshot mới nhất cho mỗi (sku, ngày).
     """
     df = pd.DataFrame(records)
-    if df.empty or "sku" not in df.columns:
+    if df.empty:
         return pd.DataFrame()
+    if not {"sku", "loaded_at", "stock_on_hand"}.issubset(df.columns):
+        raise ValueError("Inventory snapshot requires sku, loaded_at and stock_on_hand")
+    for column, limit in (("sku", 50), ("product_name", 500), ("category", 100)):
+        if column in df and df[column].dropna().astype(str).str.len().gt(limit).any():
+            raise ValueError(f"Inventory field exceeds warehouse limit: {column}")
 
-    ts = pd.to_datetime(df.get("loaded_at"), errors="coerce", utc=True)
-    ts = ts.fillna(pd.Timestamp.now(tz="UTC"))
+    ts = pd.to_datetime(df["loaded_at"], format="mixed", errors="coerce", utc=True)
+    if ts.isna().any() or df["sku"].isna().any() or df["sku"].astype(str).str.strip().eq("").any():
+        raise ValueError("Inventory snapshot has invalid sku or loaded_at; offset must not be committed")
+    for column in ("stock_on_hand", "safety_stock", "reorder_point"):
+        if column in df:
+            numbers = pd.to_numeric(df[column], errors="coerce")
+            supplied = df[column].notna() if column != "stock_on_hand" else pd.Series(True, index=df.index)
+            invalid = numbers.isna() | (numbers < 0) | (numbers > 2_147_483_647) | (numbers % 1 != 0)
+            if (supplied & invalid).any():
+                raise ValueError(f"Invalid nonnegative integer inventory field: {column}")
+            df[column] = numbers
     df["snapshot_ts"] = ts.dt.tz_convert(BUSINESS_TZ)
     df["snapshot_date"] = df["snapshot_ts"].dt.date
 
@@ -109,8 +127,8 @@ def upsert_inventory(engine, df: pd.DataFrame) -> int:
     products = [
         {
             "sku": str(r["sku"]),
-            "name": r.get("product_name") or str(r["sku"]),
-            "cat": r.get("category") or "Chung",
+            "name": _clean_val(r.get("product_name"), str(r["sku"])),
+            "cat": _clean_val(r.get("category"), "Chung"),
         }
         for r in df[["sku", "product_name", "category"]].to_dict(orient="records")
     ] if {"product_name", "category"}.issubset(df.columns) else [
@@ -121,6 +139,7 @@ def upsert_inventory(engine, df: pd.DataFrame) -> int:
         {
             "sku": str(r["sku"]),
             "full_date": r["snapshot_date"],
+            "snapshot_at": r["snapshot_ts"].to_pydatetime(),
             "stock": int(r.get("stock_on_hand") or 0),
             "ss": int(r["safety_stock"]) if pd.notna(r.get("safety_stock")) else None,
             "rop": int(r["reorder_point"]) if pd.notna(r.get("reorder_point")) else None,
@@ -129,6 +148,7 @@ def upsert_inventory(engine, df: pd.DataFrame) -> int:
     ]
 
     with engine.begin() as conn:
+        ensure_dim_dates(conn, df["snapshot_date"].tolist())
         # SKU chưa từng có đơn hàng vẫn phải có product_key để lưu tồn kho
         conn.execute(text("""
             INSERT INTO Dim_Products (sku, product_name, category)
@@ -137,21 +157,40 @@ def upsert_inventory(engine, df: pd.DataFrame) -> int:
         """), products)
 
         result = conn.execute(text("""
-            INSERT INTO Fact_Inventory_Daily (product_key, date_key, stock_on_hand, safety_stock, reorder_point)
-            SELECT p.product_key, d.date_key, v.stock, v.ss, v.rop
-            FROM (VALUES (:sku, CAST(:full_date AS DATE), :stock, CAST(:ss AS INTEGER), CAST(:rop AS INTEGER)))
-                 AS v(sku, full_date, stock, ss, rop)
+            INSERT INTO Fact_Inventory_Daily (product_key, date_key, stock_on_hand, safety_stock, reorder_point, snapshot_at)
+            SELECT p.product_key, d.date_key, v.stock, v.ss, v.rop, v.snapshot_at
+            FROM (VALUES (:sku, CAST(:full_date AS DATE), :stock, CAST(:ss AS INTEGER), CAST(:rop AS INTEGER), CAST(:snapshot_at AS TIMESTAMPTZ)))
+                 AS v(sku, full_date, stock, ss, rop, snapshot_at)
             JOIN Dim_Products p ON p.sku = v.sku
             JOIN Dim_Dates d ON d.full_date = v.full_date
             ON CONFLICT (product_key, date_key) DO UPDATE SET
                 stock_on_hand = EXCLUDED.stock_on_hand,
                 safety_stock  = EXCLUDED.safety_stock,
                 reorder_point = EXCLUDED.reorder_point,
-                loaded_at     = NOW()
+                loaded_at     = NOW(),
+                snapshot_at   = EXCLUDED.snapshot_at
+            WHERE EXCLUDED.snapshot_at >= COALESCE(Fact_Inventory_Daily.snapshot_at,
+                Fact_Inventory_Daily.loaded_at AT TIME ZONE 'UTC')
         """), rows)
 
     logger.info("Fact_Inventory_Daily: upsert %d snapshot (rowcount=%s)", len(rows), result.rowcount)
-    return len(rows)
+    return result.rowcount
+
+
+def flush_inventory_batch(engine, records, quarantine_client=None):
+    """Persist every invalid snapshot before committing offsets for a mixed batch."""
+    accepted, rejected = [], []
+    for record in records:
+        try:
+            prepare_snapshots([record])
+            accepted.append(record)
+        except (ValueError, TypeError, OverflowError) as exc:
+            rejected.append({"raw_payload": record, "rejection_reasons": str(exc)})
+    if rejected:
+        persist_quarantine(quarantine_client or build_minio_client(), pd.DataFrame(rejected),
+                           uuid.uuid4().hex, stream="inventory")
+        logger.warning("Quarantined %d invalid inventory snapshots", len(rejected))
+    return upsert_inventory(engine, prepare_snapshots(accepted))
 
 
 def main():
@@ -170,7 +209,7 @@ def main():
     def flush():
         nonlocal buffer, last_flush, total
         if buffer:
-            n = upsert_inventory(engine, prepare_snapshots(buffer))
+            n = flush_inventory_batch(engine, buffer)
             consumer.commit()  # chỉ commit offset sau khi DB commit thành công
             total += n
             buffer = []

@@ -1,0 +1,52 @@
+[
+  {
+    "Service": "fastapi",
+    "State": "running",
+    "Health": "healthy"
+  },
+  {
+    "Service": "grafana",
+    "State": "running",
+    "Health": ""
+  },
+  {
+    "Service": "kafka",
+    "State": "running",
+    "Health": "healthy"
+  },
+  {
+    "Service": "minio",
+    "State": "running",
+    "Health": "healthy"
+  },
+  {
+    "Service": "mlflow",
+    "State": "running",
+    "Health": "healthy"
+  },
+  {
+    "Service": "nifi",
+    "State": "running",
+    "Health": ""
+  },
+  {
+    "Service": "postgres",
+    "State": "running",
+    "Health": "healthy"
+  },
+  {
+    "Service": "prometheus",
+    "State": "running",
+    "Health": ""
+  },
+  {
+    "Service": "pipeline-worker",
+    "State": "running",
+    "Health": "healthy"
+  },
+  {
+    "Service": "zookeeper",
+    "State": "running",
+    "Health": "healthy"
+  }
+]

@@ -48,6 +48,7 @@ def run_etl_pipeline(
     target_date: Optional[datetime] = None,
     dry_run: bool = False,
     batch_size: int = 1000,
+    object_names: Optional[list[str]] = None,
 ) -> dict:
     """
     Thực thi chu trình ETL hoàn chỉnh.
@@ -85,7 +86,7 @@ def run_etl_pipeline(
     logger.info("─── BƯỚC 1/4: EXTRACT ───")
     try:
         minio_client = build_minio_client()
-        raw_df = extract_orders(minio_client, target_date=target_date)
+        raw_df = extract_orders(minio_client, target_date=target_date, **({"object_names": object_names} if object_names is not None else {}))
         stats["raw_records"] = len(raw_df)
     except Exception as e:
         logger.error("Lỗi khi kết nối hoặc trích xuất từ MinIO: %s", e)

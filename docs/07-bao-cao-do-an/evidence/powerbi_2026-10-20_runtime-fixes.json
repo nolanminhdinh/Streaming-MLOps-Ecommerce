@@ -1,0 +1,130 @@
+{
+  "audit_date": "2026-10-20",
+  "mode": "existing_views_readonly_local_export",
+  "export_rows": {
+    "Dim_Dates.csv": 1095,
+    "Dim_Products.csv": 116,
+    "Dim_Geography.csv": 20,
+    "Fact_Orders_Summary.csv": 18,
+    "Forecast_vs_Actual.csv": 6,
+    "Inventory_Health_Alerts.csv": 28,
+    "Historical_Demand_Daily.csv": 2211
+  },
+  "pbix": {
+    "pages": [
+      {
+        "name": "79ed4ebd14838601e5a6",
+        "title": "Quản trị Tồn kho và cảnh báo"
+      }
+    ],
+    "visuals": [
+      {
+        "type": "shape",
+        "has_query_binding": false
+      },
+      {
+        "type": "textbox",
+        "has_query_binding": false
+      },
+      {
+        "type": "cardVisual",
+        "has_query_binding": true
+      }
+    ],
+    "visual_type_counts": {
+      "shape": 1,
+      "textbox": 1,
+      "cardVisual": 1
+    },
+    "layout_only_no_render_or_refresh_verification": true
+  },
+  "source_noncancelled": {
+    "noncancelled_lines": 11717,
+    "noncancelled_orders": 11679,
+    "units": 24534,
+    "buyer_total_amount": 7615435480.0,
+    "missing_shop_lines": 29,
+    "missing_shop_units": 48,
+    "missing_shop_buyer_total": 11397710.0
+  },
+  "legacy_shop_join_scope": {
+    "lines": 11688,
+    "orders": 11650,
+    "units": 24486,
+    "buyer_total_amount": 7604037770.0
+  },
+  "summary_csv_totals": {
+    "orders": 11679,
+    "units": 24534,
+    "net_revenue": "7615435480.00"
+  },
+  "executive_view_orders": 11679,
+  "summary_vs_executive_order_mismatch_groups": 0,
+  "summary_aov_mismatch_groups": 0,
+  "summary_orders_match_source": true,
+  "summary_units_match_source": true,
+  "summary_revenue_matches_source": true,
+  "global_aov_from_totals": "652062.29",
+  "forecast": {
+    "stored": 6,
+    "eligible_issue_date": 6,
+    "retrospective_or_same_day": 0,
+    "exported": 6,
+    "complete_actual_rows": 0,
+    "actual_complete_true": 0,
+    "coverage_rows": 0,
+    "live_view_has_coverage_gate": true,
+    "live_view_has_issue_date_gate": true
+  },
+  "inventory": {
+    "rows": 28,
+    "alert_levels": {
+      "CRITICAL": 20,
+      "NORMAL": 8
+    },
+    "normal_with_positive_reorder_qty": 0,
+    "missing_date_key": 0
+  },
+  "historical_star_mapping": {
+    "historical_skus": 216,
+    "product_dimension_skus": 116,
+    "historical_skus_absent_from_product_dimension": 214
+  },
+  "existing_csv_comparison": {
+    "Dim_Dates.csv": {
+      "old_rows": 1095,
+      "new_rows": 1095,
+      "content_equal": true
+    },
+    "Dim_Products.csv": {
+      "old_rows": 116,
+      "new_rows": 116,
+      "content_equal": true
+    },
+    "Dim_Geography.csv": {
+      "old_rows": 20,
+      "new_rows": 20,
+      "content_equal": true
+    },
+    "Fact_Orders_Summary.csv": {
+      "old_rows": 18,
+      "new_rows": 18,
+      "content_equal": true
+    },
+    "Forecast_vs_Actual.csv": {
+      "old_rows": 6,
+      "new_rows": 6,
+      "content_equal": true
+    },
+    "Inventory_Health_Alerts.csv": {
+      "old_rows": 28,
+      "new_rows": 28,
+      "content_equal": true
+    },
+    "Historical_Demand_Daily.csv": {
+      "old_rows": 2211,
+      "new_rows": 2211,
+      "content_equal": true
+    }
+  }
+}

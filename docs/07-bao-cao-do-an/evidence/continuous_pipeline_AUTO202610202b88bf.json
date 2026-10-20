@@ -1,0 +1,65 @@
+{
+  "run_id": "AUTO202610202b88bf",
+  "status": "FAIL",
+  "manual_etl_or_export": false,
+  "orders_sent": 6,
+  "inventory_sent": 3,
+  "facts": [
+    {
+      "order_id": "AUTO202610202b88bf-order",
+      "order_status": "COMPLETED",
+      "quantity": 3
+    },
+    {
+      "order_id": "AUTO202610202b88bf-second",
+      "order_status": "COMPLETED",
+      "quantity": 4
+    }
+  ],
+  "latest_stock": 50,
+  "csv_summary_matches_warehouse": true,
+  "quarantined_labelled_records": {
+    "orders": 3,
+    "inventory": 1,
+    "nifi": 0
+  },
+  "ready": {
+    "http_status": 200,
+    "status": "ready",
+    "model_loaded": true,
+    "warehouse_connected": true,
+    "history_available": true,
+    "history_end": "2026-08-11",
+    "history_data_origin": "public_anonymized_historical_csv",
+    "history_age_days": 70,
+    "history_stale": true
+  },
+  "inventory_api": {
+    "total_skus_evaluated": 1,
+    "skus_needing_reorder": 0,
+    "critical_count": 0,
+    "warning_count": 0,
+    "normal_count": 1,
+    "alerts": [
+      {
+        "sku": "AUTO202610202b88bf-A",
+        "product_name": "Sản phẩm AUTO202610202b88bf-A",
+        "category": "Khác",
+        "matrix_segment": "BX",
+        "current_stock": 50,
+        "avg_daily_demand": 10.0,
+        "lead_time_days": 3,
+        "safety_stock": 9,
+        "reorder_point": 39,
+        "needs_reorder": false,
+        "alert_level": "NORMAL",
+        "days_until_stockout": 5.0,
+        "recommended_reorder_qty": 0,
+        "stock_source": "warehouse_snapshot:2026-10-20",
+        "demand_source": "fallback_catalog"
+      }
+    ],
+    "generated_at": "2026-10-20T06:54:32.632435+00:00"
+  },
+  "invalid_request_http_status": 422
+}

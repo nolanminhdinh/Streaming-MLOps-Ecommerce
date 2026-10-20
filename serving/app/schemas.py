@@ -13,7 +13,7 @@ lẫn môi trường thử nghiệm độc lập.
 from __future__ import annotations
 
 from datetime import date
-from typing import Any, Dict, List, Optional
+from typing import Annotated, Any, Dict, List, Optional
 
 try:
     from pydantic import BaseModel, Field
@@ -101,11 +101,11 @@ class BatchDemandPredictResponse(BaseModel):
 class ReorderAlertRequest(BaseModel):
     """Yêu cầu quét cảnh báo tồn kho tuỳ chỉnh."""
     skus: Optional[List[str]] = Field(None, description="Danh sách SKU cần kiểm tra (None = toàn bộ catalog)")
-    current_stocks: Optional[Dict[str, int]] = Field(
+    current_stocks: Optional[Dict[str, Annotated[int, Field(ge=0)]]] = Field(
         None, description="Bản đồ mức tồn kho thực tế hiện tại {sku: current_stock}"
     )
-    service_level: Optional[float] = Field(0.95, description="Mức độ phục vụ mong muốn (mặc định 95%)")
-    lead_time_days: Optional[int] = Field(3, description="Thời gian giao hàng của nhà cung cấp (Lead time tính theo ngày)")
+    service_level: float = Field(0.95, ge=0.50, le=0.99, description="Mức độ phục vụ mong muốn (mặc định 95%)")
+    lead_time_days: int = Field(3, ge=1, le=30, description="Thời gian giao hàng của nhà cung cấp (Lead time tính theo ngày)")
 
 
 class ReorderAlertItem(BaseModel):

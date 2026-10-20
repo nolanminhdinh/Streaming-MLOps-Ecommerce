@@ -169,9 +169,26 @@ def _classify_region(state: str) -> str:
         return "Bắc"
 
 
+def ensure_dim_dates(conn, dates):
+    """Extend the calendar for actual event dates, in the caller's transaction."""
+    rows = [{"day": value} for value in sorted({value for value in dates if value is not None and pd.notna(value)})]
+    if rows:
+        conn.execute(text("""
+            INSERT INTO Dim_Dates (full_date, day_of_week, day_name, week_of_year,
+                                   month, month_name, quarter, year, is_weekend, is_mega_sale)
+            SELECT d, EXTRACT(DOW FROM d), TO_CHAR(d, 'Day'), EXTRACT(WEEK FROM d),
+                   EXTRACT(MONTH FROM d), TO_CHAR(d, 'Month'), EXTRACT(QUARTER FROM d),
+                   EXTRACT(YEAR FROM d), EXTRACT(DOW FROM d) IN (0, 6),
+                   EXTRACT(DAY FROM d) = EXTRACT(MONTH FROM d)
+            FROM (SELECT CAST(:day AS DATE) AS d) dates
+            ON CONFLICT (full_date) DO NOTHING
+        """), rows)
+
+
 def lookup_dim_dates(engine, dates: list) -> dict:
     """Lookup Dim_Dates, trả về mapping date → date_key."""
     with engine.begin() as conn:
+        ensure_dim_dates(conn, dates)
         result = conn.execute(text("SELECT full_date, date_key FROM Dim_Dates"))
         mapping = {r[0]: r[1] for r in result}
     return mapping
@@ -240,6 +257,8 @@ def load_fact_orders(
         # Date key
         order_date = row.get("order_date")
         date_key = date_map.get(order_date) if order_date else None
+        if product_key is None or date_key is None:
+            raise ValueError(f"Unresolved required dimension for order {row.get('order_id')}")
 
         payment_key = payment_map.get(row.get("payment_method"))
         carrier_key = carrier_map.get(row.get("carrier_name"))
@@ -276,6 +295,9 @@ def load_fact_orders(
             "shipped_time": _clean_ts(row.get("shipped_time")),
             "completed_time": _clean_ts(row.get("completed_time")),
             "cancel_time": _clean_ts(row.get("cancel_time")),
+            "source_updated_at": _clean_ts(row.get("source_updated_at")) or max(
+                (_clean_ts(row.get(key)) for key in ("create_time", "pay_time", "shipped_time", "completed_time", "cancel_time")
+                 if _clean_ts(row.get(key)) is not None), default=None),
         })
 
     if not rows_to_insert:
@@ -289,7 +311,7 @@ def load_fact_orders(
             seller_discount, platform_discount, voucher_total,
             commission_fee, service_fee, transaction_fee,
             shipping_fee, original_shipping, tax_amount,
-            create_time, pay_time, shipped_time, completed_time, cancel_time
+            create_time, pay_time, shipped_time, completed_time, cancel_time, source_updated_at
         ) VALUES (
             :product_key, :shop_key, :geo_key, :date_key, :payment_key, :carrier_key,
             :order_id, :source_line_id, :platform, :order_status, :is_cancelled, :cancel_reason,
@@ -297,7 +319,7 @@ def load_fact_orders(
             :seller_discount, :platform_discount, :voucher_total,
             :commission_fee, :service_fee, :transaction_fee,
             :shipping_fee, :original_shipping, :tax_amount,
-            :create_time, :pay_time, :shipped_time, :completed_time, :cancel_time
+            :create_time, :pay_time, :shipped_time, :completed_time, :cancel_time, :source_updated_at
         )
         ON CONFLICT (order_id, platform, source_line_id) DO UPDATE SET
             product_key = EXCLUDED.product_key,
@@ -329,15 +351,19 @@ def load_fact_orders(
             shipped_time   = COALESCE(EXCLUDED.shipped_time, Fact_Orders.shipped_time),
             completed_time = COALESCE(EXCLUDED.completed_time, Fact_Orders.completed_time),
             cancel_time    = COALESCE(EXCLUDED.cancel_time, Fact_Orders.cancel_time),
-            loaded_at      = NOW()
+            loaded_at      = NOW(),
+            source_updated_at = EXCLUDED.source_updated_at
+        WHERE EXCLUDED.source_updated_at >= COALESCE(Fact_Orders.source_updated_at,
+            GREATEST(Fact_Orders.create_time, Fact_Orders.pay_time, Fact_Orders.shipped_time,
+                     Fact_Orders.completed_time, Fact_Orders.cancel_time))
     """)
 
     total_inserted = 0
     with engine.begin() as conn:
         for i in range(0, len(rows_to_insert), batch_size):
             chunk = rows_to_insert[i : i + batch_size]
-            conn.execute(insert_stmt, chunk)
-            total_inserted += len(chunk)
+            result = conn.execute(insert_stmt, chunk)
+            total_inserted += result.rowcount
 
     logger.info("Fact_Orders: %d rows upserted", total_inserted)
     return total_inserted
