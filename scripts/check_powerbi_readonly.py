@@ -7,7 +7,7 @@ import argparse
 from collections import Counter
 import csv
 from datetime import date
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 import json
 import logging
 from pathlib import Path
@@ -106,6 +106,12 @@ def main():
                 old_differences[name] = {"old_rows": len(old_rows), "new_rows": len(new_rows),
                                          "content_equal": old_rows == new_rows}
         view_by_key = {(row["order_date"], row["platform"]): row for row in executive}
+        aov_mismatches = sum(
+            Decimal(str(row["aov"])) != (
+                Decimal(str(row["net_revenue"])) / Decimal(row["total_orders"])
+            ).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            for row in summary
+        )
         historical_skus = {r["sku"] for r in histories}
         product_skus = {r["sku"] for r in products}
         historical_data = [r for r in forecast_rows if r["actual_demand"] is not None]
@@ -114,14 +120,18 @@ def main():
         result = {
             "audit_date": str(args.audit_date), "mode": "existing_views_readonly_local_export",
             "export_rows": {name: len(rows) for name, rows in snapshots.items()},
-            "pbix": pbix_structure(), "source_noncancelled": source, "export_join_scope": joined,
+            "pbix": pbix_structure(), "source_noncancelled": source, "legacy_shop_join_scope": joined,
             "summary_csv_totals": {"orders": int(sum(row["total_orders"] for row in summary)),
                                    "units": int(sum(row["units_sold"] for row in summary)),
                                    "net_revenue": sum_dec(summary, "net_revenue")},
             "executive_view_orders": int(sum(row["total_orders"] for row in executive)),
             "summary_vs_executive_order_mismatch_groups": sum(
                 row["total_orders"] != view_by_key[(row["order_date"], row["platform"])]["total_orders"] for row in summary),
-            "summary_aov_uses_line_mean_not_order_mean": True,
+            "summary_aov_mismatch_groups": aov_mismatches,
+            "summary_orders_match_source": sum(row["total_orders"] for row in summary) == source["noncancelled_orders"],
+            "summary_units_match_source": sum(row["units_sold"] for row in summary) == source["units"],
+            "summary_revenue_matches_source": Decimal(sum_dec(summary, "net_revenue")) == Decimal(str(source["buyer_total_amount"])),
+            "global_aov_from_totals": str((Decimal(sum_dec(summary, "net_revenue")) / sum(row["total_orders"] for row in summary)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)) if summary else None,
             "forecast": {**forecasts, "exported": len(forecast_rows), "complete_actual_rows": len(historical_data),
                          "actual_complete_true": sum(bool(row["actual_complete"]) for row in forecast_rows),
                          "coverage_rows": int(coverage),

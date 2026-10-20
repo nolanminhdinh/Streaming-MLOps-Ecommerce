@@ -162,8 +162,8 @@ async def lifespan(app: FastAPI):
     logger.info("═" * 60)
     manager = get_model_manager()
     get_inventory_service()
-    logger.info("✓ Model Serving sẵn sàng (model_source=%s). Uptime bắt đầu: %s",
-                manager.model_source, datetime.now(timezone.utc).isoformat())
+    logger.info("API khởi tạo xong (model_ready=%s, model_source=%s). Uptime bắt đầu: %s",
+                manager.has_model, manager.model_source, datetime.now(timezone.utc).isoformat())
     yield
     logger.info("Đang dừng dịch vụ Model Serving...")
 

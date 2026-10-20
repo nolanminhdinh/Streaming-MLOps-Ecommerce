@@ -1,5 +1,9 @@
 # Bộ báo cáo kiểm tra đồ án
 
+> **Sửa KPI 20/10:** [Số đơn/AOV được đối soát với warehouse; 114 test đạt](../04-pipeline-updates/lan-08-powerbi-orders-aov-2026-10-20.md). View và CSV đã cập nhật; refresh/render PBIX vẫn cần nghiệm thu riêng.
+
+> **Sau khắc phục 20/10:** [API phục hồi nạp model, readiness 200 và 110 test đạt](../04-pipeline-updates/lan-07-model-startup-recovery-2026-10-20.md). Các bằng chứng audit 16–19/10 được giữ nguyên để đối chiếu trước/sau.
+
 Thực hiện từ 16–19/10/2026. Đây là bản thảo kỹ thuật dựa trên mã nguồn, kiểm thử và bằng chứng runtime có ngày cụ thể; chưa thay cho nghiệm thu production hoặc bản định dạng chính thức của trường.
 
 ## Điểm bắt đầu

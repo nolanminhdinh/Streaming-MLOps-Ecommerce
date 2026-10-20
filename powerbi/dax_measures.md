@@ -6,31 +6,30 @@ Tài liệu này cung cấp toàn bộ các công thức DAX được tối ưu 
 
 ## 1. Nhóm chỉ số Tài chính & Đơn hàng (Core Business Measures)
 
-### 1.1. Tổng Doanh thu Thực nhận (Net Revenue)
+Các measure dưới đây dùng **đường import CSV** `Fact_Orders_Summary`. Exporter đã loại dòng hủy và đếm distinct `(platform, order_id)` theo ngày/platform. Một đơn phải có cùng ngày tạo nghiệp vụ cho các dòng của nó. Không lấy trung bình cột `aov` giữa các ngày/platform: luôn tính lại tỷ số từ tổng tiền và tổng số đơn trong filter context.
+
+### 1.1. Tổng tiền người mua của đơn không hủy (Net Revenue)
 ```dax
 Total Revenue = 
-SUM(Fact_Orders[buyer_total_amount])
+SUM(Fact_Orders_Summary[net_revenue])
 ```
 
 ### 1.2. Tổng Sản lượng Bán ra (Units Sold)
 ```dax
 Total Units Sold = 
-SUM(Fact_Orders[quantity])
+SUM(Fact_Orders_Summary[units_sold])
 ```
 
 ### 1.3. Tổng Số Đơn hàng Hợp lệ (Total Valid Orders)
 ```dax
 Total Orders = 
-CALCULATE(
-    COUNTROWS(SUMMARIZE(Fact_Orders, Fact_Orders[platform], Fact_Orders[order_id])),
-    Fact_Orders[is_cancelled] = FALSE()
-)
+SUM(Fact_Orders_Summary[total_orders])
 ```
 
 ### 1.4. Giá trị Đơn hàng Trung bình (Average Order Value - AOV)
 ```dax
 AOV = 
-DIVIDE([Total Revenue], [Total Orders], 0)
+DIVIDE([Total Revenue], [Total Orders])
 ```
 
 ### 1.5. Tỷ trọng Doanh thu Shopee vs TikTok Shop
@@ -38,13 +37,13 @@ DIVIDE([Total Revenue], [Total Orders], 0)
 Shopee Revenue = 
 CALCULATE(
     [Total Revenue],
-    Dim_Shops[platform] = "shopee"
+    Fact_Orders_Summary[platform] = "shopee"
 )
 
 TikTok Revenue = 
 CALCULATE(
     [Total Revenue],
-    Dim_Shops[platform] = "tiktok"
+    Fact_Orders_Summary[platform] = "tiktok"
 )
 
 Shopee Share % = 
@@ -53,6 +52,26 @@ DIVIDE([Shopee Revenue], [Total Revenue], 0)
 TikTok Share % = 
 DIVIDE([TikTok Revenue], [Total Revenue], 0)
 ```
+
+Nếu import **raw Fact_Orders** thay vì CSV summary, dùng bộ measure riêng cùng phạm vi không hủy; không trộn hai đường dữ liệu trong một KPI:
+
+```dax
+Raw Valid Revenue =
+CALCULATE(SUM(Fact_Orders[buyer_total_amount]), Fact_Orders[is_cancelled] = FALSE())
+
+Raw Valid Units =
+CALCULATE(SUM(Fact_Orders[quantity]), Fact_Orders[is_cancelled] = FALSE())
+
+Raw Valid Orders =
+CALCULATE(
+    COUNTROWS(SUMMARIZE(Fact_Orders, Fact_Orders[platform], Fact_Orders[order_id])),
+    Fact_Orders[is_cancelled] = FALSE()
+)
+
+Raw AOV = DIVIDE([Raw Valid Revenue], [Raw Valid Orders])
+```
+
+`buyer_total_amount` là đại lượng từ dữ liệu nguồn, chưa đồng nghĩa doanh thu đã thu tiền. Summary lấy platform từ fact nên dòng chưa lookup được shop vẫn được tính. Các measure tài chính này không lấy dữ liệu lịch sử CSV làm doanh thu.
 
 ---
 

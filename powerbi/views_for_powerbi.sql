@@ -13,19 +13,20 @@ SELECT
     d.day_name,
     d.is_weekend,
     d.is_mega_sale,
-    s.platform,
+    f.platform,
     COUNT(DISTINCT (f.platform, f.order_id)) AS total_orders,
     SUM(f.quantity)                 AS total_units_sold,
     SUM(f.buyer_total_amount)       AS total_revenue,
     SUM(f.seller_discount)          AS total_seller_discount,
     SUM(f.platform_discount)        AS total_platform_discount,
-    ROUND(SUM(f.buyer_total_amount) / NULLIF(COUNT(DISTINCT (f.platform, f.order_id)), 0), 0) AS average_order_value
+    ROUND(SUM(f.buyer_total_amount) / NULLIF(COUNT(DISTINCT (f.platform, f.order_id)), 0), 2) AS average_order_value,
+    SUM(COALESCE(f.subtotal, f.quantity * f.original_price)) AS gross_revenue,
+    SUM(COALESCE(f.seller_discount, 0) + COALESCE(f.platform_discount, 0)) AS discounts
 FROM Fact_Orders f
 JOIN Dim_Dates d ON f.date_key = d.date_key
-JOIN Dim_Shops s ON f.shop_key = s.shop_key
 WHERE f.is_cancelled = FALSE
 GROUP BY
-    d.full_date, d.year, d.month, d.day_name, d.is_weekend, d.is_mega_sale, s.platform;
+    d.full_date, d.year, d.month, d.day_name, d.is_weekend, d.is_mega_sale, f.platform;
 
 
 -- 2. Demand rows are separated by origin, with Vietnam-local timestamps in the warehouse.
@@ -153,15 +154,14 @@ CREATE OR REPLACE VIEW vw_powerbi_geographic_sales AS
 SELECT
     g.state,
     g.region,
-    s.platform,
+    f.platform,
     COUNT(DISTINCT (f.platform, f.order_id)) AS order_count,
     SUM(f.quantity)           AS total_units,
     SUM(f.buyer_total_amount) AS total_revenue
 FROM Fact_Orders f
 JOIN Dim_Geography g ON f.geo_key = g.geo_key
-JOIN Dim_Shops s ON f.shop_key = s.shop_key
 WHERE f.is_cancelled = FALSE
-GROUP BY g.state, g.region, s.platform;
+GROUP BY g.state, g.region, f.platform;
 
 
 -- 5. Accuracy requires matching provenance and explicitly confirmed daily coverage.

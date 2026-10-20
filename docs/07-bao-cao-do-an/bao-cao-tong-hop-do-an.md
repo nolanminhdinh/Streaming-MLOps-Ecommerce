@@ -1,5 +1,9 @@
 # Báo cáo tổng hợp đồ án Streaming MLOps E-Commerce
 
+> **Cập nhật KPI 20/10/2026:** Đã sửa số đơn/AOV trong SQL view và exporter; dữ liệu runtime khớp 11.646 đơn không hủy, AOV tổng 653.440,57. Toàn suite gồm SQL integration đạt 114 test. Xem [báo cáo khắc phục lần 8](../04-pipeline-updates/lan-08-powerbi-orders-aov-2026-10-20.md). Chưa refresh/render PBIX; các kết quả audit cũ bên dưới giữ nguyên để đối chiếu.
+
+> **Cập nhật 20/10/2026:** Đã khắc phục lỗi phục hồi model sau startup timeout; API thực tế `/ready` 200, dùng `mlflow_registry` v2. Toàn suite sau sửa đạt 110 test. Xem [báo cáo khắc phục lần 7](../04-pipeline-updates/lan-07-model-startup-recovery-2026-10-20.md). Các trạng thái ngày 19/10 bên dưới được giữ làm bằng chứng trước sửa; giới hạn dữ liệu và chất lượng dự báo vẫn còn.
+
 **Dự báo lượng bán và hỗ trợ quản trị tồn kho đa kênh Shopee/TikTok Shop**
 
 Đợt kiểm tra: 16–19/10/2026 · Mốc tổng hợp: 19/10/2026
@@ -137,8 +141,8 @@ Không cộng các số test từng chương vì có tập trùng. Kết quả t
 
 | ID | Việc cần làm | Bằng chứng / điều kiện đóng |
 |---|---|---|
-| A-01 | Phục hồi model live, thêm retry startup phù hợp | Ready 200; forecast có nguồn Registry; thử MLflow chậm rồi hồi phục |
-| A-02 | Sửa KPI orders/AOV và phạm vi shop thiếu | Đối soát distinct order và tiền trên cùng scope, fixture nhiều dòng |
+| A-01 | Phục hồi model live, thêm retry startup phù hợp | Đã khắc phục 20/10: ready 200, forecast Registry; regression và probe lỗi lần đầu rồi đọc artifact thật đạt; xem báo cáo lần 7 |
+| A-02 | Sửa KPI orders/AOV và phạm vi shop thiếu | Đã sửa SQL/exporter/DAX tài liệu 20/10: đối soát nguồn khớp, bốn SQL test đạt; refresh/visual PBIX thuộc A-03 |
 | A-03 | Hoàn thiện PBIX, DAX và relationships theo dataset chọn | Render/refresh; kiểm tra KPI, filters và đủ các trang đã cam kết |
 | A-04 | Xác nhận coverage và phân biệt thiếu nguồn với zero demand | Hồ sơ kỳ vọng nguồn theo ngày; gate readiness/feature/scoring nhất quán |
 | A-05 | Chuẩn hóa baseline alignment và mốc so sánh nhu cầu thưa | Thử chuỗi có kỳ vọng; CV cùng protocol; holdout cuối chưa dùng chọn model |

@@ -118,7 +118,8 @@ def export_powerbi_data(output_dir: str | None = None) -> str:
             SELECT g.geo_key, g.state, g.region,
                    COALESCE(SUM(f.buyer_total_amount), 0) AS total_revenue,
                    COALESCE(SUM(f.quantity), 0) AS total_units,
-                   COUNT(f.order_fact_id) AS total_orders
+                   COUNT(DISTINCT (f.platform, f.order_id))
+                       FILTER (WHERE f.order_fact_id IS NOT NULL) AS total_orders
             FROM Dim_Geography g
             LEFT JOIN Fact_Orders f
                    ON f.geo_key = g.geo_key AND f.is_cancelled = FALSE
@@ -127,19 +128,12 @@ def export_powerbi_data(output_dir: str | None = None) -> str:
             ORDER BY total_revenue DESC
         """,
         "Fact_Orders_Summary.csv": """
-            SELECT d.date_key, d.full_date AS order_date, s.platform,
-                   COUNT(f.order_fact_id) AS total_orders,
-                   SUM(f.quantity) AS units_sold,
-                   SUM(COALESCE(f.subtotal, f.quantity * f.original_price)) AS gross_revenue,
-                   SUM(COALESCE(f.seller_discount, 0) + COALESCE(f.platform_discount, 0)) AS discounts,
-                   SUM(f.buyer_total_amount) AS net_revenue,
-                   AVG(f.buyer_total_amount) AS aov
-            FROM Fact_Orders f
-            JOIN Dim_Dates d ON d.date_key = f.date_key
-            JOIN Dim_Shops s ON s.shop_key = f.shop_key
-            WHERE f.is_cancelled = FALSE
-            GROUP BY d.date_key, d.full_date, s.platform
-            ORDER BY d.full_date, s.platform
+            SELECT d.date_key, s.order_date, s.platform, s.total_orders,
+                   s.total_units_sold AS units_sold, s.gross_revenue, s.discounts,
+                   s.total_revenue AS net_revenue, s.average_order_value AS aov
+            FROM vw_powerbi_executive_summary s
+            JOIN Dim_Dates d ON d.full_date = s.order_date
+            ORDER BY s.order_date, s.platform
         """,
         "Forecast_vs_Actual.csv": """
             SELECT date_key, product_key, date, sku, product_name, category, matrix_segment,

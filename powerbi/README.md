@@ -1,4 +1,6 @@
 # Module Power BI Executive Dashboard (Tuần 9)
+
+> **Sửa KPI ngày 20/10/2026:** Exporter summary dùng chung view executive, đếm đơn distinct `(platform, order_id)` và tính AOV = tổng `buyer_total_amount` / số đơn không hủy (làm tròn 2 chữ số). Platform lấy từ fact nên dòng thiếu shop không bị loại. Khi import CSV, dùng measure trong mục 1 của `dax_measures.md`; AOV toàn bộ phải tính lại từ tổng tiền/tổng đơn, không lấy trung bình cột `aov`. Sau export thành công, Refresh PBIX để nạp CSV mới. Xem [bằng chứng sửa và đối soát](../docs/04-pipeline-updates/lan-08-powerbi-orders-aov-2026-10-20.md).
 ## Thiết kế Theo Phương pháp luận Ralph Kimball (*The Data Warehouse Toolkit*)
 
 Thư mục này chứa toàn bộ tài nguyên phục vụ việc thiết kế và xây dựng **Executive Dashboard** trên **Power BI Desktop**, hỗ trợ ban giám khảo và các nhà quản lý chuỗi cung ứng theo dõi toàn diện hoạt động kinh doanh đa kênh, dự báo nhu cầu bán hàng và quản trị tồn kho thông minh.

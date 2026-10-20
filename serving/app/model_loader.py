@@ -20,6 +20,8 @@ import json
 import logging
 import math
 import os
+import threading
+import time
 from datetime import date, datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -119,6 +121,11 @@ class ModelManager:
         self.manifest: Dict[str, Any] = {}
         self.is_loaded: bool = False  # đã chạy xong quy trình khởi tạo (kể cả khi rơi về heuristic)
         self.load_timestamp: Optional[datetime] = None
+        self._load_lock = threading.Lock()
+        self._retry_initial = max(1.0, float(os.getenv("MODEL_LOAD_RETRY_INITIAL_SECONDS", "5")))
+        self._retry_max = max(self._retry_initial, float(os.getenv("MODEL_LOAD_RETRY_MAX_SECONDS", "60")))
+        self._retry_delay = self._retry_initial
+        self._next_retry_at = 0.0
 
     @classmethod
     def get_instance(cls, manifest_path: Optional[str] = None) -> "ModelManager":
@@ -141,8 +148,18 @@ class ModelManager:
         Khi reload thất bại, model đang phục vụ tiếp tục được giữ nguyên. Điều này
         tránh request đồng thời nhìn thấy trạng thái rỗng trong lúc tải artifact.
         """
+        with self._load_lock:
+            return self._load_model_locked()
+
+    def _load_model_locked(self) -> bool:
         candidate = ModelManager(manifest_path=self.manifest_path)
-        candidate._load_model_candidate()
+        try:
+            candidate._load_model_candidate()
+        except Exception:
+            logger.exception("Nạp ứng viên model thất bại; giữ nguyên trạng thái đang phục vụ.")
+            self.is_loaded = True
+            self._schedule_retry()
+            return False
 
         if not candidate.has_model and self.has_model:
             logger.error(
@@ -152,8 +169,48 @@ class ModelManager:
             )
             return False
 
-        self.__dict__ = candidate.__dict__.copy()
+        # Keep synchronization/backoff on this manager when publishing a candidate.
+        controls = {"_load_lock", "_retry_initial", "_retry_max", "_retry_delay", "_next_retry_at"}
+        state = {key: value for key, value in candidate.__dict__.items() if key not in controls}
+        self.__dict__ = {**self.__dict__, **state}
+        if self.has_model:
+            self._retry_delay = self._retry_initial
+            self._next_retry_at = 0.0
+        else:
+            self._schedule_retry()
         return self.has_model
+
+    def _schedule_retry(self) -> None:
+        self._next_retry_at = time.monotonic() + self._retry_delay
+        logger.warning("Chưa có model ML; thử lại sau %.1f giây.", self._retry_delay)
+        self._retry_delay = min(self._retry_max, self._retry_delay * 2)
+
+    def retry_if_due(self) -> None:
+        """Retry missing Registry models in the background, with one attempt at a time.
+
+        Readiness probes keep returning promptly while Registry/artifacts are slow.
+        A healthy pinned model is never automatically replaced by this recovery path.
+        """
+        if self.has_model or not os.getenv("MLFLOW_TRACKING_URI"):
+            return
+        if time.monotonic() < self._next_retry_at or not self._load_lock.acquire(blocking=False):
+            return
+        try:
+            # Recheck after acquiring: a manual reload may just have completed.
+            if self.has_model or time.monotonic() < self._next_retry_at:
+                self._load_lock.release()
+                return
+            thread = threading.Thread(target=self._retry_in_background, name="model-load-recovery", daemon=True)
+            thread.start()
+        except Exception:
+            self._load_lock.release()
+            raise
+
+    def _retry_in_background(self) -> None:
+        try:
+            self._load_model_locked()
+        finally:
+            self._load_lock.release()
 
     def _load_model_candidate(self) -> None:
         logger.info("Đang nạp Champion Model từ manifest: %s", self.manifest_path)
@@ -499,4 +556,6 @@ def get_model_manager() -> ModelManager:
     manager = ModelManager.get_instance()
     if not manager.is_loaded:
         manager.load_model()
+    else:
+        manager.retry_if_due()
     return manager
