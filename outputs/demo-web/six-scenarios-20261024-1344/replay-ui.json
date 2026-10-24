@@ -1,0 +1,87 @@
+{
+  "message": "Đã đối chiếu đủ dữ liệu: raw, đơn hợp lệ, kiểm định và checkpoint sau xuất CSV.",
+  "metrics": [
+    26,
+    26,
+    12,
+    2
+  ],
+  "progress": "✓\nKafka xác nhận bản tin\n26 ACK đơn\n✓\nConsumer lưu Parquet\n26 bản tin\n✓\nETL nạp đơn hợp lệ\n12 / 12\n✓\nValidation cách ly bản tin lỗi\n2 lần ghi lỗi\n✓\nCheckpoint sau ETL & xuất CSV\n6 / 6 object",
+  "quarantine": "WEB20261024064728f8b7cb-012\nLý do: NON_POSITIVE_QUANTITY\nquarantine/orders/run_id=20261024T134759-55f2075f57c24ab88de672c70381afd5/rejected.jsonl\nWEB20261024064728f8b7cb-012\nLý do: NON_POSITIVE_QUANTITY\nquarantine/orders/run_id=20261024T135555-6c171e68cb4945058ece5302931049f3/rejected.jsonl",
+  "replay": "Đã đối chiếu gửi lại: toàn bộ bản tin đã checkpoint, số dòng đơn giữ nguyên. Số lượt gửi lại: 1.",
+  "run_id": "WEB20261024064728f8b7cb",
+  "warehouse_rows": [
+    [
+      "WEB20261024064728f8b7cb-000",
+      "shopee",
+      "3",
+      "UNPAID"
+    ],
+    [
+      "WEB20261024064728f8b7cb-001",
+      "tiktok",
+      "1",
+      "UNPAID"
+    ],
+    [
+      "WEB20261024064728f8b7cb-002",
+      "shopee",
+      "2",
+      "UNPAID"
+    ],
+    [
+      "WEB20261024064728f8b7cb-003",
+      "tiktok",
+      "3",
+      "UNPAID"
+    ],
+    [
+      "WEB20261024064728f8b7cb-004",
+      "shopee",
+      "2",
+      "UNPAID"
+    ],
+    [
+      "WEB20261024064728f8b7cb-005",
+      "tiktok",
+      "4",
+      "UNPAID"
+    ],
+    [
+      "WEB20261024064728f8b7cb-006",
+      "shopee",
+      "1",
+      "UNPAID"
+    ],
+    [
+      "WEB20261024064728f8b7cb-007",
+      "tiktok",
+      "3",
+      "UNPAID"
+    ],
+    [
+      "WEB20261024064728f8b7cb-008",
+      "shopee",
+      "2",
+      "UNPAID"
+    ],
+    [
+      "WEB20261024064728f8b7cb-009",
+      "tiktok",
+      "1",
+      "UNPAID"
+    ],
+    [
+      "WEB20261024064728f8b7cb-010",
+      "shopee",
+      "1",
+      "UNPAID"
+    ],
+    [
+      "WEB20261024064728f8b7cb-011",
+      "tiktok",
+      "2",
+      "UNPAID"
+    ]
+  ]
+}

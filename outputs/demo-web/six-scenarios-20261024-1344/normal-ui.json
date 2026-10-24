@@ -1,0 +1,87 @@
+{
+  "message": "Đã đối chiếu đủ dữ liệu: raw, đơn hợp lệ, kiểm định và checkpoint sau xuất CSV.",
+  "metrics": [
+    12,
+    12,
+    12,
+    0
+  ],
+  "progress": "✓\nKafka xác nhận bản tin\n12 ACK đơn\n✓\nConsumer lưu Parquet\n12 bản tin\n✓\nETL nạp đơn hợp lệ\n12 / 12\n✓\nValidation cách ly bản tin lỗi\nKhông yêu cầu lỗi\n✓\nCheckpoint sau ETL & xuất CSV\n3 / 3 object",
+  "quarantine": "Chưa ghi nhận bản tin lỗi của đợt trong quarantine.",
+  "replay": "",
+  "run_id": "WEB20261024064436db1d4b",
+  "warehouse_rows": [
+    [
+      "WEB20261024064436db1d4b-000",
+      "shopee",
+      "1",
+      "UNPAID"
+    ],
+    [
+      "WEB20261024064436db1d4b-001",
+      "tiktok",
+      "2",
+      "UNPAID"
+    ],
+    [
+      "WEB20261024064436db1d4b-002",
+      "shopee",
+      "1",
+      "UNPAID"
+    ],
+    [
+      "WEB20261024064436db1d4b-003",
+      "tiktok",
+      "1",
+      "UNPAID"
+    ],
+    [
+      "WEB20261024064436db1d4b-004",
+      "shopee",
+      "3",
+      "UNPAID"
+    ],
+    [
+      "WEB20261024064436db1d4b-005",
+      "tiktok",
+      "3",
+      "UNPAID"
+    ],
+    [
+      "WEB20261024064436db1d4b-006",
+      "shopee",
+      "2",
+      "UNPAID"
+    ],
+    [
+      "WEB20261024064436db1d4b-007",
+      "tiktok",
+      "1",
+      "UNPAID"
+    ],
+    [
+      "WEB20261024064436db1d4b-008",
+      "shopee",
+      "1",
+      "UNPAID"
+    ],
+    [
+      "WEB20261024064436db1d4b-009",
+      "tiktok",
+      "1",
+      "UNPAID"
+    ],
+    [
+      "WEB20261024064436db1d4b-010",
+      "shopee",
+      "4",
+      "UNPAID"
+    ],
+    [
+      "WEB20261024064436db1d4b-011",
+      "tiktok",
+      "1",
+      "UNPAID"
+    ]
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "message": "Đã đối chiếu đủ dữ liệu: raw, đơn hợp lệ, kiểm định và checkpoint sau xuất CSV.",
+  "metrics": [
+    "50",
+    "50",
+    "50",
+    "0"
+  ],
+  "progress": "✓\nKafka xác nhận bản tin\n50 ACK đơn\n✓\nConsumer lưu Parquet\n50 bản tin\n✓\nETL nạp đơn hợp lệ\n50 / 50\n✓\nValidation cách ly bản tin lỗi\nKhông yêu cầu lỗi\n✓\nCheckpoint sau ETL & xuất CSV\n9 / 9 object",
+  "run_id": "WEB20261024065750d70b55"
+}

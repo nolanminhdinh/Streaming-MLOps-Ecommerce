@@ -98,6 +98,12 @@ Xem chi tiết đề cương tuần tại [docs/06-weekly-progress](docs/06-week
 
 ## 6. Hướng dẫn chạy nhanh
 
+**Trang demo bảo vệ:** mở Docker Desktop, chạy `start_demo_web.bat`, rồi truy cập
+<http://127.0.0.1:8050>. Có tổng quan kiến trúc, phát đợt đơn có nhãn vào Kafka,
+đối chiếu Lake/Warehouse/quarantine, thử gửi lại chống trùng, dự báo và tồn kho.
+[Hướng dẫn vận hành demo web](docs/05-how-to-run/demo-web.md).
+[Kịch bản và lời dẫn bảo vệ riêng](docs/05-how-to-run/kich-ban-bao-ve-demo.md).
+
 ```powershell
 # Tạo file .env từ file mẫu (không commit .env lên Git)
 Copy-Item .env.example .env

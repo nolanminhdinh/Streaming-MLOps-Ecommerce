@@ -1,0 +1,95 @@
+{
+  "suite": "six-scenarios-20261024-1344",
+  "passed": 6,
+  "total": 6,
+  "results": [
+    {
+      "case": "normal",
+      "status": "PASS",
+      "run_id": "WEB20261024064436db1d4b",
+      "ui_metrics": [
+        12,
+        12,
+        12,
+        0
+      ],
+      "warehouse_units": 21,
+      "kafka_offsets_verified": 14,
+      "checkpoint_objects": 3,
+      "ui_table_matches_sql": true,
+      "raw_quantities_match_source": true
+    },
+    {
+      "case": "invalid",
+      "status": "PASS",
+      "run_id": "WEB20261024064728f8b7cb",
+      "ui_metrics": [
+        13,
+        13,
+        12,
+        1
+      ],
+      "warehouse_units": 25,
+      "kafka_offsets_verified": 15,
+      "checkpoint_objects": 3,
+      "ui_table_matches_sql": true,
+      "raw_quantities_match_source": true
+    },
+    {
+      "case": "replay",
+      "status": "PASS",
+      "run_id": "WEB20261024064728f8b7cb",
+      "ui_metrics": [
+        26,
+        26,
+        12,
+        2
+      ],
+      "warehouse_units": 25,
+      "kafka_offsets_verified": 30,
+      "checkpoint_objects": 6,
+      "ui_table_matches_sql": true,
+      "raw_quantities_match_source": true
+    },
+    {
+      "case": "burst",
+      "status": "PASS",
+      "run_id": "WEB20261024065750d70b55",
+      "ui_metrics": [
+        50,
+        50,
+        50,
+        0
+      ],
+      "warehouse_units": 112,
+      "kafka_offsets_verified": 52,
+      "checkpoint_objects": 9,
+      "ui_table_matches_sql": true,
+      "raw_quantities_match_source": true
+    },
+    {
+      "case": "stock0",
+      "status": "PASS",
+      "sku": "P23*****03",
+      "current_stock": 0,
+      "alert_level": "CRITICAL",
+      "reorder_qty": 41,
+      "safety_stock": 6,
+      "reorder_point": 17,
+      "ui_matches_direct_serving": true,
+      "warehouse_stock_unchanged": true
+    },
+    {
+      "case": "stock100",
+      "status": "PASS",
+      "sku": "P23*****03",
+      "current_stock": 100,
+      "alert_level": "NORMAL",
+      "reorder_qty": 0,
+      "safety_stock": 6,
+      "reorder_point": 17,
+      "ui_matches_direct_serving": true,
+      "warehouse_stock_unchanged": true
+    }
+  ]
+}

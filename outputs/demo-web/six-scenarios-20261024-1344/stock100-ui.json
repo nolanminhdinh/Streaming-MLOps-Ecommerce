@@ -1,0 +1,34 @@
+{
+  "lead_time": 3,
+  "level": "NORMAL",
+  "override": true,
+  "sku": "P23*****03",
+  "sources": "Tồn kho: request\nNhu cầu: model_forecast",
+  "stock_input": 100,
+  "values": [
+    {
+      "label": "Tồn kho hiện tại",
+      "value": "100"
+    },
+    {
+      "label": "Tồn kho an toàn · SS",
+      "value": "6"
+    },
+    {
+      "label": "Điểm đặt hàng lại · ROP",
+      "value": "17"
+    },
+    {
+      "label": "Đề xuất nhập thêm",
+      "value": "0"
+    },
+    {
+      "label": "Nhu cầu trung bình/ngày",
+      "value": "3,4"
+    },
+    {
+      "label": "Phân khúc ABC/XYZ",
+      "value": "AZ"
+    }
+  ]
+}
