@@ -1,0 +1,1156 @@
+{
+  "review_date_local": "2026-10-26",
+  "timezone": "Asia/Bangkok",
+  "scope": "Static documentation audit. No runtime services, tests, external URLs or credentials inspected.",
+  "markdown_count": 82,
+  "markdown_lines": 18311,
+  "relative_link_occurrences": 277,
+  "broken_relative_links": [
+    {
+      "path": "docs/04-pipeline-updates/lan-01-khac-phuc-loi-va-toi-uu-luong.md",
+      "line": 4,
+      "target": "../test-pipeline/bao_cao_kiem_thu_hieu_nang_lan_1.md"
+    }
+  ],
+  "nonportable_file_urls": [
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 331,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/warehouse/etl/data_validation.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 359,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/features/time_series_features.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 496,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/training/deep_learning_models.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 574,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/features/abc_xyz.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 677,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/serving/app/inventory_service.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 711,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/serving/app/model_loader.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 786,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/monitoring/evidently/trigger_retraining.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 805,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/powerbi/views_for_powerbi.sql"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 813,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/powerbi/dax_measures.md"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 895,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ingestion/consumer_to_minio.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 896,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ingestion/consumer_to_minio.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 897,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/warehouse/etl/data_validation.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 898,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/warehouse/etl/load.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 899,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/warehouse/ddl/01_star_schema.sql"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 900,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/features/abc_xyz.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 901,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/features/abc_xyz.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 902,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/features/time_series_features.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 903,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/features/time_series_features.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 904,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/training/train_baseline.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 905,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/training/deep_learning_models.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 906,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/training/compare_models.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 907,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/serving/app/model_loader.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 908,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/serving/app/inventory_service.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 909,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/serving/app/inventory_service.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 910,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/serving/app/inventory_service.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 911,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/serving/app/model_loader.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 912,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/serving/app/main.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 913,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/monitoring/evidently/drift_detector.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 914,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/monitoring/evidently/drift_detector.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 915,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/monitoring/evidently/trigger_retraining.py"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "line": 916,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/powerbi/dax_measures.md"
+    },
+    {
+      "path": "docs/01-ingestion-buffering/thiet_ke_buoc_dem_hung_du_lieu.md",
+      "line": 139,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ingestion/producer.py"
+    },
+    {
+      "path": "docs/01-ingestion-buffering/thiet_ke_buoc_dem_hung_du_lieu.md",
+      "line": 176,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ingestion/consumer_to_minio.py"
+    },
+    {
+      "path": "docs/01-ingestion-buffering/thiet_ke_buoc_dem_hung_du_lieu.md",
+      "line": 233,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/docs/test-pipeline/bao_cao_kiem_thu_hieu_nang_lan_1.md"
+    },
+    {
+      "path": "docs/01-ingestion-buffering/thiet_ke_buoc_dem_hung_du_lieu.md",
+      "line": 252,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/docker-compose.yml"
+    },
+    {
+      "path": "docs/01-ingestion-buffering/thiet_ke_buoc_dem_hung_du_lieu.md",
+      "line": 281,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/warehouse/etl/data_validation.py"
+    },
+    {
+      "path": "docs/01-ingestion-buffering/thiet_ke_buoc_dem_hung_du_lieu.md",
+      "line": 290,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/warehouse/etl/transform.py"
+    },
+    {
+      "path": "docs/01-ingestion-buffering/thiet_ke_buoc_dem_hung_du_lieu.md",
+      "line": 331,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/docs/test-pipeline/bao_cao_kiem_thu_hieu_nang_lan_1.md"
+    },
+    {
+      "path": "docs/02-warehouse-etl-feature-store/bao_cao_etl_va_feature_engineering.md",
+      "line": 108,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/warehouse/etl/extract.py"
+    },
+    {
+      "path": "docs/02-warehouse-etl-feature-store/bao_cao_etl_va_feature_engineering.md",
+      "line": 117,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/warehouse/etl/transform.py"
+    },
+    {
+      "path": "docs/02-warehouse-etl-feature-store/bao_cao_etl_va_feature_engineering.md",
+      "line": 136,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/warehouse/etl/transform.py"
+    },
+    {
+      "path": "docs/02-warehouse-etl-feature-store/bao_cao_etl_va_feature_engineering.md",
+      "line": 149,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/warehouse/etl/data_validation.py"
+    },
+    {
+      "path": "docs/02-warehouse-etl-feature-store/bao_cao_etl_va_feature_engineering.md",
+      "line": 170,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/warehouse/ddl/01_star_schema.sql"
+    },
+    {
+      "path": "docs/02-warehouse-etl-feature-store/bao_cao_etl_va_feature_engineering.md",
+      "line": 258,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/warehouse/etl/load.py"
+    },
+    {
+      "path": "docs/02-warehouse-etl-feature-store/bao_cao_etl_va_feature_engineering.md",
+      "line": 291,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/features/feature_pipeline.py"
+    },
+    {
+      "path": "docs/02-warehouse-etl-feature-store/bao_cao_etl_va_feature_engineering.md",
+      "line": 291,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/features/abc_xyz.py"
+    },
+    {
+      "path": "docs/02-warehouse-etl-feature-store/bao_cao_etl_va_feature_engineering.md",
+      "line": 291,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/features/time_series_features.py"
+    },
+    {
+      "path": "docs/02-warehouse-etl-feature-store/bao_cao_etl_va_feature_engineering.md",
+      "line": 393,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/features/time_series_features.py#L76-L94"
+    },
+    {
+      "path": "docs/02-warehouse-etl-feature-store/bao_cao_etl_va_feature_engineering.md",
+      "line": 430,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/features/time_series_features.py#L142-L152"
+    },
+    {
+      "path": "docs/02-warehouse-etl-feature-store/bao_cao_etl_va_feature_engineering.md",
+      "line": 465,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/features/time_series_features.py#L172-L221"
+    },
+    {
+      "path": "docs/02-warehouse-etl-feature-store/bao_cao_xay_dung_power_bi_dashboard.md",
+      "line": 358,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/powerbi/theme_pastel.json"
+    },
+    {
+      "path": "docs/02-warehouse-etl-feature-store/bao_cao_xay_dung_power_bi_dashboard.md",
+      "line": 417,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/powerbi/export_powerbi_dataset.py"
+    },
+    {
+      "path": "docs/02-warehouse-etl-feature-store/bao_cao_xay_dung_power_bi_dashboard.md",
+      "line": 423,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/powerbi/views_for_powerbi.sql"
+    },
+    {
+      "path": "docs/02-warehouse-etl-feature-store/bao_cao_xay_dung_power_bi_dashboard.md",
+      "line": 432,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/tests/test_load_test.py"
+    },
+    {
+      "path": "docs/04-pipeline-updates/lan-01-khac-phuc-loi-va-toi-uu-luong.md",
+      "line": 47,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/warehouse/etl/load.py"
+    },
+    {
+      "path": "docs/04-pipeline-updates/lan-01-khac-phuc-loi-va-toi-uu-luong.md",
+      "line": 85,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/scripts/seed_dim_tables.py"
+    },
+    {
+      "path": "docs/04-pipeline-updates/lan-01-khac-phuc-loi-va-toi-uu-luong.md",
+      "line": 102,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/warehouse/etl/data_validation.py"
+    },
+    {
+      "path": "docs/04-pipeline-updates/lan-01-khac-phuc-loi-va-toi-uu-luong.md",
+      "line": 123,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/scripts/run_heavy_pipeline_benchmark.py"
+    },
+    {
+      "path": "docs/04-pipeline-updates/lan-01-khac-phuc-loi-va-toi-uu-luong.md",
+      "line": 128,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/features/time_series_features.py"
+    },
+    {
+      "path": "docs/04-pipeline-updates/lan-01-khac-phuc-loi-va-toi-uu-luong.md",
+      "line": 129,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/ml/features/abc_xyz.py"
+    },
+    {
+      "path": "docs/06-weekly-progress/tuan-08.md",
+      "line": 18,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/docker-compose.yml"
+    },
+    {
+      "path": "docs/06-weekly-progress/tuan-08.md",
+      "line": 25,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/monitoring/grafana/provisioning/dashboards/ecommerce_mlops_dashboard.json"
+    },
+    {
+      "path": "docs/06-weekly-progress/tuan-08.md",
+      "line": 29,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/docker-compose.yml"
+    },
+    {
+      "path": "docs/06-weekly-progress/tuan-08.md",
+      "line": 50,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/data/model_manifest.json"
+    },
+    {
+      "path": "docs/06-weekly-progress/tuan-09.md",
+      "line": 45,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/tests/load_testing/locustfile.py"
+    },
+    {
+      "path": "docs/06-weekly-progress/tuan-09.md",
+      "line": 50,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/tests/load_testing/run_load_test.py"
+    },
+    {
+      "path": "docs/06-weekly-progress/tuan-09.md",
+      "line": 53,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/data/load_test_results.json"
+    },
+    {
+      "path": "docs/06-weekly-progress/tuan-09.md",
+      "line": 53,
+      "target": "file:///c:/Users/MINH/Downloads/temp-extract/streaming-mlops-ecommerce/data/load_test_summary.md"
+    }
+  ],
+  "markdown_inventory": [
+    {
+      "path": "docs/00-architecture-overview/architecture.md",
+      "lines": 370,
+      "sha256": "ef4bd6d89391ad7c928622534610af3e4058d982b85f439ee738d992bee3df5d"
+    },
+    {
+      "path": "docs/00-architecture-overview/cong_nghe_ly_thuyet.md",
+      "lines": 928,
+      "sha256": "129972e4b25b0dfc2b2596b4419867717dd8a72b1c1a59bd5eb62e4ffe5f90ba"
+    },
+    {
+      "path": "docs/00-architecture-overview/presentation_slides.md",
+      "lines": 183,
+      "sha256": "1aee862c2b61d82aee3c9b3e98885cbdf3361ed1bc42b7b9231c84250e50da5c"
+    },
+    {
+      "path": "docs/01-ingestion-buffering/bao_cao_xay_dung_data_simulator.md",
+      "lines": 349,
+      "sha256": "d02394edd59f9e05760d7e8d8046203882b366726fe25b10057ea8c282eccb69"
+    },
+    {
+      "path": "docs/01-ingestion-buffering/thiet_ke_buoc_dem_hung_du_lieu.md",
+      "lines": 332,
+      "sha256": "cf4a0a574257a94874eb2d986c6e657aaf4fb571e43a2fef918978f3cb91f558"
+    },
+    {
+      "path": "docs/02-warehouse-etl-feature-store/bao_cao_etl_va_feature_engineering.md",
+      "lines": 537,
+      "sha256": "ac52b09f2f564b7104adb83d440d7e6095ca10848530959e92974a914d8e2d7b"
+    },
+    {
+      "path": "docs/02-warehouse-etl-feature-store/bao_cao_xay_dung_power_bi_dashboard.md",
+      "lines": 471,
+      "sha256": "6094528886385e5a3c8443119254ce923c4668aa99cee8974f1d359202e01730"
+    },
+    {
+      "path": "docs/02-warehouse-etl-feature-store/data_dictionary_data_model_specification.md",
+      "lines": 203,
+      "sha256": "2cf50d44f090059ea63582c79fc99a4075f07734ab4fd72d8b6d0e8f33ca2353"
+    },
+    {
+      "path": "docs/03-testing-and-benchmark/bao_cao_kiem_thu_hieu_nang_lan_1.md",
+      "lines": 183,
+      "sha256": "77f52136dbf0336114f60a38e5e980ae8726ee96d26d46f78a9edb3bab89cfcc"
+    },
+    {
+      "path": "docs/03-testing-and-benchmark/bao_cao_tong_hop_hieu_nang_toan_he_thong.md",
+      "lines": 255,
+      "sha256": "2c966563eecfa38236fd27ac654970d149e8e25cd9945daaf00aad82ce72b658"
+    },
+    {
+      "path": "docs/03-testing-and-benchmark/checklist-truoc-van-hanh-production.md",
+      "lines": 202,
+      "sha256": "f22281f283cf95d4289876485b5bc8d5f3c34911256d16e5bfa6d8ceaa08f3a0"
+    },
+    {
+      "path": "docs/03-testing-and-benchmark/data_integrity_DI2026101327a98d.md",
+      "lines": 263,
+      "sha256": "e9552c8966f4363530d0249e38fe2f58fcea8588e2a986ecb011c894c1a9ce4a"
+    },
+    {
+      "path": "docs/03-testing-and-benchmark/data_integrity_DI20261013ba6be6.md",
+      "lines": 934,
+      "sha256": "fb4dca7a56cdb59c78ebf4cd60fd31df9445a506c480bfd878699a6c6cc6673e"
+    },
+    {
+      "path": "docs/03-testing-and-benchmark/data_integrity_DI20261013f7b3a3.md",
+      "lines": 898,
+      "sha256": "8216dfd35bd1ce0d483f6d7e90d83b23a32acd1327d3490d45cabc23c1d317fe"
+    },
+    {
+      "path": "docs/03-testing-and-benchmark/data_integrity_DI2026101400c8fb.md",
+      "lines": 1924,
+      "sha256": "6379cd7daf04629243323646745f21742b24e338388b7be3155ce5fb7cb28062"
+    },
+    {
+      "path": "docs/03-testing-and-benchmark/data_integrity_DI202610209733ad.md",
+      "lines": 1953,
+      "sha256": "2ad62628ce9ee22e3b8953b6664527664f129d13f3a71a0bae86873dc0f39095"
+    },
+    {
+      "path": "docs/03-testing-and-benchmark/data_integrity_DI20261020ab1925.md",
+      "lines": 339,
+      "sha256": "53e996cebfdad8289af4559b5566ef762dd3b9e1985cb63921167e37e895a9cb"
+    },
+    {
+      "path": "docs/03-testing-and-benchmark/demo_web_2026-10-24.md",
+      "lines": 68,
+      "sha256": "06ef1c853b4020554006603f7626f2c51e1734db15f6b8aef358ffc402fb518c"
+    },
+    {
+      "path": "docs/03-testing-and-benchmark/demo_web_six_scenarios_2026-10-24.md",
+      "lines": 101,
+      "sha256": "35ade00358f3b5800341a27cf2f324a1d308c6d2f9656dcde72415d09bb5d72d"
+    },
+    {
+      "path": "docs/03-testing-and-benchmark/e2e_audit_2026-10-12.md",
+      "lines": 116,
+      "sha256": "3ec4cc94f3fb17b292dfebeb160f886757d09501b248ca61f767afa76a3069d7"
+    },
+    {
+      "path": "docs/03-testing-and-benchmark/nifi_live_demo_2026-10-14.md",
+      "lines": 46,
+      "sha256": "ab0282efebfe2c6004c6e6841cb7da098e07a6e389b55e16104e5ad9fbdeaaed"
+    },
+    {
+      "path": "docs/03-testing-and-benchmark/README.md",
+      "lines": 18,
+      "sha256": "a7bc9d825cdc1e37ead36c7634b6db0558cb1434749772e5002bd93422f3ce72"
+    },
+    {
+      "path": "docs/03-testing-and-benchmark/runtime_e2e_report_2026-10-13.md",
+      "lines": 103,
+      "sha256": "9b9c801b098afeb5e97cb9cff0dc3a01ca48351878156a0d94e42f9036e5af03"
+    },
+    {
+      "path": "docs/03-testing-and-benchmark/test_report_2026-10-09.md",
+      "lines": 98,
+      "sha256": "502acf6f88bd66e9ed71a123dc5e870bf10f7818ff8628ba281c550d3a65dbc0"
+    },
+    {
+      "path": "docs/03-testing-and-benchmark/test_report_2026-10-10.md",
+      "lines": 66,
+      "sha256": "25469b243f73f92efcdb6dc14a8f4a442b0267220615cfb8e5d6d5955ad6cad8"
+    },
+    {
+      "path": "docs/04-pipeline-updates/bao-cao-chinh-sua-he-thong-2026-10-12.md",
+      "lines": 189,
+      "sha256": "4c702460486ed5354bb8f46885d9f9aeea7d51eda85de177de8ab0766821d24f"
+    },
+    {
+      "path": "docs/04-pipeline-updates/bao-cao-tong-hop-fix-loi-va-demo-luong-2026-10-14.md",
+      "lines": 346,
+      "sha256": "f9452887e5db2a2cd7b92dfb19efb29efef3ea935a2e3ce5678c651618662f66"
+    },
+    {
+      "path": "docs/04-pipeline-updates/lan-01-khac-phuc-loi-va-toi-uu-luong.md",
+      "lines": 206,
+      "sha256": "8911fcdf5d693116c37de0cf21a6c1cdfc3aeb51696e935459c489f329c2c51f"
+    },
+    {
+      "path": "docs/04-pipeline-updates/lan-02-sua-loi-va-toi-uu-he-thong.md",
+      "lines": 283,
+      "sha256": "ef43c866773dbbd5c8f6f567793e527e333c641dfe9188a7e316febe8bba512f"
+    },
+    {
+      "path": "docs/04-pipeline-updates/lan-03-danh-gia-du-bao-de-quy.md",
+      "lines": 55,
+      "sha256": "7d5a21693f57a8bf031785630c4e5d49f3440110631f72c41ffc90391e0a34ea"
+    },
+    {
+      "path": "docs/04-pipeline-updates/lan-03-e2e-remediation-2026-10-09.md",
+      "lines": 62,
+      "sha256": "c83f6530e0474a159adc1449d7a777968f2817bc628e0a1d2224fe613e4c2c20"
+    },
+    {
+      "path": "docs/04-pipeline-updates/lan-04-training-data-readiness-2026-10-10.md",
+      "lines": 61,
+      "sha256": "9a0799c291a0a45055219994fcf3e58cc4b67d2526ef8d3c03751148826e17de"
+    },
+    {
+      "path": "docs/04-pipeline-updates/lan-05-pipeline-integrity-2026-10-12.md",
+      "lines": 95,
+      "sha256": "7fee8efa7f60b74bf1d06a87e4c1d9c2bd6508a6bbc583e08ec7c8c40cfad2a8"
+    },
+    {
+      "path": "docs/04-pipeline-updates/lan-06-order-line-quarantine-2026-10-14.md",
+      "lines": 62,
+      "sha256": "50f9ae34cb5548aae013873381f141b0d16ef81132ed0e1232b3e67006d8fdd9"
+    },
+    {
+      "path": "docs/04-pipeline-updates/lan-07-model-startup-recovery-2026-10-20.md",
+      "lines": 73,
+      "sha256": "992624ff3112331fb6160254181b22b4a4061352f50f076e5928327c68a7a2a1"
+    },
+    {
+      "path": "docs/04-pipeline-updates/lan-08-powerbi-orders-aov-2026-10-20.md",
+      "lines": 73,
+      "sha256": "a22736ba9ace8d4151dd22836730fd089f957711fec7cf242928bdc397fa54cd"
+    },
+    {
+      "path": "docs/04-pipeline-updates/lan-09-on-dinh-end-to-end-2026-10-20.md",
+      "lines": 73,
+      "sha256": "6c317359d429f297a104ddf3bebd98ffb146342781aaf50f53656b5c21a5d558"
+    },
+    {
+      "path": "docs/04-pipeline-updates/README.md",
+      "lines": 38,
+      "sha256": "a9cea733d44d0022293c9f85031ff5531472b91d26db684233fe600f23e7f3cb"
+    },
+    {
+      "path": "docs/05-how-to-run/demo-web.md",
+      "lines": 136,
+      "sha256": "0eb574f13fd9e8293a825761ba0c28643eab309bf169f9ae44c70bc4479b07cd"
+    },
+    {
+      "path": "docs/05-how-to-run/how-to-run-week10.md",
+      "lines": 171,
+      "sha256": "f78f0bac7f540b32b4595f213779be2fa48b36b6de1e483f87f3d72be8eea848"
+    },
+    {
+      "path": "docs/05-how-to-run/how-to-run-week2.md",
+      "lines": 114,
+      "sha256": "b34eecc2a43fdd931d009b2c5980cbac6d43b485aebf00e3a5b5d38bf6a89426"
+    },
+    {
+      "path": "docs/05-how-to-run/how-to-run-week3.md",
+      "lines": 191,
+      "sha256": "6dac617a33aed34cf2d8c832a448ba4875f2b3ee740dae8660a07b7947a9d847"
+    },
+    {
+      "path": "docs/05-how-to-run/how-to-run-week4.md",
+      "lines": 112,
+      "sha256": "d126b028895f499fff12f4f2ab82e7808a3d2b77d1f689bfb8a268b2e419de61"
+    },
+    {
+      "path": "docs/05-how-to-run/how-to-run-week5.md",
+      "lines": 91,
+      "sha256": "06dfe4ffa9d8e486cbf40cd8f8bba07703b591810533e4c29850322da3340cb9"
+    },
+    {
+      "path": "docs/05-how-to-run/how-to-run-week6.md",
+      "lines": 110,
+      "sha256": "6af038b3b590662471d7861f046a9ca7962ab76564b070dff53bbb440c19ef44"
+    },
+    {
+      "path": "docs/05-how-to-run/how-to-run-week7.md",
+      "lines": 171,
+      "sha256": "6aef7b6180c7cb567e70d76288e3b261328ce0acf6ca4bd3a6fb4e5b4f835631"
+    },
+    {
+      "path": "docs/05-how-to-run/how-to-run-week8.md",
+      "lines": 106,
+      "sha256": "20c1162b53bdefb49364a66e8b04fbff6727b15caebe94b61983d460a8d548a7"
+    },
+    {
+      "path": "docs/05-how-to-run/how-to-run-week9.md",
+      "lines": 93,
+      "sha256": "52a80a568ffaaf1cbd61337fee17cdd1f290b7c9c101783e6f856ff83d9d7958"
+    },
+    {
+      "path": "docs/05-how-to-run/kich-ban-bao-ve-demo.md",
+      "lines": 122,
+      "sha256": "716770f68c51e27519513317bd3622696fe70894aadd8d83a0944d5156e7ee4d"
+    },
+    {
+      "path": "docs/05-how-to-run/live_demo_script.md",
+      "lines": 132,
+      "sha256": "dc5e0040c958622cbc21dc68588e2569d289b19c82b04b22dc343e6061780065"
+    },
+    {
+      "path": "docs/06-weekly-progress/tuan-01.md",
+      "lines": 22,
+      "sha256": "e29988f5fbc7eb4b08ecb21cf6d4e7fb9390de7d0de7fc1f4e4c11081c8b5ecb"
+    },
+    {
+      "path": "docs/06-weekly-progress/tuan-02.md",
+      "lines": 35,
+      "sha256": "ae7c5562027fe3b764548d59205719e2d62c9b4236a0226803fdc69eb67ed335"
+    },
+    {
+      "path": "docs/06-weekly-progress/tuan-03.md",
+      "lines": 104,
+      "sha256": "1ae72204023e818287f7b775896a1497d93c7e1232627ef63673939fbcdf6f6d"
+    },
+    {
+      "path": "docs/06-weekly-progress/tuan-04.md",
+      "lines": 85,
+      "sha256": "a9f50d037163e9b08cd6e5792873f77fc51c73282da64a6b2f74cc0ba44a283e"
+    },
+    {
+      "path": "docs/06-weekly-progress/tuan-05.md",
+      "lines": 94,
+      "sha256": "f12fa9d5527c229a93c580060421af1feb882e450c121e2f783ce518f179a299"
+    },
+    {
+      "path": "docs/06-weekly-progress/tuan-06.md",
+      "lines": 100,
+      "sha256": "bd7d83c4d4a0c2d67b7d11a097f9d58f81c6592e13c02476c561253ad595c452"
+    },
+    {
+      "path": "docs/06-weekly-progress/tuan-07.md",
+      "lines": 104,
+      "sha256": "6b61b900f66e450f1fd5f161e08e4d2332ec22b77953933327927b337531afb2"
+    },
+    {
+      "path": "docs/06-weekly-progress/tuan-08.md",
+      "lines": 99,
+      "sha256": "7b985ca2c4d454b7d71899827882caa3f8ef7600f644cb8994a5fe85e52f36cb"
+    },
+    {
+      "path": "docs/06-weekly-progress/tuan-09.md",
+      "lines": 103,
+      "sha256": "f65b26c326ce097226a16af0a5bb128ddaff416ed85e14764fb7b92b4e7be62f"
+    },
+    {
+      "path": "docs/06-weekly-progress/tuan-10.md",
+      "lines": 91,
+      "sha256": "f999eacfbb1d2f4dc1ffedd3064faa7af60bdb658fb4b7f767dbaef6c2d09ae9"
+    },
+    {
+      "path": "docs/07-bao-cao-do-an/01-bai-toan-va-du-lieu.md",
+      "lines": 151,
+      "sha256": "a4b1e4c6bbc877f32fc8e771b7d479f38231caf7cbf47a0c9856acdf4efb3e76"
+    },
+    {
+      "path": "docs/07-bao-cao-do-an/02-ingestion-kafka-nifi-minio.md",
+      "lines": 200,
+      "sha256": "5fd5676ddd7e2941f391cb0f991ca40b22ec5fba0d66cecab5530842d0d47e32"
+    },
+    {
+      "path": "docs/07-bao-cao-do-an/03-etl-va-data-warehouse.md",
+      "lines": 204,
+      "sha256": "882e26586505c431974cc4eba079af46cb92697038d19229e0fc50355151ae20"
+    },
+    {
+      "path": "docs/07-bao-cao-do-an/04-feature-engineering-va-machine-learning.md",
+      "lines": 198,
+      "sha256": "eaacaa6cd279c72bc13adb205b8850c7040e0c2ccaa8b77b147c3cfd193a54d0"
+    },
+    {
+      "path": "docs/07-bao-cao-do-an/05-serving-inventory-va-monitoring.md",
+      "lines": 193,
+      "sha256": "a96dd8e23abdc0df8a2904d944ae57c49215c05e6a4a0a9581319e05ee96124a"
+    },
+    {
+      "path": "docs/07-bao-cao-do-an/06-power-bi-va-tong-hop-thuc-nghiem.md",
+      "lines": 134,
+      "sha256": "9c169f359970bcdc4956616395f8b3d41beae97da5ebc64c266f63636d2336c7"
+    },
+    {
+      "path": "docs/07-bao-cao-do-an/bao-cao-tong-hop-do-an.md",
+      "lines": 182,
+      "sha256": "6dca1b52f1fbd0c217c090e42918f141d556a2ef55db566718b96998b9ab1b5b"
+    },
+    {
+      "path": "docs/07-bao-cao-do-an/README.md",
+      "lines": 46,
+      "sha256": "8669a45f83a26079b19e4e511838e15ea899e30e26083a50a58d4a5bcaa5adb2"
+    },
+    {
+      "path": "docs/data-dictionary/DATA_DICTIONARY_VI.md",
+      "lines": 328,
+      "sha256": "dc5667d38ca2c98463ae95a800e87cb15b12e9ea862ca601e5c127914443f0bb"
+    },
+    {
+      "path": "docs/README.md",
+      "lines": 104,
+      "sha256": "780b49984f63d8f9cfa92b2379a7af8a55e74bf1fd42a44930fd8d5525d7657f"
+    },
+    {
+      "path": "docs/tai-lieu-du-an-5-phan.md",
+      "lines": 413,
+      "sha256": "cdfcb7c64e8092725d48f9779cf3749e4bd23e9cdfa8819c70e4dcdbe7c47479"
+    },
+    {
+      "path": "ingestion/nifi/README.md",
+      "lines": 112,
+      "sha256": "8a4dd52108efbcc6c853b2f0bd0a0754243ce8903e6e319e0ffd03b75bc54517"
+    },
+    {
+      "path": "ml/README.md",
+      "lines": 28,
+      "sha256": "e0f2682f53099124a980084fcff465c256b458ef391dfe630ffa27cdfb36d1c5"
+    },
+    {
+      "path": "monitoring/README.md",
+      "lines": 42,
+      "sha256": "b5450dab756181518ce52cea345b7bf99be71a48353a3b7a37475ab0b3b1da9c"
+    },
+    {
+      "path": "notebooks/README.md",
+      "lines": 6,
+      "sha256": "1af0bd7eedc750a9bdb3fb067858bf995c0a4181b61ec44b7e704cbac282cf49"
+    },
+    {
+      "path": "powerbi/dax_measures.md",
+      "lines": 239,
+      "sha256": "aaa9bca844dc5c9212d83932884041bc7eb3a36c9a0abbce012f3b85a20a8a4e"
+    },
+    {
+      "path": "powerbi/README.md",
+      "lines": 82,
+      "sha256": "688b2c03e1f2b1c7ccab534b79f8a34feb168b25cb0b5788c7c784b6437a5756"
+    },
+    {
+      "path": "PROJECT_CONTEXT.md",
+      "lines": 510,
+      "sha256": "7858f55ccb80d75383a7ed8688ded0f4e0ef17409bd6b60852fd3db224d25eb6"
+    },
+    {
+      "path": "README.md",
+      "lines": 160,
+      "sha256": "cf55da6caf231928e25360d51d9e1106d92c098d504637037255b8c100524d64"
+    },
+    {
+      "path": "scripts/README.md",
+      "lines": 4,
+      "sha256": "c163157c7fe6fefa328a3674b41c7489c90648324cb97638a5d3f541d0af6eb7"
+    },
+    {
+      "path": "tests/README.md",
+      "lines": 12,
+      "sha256": "6c345bdc8a64fa5e6e5fccebce599f2aa532e5010b7be36bfc625e21c42c943a"
+    },
+    {
+      "path": "warehouse/etl/README.md",
+      "lines": 21,
+      "sha256": "879ebb1a51febe6b9916975fd149169b1b4e2bb8d4e974354781db77d7153fe1"
+    }
+  ],
+  "simulator_classes": [
+    {
+      "name": "InventoryItem",
+      "line": 240,
+      "declared_fields": 19
+    },
+    {
+      "name": "InventoryMovementEvent",
+      "line": 264,
+      "declared_fields": 9
+    },
+    {
+      "name": "ShopeeOrderEvent",
+      "line": 277,
+      "declared_fields": 61
+    },
+    {
+      "name": "TikTokOrderEvent",
+      "line": 364,
+      "declared_fields": 70
+    }
+  ],
+  "ddl_tables": [
+    "Dim_Products",
+    "Dim_Shops",
+    "Dim_Geography",
+    "Dim_Dates",
+    "Dim_Payment",
+    "Dim_Carriers",
+    "Fact_Orders",
+    "Fact_Inventory_Daily",
+    "Fact_Forecast_Predictions",
+    "Fact_Historical_Order_Lines",
+    "Warehouse_Daily_Coverage"
+  ],
+  "saved_model_manifest": {
+    "model_registry_name": "ECommerceDemandForecastModel",
+    "version": "2",
+    "stage": "Staging",
+    "champion_algorithm": "moving_average",
+    "metrics": {
+      "cv_wape": 126.08,
+      "cv_mae": 0.1599,
+      "cv_rmse": 0.5253
+    },
+    "run_id": "9c01dafd9238464cbcd1cef677324bcc",
+    "model_file": "moving_average_model.joblib",
+    "target_variable": "daily_demand_t_plus_1",
+    "registered_at": "2026-10-10T15:44:33.622483+00:00",
+    "input_feature_count": 43,
+    "lead_time_days": 3,
+    "service_level": 0.95,
+    "status": "READY_FOR_SERVING",
+    "data_origin": "public_anonymized_historical_csv"
+  },
+  "powerbi_report": {
+    "pages": [
+      "Quản trị Tồn kho và cảnh báo"
+    ],
+    "visual_types": [
+      "shape",
+      "textbox",
+      "cardVisual"
+    ],
+    "visuals_with_query": 1,
+    "method": "Stored report definitions; no Desktop refresh/render or DataModel execution."
+  },
+  "csv_headers": {
+    "powerbi/data/Dim_Dates.csv": [
+      "date_key",
+      "full_date",
+      "day_of_week",
+      "day_name",
+      "month",
+      "month_name",
+      "quarter",
+      "year",
+      "is_weekend",
+      "is_mega_sale"
+    ],
+    "powerbi/data/Dim_Geography.csv": [
+      "geo_key",
+      "state",
+      "region",
+      "total_revenue",
+      "total_units",
+      "total_orders"
+    ],
+    "powerbi/data/Dim_Products.csv": [
+      "product_key",
+      "sku",
+      "product_name",
+      "category",
+      "base_demand",
+      "sigma",
+      "matrix_segment"
+    ],
+    "powerbi/data/Fact_Orders_Summary.csv": [
+      "date_key",
+      "order_date",
+      "platform",
+      "total_orders",
+      "units_sold",
+      "gross_revenue",
+      "discounts",
+      "net_revenue",
+      "aov"
+    ],
+    "powerbi/data/Forecast_vs_Actual.csv": [
+      "date_key",
+      "product_key",
+      "date",
+      "sku",
+      "product_name",
+      "category",
+      "matrix_segment",
+      "actual_demand",
+      "forecast_demand",
+      "lower_bound",
+      "upper_bound",
+      "absolute_error",
+      "squared_error",
+      "model_name",
+      "model_version",
+      "model_source",
+      "forecast_generated_at",
+      "data_origin",
+      "source_datasets",
+      "actual_complete"
+    ],
+    "powerbi/data/Historical_Demand_Daily.csv": [
+      "date_key",
+      "order_date",
+      "sku",
+      "product_name",
+      "platform",
+      "units_sold",
+      "data_origin",
+      "source_dataset"
+    ],
+    "powerbi/data/Inventory_Health_Alerts.csv": [
+      "date_key",
+      "product_key",
+      "sku",
+      "product_name",
+      "category",
+      "matrix_segment",
+      "current_stock",
+      "avg_daily_demand",
+      "safety_stock",
+      "reorder_point",
+      "needs_reorder",
+      "alert_level",
+      "days_until_stockout",
+      "recommended_reorder_qty"
+    ]
+  },
+  "junit_evidence_not_rerun": [
+    {
+      "path": "docs/07-bao-cao-do-an/evidence/pytest_full_2026-10-19.xml",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "106",
+          "time": "7.300",
+          "timestamp": "2026-10-19T21:49:16.052969+07:00",
+          "hostname": "LAPTOP-SIO6S5EC"
+        }
+      ]
+    },
+    {
+      "path": "docs/07-bao-cao-do-an/evidence/pytest_powerbi_order_fix_2026-10-20.xml",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "114",
+          "time": "5.215",
+          "timestamp": "2026-10-20T09:10:26.615497+07:00",
+          "hostname": "LAPTOP-SIO6S5EC"
+        }
+      ]
+    },
+    {
+      "path": "docs/07-bao-cao-do-an/evidence/pytest_recovery_2026-10-20.xml",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "110",
+          "time": "5.507",
+          "timestamp": "2026-10-20T09:04:28.646844+07:00",
+          "hostname": "LAPTOP-SIO6S5EC"
+        }
+      ]
+    },
+    {
+      "path": "docs/07-bao-cao-do-an/evidence/pytest_runtime_fixes_2026-10-20.xml",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "145",
+          "time": "4.003",
+          "timestamp": "2026-10-20T13:59:54.936604+07:00",
+          "hostname": "LAPTOP-SIO6S5EC"
+        }
+      ]
+    }
+  ],
+  "notebooks": [
+    {
+      "path": "notebooks/abc_xyz_classification.ipynb",
+      "code_cells": 7,
+      "saved_executed_cells": 0
+    },
+    {
+      "path": "notebooks/eda.ipynb",
+      "code_cells": 6,
+      "saved_executed_cells": 0
+    }
+  ],
+  "workbooks": [
+    {
+      "path": "docs/02-warehouse-etl-feature-store/data_management_specification.xlsx",
+      "sheets": [
+        {
+          "name": "TIMELINE DATA",
+          "nonempty_cells": 81,
+          "selected_text_cells": [
+            {
+              "cell": "A6",
+              "value": "Chuẩn hóa Thước đo Sai số Dự báo WAPE thay thế MAPE"
+            },
+            {
+              "cell": "E6",
+              "value": "WAPE = DIVIDE(SUM(Forecast_vs_Actual[absolute_error]), SUM(Forecast_vs_Actual[actual_demand]), 0); Accuracy = MAX(0, 1 - [WAPE %])"
+            },
+            {
+              "cell": "I6",
+              "value": "WAPE chia tổng lỗi cho tổng sản lượng thực tế, là chuẩn công nghiệp bán lẻ quốc tế."
+            },
+            {
+              "cell": "J6",
+              "value": "Đạt WAPE ~ 19.8% trên tập kiểm thử đối chứng thực tế."
+            },
+            {
+              "cell": "H7",
+              "value": "Cố định tĩnh gây đứt hàng với SKU bán chạy và ứ đọng vốn với SKU bán chậm. Động hóa theo độ lệch chuẩn nhu cầu sigma và Lead Time 3 ngày."
+            },
+            {
+              "cell": "I7",
+              "value": "Giảm tỷ lệ đứt hàng (Stockout Rate) thực nghiệm từ 14.2% xuống dưới 1.5%."
+            },
+            {
+              "cell": "E8",
+              "value": "Fact_Orders_Summary[order_date] -> Dim_Dates[Date] (N:1) và Forecast_vs_Actual[sku] -> Dim_Products[sku] (N:1)"
+            }
+          ]
+        },
+        {
+          "name": "DATA DICTIONARY",
+          "nonempty_cells": 265,
+          "selected_text_cells": [
+            {
+              "cell": "H4",
+              "value": "Smart Surrogate Key (PK) YYYYMMDD"
+            },
+            {
+              "cell": "H32",
+              "value": "Nối Dim_Dates[Date]"
+            },
+            {
+              "cell": "H41",
+              "value": "Nối Dim_Dates[Date]"
+            },
+            {
+              "cell": "E59",
+              "value": "days_until_stockout"
+            }
+          ]
+        },
+        {
+          "name": "MIND MAP",
+          "nonempty_cells": 39,
+          "selected_text_cells": [
+            {
+              "cell": "C12",
+              "value": "Thước đo Hiệu năng Chuẩn WAPE % & Accuracy %"
+            },
+            {
+              "cell": "C18",
+              "value": "Dự báo Số Ngày Cạn Kho (Days Until Stockout)"
+            }
+          ]
+        },
+        {
+          "name": "DATA MODEL",
+          "nonempty_cells": 81,
+          "selected_text_cells": []
+        },
+        {
+          "name": "REPORTS",
+          "nonempty_cells": 25,
+          "selected_text_cells": [
+            {
+              "cell": "E5",
+              "value": "1/ Line & Clustered Column Chart: So sánh sản lượng bán thực tế (Actual Demand) và dự báo mô hình (Forecast Demand), kèm dải bóng mờ khoảng tin cậy 95%.\n2/ Gauge Chart: Chỉ số độ chính xác toàn chuỗi Forecast Accuracy % (Mục tiêu >= 80%, tương ứng WAPE <= 20%).\n3/ Bar Chart: Độ lệch hệ thống Forecast Bias % nhận diện xu hướng dự báo thừa hay thiếu.\n4/ Matrix Table: Phân rã sai số chi tiết WAPE% theo nhóm sản phẩm."
+            },
+            {
+              "cell": "F5",
+              "value": "- Slicers: Lọc theo Ngành hàng (Category) và Phân khúc ma trận.\n- Drill-through: Nhấp chuột phải vào một SKU để xem chi tiết chuỗi thời gian của riêng sản phẩm đó.\n- Conditional Formatting: Bôi đỏ cảnh báo khi WAPE của nhóm hàng vượt ngưỡng 30%."
+            },
+            {
+              "cell": "D6",
+              "value": "Kiểm soát rủi ro đứt hàng, giải phóng hàng tồn đọng và tự động hóa đề xuất đơn nhập hàng bổ sung cho nhà cung cấp."
+            },
+            {
+              "cell": "F6",
+              "value": "- Slicers: Lọc theo Cấp độ cảnh báo (alert_level: CRITICAL, WARNING, NORMAL).\n- Bookmarks: Chuyển đổi nhanh giữa chế độ xem Cảnh báo Khẩn cấp và Toàn bộ Danh mục.\n- Alert Highlighting: Bôi đỏ các SKU có days_until_stockout < 2 ngày để ưu tiên xử lý."
+            }
+          ]
+        },
+        {
+          "name": "MEASURES",
+          "nonempty_cells": 121,
+          "selected_text_cells": [
+            {
+              "cell": "C15",
+              "value": "WAPE %"
+            },
+            {
+              "cell": "F15",
+              "value": "WAPE % = DIVIDE([Forecast Absolute Error], [Actual Demand], 0)"
+            },
+            {
+              "cell": "E16",
+              "value": "MAX(0, 1 - WAPE)"
+            },
+            {
+              "cell": "F16",
+              "value": "Forecast Accuracy % = MAX(0, 1 - [WAPE %])"
+            },
+            {
+              "cell": "D19",
+              "value": "Đếm số mặt hàng có nguy cơ đứt hàng khẩn cấp (tồn kho <= SS)"
+            }
+          ]
+        },
+        {
+          "name": "TIMELINE",
+          "nonempty_cells": 129,
+          "selected_text_cells": []
+        }
+      ],
+      "method": "Read stored OOXML text only; no recalculation or visual QA."
+    },
+    {
+      "path": "outputs/data-dictionary-20261020/Data_Dictionary_Ecommerce.xlsx",
+      "sheets": [
+        {
+          "name": "DATA DICTIONARY",
+          "nonempty_cells": 282,
+          "selected_text_cells": [
+            {
+              "cell": "D4",
+              "value": "Dòng hàng của đơn hàng tại mỗi lần cập nhật. Khóa đề xuất: platform + shop_id + order_id + source_line_id. Không cộng lặp tổng tiền cấp đơn."
+            },
+            {
+              "cell": "E7",
+              "value": "source_line_id"
+            }
+          ]
+        }
+      ],
+      "method": "Read stored OOXML text only; no recalculation or visual QA."
+    }
+  ]
+}
