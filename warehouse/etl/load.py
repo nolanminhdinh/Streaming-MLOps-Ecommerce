@@ -373,12 +373,14 @@ def load_fact_orders(
 # 3. MAIN LOAD
 # ─────────────────────────────────────────────────────────────
 
-def load(df: pd.DataFrame, batch_size: int = 5000) -> dict:
+def load(df: pd.DataFrame, batch_size: int = 5000, engine=None) -> dict:
     """
     Pipeline load chính: upsert dimensions → load fact table.
 
     Args:
         df: DataFrame đã transform (output từ transform.py).
+        engine: Optional engine-compatible transaction context; all dimension/fact
+            writes use this context, allowing an enclosing atomic replacement.
 
     Returns:
         dict chứa thống kê load.
@@ -387,7 +389,7 @@ def load(df: pd.DataFrame, batch_size: int = 5000) -> dict:
         logger.warning("DataFrame rỗng, bỏ qua load")
         return {"status": "skipped", "reason": "empty_dataframe"}
 
-    engine = get_engine()
+    engine = get_engine() if engine is None else engine
     logger.info("Kết nối PostgreSQL: %s", DATABASE_URL.replace(PG_PASS, "***"))
 
     # Upsert dimensions

@@ -5,8 +5,8 @@ Tạo tập dữ liệu lịch sử đơn hàng mô phỏng (Historical Dataset,
 để phục vụ phân tích EDA, phân loại ma trận ABC/XYZ và huấn luyện mô hình Machine Learning.
 
 Tích hợp đầy đủ các đặc tính thực tế:
-  - Phân bổ theo 2 sàn TMĐT Shopee (55%) và TikTok Shop (45%).
-  - Mùa vụ theo giờ (Flash Sale 12h, 20h, 21h), theo thứ trong tuần, và các ngày đôi Mega-sale (8/8, 9/9).
+  - Nhu cầu Gamma–Poisson theo SKU, mùa vụ, xu hướng và cú sốc nhiều ngày.
+  - Shopee/TikTok có tỷ trọng theo nhóm hàng; sale có hiệu ứng trước và sau.
   - Tỷ lệ hủy đơn, voucher, phí sàn và vòng đời đơn hàng.
   - Lưu file ra data/historical_orders.parquet và hỗ trợ nạp thẳng vào PostgreSQL nếu cần.
 
@@ -19,17 +19,16 @@ import argparse
 import logging
 import os
 import sys
-from dataclasses import asdict
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, time, timedelta, timezone
 
 import pandas as pd
 
 # Cho phép import từ thư mục gốc
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from data_simulator.data_simulator import ECommerceSimulator
+from data_simulator.history import iter_historical_days, local_time
 from warehouse.etl.transform import unify_schema, clean_data
-from warehouse.etl.load import get_engine, load
+from warehouse.etl.load import load
 
 logging.basicConfig(
     level=logging.INFO,
@@ -43,71 +42,20 @@ def generate_historical_orders(
     days: int = 60,
     base_orders_per_day: int = 200,
     end_date: datetime = None,
+    start_date: datetime = None,
+    seed: int = 42,
+    order_prefix: str = "",
 ) -> pd.DataFrame:
-    """Sinh tập dữ liệu đơn hàng lịch sử qua nhiều ngày."""
-    if end_date is None:
-        end_date = datetime.now(timezone.utc)
-
-    start_date = end_date - timedelta(days=days)
-    simulator = ECommerceSimulator(
-        shopee_ratio=0.55,
-        cancel_rate=0.12,
-        start_date=start_date,
-    )
-
-    logger.info("═" * 60)
-    logger.info("  BẮT ĐẦU SINH DỮ LIỆU LỊCH SỬ %d NGÀY", days)
-    logger.info("  Khoảng thời gian: %s ➔ %s", start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d"))
-    logger.info("  Số đơn cơ bản/ngày: %d", base_orders_per_day)
-    logger.info("═" * 60)
-
-    raw_events = []
-    current_dt = start_date
-
-    while current_dt <= end_date:
-        # Số đơn thực tế của ngày (áp dụng hệ số mùa vụ ngày trong tuần và ngày đôi)
-        dow_factor = {5: 1.3, 6: 1.2}.get(current_dt.weekday(), 1.0)
-        is_mega = (current_dt.day == current_dt.month)
-        mega_factor = 3.5 if is_mega else 1.0
-
-        daily_orders = int(round(base_orders_per_day * dow_factor * mega_factor))
-
-        for _ in range(daily_orders):
-            # Phân bố giờ trong ngày theo thói quen mua sắm (đỉnh lúc 12h và 20h)
-            hour_weights = [
-                0.01, 0.01, 0.005, 0.005, 0.005, 0.01,  # 0h - 5h
-                0.02, 0.04, 0.06, 0.07, 0.08, 0.09,     # 6h - 11h
-                0.12, 0.06, 0.05, 0.05, 0.05, 0.05,     # 12h - 17h (12h Flash Sale)
-                0.06, 0.07, 0.12, 0.11, 0.06, 0.03,     # 18h - 23h (20h-21h Flash Sale)
-            ]
-            import random
-            selected_hour = random.choices(range(24), weights=hour_weights)[0]
-            selected_minute = random.randint(0, 59)
-            selected_second = random.randint(0, 59)
-
-            event_time = current_dt.replace(
-                hour=selected_hour,
-                minute=selected_minute,
-                second=selected_second,
-            )
-
-            # Chọn sàn
-            if random.random() < simulator.shopee_ratio:
-                ev = simulator._generate_shopee_event(event_time)
-                d = asdict(ev)
-                d["_platform"] = "shopee"
-            else:
-                ev = simulator._generate_tiktok_event(event_time)
-                d = asdict(ev)
-                d["_platform"] = "tiktok"
-
-            raw_events.append(d)
-
-        current_dt += timedelta(days=1)
-
-    raw_df = pd.DataFrame(raw_events)
-    logger.info("Đã sinh thành công %d đơn hàng lịch sử.", len(raw_df))
-    return raw_df
+    """Sample SKU demand, then generate events in timestamp order (business time)."""
+    if days < 0:
+        raise ValueError("days must be nonnegative")
+    end = local_time(end_date or datetime.now(timezone.utc))
+    start = local_time(start_date) if start_date is not None else (end - timedelta(days=days)).replace(hour=0, minute=0, second=0, microsecond=0)
+    events = []
+    for day, rows, _, _ in iter_historical_days(start, end, base_orders_per_day, seed, order_prefix):
+        events.extend(rows)
+        logger.info("%s: generated %d orders", day, len(rows))
+    return pd.DataFrame(events)
 
 
 def save_and_load(raw_df: pd.DataFrame, load_db: bool = False):
@@ -129,12 +77,9 @@ def save_and_load(raw_df: pd.DataFrame, load_db: bool = False):
 
     if load_db:
         logger.info("Đang nạp dữ liệu sạch vào PostgreSQL Fact_Orders...")
-        try:
-            res = load(clean_df)
-            count = res.get("rows_loaded", 0)
-            logger.info("✓ Nạp thành công %d Fact_Orders vào PostgreSQL!", count)
-        except Exception as e:
-            logger.error("Không thể nạp vào PostgreSQL: %s", e)
+        res = load(clean_df)
+        count = res.get("rows_loaded", 0)
+        logger.info("✓ Nạp thành công %d Fact_Orders vào PostgreSQL!", count)
 
 
 def main():
@@ -142,11 +87,19 @@ def main():
     parser.add_argument("--days", type=int, default=60, help="Số ngày lịch sử (mặc định 60)")
     parser.add_argument("--orders-per-day", type=int, default=150, help="Số đơn cơ bản/ngày (mặc định 150)")
     parser.add_argument("--load-db", action="store_true", help="Nạp trực tiếp vào PostgreSQL Star Schema")
+    parser.add_argument('--start-date', type=date.fromisoformat, help='Inclusive start, YYYY-MM-DD in business time')
+    parser.add_argument('--end-date', type=date.fromisoformat, help='Inclusive final day, YYYY-MM-DD in business time')
+    parser.add_argument('--seed', type=int, default=42)
+    parser.add_argument('--order-prefix', default='')
     args = parser.parse_args()
 
     raw_df = generate_historical_orders(
         days=args.days,
         base_orders_per_day=args.orders_per_day,
+        start_date=datetime.combine(args.start_date, time.min) if args.start_date else None,
+        end_date=datetime.combine(args.end_date, time.max) if args.end_date else None,
+        seed=args.seed,
+        order_prefix=args.order_prefix,
     )
     save_and_load(raw_df, load_db=args.load_db)
 

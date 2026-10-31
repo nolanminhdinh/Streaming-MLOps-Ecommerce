@@ -787,9 +787,15 @@ class ECommerceSimulator:
                               "Quân", "Sơn", "Tâm", "Uyên", "Vy", "Xuân"])
         return f"{ho} {ten_dem} {ten}"
 
-    def _pick_product(self) -> dict:
+    def _pick_product(self, now: Optional[datetime] = None) -> dict:
         """Chọn SKU theo trọng số phổ biến (Pareto 80/20 sales distribution)."""
-        weights = [p.get("popularity_weight", 1.0) for p in PRODUCT_CATALOG]
+        if __package__:
+            from .demand import expected_multiplier
+        else:
+            from demand import expected_multiplier
+        weights = [p.get("popularity_weight", 1.0) *
+                   (expected_multiplier(p['sku'], now.date()) if now is not None else 1.0)
+                   for p in PRODUCT_CATALOG]
         return random.choices(PRODUCT_CATALOG, weights=weights)[0]
 
     def _pick_address(self) -> dict:
@@ -973,9 +979,9 @@ class ECommerceSimulator:
 
     # ──────────── EVENT GENERATORS ────────────
 
-    def _generate_shopee_event(self, now: datetime) -> ShopeeOrderEvent:
+    def _generate_shopee_event(self, now: datetime, product: Optional[dict] = None) -> ShopeeOrderEvent:
         self._order_counter += 1
-        product = self._pick_product()
+        product = product if product is not None else self._pick_product(now)
         addr = self._pick_address()
         shop_name, shop_id, conn_id = self._pick_shop(Platform.SHOPEE)
 
@@ -1008,7 +1014,7 @@ class ECommerceSimulator:
                 else:
                     self._queue_return(product["sku"], qty, order_sn, now)
 
-        ts = self._generate_timestamps(now, stage, is_cancelled)
+        ts = self._generate_timestamps(now, 4 if status == 'COMPLETED' else stage, is_cancelled)
 
         # Discounted price
         disc_price = round(product["price"] * random.uniform(0.80, 1.0))
@@ -1089,10 +1095,10 @@ class ECommerceSimulator:
             promotion_id=f"PROMO-{now.strftime('%m%d')}" if self._is_flash_sale(now) or self._is_mega_sale(now) else None,
         )
 
-    def _generate_tiktok_event(self, now: datetime) -> TikTokOrderEvent:
+    def _generate_tiktok_event(self, now: datetime, product: Optional[dict] = None) -> TikTokOrderEvent:
         self._order_counter += 1
         self._row_idx += 1
-        product = self._pick_product()
+        product = product if product is not None else self._pick_product(now)
         addr = self._pick_address()
         shop_name, shop_id, conn_id = self._pick_shop(Platform.TIKTOK)
         warehouse_id = self.enterprise["central_warehouse"]["warehouse_id"]
