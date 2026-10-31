@@ -1,5 +1,7 @@
 # THƯ VIỆN TÀI LIỆU KỸ THUẬT & KIẾN TRÚC HỆ THỐNG
 
+> **Cập nhật 31/10/2026:** [Tổng kết sửa simulator: so sánh trước–sau và kết quả chạy](04-pipeline-updates/lan-08-simulator-seasonality-2026-10-31.md) · [Báo cáo thiết kế simulator đã cập nhật](01-ingestion-buffering/bao_cao_xay_dung_data_simulator.md) · [Hướng dẫn chạy lịch sử theo SKU](05-how-to-run/historical-simulator.md).
+
 > **Đợt rà soát 16–19/10/2026:** [Báo cáo tổng hợp đồ án](07-bao-cao-do-an/bao-cao-tong-hop-do-an.md) · [Sáu phần kiểm tra và bằng chứng](07-bao-cao-do-an/README.md). Kết quả kiểm thử, trạng thái runtime và các tồn đọng được ghi theo ngày, không thay thế bằng các tuyên bố nghiệm thu lịch sử.
 
 ## Streaming MLOps E-Commerce Demand Forecasting & Dynamic Inventory Optimization

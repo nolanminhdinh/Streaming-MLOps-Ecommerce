@@ -1,0 +1,430 @@
+{
+  "measured_at": "2026-10-31T23:51:51.922978+07:00",
+  "implementation_commit": "54c39a4acc5afb0c85a4ad94d87a4d03a088e42d",
+  "source": "Local PostgreSQL snapshot and archived simulator Parquet files; aggregates only",
+  "before_cutoff": "2026-10-31T23:10:13.710874+07:00",
+  "after_cutoff": "2026-10-31T23:31:20.659634+07:00",
+  "seed": 20261031,
+  "months": [
+    {
+      "month": "2026-01",
+      "days": 31,
+      "before_orders": 10740,
+      "after_orders": 12932,
+      "before_orders_per_day": 346.45,
+      "after_orders_per_day": 417.16,
+      "before_cancelled": 2468,
+      "after_cancelled": 1804,
+      "after_cancelled_percent": 13.95
+    },
+    {
+      "month": "2026-02",
+      "days": 28,
+      "before_orders": 9750,
+      "after_orders": 7148,
+      "before_orders_per_day": 348.21,
+      "after_orders_per_day": 255.29,
+      "before_cancelled": 2896,
+      "after_cancelled": 1026,
+      "after_cancelled_percent": 14.35
+    },
+    {
+      "month": "2026-03",
+      "days": 31,
+      "before_orders": 10710,
+      "after_orders": 8847,
+      "before_orders_per_day": 345.48,
+      "after_orders_per_day": 285.39,
+      "before_cancelled": 3107,
+      "after_cancelled": 1343,
+      "after_cancelled_percent": 15.18
+    },
+    {
+      "month": "2026-04",
+      "days": 30,
+      "before_orders": 10575,
+      "after_orders": 10269,
+      "before_orders_per_day": 352.5,
+      "after_orders_per_day": 342.3,
+      "before_cancelled": 3157,
+      "after_cancelled": 1416,
+      "after_cancelled_percent": 13.79
+    },
+    {
+      "month": "2026-05",
+      "days": 31,
+      "before_orders": 10800,
+      "after_orders": 13781,
+      "before_orders_per_day": 348.39,
+      "after_orders_per_day": 444.55,
+      "before_cancelled": 3018,
+      "after_cancelled": 2012,
+      "after_cancelled_percent": 14.6
+    },
+    {
+      "month": "2026-06",
+      "days": 30,
+      "before_orders": 10575,
+      "after_orders": 13325,
+      "before_orders_per_day": 352.5,
+      "after_orders_per_day": 444.17,
+      "before_cancelled": 3040,
+      "after_cancelled": 2103,
+      "after_cancelled_percent": 15.78
+    },
+    {
+      "month": "2026-07",
+      "days": 31,
+      "before_orders": 10650,
+      "after_orders": 10326,
+      "before_orders_per_day": 343.55,
+      "after_orders_per_day": 333.1,
+      "before_cancelled": 2908,
+      "after_cancelled": 1391,
+      "after_cancelled_percent": 13.47
+    },
+    {
+      "month": "2026-08",
+      "days": 31,
+      "before_orders": 11025,
+      "after_orders": 14947,
+      "before_orders_per_day": 355.65,
+      "after_orders_per_day": 482.16,
+      "before_cancelled": 3357,
+      "after_cancelled": 2247,
+      "after_cancelled_percent": 15.03
+    },
+    {
+      "month": "2026-09",
+      "days": 30,
+      "before_orders": 10350,
+      "after_orders": 16670,
+      "before_orders_per_day": 345.0,
+      "after_orders_per_day": 555.67,
+      "before_cancelled": 3006,
+      "after_cancelled": 2471,
+      "after_cancelled_percent": 14.82
+    },
+    {
+      "month": "2026-10",
+      "days": 31,
+      "before_orders": 10956,
+      "after_orders": 17178,
+      "before_orders_per_day": 353.42,
+      "after_orders_per_day": 554.13,
+      "before_cancelled": 3253,
+      "after_cancelled": 2737,
+      "after_cancelled_percent": 15.93
+    }
+  ],
+  "sku_months": [
+    {
+      "sku": "QM-USB-01",
+      "month": "2026-01",
+      "before_orders": 191,
+      "after_orders": 38
+    },
+    {
+      "sku": "QM-USB-01",
+      "month": "2026-02",
+      "before_orders": 173,
+      "after_orders": 44
+    },
+    {
+      "sku": "QM-USB-01",
+      "month": "2026-03",
+      "before_orders": 177,
+      "after_orders": 112
+    },
+    {
+      "sku": "QM-USB-01",
+      "month": "2026-04",
+      "before_orders": 188,
+      "after_orders": 307
+    },
+    {
+      "sku": "QM-USB-01",
+      "month": "2026-05",
+      "before_orders": 199,
+      "after_orders": 546
+    },
+    {
+      "sku": "QM-USB-01",
+      "month": "2026-06",
+      "before_orders": 178,
+      "after_orders": 427
+    },
+    {
+      "sku": "QM-USB-01",
+      "month": "2026-07",
+      "before_orders": 161,
+      "after_orders": 281
+    },
+    {
+      "sku": "QM-USB-01",
+      "month": "2026-08",
+      "before_orders": 181,
+      "after_orders": 283
+    },
+    {
+      "sku": "QM-USB-01",
+      "month": "2026-09",
+      "before_orders": 185,
+      "after_orders": 287
+    },
+    {
+      "sku": "QM-USB-01",
+      "month": "2026-10",
+      "before_orders": 203,
+      "after_orders": 78
+    },
+    {
+      "sku": "KCN-ANESSA",
+      "month": "2026-01",
+      "before_orders": 860,
+      "after_orders": 463
+    },
+    {
+      "sku": "KCN-ANESSA",
+      "month": "2026-02",
+      "before_orders": 781,
+      "after_orders": 548
+    },
+    {
+      "sku": "KCN-ANESSA",
+      "month": "2026-03",
+      "before_orders": 817,
+      "after_orders": 882
+    },
+    {
+      "sku": "KCN-ANESSA",
+      "month": "2026-04",
+      "before_orders": 830,
+      "after_orders": 1214
+    },
+    {
+      "sku": "KCN-ANESSA",
+      "month": "2026-05",
+      "before_orders": 846,
+      "after_orders": 2079
+    },
+    {
+      "sku": "KCN-ANESSA",
+      "month": "2026-06",
+      "before_orders": 825,
+      "after_orders": 1852
+    },
+    {
+      "sku": "KCN-ANESSA",
+      "month": "2026-07",
+      "before_orders": 767,
+      "after_orders": 2308
+    },
+    {
+      "sku": "KCN-ANESSA",
+      "month": "2026-08",
+      "before_orders": 881,
+      "after_orders": 2093
+    },
+    {
+      "sku": "KCN-ANESSA",
+      "month": "2026-09",
+      "before_orders": 852,
+      "after_orders": 1802
+    },
+    {
+      "sku": "KCN-ANESSA",
+      "month": "2026-10",
+      "before_orders": 876,
+      "after_orders": 1477
+    },
+    {
+      "sku": "BL-15-CS",
+      "month": "2026-01",
+      "before_orders": 187,
+      "after_orders": 103
+    },
+    {
+      "sku": "BL-15-CS",
+      "month": "2026-02",
+      "before_orders": 181,
+      "after_orders": 61
+    },
+    {
+      "sku": "BL-15-CS",
+      "month": "2026-03",
+      "before_orders": 192,
+      "after_orders": 104
+    },
+    {
+      "sku": "BL-15-CS",
+      "month": "2026-04",
+      "before_orders": 155,
+      "after_orders": 97
+    },
+    {
+      "sku": "BL-15-CS",
+      "month": "2026-05",
+      "before_orders": 208,
+      "after_orders": 193
+    },
+    {
+      "sku": "BL-15-CS",
+      "month": "2026-06",
+      "before_orders": 169,
+      "after_orders": 209
+    },
+    {
+      "sku": "BL-15-CS",
+      "month": "2026-07",
+      "before_orders": 168,
+      "after_orders": 226
+    },
+    {
+      "sku": "BL-15-CS",
+      "month": "2026-08",
+      "before_orders": 209,
+      "after_orders": 581
+    },
+    {
+      "sku": "BL-15-CS",
+      "month": "2026-09",
+      "before_orders": 153,
+      "after_orders": 417
+    },
+    {
+      "sku": "BL-15-CS",
+      "month": "2026-10",
+      "before_orders": 173,
+      "after_orders": 192
+    },
+    {
+      "sku": "OMO-6KG",
+      "month": "2026-01",
+      "before_orders": 942,
+      "after_orders": 805
+    },
+    {
+      "sku": "OMO-6KG",
+      "month": "2026-02",
+      "before_orders": 867,
+      "after_orders": 616
+    },
+    {
+      "sku": "OMO-6KG",
+      "month": "2026-03",
+      "before_orders": 951,
+      "after_orders": 578
+    },
+    {
+      "sku": "OMO-6KG",
+      "month": "2026-04",
+      "before_orders": 939,
+      "after_orders": 1041
+    },
+    {
+      "sku": "OMO-6KG",
+      "month": "2026-05",
+      "before_orders": 937,
+      "after_orders": 1151
+    },
+    {
+      "sku": "OMO-6KG",
+      "month": "2026-06",
+      "before_orders": 906,
+      "after_orders": 853
+    },
+    {
+      "sku": "OMO-6KG",
+      "month": "2026-07",
+      "before_orders": 951,
+      "after_orders": 826
+    },
+    {
+      "sku": "OMO-6KG",
+      "month": "2026-08",
+      "before_orders": 978,
+      "after_orders": 1028
+    },
+    {
+      "sku": "OMO-6KG",
+      "month": "2026-09",
+      "before_orders": 873,
+      "after_orders": 1294
+    },
+    {
+      "sku": "OMO-6KG",
+      "month": "2026-10",
+      "before_orders": 966,
+      "after_orders": 977
+    }
+  ],
+  "metrics": {
+    "before_total_orders": 106131,
+    "after_total_orders": 125423,
+    "before_cancelled": 30210,
+    "after_cancelled": 18550,
+    "before_cancelled_percent": 28.46,
+    "after_cancelled_percent": 14.79,
+    "before_monthly_daily_rate_cv_population": 0.0112,
+    "after_monthly_daily_rate_cv_population": 0.2425
+  },
+  "runtime": {
+    "orders": {
+      "total_orders": 144851,
+      "simulated_orders": 125423,
+      "preserved_orders": 19428
+    },
+    "coverage": {
+      "first_date": "2026-01-01",
+      "last_date": "2026-10-31",
+      "days": 304,
+      "distinct_order_ids": 125423,
+      "skus": 20
+    },
+    "inventory": {
+      "total_rows": 6098,
+      "preserved_rows": 38,
+      "days": 304
+    },
+    "missing_days": {
+      "count": 0
+    },
+    "invalid_transitions": {
+      "after_cutoff": 0,
+      "missing_completed_time": 0
+    }
+  },
+  "preserved_fingerprints": {
+    "orders": {
+      "count": 19428,
+      "hash": "88cbb4567db3b4c2ec90839032af969a"
+    },
+    "inventory": {
+      "count": 38,
+      "hash": "16a0218ee399e763f6fda7e587122444"
+    },
+    "products": {
+      "count": 126,
+      "hash": "22f4ba2455f8db338098ea26d592bcdb"
+    },
+    "shops": {
+      "count": 22047,
+      "hash": "2b07f07152cb7cacf92e163ac8240247"
+    }
+  },
+  "matches_replacement_baseline": true,
+  "replacement": {
+    "old_orders_removed": 106131,
+    "old_inventory_removed": 6060,
+    "new_inventory_inserted": 6060
+  },
+  "local_backup_bytes": 7506033,
+  "local_backup_sha256": "575c2bd5265216e8d0a66da24b8540e9a8fb865774be49ceccf353506cecd9f0",
+  "limits": [
+    "Synthetic scenario coefficients, not fitted to external market observations",
+    "Different final-day cutoffs; comparison is descriptive, not a controlled causal experiment",
+    "Historical run generated events and loaded PostgreSQL directly; Kafka/MinIO end-to-end not revalidated",
+    "Forecast models were not retrained or benchmarked in this change"
+  ]
+}

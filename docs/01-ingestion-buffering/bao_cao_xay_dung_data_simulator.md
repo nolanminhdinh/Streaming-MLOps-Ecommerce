@@ -3,6 +3,9 @@
 **Đề tài:** Xây dựng luồng dữ liệu dự báo nhu cầu mua hàng và cảnh báo tồn kho cho Doanh nghiệp bán lẻ Đa kênh (Shopee & TikTok Shop)  
 **Tác giả:** Đội ngũ Kỹ thuật & Nghiên cứu MLOps Pipeline  
 **Ngày hoàn thành:** Tháng 10/2026  
+**Cập nhật:** 31/10/2026 — nhu cầu lịch sử theo SKU và nhập kho thích ứng.
+
+**Báo cáo lần sửa:** [So sánh trước–sau và kết quả PostgreSQL](../04-pipeline-updates/lan-08-simulator-seasonality-2026-10-31.md). Các hệ số mùa vụ là giả định kịch bản; chưa được hiệu chỉnh từ doanh số thị trường.
 
 ---
 
@@ -11,10 +14,10 @@
 2. [Cơ sở thực tiễn: Khai thác bộ dữ liệu thực tế XomData](#2-cơ-sở-thực-tiễn-khai-thác-bộ-dữ-liệu-thực-tế-xomdata)
 3. [Thiết kế Thực thể Doanh nghiệp Giả lập (Mock Enterprise Architecture)](#3-thiết-kế-thực-thể-doanh-nghiệp-giả-lập-mock-enterprise-architecture)
    - [3.1. Căn cứ Khoa học & Lập luận Bảo vệ trước Hội đồng](#31-căn-cứ-khoa-học--lập-luận-bảo-vệ-trước-hội-đồng-định-vị-mô-hình-bách-hóa-bán-lẻ-tổng-hợp-general-merchandise-retailer)
-4. [Mô hình hóa Hành vi Khách hàng & Chu kỳ Mua sắm Thị trường Việt Nam](#4-mô-hình-hóa-hành-vi-khách-hàng--chu-kỳ-mua-sắm-thị-trường-việt-nam)
+4. [Mô hình hóa nhu cầu theo SKU — cập nhật 31/10/2026](#nhu-cau-sku)
 5. [Động cơ Quản trị Tồn kho & Vận hành Khép kín (Inventory Engine)](#5-động-cơ-quản-trị-tồn-kho--vận-hành-khép-kín-inventory-engine)
 6. [Định dạng Dữ liệu Đầu ra & Chuẩn hóa Schema](#6-định-dạng-dữ-liệu-đầu-ra--chuẩn-hóa-schema)
-7. [Kết quả Kiểm thử & Đánh giá Chất lượng Hệ thống](#7-kết-quả-kiểm-thử--đánh-giá-chất-lượng-hệ-thống)
+7. [Kết quả kiểm thử và chạy dữ liệu ngày 31/10/2026](#ket-qua-31102026)
 8. [Giá trị Ứng dụng Đối với Bài toán AI Dự báo & Báo cáo Quản trị](#8-giá-trị-ứng-dụng-đối-với-bài-toán-ai-dự-báo--báo-cáo-quản-trị)
 
 ---
@@ -54,11 +57,13 @@ flowchart LR
 
 ## 2. Cơ sở thực tiễn: Khai thác bộ dữ liệu thực tế XomData
 
-Hệ thống giả lập được thiết kế dựa trên cơ sở phân tích trực tiếp từ bộ dữ liệu thương mại điện tử Việt Nam công khai tại [XomData Vietnam Ecommerce](https://dataset.xomdata.com/datasets/schema/vietnam_ecommerce):
+Phần thiết kế ban đầu tham khảo cấu trúc dữ liệu thương mại điện tử Việt Nam tại [XomData Vietnam Ecommerce](https://dataset.xomdata.com/datasets/schema/vietnam_ecommerce):
 - **Tập dữ liệu Shopee:** Gồm **25,500** dòng giao dịch với **84 cột thuộc tính**.
 - **Tập dữ liệu TikTok Shop:** Gồm **102,000** dòng giao dịch với **71 cột thuộc tính**.
 
-### Các phát hiện nghiệp vụ then chốt từ tập dữ liệu:
+> Các nhận định và quy mô dữ liệu trong phần này được giữ làm bối cảnh thiết kế ban đầu; đợt sửa 31/10 không kiểm chứng lại nguồn ngoài hoặc ước lượng các hệ số từ nguồn đó. Các tỷ lệ phí, COD và mùa vụ trong simulator là giả định kiểm thử, không phải kết quả thống kê đã xác nhận trong lần sửa này.
+
+### Các giả định nghiệp vụ của thiết kế ban đầu:
 1. **Bản chất một chủ thể bán (Single Multi-Channel Seller):** Dữ liệu thực chất ghi nhận nhật ký bán hàng của một doanh nghiệp duy nhất phân phối trên 2 sàn với các mã định danh gian hàng (`shop_id`, `shop_name`, `warehouse_id`).
 2. **Cấu trúc chiết khấu & Phí sàn phức tạp:**
    - Shopee: Phí cố định sàn (`commission_fee`, `service_fee`, `transaction_fee`), trợ giá từ người bán (`seller_discount`), voucher sàn (`voucher_from_shopee`), tiền tạm giữ (`escrow_amount`).
@@ -116,7 +121,7 @@ Khi trình bày và bảo vệ đề tài trước Hội đồng Đánh giá / H
 
 1. **Căn cứ từ Dữ liệu Mẫu Thực tế (Empirical Data Grounding):**
    - Bộ dữ liệu thực tế XomData (Shopee 25.5k dòng, TikTok Shop 102k dòng) là nhật ký giao dịch thực tế của một doanh nghiệp phân phối tổng hợp đa kênh tại thị trường Việt Nam.
-   - Việc kế thừa cơ cấu danh mục này giúp mô phỏng giữ nguyên được tính chân thực của thị trường, tránh việc suy đoán chủ quan hoặc gọt đẽo dữ liệu nhân tạo.
+   - Danh mục tổng hợp được chọn để thử nhiều kiểu chuỗi nhu cầu và trọng lượng hàng; chưa có bằng chứng cho thấy tỷ trọng 20 SKU mô phỏng đại diện cho cơ cấu thị trường thực tế.
 
 2. **Yêu cầu Kỹ thuật Cốt lõi của Pipeline MLOps & Dự báo Nhu cầu (Technical Necessity):**
    - **Ma trận Phân loại Tồn kho ABC / XYZ:** Để thuật toán phân loại ABC/XYZ hoạt động có ý nghĩa, danh mục sản phẩm bắt buộc phải có sự phân hóa sâu sắc về hệ số biến thiên nhu cầu ($CV = \sigma / \mu$):
@@ -132,52 +137,57 @@ Khi trình bày và bảo vệ đề tài trước Hội đồng Đánh giá / H
 
 ---
 
-## 4. Mô hình hóa Hành vi Khách hàng & Chu kỳ Mua sắm Thị trường Việt Nam
+<a id="nhu-cau-sku"></a>
 
-Hệ thống tính toán tốc độ phát sinh đơn hàng thực tế ($\text{orders/sec}$) bằng hàm tích hợp toán học đa nhân tố:
+## 4. Mô hình hóa nhu cầu theo SKU — cập nhật 31/10/2026
 
-$$\text{Seasonal Multiplier} = f_{\text{dow}} \times f_{\text{hour}} \times f_{\text{flash}} \times f_{\text{mega}} \times f_{\text{payday}} \times f_{\text{trend}}$$
+### 4.1. Phân biệt mô phỏng trực tiếp và lịch sử
 
-```
-                       CÁC HỆ SỐ MÙA VỤ & HÀNH VI MUA SẮM
- ┌───────────────────────┐   ┌──────────────────────┐   ┌───────────────────────┐
- │ Phân Phối Pareto 80/20│   │ Chu Kỳ Giờ Trong Ngày│   │  Ngày Lĩnh Lương VN   │
- │   (Luật Zipf SKU)     │   │ (Diurnal Bell Curve) │   │ (Payday 15 & 25-28)   │
- └──────────┬────────────┘   └──────────┬───────────┘   └───────────┬───────────┘
-            │                           │                           │
-            └───────────────────────────┼───────────────────────────┘
-                                        ▼
- ┌───────────────────────┐   ┌──────────────────────┐   ┌───────────────────────┐
- │ Siêu Sale Ngày Đôi    │   │ Khung Giờ Flash Sale │   │ Kênh TikTok Livestream│
- │ (1/1, 2/2 ... 12/12)  │   │  (12h trưa & 20h tối)│   │ (Tối & Nghỉ trưa)     │
- └───────────────────────┘   └──────────────────────┘   └───────────────────────┘
-```
+`ECommerceSimulator` tiếp tục tạo payload, vòng đời đơn và biến động kho. Luồng
+trực tiếp vẫn dùng `orders_per_second()` với các hệ số giờ, cuối tuần, sale,
+payday và xu hướng đã có. Lựa chọn sản phẩm có truyền thời điểm sử dụng thêm
+hệ số mùa vụ theo SKU; lời gọi `_pick_product()` không truyền thời điểm vẫn dùng
+trọng số phổ biến nền để giữ tương thích.
 
-### 4.1. Quy luật Pareto 80/20 (Sức mua mặt hàng)
-Thực tế kinh doanh cho thấy 20% danh mục sản phẩm chủ lực đóng góp đến 80% doanh số:
-- **Nhóm bán chạy (Hero SKUs):** Khẩu trang kháng khuẩn (`KT-KF94-10`, weight: 15.0), Ốp lưng iPhone (`OL-IP15PM`, weight: 12.0), Bột giặt OMO (`OMO-6KG`, weight: 10.0), Kem chống nắng (`KCN-ANESSA`, weight: 9.0).
-- **Nhóm đặc thù / Giá trị cao:** Nồi chiên không dầu (`AF-6L-001`, weight: 2.2), Bàn phím cơ (`BP-GM-104`, weight: 3.0), Túi xách da (`TX-PU-001`, weight: 1.5).
+Luồng lịch sử qua `scripts/simulate_historical_data.py` đã chuyển sang
+`ProductDemandModel` và `iter_historical_days()`. Không còn tính số đơn mỗi ngày
+bằng mức nền cố định nhân riêng hệ số cuối tuần/ngày đôi. `--orders-per-day`
+chỉ là quy mô nền, không phải chỉ tiêu cố định cho tổng đơn ngày hoặc tháng.
 
-### 4.2. Đường cong sinh hoạt ngày/đêm (Diurnal Curve)
-Dựa trên hành vi sử dụng điện thoại và mua sắm của người Việt:
-- **00h00 – 06h00 (Đêm khuya):** Hoạt động giảm sâu, hệ số duy trì mức sàn $0.25 - 0.32$.
-- **09h00 – 11h30 (Sáng):** Nhu cầu mua sắm văn phòng ổn định (hệ số $\approx 1.0$).
-- **12h00 – 13h30 (Nghỉ trưa):** Flash sale giờ ăn trưa (hệ số $\times 2.5$).
-- **19h30 – 22h30 (Buổi tối):** Đỉnh điểm mua sắm giải trí và chốt đơn livestream (hệ số $\times 3.65$).
+### 4.2. Kỳ vọng và lấy mẫu từng mặt hàng
 
-### 4.3. Hiệu ứng Ngày lĩnh lương (Payday Effect)
-Tại Việt Nam, sức mua có xu hướng bùng nổ theo 2 đợt nhận thu nhập trong tháng:
-- **Ngày 15 hàng tháng:** Đợt chi trả lương/phụ cấp giữa tháng cho khối công chức, giáo viên, cơ quan nhà nước $\rightarrow$ Nhân hệ số $\times 1.8$.
-- **Ngày 25 – 28 hàng tháng:** Đợt quyết toán lương cuối tháng của khối Doanh nghiệp tư nhân, tập đoàn đa quốc gia (FDI) $\rightarrow$ Nhân hệ số $\times 1.6$.
+Kỳ vọng đơn mỗi SKU/ngày kết hợp trọng số danh mục, hệ số thị trường theo tháng,
+mùa vụ SKU, xu hướng riêng, cuối tuần, payday, sale và các trạng thái nhiễu.
+Động cơ dùng Gamma–Poisson (negative binomial): nếu kỳ vọng là `mu`, độ biến
+động của SKU là `v`, thì cường độ được lấy mẫu Gamma với `shape=1/v²`,
+`scale=mu/shape`, rồi số đơn lấy mẫu Poisson theo cường độ đó. Trước cơ chế ngày
+ngừng bán ở SKU thưa, phương sai có điều kiện là `mu + v²*mu²`.
 
-### 4.4. Siêu Sale ngày đôi (Mega-Sale Campaign)
-Các chiến dịch kích cầu quy mô lớn nhất năm của Shopee và TikTok Shop diễn ra vào các ngày có ngày trùng tháng ($1/1, 2/2, \dots, 11/11, 12/12$). Vào các ngày này, lượng đơn hàng bùng nổ gấp $\times 4.0$ lần ngày thường.
+- Thị trường có nhiễu liên tiếp giữa các ngày; nhóm hàng có nhiễu theo tháng;
+  từng SKU có trạng thái nhiễu riêng và đợt tăng nhu cầu ngắn 3–7 ngày.
+- Một số SKU bán chậm có xác suất ngày không có đơn; không ép đủ đơn mỗi SKU/ngày.
+- Chiến dịch có tác động trước ngày sale, ngày chính và giai đoạn giảm sau sale.
+  Mức phản ứng khác nhau giữa các SKU.
+- Quạt mini/kem chống nắng có hệ số tăng vào mùa nóng; balo tăng trước tựu trường;
+  đồ trang trí tăng ở các tháng đã cấu hình; bột giặt có mùa vụ nhẹ hơn.
+- Các cấu hình là giả định phục vụ thử nghiệm, chưa phải hệ số đo từ thị trường.
+  Không gán cố định nhãn ABC/XYZ cho SKU trước khi tính trên dữ liệu thực sinh.
 
-### 4.5. Đơn hàng từ Kênh TikTok Livestream
-Trong các khung giờ phát sóng trực tiếp (12h trưa và 19h – 22h tối), $65\%$ các đơn hàng TikTok được sinh ra với thuộc tính `order_type = "livestream"`, phản ánh chính xác xu hướng bán hàng qua người sáng tạo nội dung (KOL/KOC).
+### 4.3. Thời gian, kênh và vòng đời
+
+Sự kiện được lấy mẫu giờ trong ngày rồi sắp xếp theo timestamp trước khi cập
+nhật kho. Nhóm mỹ phẩm/thời trang dùng tỷ trọng Shopee 42%, các nhóm còn lại
+65%; phần còn lại là TikTok. Đây là tỷ trọng lấy mẫu của kịch bản.
+
+Ngày nghiệp vụ tính theo `Asia/Ho_Chi_Minh`. Lượt chạy lịch sử chặn tại thời
+điểm yêu cầu/hiện tại, loại các chuyển trạng thái sau mốc chặn và chọn lại trạng
+thái sàn phù hợp. Lỗi đơn Shopee `COMPLETED` thiếu `completed_time` đã được sửa
+bằng ánh xạ đúng giai đoạn sinh timestamp.
+
+Cùng seed và khoảng ngày tái lập được số đơn/SKU. UUID ingestion vẫn được sinh
+riêng; đây không phải cam kết tái lập từng byte của toàn bộ payload.
 
 ---
-
 ## 5. Động cơ Quản trị Tồn kho & Vận hành Khép kín (Inventory Engine)
 
 Module Tồn kho được thiết kế theo mô hình **Sổ cái Giao dịch Kho (Inventory Transaction Ledger)**, ghi nhận đầy đủ lịch sử biến động qua bảng sự kiện `InventoryMovementEvent`.
@@ -234,6 +244,22 @@ Hệ thống cung cấp hàm `get_inventory_snapshot()` và `get_inventory_alert
 
 ---
 
+### 5.4. Chính sách nhập hàng cho lịch sử dài ngày — cập nhật 31/10
+
+Luồng lịch sử dùng trung bình số lượng yêu cầu của tối đa 14 ngày đã qua,
+kết hợp 70% mức quan sát và 30% mức kế hoạch mùa vụ. Mức kế hoạch dùng quy mô
+nền, trọng số SKU và giả định 2,5 sản phẩm/đơn; không đọc trước số đơn lấy mẫu.
+Tồn đầu kỳ đủ cho quy mô kịch bản; điểm đặt hàng, tồn an toàn và lượng nhập
+được điều chỉnh theo nhu cầu. Các mức sàn trong danh mục vẫn được giữ.
+
+Với tốc độ nhu cầu đơn vị/ngày là `r`, công thức dùng phần trần nguyên:
+`SS=max(SS_catalog,ceil(0.8*r))`,
+`ROP=max(ROP_catalog,ceil(r*(lead_time_days+1.2)))`,
+`Q=max(Q_catalog,ceil(7*r))`.
+Đột biến và lead time vẫn có thể gây thiếu hàng. Phần kho trực tiếp giữ chính
+sách nền hiện có; điều chỉnh thích ứng này thuộc bộ sinh lịch sử.
+
+---
 ## 6. Định dạng Dữ liệu Đầu ra & Chuẩn hóa Schema
 
 Mỗi sự kiện đơn hàng được sinh ra đều chứa đầy đủ thông tin để nạp thẳng vào Data Warehouse / Data Lakehouse:
@@ -298,46 +324,49 @@ Mỗi sự kiện đơn hàng được sinh ra đều chứa đầy đủ thông
 
 ---
 
-## 7. Kết quả Kiểm thử & Đánh giá Chất lượng Hệ thống
+<a id="ket-qua-31102026"></a>
 
-Để đảm bảo tính đúng đắn và độ tin cậy tuyệt đối của mã nguồn trước khi tích hợp vào luồng dữ liệu thời gian thực (Kafka/Spark), toàn bộ hệ thống đã được kiểm thử tự động với framework **pytest**:
+## 7. Kết quả kiểm thử và chạy dữ liệu ngày 31/10/2026
 
-### 7.1. Kiểm thử Unit Test module Data Simulator (`tests/test_data_simulator.py`)
-Đạt tỷ lệ thành công tuyệt đối: **17/17 tests passed (100%)** trong thời gian **0.10s**.
+### 7.1. Kiểm thử hiện tại
 
-| Nhóm Kiểm Thử | Các Test Cases Đại Diện | Trạng Thái |
-|:---|:---|:---:|
-| **Định danh Doanh nghiệp** | `test_simulator_initialization`, `test_enterprise_storefront_identity` | PASSED |
-| **Schema TMĐT** | `test_generate_shopee_event`, `test_generate_tiktok_event` | PASSED |
-| **Quản trị Tồn kho & ROP** | `test_inventory_decrement_on_order`, `test_inventory_out_of_stock_triggers_cancellation`, `test_inventory_reorder_trigger_and_restock` | PASSED |
-| **Cảnh báo Tồn kho** | `test_inventory_alert_levels`, `test_manual_restock` | PASSED |
-| **Chu kỳ & Mùa vụ** | `test_flash_sale_logic`, `test_mega_sale_multiplier`, `test_payday_seasonality` | PASSED |
-| **Hành vi Khách hàng** | `test_pareto_product_distribution`, `test_tiktok_livestream_order_type`, `test_order_stream_distribution` | PASSED |
-| **Logistics Hoàn hàng** | `test_reverse_logistics_return_restock`, `test_cancellation_release_stock_before_shipping` | PASSED |
+Lệnh `python -m unittest tests.test_historical_demand tests.test_data_simulator -v`
+đạt **24/24 kiểm thử**: 17 kiểm thử simulator hiện có và 7 kiểm thử nhu cầu lịch sử.
+Nhóm mới kiểm tra seed, mùa vụ khác nhau theo SKU, biến động số đơn, ngày không
+có đơn, thứ tự/mốc thời gian, dữ liệu đầu vào và chính sách nhập kho thích ứng.
+Nhật ký đầy đủ lưu trong [bằng chứng kiểm thử](../04-pipeline-updates/evidence/simulator-tests-2026-10-31.json).
 
-### 7.2. Kiểm thử Tích hợp Toàn diện (Full Repository Regression)
-Chạy toàn bộ test suite của toàn dự án (`tests/`):
-```bash
-======================== 58 passed, 1 warning in 5.80s ========================
-```
-- Module Sinh dữ liệu (`test_data_simulator.py`): 17/17 passed.
-- Module Chuẩn hóa dữ liệu ETL (`test_etl.py`): 5/5 passed.
-- Module Đặc trưng chuỗi thời gian & ABC/XYZ (`test_features.py`): 4/4 passed.
-- Module Huấn luyện Machine Learning (`test_ml_pipeline.py`): 4/4 passed.
-- Module Huấn luyện Deep Learning (`test_deep_learning.py`): 4/4 passed.
-- Module Serving API & Inventory Service (`test_serving.py`): 11/11 passed.
-- Module Phát hiện trôi dạt dữ liệu & Giám sát (`test_monitoring.py`): 8/8 passed.
-- Module Kiểm thử tải & Xuất báo cáo PowerBI (`test_load_test.py`): 5/5 passed.
+Kết quả lịch sử “58 passed, 1 warning trong 5,80 giây” của bản báo cáo trước
+không được sử dụng làm bằng chứng cho phiên bản mới. Đợt này không chạy lại toàn
+bộ suite hoặc nghiệm thu lại Kafka/MinIO, API, BI và chất lượng mô hình dự báo.
+
+### 7.2. Chạy thực tế vào PostgreSQL
+
+| Nội dung | Kết quả |
+|---|---:|
+| Đơn mô phỏng cũ được thay | 106.131 |
+| Đơn mô phỏng mới | 125.423 |
+| Đơn có trước đợt mô phỏng được giữ | 19.428 |
+| Tổng dòng `fact_orders` sau thay | 144.851 |
+| Bản ghi tồn kho mô phỏng được thay | 6.060 |
+| Bản ghi tồn kho cũ được giữ | 38 |
+| Số ngày có đơn mô phỏng, 01/01–31/10/2026 | 304 |
+| Ngày thiếu / chuyển trạng thái sau mốc chặn | 0 / 0 |
+
+Dữ liệu thay thế dùng tiền tố `SIM26YTD-`. Việc thay diễn ra trong một giao dịch,
+có bản sao lưu, kiểm tra hoàn tác và so khớp số dòng/nội dung của dữ liệu được
+bảo vệ. Các hệ số mùa vụ, số đơn từng tháng và số liệu từng SKU có trong
+[báo cáo tổng kết lần sửa](../04-pipeline-updates/lan-08-simulator-seasonality-2026-10-31.md)
+và [bằng chứng tổng hợp](../04-pipeline-updates/evidence/simulator-comparison-2026-10-31.json).
 
 ---
-
 ## 8. Giá trị Ứng dụng Đối với Bài toán AI Dự báo & Báo cáo Quản trị
 
 Việc xây dựng thành công bộ sinh dữ liệu mô phỏng này mang lại các giá trị nền tảng cốt lõi cho đề tài tốt nghiệp:
 
-1. **Dữ liệu huấn luyện AI chất lượng cao:**
+1. **Dữ liệu thử nghiệm cho bài toán dự báo:**
    - Cung cấp chuỗi thời gian liên tục mang đầy đủ tính quy luật (tính xu hướng dài hạn, tính mùa vụ theo tuần, các cú sốc cầu vào ngày Payday, Flash sale, Mega-sale).
-   - Giúp các mô hình Machine Learning (LightGBM, XGBoost) và Deep Learning (LSTM, GRU, Temporal Fusion Transformer) học được mối tương quan thực tế giữa các đặc trưng lịch và nhu cầu mua hàng.
+   - Giúp các mô hình Machine Learning (LightGBM, XGBoost) và Deep Learning (LSTM, GRU, Temporal Fusion Transformer) thử học các quan hệ lịch và nhu cầu đã đặt trong kịch bản. Chất lượng trên dữ liệu thị trường cần được đánh giá riêng bằng dữ liệu thực và kiểm định theo thời gian.
 2. **Khép kín bài toán Cảnh báo Tồn kho:**
    - Không dừng lại ở việc dự báo con số vô hồn, luồng dữ liệu cho phép so sánh tức thời:
      $$\text{Forecasted Demand (7 ngày)} \quad \text{vs.} \quad \text{Current Stock on Hand} + \text{Incoming Stock}$$
@@ -346,4 +375,4 @@ Việc xây dựng thành công bộ sinh dữ liệu mô phỏng này mang lạ
    - Dễ dàng tổng hợp dữ liệu để hiển thị lên Dashboard (Streamlit / PowerBI) giúp Ban Giám đốc và Bộ phận Kho vận nắm bắt toàn bộ bức tranh dòng hàng, phát hiện điểm nghẽn thiếu hụt hoặc dư thừa tồn kho tức thì.
 
 ---
-**KẾT LUẬN:** Module `data_simulator` hiện tại đã hoàn thiện ở cấp độ sản xuất (Production-ready simulation), mô phỏng trọn vẹn vòng đời vận hành bán lẻ đa kênh tại Việt Nam và sẵn sàng làm đầu vào cho toàn bộ chuỗi xử lý Big Data, MLOps tiếp theo.
+**KẾT LUẬN CẬP NHẬT 31/10/2026:** Bộ sinh lịch sử đã có nhu cầu biến động riêng theo SKU, kho thích ứng và dữ liệu PostgreSQL phủ đủ 304 ngày. Phạm vi đã kiểm chứng gồm 24 kiểm thử, kết quả nạp và bảo toàn dữ liệu cũ. Các hệ số vẫn là giả định; chưa có căn cứ để xác nhận mức đại diện thị trường, cải thiện chất lượng dự báo hoặc trạng thái production-ready của toàn hệ thống.

@@ -1,5 +1,8 @@
 # Mô phỏng nhu cầu lịch sử theo SKU
 
+Kết quả triển khai 31/10/2026, bảng so sánh trước–sau và bằng chứng bảo toàn dữ liệu:
+[Báo cáo tổng kết lần sửa simulator](../04-pipeline-updates/lan-08-simulator-seasonality-2026-10-31.md).
+
 `scripts/simulate_historical_data.py` dùng `data_simulator/history.py` và các cấu hình
 trong `data_simulator/demand.py`. Các hệ số là giả định của một kịch bản mô phỏng,
 chưa được ước lượng từ doanh số thực tế. Dữ liệu này phục vụ thử nghiệm pipeline,
