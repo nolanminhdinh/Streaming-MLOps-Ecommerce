@@ -1,0 +1,31 @@
+{
+  "ok": true,
+  "status": 200,
+  "data": {
+    "total_skus_evaluated": 1,
+    "skus_needing_reorder": 1,
+    "critical_count": 1,
+    "warning_count": 0,
+    "normal_count": 0,
+    "alerts": [
+      {
+        "sku": "KCN-ANESSA",
+        "product_name": "Kem chống nắng Anessa SPF50+",
+        "category": "Mỹ phẩm",
+        "matrix_segment": "AZ",
+        "current_stock": 0,
+        "avg_daily_demand": 19.5,
+        "lead_time_days": 3,
+        "safety_stock": 20,
+        "reorder_point": 79,
+        "needs_reorder": true,
+        "alert_level": "CRITICAL",
+        "days_until_stockout": 0.0,
+        "recommended_reorder_qty": 216,
+        "stock_source": "request",
+        "demand_source": "fallback_catalog"
+      }
+    ],
+    "generated_at": "2026-11-04T23:24:14.223409+07:00"
+  }
+}

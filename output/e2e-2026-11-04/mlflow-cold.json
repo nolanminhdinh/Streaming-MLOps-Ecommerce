@@ -1,0 +1,215 @@
+{
+  "started": "2026-11-04T23:29:15.4919782+07:00",
+  "passed": true,
+  "warm_forecast": {
+    "data": {
+      "sku": "P23*****03",
+      "product_name": "Áo ***************************************************************************************03",
+      "category": "Khác",
+      "from_date": "2026-08-12",
+      "to_date": "2026-08-18",
+      "total_predicted_demand": 24.8,
+      "forecast": [
+        {
+          "date": "2026-08-12",
+          "predicted_quantity": 3.6,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-13",
+          "predicted_quantity": 3.6,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-14",
+          "predicted_quantity": 3.7,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-15",
+          "predicted_quantity": 3.7,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-16",
+          "predicted_quantity": 4.0,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-17",
+          "predicted_quantity": 3.1,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-18",
+          "predicted_quantity": 3.1,
+          "lower_bound": null,
+          "upper_bound": null
+        }
+      ],
+      "model_name": "ECommerceDemandForecastModel",
+      "model_version": "2",
+      "model_stage": "Staging",
+      "model_source": "mlflow_registry",
+      "history_source": "warehouse"
+    },
+    "http": 200
+  },
+  "cold_ready": {
+    "data": {
+      "status": "not_ready",
+      "model_loaded": false,
+      "warehouse_connected": true,
+      "history_available": true,
+      "history_end": "2026-08-11",
+      "history_data_origin": "public_anonymized_historical_csv",
+      "history_age_days": 85,
+      "history_stale": true
+    },
+    "http": 503
+  },
+  "cold_forecast": {
+    "data": {
+      "sku": "P23*****03",
+      "product_name": "Áo ***************************************************************************************03",
+      "category": "Khác",
+      "from_date": "2026-08-12",
+      "to_date": "2026-08-18",
+      "total_predicted_demand": 20.3,
+      "forecast": [
+        {
+          "date": "2026-08-12",
+          "predicted_quantity": 2.7,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-13",
+          "predicted_quantity": 2.7,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-14",
+          "predicted_quantity": 2.9,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-15",
+          "predicted_quantity": 3.6,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-16",
+          "predicted_quantity": 3.3,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-17",
+          "predicted_quantity": 2.5,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-18",
+          "predicted_quantity": 2.6,
+          "lower_bound": null,
+          "upper_bound": null
+        }
+      ],
+      "model_name": "ECommerceDemandForecastModel",
+      "model_version": "2",
+      "model_stage": "Staging",
+      "model_source": "heuristic_history",
+      "history_source": "warehouse"
+    },
+    "http": 200
+  },
+  "ready_after": {
+    "data": {
+      "status": "ready",
+      "model_loaded": true,
+      "warehouse_connected": true,
+      "history_available": true,
+      "history_end": "2026-08-11",
+      "history_data_origin": "public_anonymized_historical_csv",
+      "history_age_days": 85,
+      "history_stale": true
+    },
+    "http": 200
+  },
+  "forecast_after": {
+    "data": {
+      "sku": "P23*****03",
+      "product_name": "Áo ***************************************************************************************03",
+      "category": "Khác",
+      "from_date": "2026-08-12",
+      "to_date": "2026-08-18",
+      "total_predicted_demand": 24.8,
+      "forecast": [
+        {
+          "date": "2026-08-12",
+          "predicted_quantity": 3.6,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-13",
+          "predicted_quantity": 3.6,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-14",
+          "predicted_quantity": 3.7,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-15",
+          "predicted_quantity": 3.7,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-16",
+          "predicted_quantity": 4.0,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-17",
+          "predicted_quantity": 3.1,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-18",
+          "predicted_quantity": 3.1,
+          "lower_bound": null,
+          "upper_bound": null
+        }
+      ],
+      "model_name": "ECommerceDemandForecastModel",
+      "model_version": "2",
+      "model_stage": "Staging",
+      "model_source": "mlflow_registry",
+      "history_source": "warehouse"
+    },
+    "http": 200
+  },
+  "training_tracking_smoke": {
+    "local_fallback": true,
+    "metric_logged": true,
+    "scope": "unreachable endpoint in isolated probe"
+  }
+}

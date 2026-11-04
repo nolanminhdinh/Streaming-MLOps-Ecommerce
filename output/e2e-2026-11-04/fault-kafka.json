@@ -1,0 +1,72 @@
+{
+  "service": "kafka",
+  "started": "2026-11-04T23:24:23.8039821+07:00",
+  "passed": true,
+  "down": {
+    "inventory_ack": 0,
+    "facts": 0,
+    "status": "error",
+    "ack": 0,
+    "services": {
+      "kafka": {
+        "ok": false,
+        "detail": "Cổng kết nối; ACK của đợt phát là bằng chứng ghi."
+      },
+      "minio": {
+        "ok": true
+      },
+      "postgres": {
+        "ok": true
+      },
+      "worker": {
+        "ok": true
+      },
+      "serving": {
+        "ok": true
+      },
+      "model": {
+        "ok": true
+      }
+    },
+    "worker": "healthy",
+    "run": "WEB20261104162425a20868",
+    "processed": 0,
+    "objects": 0,
+    "raw": 0
+  },
+  "after": {
+    "inventory_ack": 2,
+    "facts": 4,
+    "status": "published",
+    "ack": 4,
+    "services": {
+      "kafka": {
+        "ok": true,
+        "detail": "Cổng kết nối; ACK của đợt phát là bằng chứng ghi."
+      },
+      "minio": {
+        "ok": true
+      },
+      "postgres": {
+        "ok": true
+      },
+      "worker": {
+        "ok": true
+      },
+      "serving": {
+        "ok": true
+      },
+      "model": {
+        "ok": true
+      }
+    },
+    "worker": "healthy",
+    "run": "WEB20261104162441ae67ec",
+    "processed": 3,
+    "objects": 3,
+    "raw": 4
+  },
+  "ready_after": {
+    "http": 200
+  }
+}

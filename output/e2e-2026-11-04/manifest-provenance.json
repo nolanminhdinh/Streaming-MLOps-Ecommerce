@@ -1,0 +1,1 @@
+{"name": "ECommerceDemandForecastModel", "version": "2", "run_id": "9c01dafd9238464cbcd1cef677324bcc", "data_origin": "public_anonymized_historical_csv", "source_datasets": ["shopee:sha256:6ae345e246481a2bd3b656838396e4fd31ce821c253945de6aa1370b2008f18d", "tiktok:sha256:881e893f6b318bc6fbf42f518f4bacb7f74bb4002076c33d8e7e7452176656fb"], "verified": true}

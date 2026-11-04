@@ -1,0 +1,1 @@
+{"run_id": "SOAK87397963f1", "kafka_orders_readback": 416, "kafka_unique_orders": 416, "kafka_inventory_readback": 20, "raw_rows": 600, "raw_distinct_orders": 600, "minio_objects": 56, "checkpointed_objects": 56, "missing_raw_orders": [], "fact_rows": 600, "last_inventory_stock": 620, "status": "FAIL"}

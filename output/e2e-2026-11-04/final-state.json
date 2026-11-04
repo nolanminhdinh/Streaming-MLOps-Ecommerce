@@ -1,0 +1,40 @@
+{
+  "docker": [
+    "fastapi Up About a minute (healthy)",
+    "grafana Up About a minute",
+    "kafka Up 5 minutes (healthy)",
+    "minio Up 4 minutes (healthy)",
+    "mlflow Up 55 seconds (healthy)",
+    "postgres Up 4 minutes (healthy)",
+    "prometheus Up About a minute",
+    "demo-web Up 9 minutes (healthy)",
+    "pipeline-worker Up 3 minutes (healthy)",
+    "zookeeper Up 9 minutes (healthy)"
+  ],
+  "grafana": 200,
+  "services": {
+    "kafka": {
+      "ok": true,
+      "detail": "Cổng kết nối; ACK của đợt phát là bằng chứng ghi."
+    },
+    "minio": {
+      "ok": true
+    },
+    "postgres": {
+      "ok": true
+    },
+    "worker": {
+      "ok": true
+    },
+    "serving": {
+      "ok": true
+    },
+    "model": {
+      "ok": true
+    }
+  },
+  "worker": "healthy",
+  "captured": "2026-11-04T23:30:24.1590913+07:00",
+  "ready": 200,
+  "prometheus": 200
+}

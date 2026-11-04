@@ -1,0 +1,13 @@
+{
+  "worker": {
+    "status": "healthy",
+    "checked_at": 1793810718.0401547,
+    "pending_objects": 0
+  },
+  "history_end": "2026-08-11",
+  "ready": "ready",
+  "model_source": "mlflow_registry",
+  "model_version": "2",
+  "model_registry_name": "ECommerceDemandForecastModel",
+  "captured": "2026-11-04T23:45:22.8850561+07:00"
+}

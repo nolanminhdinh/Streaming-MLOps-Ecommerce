@@ -1,0 +1,111 @@
+{
+  "service": "prometheus",
+  "started": "2026-11-04T23:28:44.6028698+07:00",
+  "passed": true,
+  "down": {
+    "inventory_ack": 2,
+    "facts": 0,
+    "status": "published",
+    "ack": 4,
+    "services": {
+      "kafka": {
+        "ok": true,
+        "detail": "Cổng kết nối; ACK của đợt phát là bằng chứng ghi."
+      },
+      "minio": {
+        "ok": true
+      },
+      "postgres": {
+        "ok": true
+      },
+      "worker": {
+        "ok": true
+      },
+      "serving": {
+        "ok": true
+      },
+      "model": {
+        "ok": true
+      }
+    },
+    "worker": "healthy",
+    "run": "WEB202611041628451574d8",
+    "processed": 0,
+    "objects": 1,
+    "raw": 1
+  },
+  "endpoint_down": {
+    "http": 0,
+    "error": "No connection could be made because the target machine actively refused it. (localhost:9090)"
+  },
+  "grafana_during": {
+    "http": 200
+  },
+  "ingested_during": {
+    "inventory_ack": 2,
+    "facts": 4,
+    "status": "published",
+    "ack": 4,
+    "services": {
+      "kafka": {
+        "ok": true,
+        "detail": "Cổng kết nối; ACK của đợt phát là bằng chứng ghi."
+      },
+      "minio": {
+        "ok": true
+      },
+      "postgres": {
+        "ok": true
+      },
+      "worker": {
+        "ok": true
+      },
+      "serving": {
+        "ok": true
+      },
+      "model": {
+        "ok": true
+      }
+    },
+    "worker": "healthy",
+    "run": "WEB202611041628451574d8",
+    "processed": 3,
+    "objects": 3,
+    "raw": 4
+  },
+  "after": {
+    "inventory_ack": 2,
+    "facts": 4,
+    "status": "published",
+    "ack": 4,
+    "services": {
+      "kafka": {
+        "ok": true,
+        "detail": "Cổng kết nối; ACK của đợt phát là bằng chứng ghi."
+      },
+      "minio": {
+        "ok": true
+      },
+      "postgres": {
+        "ok": true
+      },
+      "worker": {
+        "ok": true
+      },
+      "serving": {
+        "ok": true
+      },
+      "model": {
+        "ok": true
+      }
+    },
+    "worker": "healthy",
+    "run": "WEB202611041628451574d8",
+    "processed": 3,
+    "objects": 3,
+    "raw": 4
+  },
+  "ready_after": {
+    "http": 200
+  }
+}

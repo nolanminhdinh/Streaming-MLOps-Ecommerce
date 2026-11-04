@@ -1,0 +1,47 @@
+{
+  "status": "RUNNING",
+  "captured": "2026-11-04T23:40:09.8066843+07:00",
+  "run_id": "SOAK87397963f1",
+  "measurements": [
+    {
+      "elapsed_seconds": 180.1,
+      "ack": 181,
+      "fact_rows": 144,
+      "stock": 200,
+      "worker": "healthy",
+      "pending_objects_at_last_scan": 0
+    },
+    {
+      "elapsed_seconds": 210.0,
+      "ack": 211,
+      "fact_rows": 177,
+      "stock": 230,
+      "worker": "healthy",
+      "pending_objects_at_last_scan": 0
+    },
+    {
+      "elapsed_seconds": 240.1,
+      "ack": 241,
+      "fact_rows": 210,
+      "stock": 260,
+      "worker": "healthy",
+      "pending_objects_at_last_scan": 0
+    },
+    {
+      "elapsed_seconds": 270.0,
+      "ack": 271,
+      "fact_rows": 243,
+      "stock": 290,
+      "worker": "healthy",
+      "pending_objects_at_last_scan": 0
+    },
+    {
+      "elapsed_seconds": 300.1,
+      "ack": 301,
+      "fact_rows": 265,
+      "stock": 320,
+      "worker": "healthy",
+      "pending_objects_at_last_scan": 0
+    }
+  ]
+}

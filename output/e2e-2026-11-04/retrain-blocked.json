@@ -1,0 +1,120 @@
+{
+  "experiment": "e2e-retraining-44977583",
+  "status": "FAIL",
+  "before_ready": {
+    "http": 200,
+    "body": {
+      "status": "ready",
+      "model_loaded": true,
+      "warehouse_connected": true,
+      "history_available": true,
+      "history_end": "2026-08-11",
+      "history_data_origin": "public_anonymized_historical_csv",
+      "history_age_days": 85,
+      "history_stale": true
+    }
+  },
+  "before": {
+    "model_registry_name": "ECommerceDemandForecastAudit_44977583",
+    "version": "1",
+    "stage": "Staging",
+    "champion_algorithm": "moving_average",
+    "status": "READY_FOR_SERVING",
+    "registered_at": "2026-10-10T15:44:33.622483+00:00",
+    "input_feature_count": 43,
+    "metrics": {
+      "cv_wape": 126.08,
+      "cv_mae": 0.1599,
+      "cv_rmse": 0.5253
+    },
+    "inventory_defaults": {
+      "lead_time_days": 3,
+      "service_level": 0.95
+    },
+    "model_source": "mlflow_registry",
+    "training_data_origin": "public_anonymized_historical_csv",
+    "source_datasets": [
+      "shopee:sha256:6ae345e246481a2bd3b656838396e4fd31ce821c253945de6aa1370b2008f18d",
+      "tiktok:sha256:881e893f6b318bc6fbf42f518f4bacb7f74bb4002076c33d8e7e7452176656fb"
+    ]
+  },
+  "before_forecast": {
+    "http": 200,
+    "body": {
+      "sku": "P23*****03",
+      "product_name": "Áo ***************************************************************************************03",
+      "category": "Khác",
+      "from_date": "2026-08-12",
+      "to_date": "2026-08-18",
+      "total_predicted_demand": 24.8,
+      "forecast": [
+        {
+          "date": "2026-08-12",
+          "predicted_quantity": 3.6,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-13",
+          "predicted_quantity": 3.6,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-14",
+          "predicted_quantity": 3.7,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-15",
+          "predicted_quantity": 3.7,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-16",
+          "predicted_quantity": 4.0,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-17",
+          "predicted_quantity": 3.1,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-18",
+          "predicted_quantity": 3.1,
+          "lower_bound": null,
+          "upper_bound": null
+        }
+      ],
+      "model_name": "ECommerceDemandForecastAudit_44977583",
+      "model_version": "1",
+      "model_stage": "Staging",
+      "model_source": "mlflow_registry",
+      "history_source": "warehouse"
+    }
+  },
+  "retraining": {
+    "status": "FAILED",
+    "stage": "training",
+    "error": "Historical CSV retraining requires deployment dataset fingerprints.",
+    "audit_log": {
+      "event": "CLOSED_LOOP_RETRAINING_TRIGGERED",
+      "trigger": "manual_force",
+      "timestamp": "2026-11-04T16:36:08.746024+00:00",
+      "old_version": "1",
+      "drift_share": 0.0,
+      "drift_data_source": "unknown",
+      "drifted_features": [],
+      "status": "FAILED",
+      "stage": "training",
+      "error": "Historical CSV retraining requires deployment dataset fingerprints."
+    }
+  },
+  "retraining_seconds": 0.31,
+  "error": "AssertionError({'status': 'FAILED', 'stage': 'training', 'error': 'Historical CSV retraining requires deployment dataset fingerprints.', 'audit_log': {'event': 'CLOSED_LOOP_RETRAINING_TRIGGERED', 'trigger': 'manual_force', 'timestamp': '2026-11-04T16:36:08.746024+00:00', 'old_version': '1', 'drift_share': 0.0, 'drift_data_source': 'unknown', 'drifted_features': [], 'status': 'FAILED', 'stage': 'training', 'error': 'Historical CSV retraining requires deployment dataset fingerprints.'}})"
+}

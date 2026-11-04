@@ -1,0 +1,104 @@
+{
+  "service": "minio",
+  "started": "2026-11-04T23:25:17.7888863+07:00",
+  "passed": true,
+  "down": {
+    "inventory_ack": 2,
+    "facts": null,
+    "status": "published",
+    "ack": 4,
+    "services": {
+      "kafka": {
+        "ok": true,
+        "detail": "Cổng kết nối; ACK của đợt phát là bằng chứng ghi."
+      },
+      "minio": {
+        "ok": true
+      },
+      "postgres": {
+        "ok": true
+      },
+      "worker": {
+        "ok": true
+      },
+      "serving": {
+        "ok": true
+      },
+      "model": {
+        "ok": true
+      }
+    },
+    "worker": "healthy",
+    "run": "WEB20261104162518cadddd",
+    "processed": null,
+    "objects": 1,
+    "raw": null
+  },
+  "outage_observed": {
+    "inventory_ack": 2,
+    "facts": 0,
+    "status": "published",
+    "ack": 4,
+    "services": {
+      "kafka": {
+        "ok": true,
+        "detail": "Cổng kết nối; ACK của đợt phát là bằng chứng ghi."
+      },
+      "minio": {
+        "ok": false
+      },
+      "postgres": {
+        "ok": true
+      },
+      "worker": {
+        "ok": true
+      },
+      "serving": {
+        "ok": true
+      },
+      "model": {
+        "ok": true
+      }
+    },
+    "worker": "healthy",
+    "run": "WEB20261104162518cadddd",
+    "processed": 0,
+    "objects": 1,
+    "raw": null
+  },
+  "after": {
+    "inventory_ack": 2,
+    "facts": 4,
+    "status": "published",
+    "ack": 4,
+    "services": {
+      "kafka": {
+        "ok": true,
+        "detail": "Cổng kết nối; ACK của đợt phát là bằng chứng ghi."
+      },
+      "minio": {
+        "ok": true
+      },
+      "postgres": {
+        "ok": true
+      },
+      "worker": {
+        "ok": true
+      },
+      "serving": {
+        "ok": true
+      },
+      "model": {
+        "ok": true
+      }
+    },
+    "worker": "healthy",
+    "run": "WEB20261104162518cadddd",
+    "processed": 3,
+    "objects": 3,
+    "raw": 4
+  },
+  "ready_after": {
+    "http": 200
+  }
+}

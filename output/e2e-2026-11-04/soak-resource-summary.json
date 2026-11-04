@@ -1,0 +1,43 @@
+{
+  "samples": 12,
+  "first_at": "2026-11-04T23:36:15.6880043+07:00",
+  "last_at": "2026-11-04T23:44:54.6180856+07:00",
+  "fastapi_up_samples": 12,
+  "containers": [
+    {
+      "name": "fastapi-serving",
+      "first_mib": 161,
+      "last_mib": 164.1,
+      "max_mib": 164.1,
+      "max_cpu_pct": 63.58
+    },
+    {
+      "name": "kafka",
+      "first_mib": 473.4,
+      "last_mib": 481,
+      "max_mib": 563.4,
+      "max_cpu_pct": 199.86
+    },
+    {
+      "name": "postgres",
+      "first_mib": 142.2,
+      "last_mib": 162.5,
+      "max_mib": 162.5,
+      "max_cpu_pct": 69.58
+    },
+    {
+      "name": "minio",
+      "first_mib": 152.7,
+      "last_mib": 250.4,
+      "max_mib": 250.4,
+      "max_cpu_pct": 12.87
+    },
+    {
+      "name": "streaming-mlops-ecommerce-pipeline-worker-1",
+      "first_mib": 301.6,
+      "last_mib": 301.9,
+      "max_mib": 302.7,
+      "max_cpu_pct": 5.68
+    }
+  ]
+}

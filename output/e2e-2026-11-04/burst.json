@@ -1,0 +1,1097 @@
+{
+  "passed": true,
+  "lake": {
+    "ok": true,
+    "raw_rows": 50,
+    "objects": [
+      {
+        "name": "raw/orders/platform=shopee/year=2026/month=11/day=04/part-20261104T232313-59721afd-1.parquet",
+        "rows": 1
+      },
+      {
+        "name": "raw/orders/platform=shopee/year=2026/month=11/day=04/part-20261104T232324-eea13119-8.parquet",
+        "rows": 8
+      },
+      {
+        "name": "raw/orders/platform=shopee/year=2026/month=11/day=04/part-20261104T232334-0f306838-8.parquet",
+        "rows": 8
+      },
+      {
+        "name": "raw/orders/platform=shopee/year=2026/month=11/day=04/part-20261104T232345-29c22dba-8.parquet",
+        "rows": 8
+      },
+      {
+        "name": "raw/orders/platform=tiktok/year=2026/month=11/day=04/part-20261104T232324-eea13119-8.parquet",
+        "rows": 8
+      },
+      {
+        "name": "raw/orders/platform=tiktok/year=2026/month=11/day=04/part-20261104T232334-0f306838-8.parquet",
+        "rows": 8
+      },
+      {
+        "name": "raw/orders/platform=tiktok/year=2026/month=11/day=04/part-20261104T232345-29c22dba-8.parquet",
+        "rows": 8
+      },
+      {
+        "name": "raw/orders/platform=tiktok/year=2026/month=11/day=04/part-20261104T232356-880ca6dd-1.parquet",
+        "rows": 1
+      }
+    ],
+    "rejected": [],
+    "rejected_count": 0,
+    "processed_objects": 8
+  },
+  "captured": "2026-11-04T23:24:14.2059954+07:00",
+  "warehouse": {
+    "ok": true,
+    "order_lines": 144929,
+    "orders": 144890,
+    "units": 346969,
+    "run_count": 50,
+    "rows": [
+      {
+        "order_id": "WEB20261104162313c84ab6-000",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 2,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-001",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 3,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-002",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 4,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-003",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-004",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-005",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 2,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-006",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-007",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-008",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 3,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-009",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 3,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-010",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-011",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-012",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 4,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-013",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-014",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-015",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 2,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-016",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-017",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-018",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-019",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 2,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-020",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-021",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-022",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 5,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-023",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 2,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-024",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 5,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-025",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-026",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-027",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 4,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-028",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 2,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-029",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 5,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-030",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 3,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-031",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-032",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 2,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-033",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 2,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-034",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-035",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 2,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-036",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 4,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-037",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 2,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-038",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 2,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-039",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-040",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-041",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-042",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 2,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-043",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-044",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 3,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-045",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-046",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-047",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-048",
+        "platform": "shopee",
+        "sku": "WEB20261104162313c84ab6-S",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      },
+      {
+        "order_id": "WEB20261104162313c84ab6-049",
+        "platform": "tiktok",
+        "sku": "WEB20261104162313c84ab6-T",
+        "quantity": 1,
+        "order_status": "UNPAID",
+        "create_time": "2026-11-04 23:23:13.716185"
+      }
+    ],
+    "stocks": [
+      {
+        "sku": "WEB20261104162313c84ab6-S",
+        "stock_on_hand": 50,
+        "snapshot_at": "2026-11-04 16:23:13.716185+00:00"
+      },
+      {
+        "sku": "WEB20261104162313c84ab6-T",
+        "stock_on_hand": 8,
+        "snapshot_at": "2026-11-04 16:23:13.716185+00:00"
+      }
+    ],
+    "catalog": [
+      {
+        "sku": "P23*****03",
+        "name": "Áo ***************************************************************************************03",
+        "history_end": "2026-08-11"
+      },
+      {
+        "sku": "DST*****49",
+        "name": "DRC**************************************************************************************************************************************re",
+        "history_end": "2026-06-23"
+      },
+      {
+        "sku": "P25*****01",
+        "name": "Áo *****************************************************************************01",
+        "history_end": "2026-08-09"
+      },
+      {
+        "sku": "P24*****11",
+        "name": "Áo ********************************************************************************************11",
+        "history_end": "2026-08-09"
+      },
+      {
+        "sku": "P25*****02",
+        "name": "[MỚ******************************************************************02",
+        "history_end": "2026-08-09"
+      },
+      {
+        "sku": "P23*****01",
+        "name": "Áo *****************************************************************01",
+        "history_end": "2026-08-09"
+      },
+      {
+        "sku": "P25*****03",
+        "name": "Áo ***************************************************************************03",
+        "history_end": "2026-08-08"
+      },
+      {
+        "sku": "P25*****12",
+        "name": "[MỚ***************************************************************************************12",
+        "history_end": "2026-08-06"
+      },
+      {
+        "sku": "P24*****08",
+        "name": "Áo *********************************************************************************************08",
+        "history_end": "2026-08-10"
+      },
+      {
+        "sku": "P25*****14",
+        "name": "[MỚ**************************************************************************************14",
+        "history_end": "2026-08-08"
+      },
+      {
+        "sku": "P25*****15",
+        "name": "[MỚ**************************************************************************************15",
+        "history_end": "2026-08-10"
+      },
+      {
+        "sku": "P24*****01",
+        "name": "Áo *******************************************************************************************01",
+        "history_end": "2026-08-09"
+      },
+      {
+        "sku": "P24*****09",
+        "name": "Áo *************************************************************************************09",
+        "history_end": "2026-08-09"
+      },
+      {
+        "sku": "*****",
+        "name": "[Cỏ**************************************************************************ml",
+        "history_end": "2026-07-07"
+      },
+      {
+        "sku": "P24*****10",
+        "name": "Áo ***************************************************************************************10",
+        "history_end": "2026-08-08"
+      },
+      {
+        "sku": "P25***01",
+        "name": "[MỚ************************************************************************01",
+        "history_end": "2026-08-10"
+      },
+      {
+        "sku": "P25***02",
+        "name": "[MỚ*****************************************************************02",
+        "history_end": "2026-08-07"
+      },
+      {
+        "sku": "P25***03",
+        "name": "[MỚ*****************************************************************03",
+        "history_end": "2026-08-10"
+      },
+      {
+        "sku": "P23*****02",
+        "name": "Áo ****************************************************************************************02",
+        "history_end": "2026-08-09"
+      },
+      {
+        "sku": "DST*****17",
+        "name": "DRC****************************************************************************************Da",
+        "history_end": "2026-06-23"
+      },
+      {
+        "sku": "P24*****04",
+        "name": "Áo ******************************************************************************************04",
+        "history_end": "2026-07-21"
+      },
+      {
+        "sku": "SK-*****UA",
+        "name": "[QU*******************************************************************************ch",
+        "history_end": "2026-08-07"
+      },
+      {
+        "sku": "P24*****03",
+        "name": "Áo **********************************************************************************03",
+        "history_end": "2026-08-05"
+      },
+      {
+        "sku": "P23*****************XL",
+        "name": "Áo *****************************************************************************02",
+        "history_end": "2026-01-02"
+      },
+      {
+        "sku": "893********49",
+        "name": "Mat******************************************************************************************ản",
+        "history_end": "2026-07-23"
+      },
+      {
+        "sku": "893********09",
+        "name": "Trà****************************************************************************************************************************************************************************************************************0g",
+        "history_end": "2026-06-30"
+      },
+      {
+        "sku": "QT-********ot",
+        "name": "[Qu****************************ọt",
+        "history_end": "2026-06-30"
+      },
+      {
+        "sku": "P25*****16",
+        "name": "[MỚ**********************************************************************************16",
+        "history_end": "2026-08-08"
+      },
+      {
+        "sku": "SK-********40",
+        "name": "Tai********************************************************************************************òm",
+        "history_end": "2026-08-03"
+      },
+      {
+        "sku": "893********23",
+        "name": "[Vo************************************************************************************************************************************************0g",
+        "history_end": "2026-07-23"
+      },
+      {
+        "sku": "P23*****05",
+        "name": "Áo *********************************************************************************************05",
+        "history_end": "2026-07-16"
+      },
+      {
+        "sku": "P23*****04",
+        "name": "Áo *********************************************************************04",
+        "history_end": "2026-07-16"
+      },
+      {
+        "sku": "****",
+        "name": "Com**************************************************************************01",
+        "history_end": "2026-07-15"
+      },
+      {
+        "sku": "QT-********ng",
+        "name": "[Qu*************************************************************************************************************************gr",
+        "history_end": "2026-06-30"
+      },
+      {
+        "sku": "P23*****06",
+        "name": "Áo **************************************************************************06",
+        "history_end": "2026-07-13"
+      },
+      {
+        "sku": "P25*****04",
+        "name": "[MỚ*************************************************************************04",
+        "history_end": "2026-06-06"
+      },
+      {
+        "sku": "893********22",
+        "name": "Trà***************************************************************************************0g",
+        "history_end": "2026-07-08"
+      },
+      {
+        "sku": "DST*****02",
+        "name": "DRC******************************************************************************0g",
+        "history_end": "2026-06-22"
+      },
+      {
+        "sku": "893********39",
+        "name": "Trà***************************************************************************************0g",
+        "history_end": "2026-07-21"
+      },
+      {
+        "sku": "CB2*****15",
+        "name": "Com*******************************************************************************************15",
+        "history_end": "2026-08-09"
+      }
+    ]
+  },
+  "run": {
+    "run_id": "WEB20261104162313c84ab6",
+    "started_at": 1793809393.721701,
+    "valid_orders": 50,
+    "invalid_orders": 0,
+    "sent_orders": 50,
+    "sent_inventory": 2,
+    "replay_count": 0,
+    "acks": [
+      {
+        "key": "WEB20261104162313c84ab6-000",
+        "topic": "ecom.orders.raw",
+        "partition": 2,
+        "offset": 3215,
+        "invalid": false,
+        "at": 1793809393.83752
+      },
+      {
+        "key": "WEB20261104162313c84ab6-001",
+        "topic": "ecom.orders.raw",
+        "partition": 1,
+        "offset": 3272,
+        "invalid": false,
+        "at": 1793809394.4962885
+      },
+      {
+        "key": "WEB20261104162313c84ab6-002",
+        "topic": "ecom.orders.raw",
+        "partition": 0,
+        "offset": 3094,
+        "invalid": false,
+        "at": 1793809395.1569219
+      },
+      {
+        "key": "WEB20261104162313c84ab6-003",
+        "topic": "ecom.orders.raw",
+        "partition": 0,
+        "offset": 3095,
+        "invalid": false,
+        "at": 1793809395.8176477
+      },
+      {
+        "key": "WEB20261104162313c84ab6-004",
+        "topic": "ecom.orders.raw",
+        "partition": 1,
+        "offset": 3273,
+        "invalid": false,
+        "at": 1793809396.4772441
+      },
+      {
+        "key": "WEB20261104162313c84ab6-005",
+        "topic": "ecom.orders.raw",
+        "partition": 1,
+        "offset": 3274,
+        "invalid": false,
+        "at": 1793809397.1389751
+      },
+      {
+        "key": "WEB20261104162313c84ab6-006",
+        "topic": "ecom.orders.raw",
+        "partition": 1,
+        "offset": 3275,
+        "invalid": false,
+        "at": 1793809397.8028982
+      },
+      {
+        "key": "WEB20261104162313c84ab6-007",
+        "topic": "ecom.orders.raw",
+        "partition": 0,
+        "offset": 3096,
+        "invalid": false,
+        "at": 1793809398.4636538
+      },
+      {
+        "key": "WEB20261104162313c84ab6-008",
+        "topic": "ecom.orders.raw",
+        "partition": 0,
+        "offset": 3097,
+        "invalid": false,
+        "at": 1793809399.1209178
+      },
+      {
+        "key": "WEB20261104162313c84ab6-009",
+        "topic": "ecom.orders.raw",
+        "partition": 0,
+        "offset": 3098,
+        "invalid": false,
+        "at": 1793809399.7836525
+      },
+      {
+        "key": "WEB20261104162313c84ab6-010",
+        "topic": "ecom.orders.raw",
+        "partition": 0,
+        "offset": 3099,
+        "invalid": false,
+        "at": 1793809400.450369
+      },
+      {
+        "key": "WEB20261104162313c84ab6-011",
+        "topic": "ecom.orders.raw",
+        "partition": 2,
+        "offset": 3216,
+        "invalid": false,
+        "at": 1793809401.1103668
+      },
+      {
+        "key": "WEB20261104162313c84ab6-012",
+        "topic": "ecom.orders.raw",
+        "partition": 1,
+        "offset": 3276,
+        "invalid": false,
+        "at": 1793809401.7698507
+      },
+      {
+        "key": "WEB20261104162313c84ab6-013",
+        "topic": "ecom.orders.raw",
+        "partition": 0,
+        "offset": 3100,
+        "invalid": false,
+        "at": 1793809402.4293473
+      },
+      {
+        "key": "WEB20261104162313c84ab6-014",
+        "topic": "ecom.orders.raw",
+        "partition": 2,
+        "offset": 3217,
+        "invalid": false,
+        "at": 1793809403.0914695
+      },
+      {
+        "key": "WEB20261104162313c84ab6-015",
+        "topic": "ecom.orders.raw",
+        "partition": 1,
+        "offset": 3277,
+        "invalid": false,
+        "at": 1793809403.750844
+      },
+      {
+        "key": "WEB20261104162313c84ab6-016",
+        "topic": "ecom.orders.raw",
+        "partition": 2,
+        "offset": 3218,
+        "invalid": false,
+        "at": 1793809404.410672
+      },
+      {
+        "key": "WEB20261104162313c84ab6-017",
+        "topic": "ecom.orders.raw",
+        "partition": 2,
+        "offset": 3219,
+        "invalid": false,
+        "at": 1793809405.0696092
+      },
+      {
+        "key": "WEB20261104162313c84ab6-018",
+        "topic": "ecom.orders.raw",
+        "partition": 1,
+        "offset": 3278,
+        "invalid": false,
+        "at": 1793809405.7283766
+      },
+      {
+        "key": "WEB20261104162313c84ab6-019",
+        "topic": "ecom.orders.raw",
+        "partition": 2,
+        "offset": 3220,
+        "invalid": false,
+        "at": 1793809406.386085
+      },
+      {
+        "key": "WEB20261104162313c84ab6-020",
+        "topic": "ecom.orders.raw",
+        "partition": 0,
+        "offset": 3101,
+        "invalid": false,
+        "at": 1793809407.0464678
+      },
+      {
+        "key": "WEB20261104162313c84ab6-021",
+        "topic": "ecom.orders.raw",
+        "partition": 2,
+        "offset": 3221,
+        "invalid": false,
+        "at": 1793809407.7063596
+      },
+      {
+        "key": "WEB20261104162313c84ab6-022",
+        "topic": "ecom.orders.raw",
+        "partition": 2,
+        "offset": 3222,
+        "invalid": false,
+        "at": 1793809408.3643303
+      },
+      {
+        "key": "WEB20261104162313c84ab6-023",
+        "topic": "ecom.orders.raw",
+        "partition": 1,
+        "offset": 3279,
+        "invalid": false,
+        "at": 1793809409.0235906
+      },
+      {
+        "key": "WEB20261104162313c84ab6-024",
+        "topic": "ecom.orders.raw",
+        "partition": 2,
+        "offset": 3223,
+        "invalid": false,
+        "at": 1793809409.6857498
+      },
+      {
+        "key": "WEB20261104162313c84ab6-025",
+        "topic": "ecom.orders.raw",
+        "partition": 0,
+        "offset": 3102,
+        "invalid": false,
+        "at": 1793809410.3448908
+      },
+      {
+        "key": "WEB20261104162313c84ab6-026",
+        "topic": "ecom.orders.raw",
+        "partition": 2,
+        "offset": 3224,
+        "invalid": false,
+        "at": 1793809411.0042784
+      },
+      {
+        "key": "WEB20261104162313c84ab6-027",
+        "topic": "ecom.orders.raw",
+        "partition": 0,
+        "offset": 3103,
+        "invalid": false,
+        "at": 1793809411.6634321
+      },
+      {
+        "key": "WEB20261104162313c84ab6-028",
+        "topic": "ecom.orders.raw",
+        "partition": 0,
+        "offset": 3104,
+        "invalid": false,
+        "at": 1793809412.3207982
+      },
+      {
+        "key": "WEB20261104162313c84ab6-029",
+        "topic": "ecom.orders.raw",
+        "partition": 2,
+        "offset": 3225,
+        "invalid": false,
+        "at": 1793809412.9817038
+      },
+      {
+        "key": "WEB20261104162313c84ab6-030",
+        "topic": "ecom.orders.raw",
+        "partition": 1,
+        "offset": 3280,
+        "invalid": false,
+        "at": 1793809413.6408546
+      },
+      {
+        "key": "WEB20261104162313c84ab6-031",
+        "topic": "ecom.orders.raw",
+        "partition": 0,
+        "offset": 3105,
+        "invalid": false,
+        "at": 1793809414.3031414
+      },
+      {
+        "key": "WEB20261104162313c84ab6-032",
+        "topic": "ecom.orders.raw",
+        "partition": 2,
+        "offset": 3226,
+        "invalid": false,
+        "at": 1793809414.9624956
+      },
+      {
+        "key": "WEB20261104162313c84ab6-033",
+        "topic": "ecom.orders.raw",
+        "partition": 1,
+        "offset": 3281,
+        "invalid": false,
+        "at": 1793809415.6244185
+      },
+      {
+        "key": "WEB20261104162313c84ab6-034",
+        "topic": "ecom.orders.raw",
+        "partition": 1,
+        "offset": 3282,
+        "invalid": false,
+        "at": 1793809416.2822547
+      },
+      {
+        "key": "WEB20261104162313c84ab6-035",
+        "topic": "ecom.orders.raw",
+        "partition": 0,
+        "offset": 3106,
+        "invalid": false,
+        "at": 1793809416.9433932
+      },
+      {
+        "key": "WEB20261104162313c84ab6-036",
+        "topic": "ecom.orders.raw",
+        "partition": 1,
+        "offset": 3283,
+        "invalid": false,
+        "at": 1793809417.6113205
+      },
+      {
+        "key": "WEB20261104162313c84ab6-037",
+        "topic": "ecom.orders.raw",
+        "partition": 2,
+        "offset": 3227,
+        "invalid": false,
+        "at": 1793809418.2731159
+      },
+      {
+        "key": "WEB20261104162313c84ab6-038",
+        "topic": "ecom.orders.raw",
+        "partition": 0,
+        "offset": 3107,
+        "invalid": false,
+        "at": 1793809418.9333138
+      },
+      {
+        "key": "WEB20261104162313c84ab6-039",
+        "topic": "ecom.orders.raw",
+        "partition": 2,
+        "offset": 3228,
+        "invalid": false,
+        "at": 1793809419.6020212
+      },
+      {
+        "key": "WEB20261104162313c84ab6-040",
+        "topic": "ecom.orders.raw",
+        "partition": 0,
+        "offset": 3108,
+        "invalid": false,
+        "at": 1793809420.2611868
+      },
+      {
+        "key": "WEB20261104162313c84ab6-041",
+        "topic": "ecom.orders.raw",
+        "partition": 2,
+        "offset": 3229,
+        "invalid": false,
+        "at": 1793809420.9197588
+      },
+      {
+        "key": "WEB20261104162313c84ab6-042",
+        "topic": "ecom.orders.raw",
+        "partition": 1,
+        "offset": 3284,
+        "invalid": false,
+        "at": 1793809421.5799809
+      },
+      {
+        "key": "WEB20261104162313c84ab6-043",
+        "topic": "ecom.orders.raw",
+        "partition": 0,
+        "offset": 3109,
+        "invalid": false,
+        "at": 1793809422.2449162
+      },
+      {
+        "key": "WEB20261104162313c84ab6-044",
+        "topic": "ecom.orders.raw",
+        "partition": 2,
+        "offset": 3230,
+        "invalid": false,
+        "at": 1793809422.9076986
+      },
+      {
+        "key": "WEB20261104162313c84ab6-045",
+        "topic": "ecom.orders.raw",
+        "partition": 2,
+        "offset": 3231,
+        "invalid": false,
+        "at": 1793809423.5663488
+      },
+      {
+        "key": "WEB20261104162313c84ab6-046",
+        "topic": "ecom.orders.raw",
+        "partition": 0,
+        "offset": 3110,
+        "invalid": false,
+        "at": 1793809424.2260802
+      },
+      {
+        "key": "WEB20261104162313c84ab6-047",
+        "topic": "ecom.orders.raw",
+        "partition": 0,
+        "offset": 3111,
+        "invalid": false,
+        "at": 1793809424.8839254
+      },
+      {
+        "key": "WEB20261104162313c84ab6-048",
+        "topic": "ecom.orders.raw",
+        "partition": 0,
+        "offset": 3112,
+        "invalid": false,
+        "at": 1793809425.5440233
+      },
+      {
+        "key": "WEB20261104162313c84ab6-049",
+        "topic": "ecom.orders.raw",
+        "partition": 1,
+        "offset": 3285,
+        "invalid": false,
+        "at": 1793809426.2085307
+      },
+      {
+        "key": "WEB20261104162313c84ab6-S",
+        "topic": "inventory.logs",
+        "partition": 2,
+        "offset": 13,
+        "invalid": false,
+        "at": 1793809426.8685455
+      },
+      {
+        "key": "WEB20261104162313c84ab6-T",
+        "topic": "inventory.logs",
+        "partition": 1,
+        "offset": 26,
+        "invalid": false,
+        "at": 1793809427.5337448
+      }
+    ],
+    "status": "published",
+    "message": "Kafka đã xác nhận. Đang chờ consumer và worker xử lý."
+  }
+}
