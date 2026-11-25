@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_core_operations.py::test_worker_invalidates_healthy_status_before_failed_startup",
+  "file": "cases\\test_worker_invalidates_healthy_status_b-27473371f5",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0020041000097990036,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0028117999900132418,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00018640002235770226,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

@@ -1,67 +1,39 @@
-# Module Power BI Executive Dashboard (Tuần 9)
+# Power BI Executive Dashboard — PostgreSQL Import
 
-> **Sửa KPI ngày 20/10/2026:** Exporter summary dùng chung view executive, đếm đơn distinct `(platform, order_id)` và tính AOV = tổng `buyer_total_amount` / số đơn không hủy (làm tròn 2 chữ số). Platform lấy từ fact nên dòng thiếu shop không bị loại. Khi import CSV, dùng measure trong mục 1 của `dax_measures.md`; AOV toàn bộ phải tính lại từ tổng tiền/tổng đơn, không lấy trung bình cột `aov`. Sau export thành công, Refresh PBIX để nạp CSV mới. Xem [bằng chứng sửa và đối soát](../docs/04-pipeline-updates/lan-08-powerbi-orders-aov-2026-10-20.md).
-## Thiết kế Theo Phương pháp luận Ralph Kimball (*The Data Warehouse Toolkit*)
+> **Mô hình mới sau rà soát schema:** [warehouse/README.md](../warehouse/README.md).
+> Dashboard dựng mới đọc schema `bi`, dùng fact dòng hàng thay summary ngày × sàn.
+> Bộ query `import/` hiện giữ đường tương thích cũ, chưa phải template PBIX mới.
 
-Thư mục này chứa toàn bộ tài nguyên phục vụ việc thiết kế và xây dựng **Executive Dashboard** trên **Power BI Desktop**, hỗ trợ ban giám khảo và các nhà quản lý chuỗi cung ứng theo dõi toàn diện hoạt động kinh doanh đa kênh, dự báo nhu cầu bán hàng và quản trị tồn kho thông minh.
+Nguồn chính của báo cáo là PostgreSQL, chế độ **Import**. CSV chỉ dùng làm snapshot
+dự phòng; worker không xuất CSV và không phụ thuộc kết quả backup.
 
-> 📖 **Báo cáo Kỹ thuật Đầy đủ**: Xem chi tiết tại [`docs/02-warehouse-etl-feature-store/bao_cao_xay_dung_power_bi_dashboard.md`](../docs/02-warehouse-etl-feature-store/bao_cao_xay_dung_power_bi_dashboard.md)
+Hướng dẫn đầy đủ: [kết nối, chuyển query, refresh, quyền chỉ đọc và đối soát](import/README.md).
 
----
+## Tài nguyên
 
-## Cấu trúc thư mục
+| Tệp/thư mục | Vai trò |
+|---|---|
+| `import/*.pq` | 7 query PostgreSQL và 2 query cấu hình server/database cho Power Query |
+| `views_for_powerbi.sql` | Các view BI, worker cài một lần lúc khởi động |
+| `export_powerbi_dataset.py` | SELECT dùng chung cho Import và CSV; CLI xuất dự phòng |
+| `data/*.csv` | Snapshot dự phòng, có thể cũ nếu chưa chạy backup |
+| `dax_measures.md` | Measure theo tên bảng/schema giữ nguyên khi đổi nguồn |
+| `BaoCaoQuanLy/` | Báo cáo chính (PBIP, 6 trang, đọc schema `mart`). Các PBIX cũ đã xóa ngày 22/11/2026 |
 
-```
-powerbi/
-├── data/                         # Thư mục chứa các tệp CSV xuất bản sẵn sàng import (Chuẩn Star Schema)
-│   ├── Dim_Dates.csv             # Chiều lịch thời gian nhất quán (Conformed Date Dimension)
-│   ├── Dim_Products.csv          # Danh mục sản phẩm, Surrogate Key, phân khúc ma trận ABC/XYZ
-│   ├── Dim_Geography.csv         # Phân bổ địa lý 3 miền Bắc - Trung - Nam
-│   ├── Fact_Orders_Summary.csv   # Doanh thu & đơn hàng tổng hợp theo ngày và sàn
-│   ├── Inventory_Health_Alerts.csv # Tồn kho thực tế, Safety Stock, ROP, cấp độ cảnh báo
-│   └── Forecast_vs_Actual.csv    # Forecast ML đã lưu, ghép actual sau ngày mục tiêu
-├── Report_PowerBI.pbix           # Tệp Báo cáo Power BI hoàn thiện
-├── theme_pastel.json             # Theme màu Pastel chuẩn Microsoft JSON Schema
-├── views_for_powerbi.sql         # 5 SQL Views cho kết nối trực tiếp PostgreSQL
-├── dax_measures.md               # Tập hợp đầy đủ các công thức tính toán DAX chuẩn
-├── export_powerbi_dataset.py     # Script xuất khẩu tự động các tệp dữ liệu phẳng CSV
-└── README.md                     # Tài liệu hướng dẫn này
-```
+## Chạy
 
----
+1. Chạy `docker compose up -d --build`, đợi worker healthy.
+2. Trong Power BI Desktop, chọn PostgreSQL database và **Import**; server mặc định
+   `localhost:5432`, database `ecom_warehouse`. Dùng tài khoản chỉ đọc.
+3. Dùng bộ query tại `import/`, giữ tên bảng, Apply rồi Refresh. Xem hướng dẫn
+   chi tiết trước khi thay query trong PBIX đang có.
+4. Nếu cần CSV dự phòng, chạy `docker compose --profile backup run --rm csv-backup`.
+   Lệnh backup lỗi không làm worker unhealthy hoặc xử lý lại batch ETL.
 
-## 2 Phương thức Kết nối Dữ liệu vào Power BI Desktop
-
-### Cách 1: Nạp CSV từ Data Warehouse
-1. Khởi động PostgreSQL, tạo/cập nhật schema và nạp dữ liệu ETL:
-   ```bash
-   docker compose up -d postgres
-   python scripts/init_warehouse.py
-   # Chạy ingestion/ETL và Model Serving như hướng dẫn vận hành.
-   ```
-2. Chạy API `/predict/demand` để các dự báo ML có lịch sử warehouse được ghi vào `Fact_Forecast_Predictions`.
-3. Xuất lại các bảng CSV:
-   ```bash
-   python powerbi/export_powerbi_dataset.py
-   ```
-4. Trong Power BI Desktop, chọn **Refresh** để tải dữ liệu mới.
-
-Exporter đọc trực tiếp `Fact_Orders`, `Fact_Inventory_Daily` và forecast đã lưu trong PostgreSQL. Nếu kho không truy cập được hoặc chưa có đơn hợp lệ, lệnh dừng với thông báo lỗi; nó không tạo số liệu ngẫu nhiên. `Forecast_vs_Actual` chỉ có forecast ML từ `mlflow_registry`/`local_joblib`, dựa trên lịch sử warehouse. `actual_demand` chỉ được gán sau khi ngày mục tiêu kết thúc; các forecast chưa có actual sẽ không ảnh hưởng WAPE/Bias. Khi chưa có dự báo ML đã lưu, file chỉ có header và dashboard chưa hiển thị metric accuracy.
-
-“Actual” ở đây là giao dịch đã được ghi nhận trong warehouse. Nếu demo đang dùng `data_simulator`, accuracy là accuracy trên luồng mô phỏng đó; exporter không tự tạo actual bằng cách cộng nhiễu vào dự báo.
-
-Các CSV đã xuất từ phiên bản cũ không tự đổi khi cập nhật mã nguồn. Chỉ bấm **Refresh** sau khi lệnh export chạy thành công để tránh tiếp tục xem snapshot demo cũ.
-
-### Cách 2: Kết nối trực tiếp vào PostgreSQL Star Schema
-1. Đảm bảo container PostgreSQL đang chạy (`docker compose up -d postgres`).
-2. Thực thi các views trong `powerbi/views_for_powerbi.sql` vào database `ecom_warehouse`.
-3. Trong Power BI Desktop: Chọn **Get Data** ➔ **PostgreSQL Database**:
-   - **Server**: `localhost:5432`
-   - **Database**: `ecom_warehouse`
-   - **User**: `ecom` | **Password**: `ecom_password`
-4. Chọn các Views có tiền tố `vw_powerbi_*` để tải dữ liệu.
-
----
+KPI số đơn đếm distinct `(platform, order_id)` trên đơn không hủy; AOV tính tổng
+`buyer_total_amount` / tổng số đơn. Import và CSV dùng cùng SELECT để giữ định nghĩa.
+Forecast chỉ lấy từ dự báo ML đã lưu; actual chỉ hoàn tất sau ngày mục tiêu và có
+coverage phù hợp. Bảng forecast trống là trạng thái hợp lệ khi chưa có dự báo.
 
 ## Thiết kế Bố cục Dashboard (3 Trang Báo cáo)
 

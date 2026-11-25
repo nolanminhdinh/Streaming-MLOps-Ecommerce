@@ -1,0 +1,75 @@
+{
+  "audit_date": "2026-11-20",
+  "offline": {
+    "balanced_fixture": {
+      "raw": 6,
+      "valid": 2,
+      "duplicate": 2,
+      "rejected": 2
+    },
+    "verified_fixes": {
+      "dedupe_independent_of_input_order": [
+        "COMPLETED",
+        "COMPLETED"
+      ],
+      "same_sku_without_line_ids_collapses": {
+        "inputs": 2,
+        "remaining": 1
+      },
+      "malformed_voucher_quarantined": 1,
+      "malformed_discounted_price_quarantined": 1
+    }
+  },
+  "runtime_readonly": {
+    "warehouse": {
+      "fact_lines": 162858,
+      "orders": 162832,
+      "quantity": 387064,
+      "cancelled_lines": 29316,
+      "missing_product": 0,
+      "missing_date": 0,
+      "missing_shop": 30,
+      "first_create_time": "2026-01-01T00:06:42",
+      "last_create_time": "2026-11-20T00:00:39.900873",
+      "coverage_rows": 322
+    },
+    "historical": {
+      "rows": 7000,
+      "skus": 228,
+      "first_create_time": "2025-12-26T04:11:27",
+      "last_create_time": "2026-08-11T06:27:46"
+    },
+    "line_unique_index": [
+      {
+        "indexname": "uq_fact_orders_order_platform_line",
+        "indexdef": "CREATE UNIQUE INDEX uq_fact_orders_order_platform_line ON public.fact_orders USING btree (order_id, platform, source_line_id)"
+      }
+    ],
+    "reconciliation": {
+      "source_date": "2026-11-20",
+      "raw_objects": 8,
+      "raw_rows": 37,
+      "valid_lines": 37,
+      "duplicate_rows": 0,
+      "rejected_rows": 0,
+      "accounting_balanced": true,
+      "quarantine_objects_inspected": 42,
+      "rejected_source_rows_found_in_existing_quarantine": 0,
+      "warehouse_lines_on_date": 37,
+      "missing_in_warehouse": 0,
+      "warehouse_keys_absent_from_selected_raw": 0,
+      "common_keys_with_value_mismatch": 0,
+      "compared_fields": [
+        "quantity",
+        "order_status",
+        "is_cancelled",
+        "sku",
+        "subtotal",
+        "buyer_total_amount"
+      ],
+      "raw_valid_quantity": 66,
+      "warehouse_quantity": 66,
+      "rejection_reasons": {}
+    }
+  }
+}

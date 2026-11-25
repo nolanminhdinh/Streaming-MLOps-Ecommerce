@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_monitoring.py::TestFeatureStoreDriftWindows::test_windows_split_by_date",
+  "file": "cases\\test_windows_split_by_date-824fe89f2f",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0008724000072106719,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.02164619998075068,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0002503000432625413,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

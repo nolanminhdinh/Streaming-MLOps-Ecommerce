@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_runtime_integrity_fixes.py::test_inventory_quarantine_failure_prevents_database_write",
+  "file": "cases\\test_inventory_quarantine_failure_preven-5bf22ed32a",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00015249999705702066,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0021324000554159284,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00023110001347959042,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

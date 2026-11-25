@@ -1,0 +1,14 @@
+<!doctype html><meta charset="utf-8"><title>ZooKeeper – điều phối broker Kafka</title>
+<style>body{font:14px/1.45 Segoe UI,Arial;margin:24px;background:#fff;color:#1d2433}
+h1{font-size:22px;margin:0 0 4px} .meta{color:#5b6475;margin-bottom:14px}
+h2{font-size:15px;margin:16px 0 6px;color:#24508f}
+pre{background:#f4f6fa;border:1px solid #d9dee8;border-radius:6px;padding:10px;font:12.5px/1.4 Consolas,monospace;
+white-space:pre-wrap;word-break:break-all;margin:0}</style>
+<h1>ZooKeeper – điều phối broker Kafka</h1><div class="meta">Kết quả lệnh kiểm tra chạy lúc 20/11/2026 00:17:45 (giờ Việt Nam)</div><h2>zookeeper-shell: broker đang đăng ký</h2><pre>Connecting to localhost:2181
+
+WATCHER::
+
+WatchedEvent state:SyncConnected type:None path:null
+[1]</pre><h2>docker compose ps zookeeper kafka</h2><pre>NAME        IMAGE                             COMMAND                  SERVICE     CREATED      STATUS                       PORTS
+kafka       confluentinc/cp-kafka:7.6.0       &quot;/etc/confluent/dock…&quot;   kafka       4 days ago   Up About an hour (healthy)   0.0.0.0:9092-&gt;9092/tcp, [::]:9092-&gt;9092/tcp, 0.0.0.0:29092-&gt;29092/tcp, [::]:29092-&gt;29092/tcp
+zookeeper   confluentinc/cp-zookeeper:7.6.0   &quot;/etc/confluent/dock…&quot;   zookeeper   4 days ago   Up About an hour (healthy)   0.0.0.0:2181-&gt;2181/tcp, [::]:2181-&gt;2181/tcp</pre>

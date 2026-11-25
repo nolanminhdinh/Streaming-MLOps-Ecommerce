@@ -1,0 +1,20 @@
+[
+  {
+    "order_id": "CMP20261108c96f7bfb-A",
+    "source_line_id": "sku:CMP20261108c96f7bfb-A",
+    "sku": "CMP20261108c96f7bfb-A",
+    "quantity": 7,
+    "order_status": "COMPLETED",
+    "source_updated_at": "2026-11-08T22:43:40.438152",
+    "buyer_total_amount": "70.00"
+  },
+  {
+    "order_id": "CMP20261108c96f7bfb-B",
+    "source_line_id": "sku:CMP20261108c96f7bfb-B",
+    "sku": "CMP20261108c96f7bfb-B",
+    "quantity": 3,
+    "order_status": "COMPLETED",
+    "source_updated_at": "2026-11-08T22:43:05.438152",
+    "buyer_total_amount": "30.00"
+  }
+]

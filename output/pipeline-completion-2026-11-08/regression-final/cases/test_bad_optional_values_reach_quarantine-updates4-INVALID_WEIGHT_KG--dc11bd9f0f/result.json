@@ -1,0 +1,37 @@
+{
+  "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_optional_values_reach_quarantine[updates4-INVALID_WEIGHT_KG]",
+  "file": "cases\\test_bad_optional_values_reach_quarantine-updates4-INVALID_WEIGHT_KG--dc11bd9f0f",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0005650999955832958,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.05777140008285642,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0004909998970106244,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "updates": {
+      "item_weight": "bad"
+    },
+    "reason": "INVALID_WEIGHT_KG"
+  },
+  "outcome": "passed"
+}

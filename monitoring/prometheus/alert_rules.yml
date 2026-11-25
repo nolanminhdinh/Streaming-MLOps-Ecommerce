@@ -36,6 +36,27 @@ groups:
           severity: warning
         annotations:
           summary: "Lịch sử nhu cầu của model đã cũ hơn 7 ngày"
+      - alert: EcommercePipelineBacklogTooOld
+        expr: ecommerce_pipeline_pending_objects > 0 and ecommerce_pipeline_oldest_pending_seconds > 180
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Raw đang chờ ETL quá 180 giây"
+      - alert: EcommercePipelineBatchSlow
+        expr: ecommerce_pipeline_latency_measured_rows > 0 and ecommerce_pipeline_ingest_to_warehouse_p95_seconds > 120
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "P95 từ consumer đến hoàn tất mẻ ETL vượt 120 giây"
+      - alert: EcommercePipelineBatchVolumeAnomaly
+        expr: ecommerce_pipeline_batch_volume_anomaly == 1 and ecommerce_pipeline_batch_volume_reference_batches >= 6
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Khối lượng mẻ ETL lệch khỏi mức tham chiếu"
       - alert: EcommerceTrainingDataInsufficient
         expr: ecommerce_training_history_days{kind="missing"} > 0
         for: 30s

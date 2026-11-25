@@ -1,0 +1,34 @@
+{
+  "nodeid": "tests/test_core_operations.py::test_exited_consumer_is_failure_even_on_clean_exit[0]",
+  "file": "cases\\test_exited_consumer_is_failure_even_on_-966be324d2",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0004425999941304326,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0006485999329015613,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00032410002313554287,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "exit_code": 0
+  },
+  "outcome": "passed"
+}

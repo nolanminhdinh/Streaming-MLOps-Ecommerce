@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_pipeline_integrity.py::test_forecast_audit_persists_source_and_canonical_fingerprints",
+  "file": "cases\\test_forecast_audit_persists_source_and_-836207f0df",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00012310000602155924,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0009310001041740179,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0001634000800549984,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

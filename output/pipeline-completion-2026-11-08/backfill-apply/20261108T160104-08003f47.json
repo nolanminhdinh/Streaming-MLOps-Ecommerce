@@ -1,0 +1,80 @@
+{
+  "status": "APPLIED",
+  "start": "2026-11-08",
+  "end": "2026-11-08",
+  "checkpoint_modified": false,
+  "source_version_guard_enabled": true,
+  "results": [
+    {
+      "run_id": "20261108T230104-f60e548e0d0749cea536ffa9026366e4",
+      "status": "SUCCESS",
+      "target_date": "2026-11-08",
+      "raw_records": 8,
+      "unified_records": 8,
+      "clean_records": 2,
+      "quarantined_records": 3,
+      "loaded_records": 2,
+      "elapsed_seconds": 0.31,
+      "duplicates_removed": 3,
+      "validation_errors": {
+        "CONTRACT_MISSING_ITEM_SKU": 1,
+        "MISSING_SKU": 1,
+        "CONTRACT_UNSUPPORTED_VERSION": 1,
+        "CONTRACT_INVALID_TYPE_QUANTITY": 1,
+        "NON_POSITIVE_QUANTITY": 1
+      },
+      "quarantine_object": "quarantine/orders/run_id=20261108T230104-f60e548e0d0749cea536ffa9026366e4/rejected.jsonl",
+      "contract": "ecommerce.orders/1.0",
+      "object_accounting": [
+        {
+          "source_object": "raw/orders/platform=shopee/year=2026/month=11/day=08/part-20261108T224356-137d5eee-7.parquet",
+          "raw": 7,
+          "valid": 2,
+          "duplicates": 2,
+          "rejected": 3
+        },
+        {
+          "source_object": "raw/orders/platform=shopee/year=2026/month=11/day=08/part-20261108T224346-927b1b38-1.parquet",
+          "raw": 1,
+          "valid": 0,
+          "duplicates": 1,
+          "rejected": 0
+        }
+      ],
+      "accounted_records": 8,
+      "completed_at": "2026-11-08T16:01:05.043947+00:00",
+      "ingest_to_warehouse_seconds": {
+        "measured_rows": 8,
+        "total_rows": 8,
+        "p50": 1038.9116235000001,
+        "p95": 1039.0152095,
+        "max": 1039.070968
+      },
+      "execution_mode": "backfill",
+      "latency_interpretation": "replay age, not a new live-traffic SLA measurement"
+    }
+  ],
+  "before": [
+    {
+      "date": "2026-11-08",
+      "rows": 2,
+      "quantity": 10,
+      "buyer_amount": "100.00",
+      "business_sha": "259e34d540c780f5997a202151a3ddcf"
+    }
+  ],
+  "after": [
+    {
+      "date": "2026-11-08",
+      "rows": 2,
+      "quantity": 10,
+      "buyer_amount": "100.00",
+      "business_sha": "259e34d540c780f5997a202151a3ddcf"
+    }
+  ],
+  "selected_objects": [
+    "raw/orders/platform=shopee/year=2026/month=11/day=08/part-20261108T224346-927b1b38-1.parquet",
+    "raw/orders/platform=shopee/year=2026/month=11/day=08/part-20261108T224356-137d5eee-7.parquet"
+  ],
+  "business_output_unchanged": true
+}

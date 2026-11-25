@@ -23,6 +23,7 @@ import signal
 import sys
 import time
 import uuid
+from datetime import datetime, timezone
 
 import pandas as pd
 import pyarrow as pa
@@ -275,7 +276,12 @@ def main():
                     if not _running:
                         break
 
-                    buffer.append(message.value)
+                    record = dict(message.value)
+                    record.update(_pipeline_ingested_at=datetime.now(timezone.utc).isoformat(),
+                                  _pipeline_kafka_topic=getattr(message, "topic", None),
+                                  _pipeline_kafka_partition=getattr(message, "partition", None),
+                                  _pipeline_kafka_offset=getattr(message, "offset", None))
+                    buffer.append(record)
                     total_messages += 1
 
                     # Check flush conditions

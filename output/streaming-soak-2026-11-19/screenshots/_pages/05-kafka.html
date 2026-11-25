@@ -1,0 +1,29 @@
+<!doctype html><meta charset="utf-8"><title>Kafka – topic và consumer group</title>
+<style>body{font:14px/1.45 Segoe UI,Arial;margin:24px;background:#fff;color:#1d2433}
+h1{font-size:22px;margin:0 0 4px} .meta{color:#5b6475;margin-bottom:14px}
+h2{font-size:15px;margin:16px 0 6px;color:#24508f}
+pre{background:#f4f6fa;border:1px solid #d9dee8;border-radius:6px;padding:10px;font:12.5px/1.4 Consolas,monospace;
+white-space:pre-wrap;word-break:break-all;margin:0}</style>
+<h1>Kafka – topic và consumer group</h1><div class="meta">Kết quả lệnh kiểm tra chạy lúc 20/11/2026 00:17:45 (giờ Việt Nam)</div><h2>kafka-topics --describe (hai topic của luồng)</h2><pre>Topic: ecom.orders.raw	TopicId: 5FH4hmxPQVujSEb65oulyw	PartitionCount: 3	ReplicationFactor: 1	Configs: 
+	Topic: ecom.orders.raw	Partition: 0	Leader: 1	Replicas: 1	Isr: 1
+	Topic: ecom.orders.raw	Partition: 1	Leader: 1	Replicas: 1	Isr: 1
+	Topic: ecom.orders.raw	Partition: 2	Leader: 1	Replicas: 1	Isr: 1
+Topic: inventory.logs	TopicId: 64XbrlKQR6GY3dorSW7JcA	PartitionCount: 3	ReplicationFactor: 1	Configs: 
+	Topic: inventory.logs	Partition: 0	Leader: 1	Replicas: 1	Isr: 1
+	Topic: inventory.logs	Partition: 1	Leader: 1	Replicas: 1	Isr: 1
+	Topic: inventory.logs	Partition: 2	Leader: 1	Replicas: 1	Isr: 1</pre><h2>kafka-consumer-groups --describe --all-groups (LAG = số bản tin chưa xử lý)</h2><pre>GROUP                           TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                             HOST            CLIENT-ID
+inventory-postgres-writer-group inventory.logs  0          685             685             0               kafka-python-2.2.3-70732f65-4cec-4a5a-aaf1-017223381ce6 /172.19.0.14    kafka-python-2.2.3
+inventory-postgres-writer-group inventory.logs  1          690             690             0               kafka-python-2.2.3-70732f65-4cec-4a5a-aaf1-017223381ce6 /172.19.0.14    kafka-python-2.2.3
+inventory-postgres-writer-group inventory.logs  2          600             600             0               kafka-python-2.2.3-70732f65-4cec-4a5a-aaf1-017223381ce6 /172.19.0.14    kafka-python-2.2.3
+
+GROUP              TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                             HOST            CLIENT-ID
+minio-writer-group ecom.orders.raw 0          1900            1900            0               kafka-python-2.2.3-af9beaea-21d0-48f3-96fd-f57b94206ae4 /172.19.0.14    kafka-python-2.2.3
+minio-writer-group ecom.orders.raw 1          1932            1932            0               kafka-python-2.2.3-af9beaea-21d0-48f3-96fd-f57b94206ae4 /172.19.0.14    kafka-python-2.2.3
+minio-writer-group ecom.orders.raw 2          1889            1889            0               kafka-python-2.2.3-af9beaea-21d0-48f3-96fd-f57b94206ae4 /172.19.0.14    kafka-python-2.2.3
+
+GROUP                     TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID     HOST            CLIENT-ID
+nifi-ecom-orders-consumer ecom.orders.raw 0          776             1900            1124            -               -               -
+nifi-ecom-orders-consumer ecom.orders.raw 1          848             1932            1084            -               -               -
+nifi-ecom-orders-consumer ecom.orders.raw 2          779             1889            1110            -               -               -
+
+Consumer group &#x27;nifi-ecom-orders-consumer&#x27; has no active members.</pre>

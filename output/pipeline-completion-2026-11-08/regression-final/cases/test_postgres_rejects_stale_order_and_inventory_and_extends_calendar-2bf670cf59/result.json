@@ -1,0 +1,24 @@
+{
+  "nodeid": "tests/test_runtime_integrity_fixes.py::test_postgres_rejects_stale_order_and_inventory_and_extends_calendar",
+  "file": "cases\\test_postgres_rejects_stale_order_and_inventory_and_extends_calendar-2bf670cf59",
+  "phases": {
+    "setup": {
+      "outcome": "skipped",
+      "duration_seconds": 0.0001949999714270234,
+      "details": "('C:\\\\Users\\\\MINH\\\\Đếm ngày xa trường\\\\temp-extract\\\\streaming-mlops-ecommerce\\\\tests\\\\test_runtime_integrity_fixes.py', 191, 'Skipped: Opt-in PostgreSQL integration')",
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0003071000101044774,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "skipped"
+}

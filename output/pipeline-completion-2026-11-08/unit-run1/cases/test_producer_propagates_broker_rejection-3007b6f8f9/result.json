@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_core_operations.py::test_producer_propagates_broker_rejection",
+  "file": "cases\\test_producer_propagates_broker_rejection-3007b6f8f9",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0004126999992877245,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0016457999590784311,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00048290006816387177,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

@@ -77,11 +77,12 @@ def make_events(run_id, count, invalid):
         if platform == "shopee":
             event = asdict(simulator._generate_shopee_event(now))
             event.update(order_sn=order_id, item_sku=sku, item_name="DEMO · Sản phẩm Shopee",
-                         shop_id=run_id, shop_name="DEMO bảo vệ")
+                         # Shop cố định: shop_id theo lượt chạy từng làm Dim_Shops thêm 1 dòng mỗi lượt demo.
+                         shop_id="DEMO-SHOPEE", shop_name="DEMO bảo vệ")
         else:
             event = asdict(simulator._generate_tiktok_event(now))
             event.update(order_id=order_id, seller_sku=sku, product_name="DEMO · Sản phẩm TikTok",
-                         shop_name="DEMO " + run_id)
+                         shop_name="DEMO bảo vệ")  # ETL dùng shop_name làm shop_id cho TikTok
         event.update(_platform=platform, _demo_run_id=run_id, order_line_id=order_id + "-1",
                      update_time=now.isoformat())
         if bad:
@@ -394,6 +395,16 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         if not self.allowed_host() or self.headers.get("Origin") not in {None, "http://" + self.headers.get("Host", "")} or not secrets.compare_digest(self.headers.get("X-Demo-Token", ""), TOKEN):
+            # Đọc bỏ body nhỏ trước khi từ chối: đóng socket còn dữ liệu chưa đọc khiến Windows
+            # gửi RST và client nhận "connection aborted" thay vì mã 403.
+            try:
+                size = int(self.headers.get("Content-Length", "0"))
+            except ValueError:
+                size = -1
+            if 0 < size <= 8192:
+                self.rfile.read(size)
+            else:
+                self.close_connection = True
             return self.json_response({"error": "Yêu cầu phải được gửi từ trang demo này."}, 403)
         try:
             size = int(self.headers.get("Content-Length", "0"))

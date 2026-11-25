@@ -1,0 +1,35 @@
+{
+  "nodeid": "tests/test_ingestion.py::test_vietnam_midnight_year_boundary_and_mixed_iso_formats[shopee-create_time]",
+  "file": "cases\\test_vietnam_midnight_year_boundary_and_mixed_iso_formats-shopee-create_time--a7114d7582",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0006765000289306045,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.01901469996664673,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00029820005875080824,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "platform": "shopee",
+    "time_column": "create_time"
+  },
+  "outcome": "passed"
+}

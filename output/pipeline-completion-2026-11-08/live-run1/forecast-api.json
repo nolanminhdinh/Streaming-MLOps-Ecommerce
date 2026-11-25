@@ -1,0 +1,68 @@
+{
+  "input": {
+    "sku": "****",
+    "from_date": "2026-08-12",
+    "to_date": "2026-08-18"
+  },
+  "output": {
+    "http_status": 200,
+    "body": {
+      "sku": "****",
+      "product_name": "Com**************************************************************************01",
+      "category": "Khác",
+      "from_date": "2026-08-12",
+      "to_date": "2026-08-18",
+      "total_predicted_demand": 0.0,
+      "forecast": [
+        {
+          "date": "2026-08-12",
+          "predicted_quantity": 0.0,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-13",
+          "predicted_quantity": 0.0,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-14",
+          "predicted_quantity": 0.0,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-15",
+          "predicted_quantity": 0.0,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-16",
+          "predicted_quantity": 0.0,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-17",
+          "predicted_quantity": 0.0,
+          "lower_bound": null,
+          "upper_bound": null
+        },
+        {
+          "date": "2026-08-18",
+          "predicted_quantity": 0.0,
+          "lower_bound": null,
+          "upper_bound": null
+        }
+      ],
+      "model_name": "ECommerceDemandForecastModel",
+      "model_version": "2",
+      "model_stage": "Staging",
+      "model_source": "mlflow_registry",
+      "history_source": "warehouse"
+    }
+  },
+  "scope": "separate historical-source consumption branch; no accuracy claim"
+}

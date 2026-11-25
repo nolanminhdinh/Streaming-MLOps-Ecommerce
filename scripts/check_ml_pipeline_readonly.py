@@ -20,7 +20,7 @@ from data_simulator.data_simulator import PRODUCT_CATALOG
 from ml.features.feature_pipeline import get_feature_columns
 from ml.features.time_series_features import TimeSeriesFeatureExtractor
 from ml.training.data_readiness import assess_order_history, required_history_days
-from ml.training.metrics import calculate_all_metrics
+from ml.training.metrics import EVALUATION_PROTOCOL, calculate_all_metrics
 from ml.training.recursive_evaluation import forecast_fold_recursively
 from serving.app.baseline_models import NaiveModel, SeasonalNaiveModel, MovingAverageModel
 from serving.app.features import build_feature_row
@@ -46,10 +46,12 @@ def boundary_checks():
     assert early_price == 0
     history = [{"daily_demand": float(i)} for i in range(1, 11)]
     row = build_feature_row(history, date(2026, 1, 10))
-    baseline_values = {"latest_observed": 10, "naive_lag_1_prediction": row["lag_1"],
-                       "seasonal_lag_7_prediction": row["lag_7"],
-                       "moving_average_shifted_7": row["rolling_mean_7"]}
-    assert row["lag_1"] == 9 and row["lag_7"] == 3
+    X = pd.DataFrame([row])
+    baseline_values = {"latest_observed": 10, "alignment_version": 2,
+                       "naive_prediction": float(NaiveModel().predict(X)[0]),
+                       "seasonal_prediction": float(SeasonalNaiveModel().predict(X)[0]),
+                       "moving_average_prediction": float(MovingAverageModel().predict(X)[0])}
+    assert list(baseline_values[k] for k in ["naive_prediction", "seasonal_prediction", "moving_average_prediction"]) == [10, 4, 7]
     return {"readiness_two_observed_dates": {key: readiness[key] for key in
                                            ["data_sufficient", "available_history_days", "active_source_days", "required_history_days"]},
             "price_backfill_before_first_sale": early_price,
@@ -59,6 +61,13 @@ def boundary_checks():
 
 def evaluate(features, daily, columns):
     frame = features.copy()
+    columns = list(columns)
+    if "lag_6" not in frame:
+        lag_data = daily.sort_values(["sku", "date"]).copy()
+        lag_data["lag_6"] = lag_data.groupby("sku")["daily_demand"].shift(6)
+        frame = frame.merge(lag_data[["sku", "date", "lag_6"]], on=["sku", "date"], how="left", validate="one_to_one")
+    if "lag_6" not in columns:
+        columns.append("lag_6")
     frame["target_date"] = pd.to_datetime(frame.date).dt.date + pd.Timedelta(days=1)
     output = {}
     for name, model in [("naive", NaiveModel()), ("seasonal_naive", SeasonalNaiveModel()),
@@ -79,7 +88,9 @@ def evaluate(features, daily, columns):
                           "test_skus": int(test.sku.nunique()), "scored_skus": int(scored.sku.nunique()),
                           "metrics": calculate_all_metrics(y, p)})
             all_y.extend(y); all_p.extend(p)
-        output[name] = {"folds": folds, "mean_fold_wape": round(float(np.mean([f["metrics"]["wape"] for f in folds])), 2),
+        defined = [f["metrics"]["wape"] for f in folds if f["metrics"]["wape"] is not None]
+        output[name] = {"folds": folds, "evaluation_protocol": EVALUATION_PROTOCOL,
+                        "mean_fold_wape": round(float(np.mean(defined)), 2) if defined else None,
                         "pooled_metrics": calculate_all_metrics(all_y, all_p),
                         "horizon_metrics": {str(h): calculate_all_metrics(a, b) for h, (a, b) in horizon_values.items()}}
     return output

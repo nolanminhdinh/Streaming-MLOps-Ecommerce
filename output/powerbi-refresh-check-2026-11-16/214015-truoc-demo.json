@@ -1,0 +1,234 @@
+{
+  "checked_at": "2026-11-16T21:40:15.441138+07:00",
+  "label": "truoc-demo",
+  "status": "PASS",
+  "transaction_read_only": true,
+  "powerbi_desktop_refresh_verified": false,
+  "sources": {
+    "pq:Dim_Dates": {
+      "rows": 1095,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.009
+    },
+    "pq:Dim_Products": {
+      "rows": 200,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.772
+    },
+    "pq:Dim_Geography": {
+      "rows": 20,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.641
+    },
+    "pq:Fact_Orders_Summary": {
+      "rows": 614,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.545
+    },
+    "pq:Forecast_vs_Actual": {
+      "rows": 6,
+      "nan_or_infinity_cells": 0,
+      "seconds": 3.523
+    },
+    "pq:Inventory_Health_Alerts": {
+      "rows": 78,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.623
+    },
+    "pq:Historical_Demand_Daily": {
+      "rows": 2211,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.027
+    },
+    "bi.dim_date": {
+      "rows": 1095,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.006
+    },
+    "bi.dim_geography": {
+      "rows": 20,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.003
+    },
+    "bi.dim_historical_product": {
+      "rows": 230,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.04
+    },
+    "bi.dim_platform": {
+      "rows": 2,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.001
+    },
+    "bi.dim_product": {
+      "rows": 200,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.002
+    },
+    "bi.dim_shop": {
+      "rows": 57,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.002
+    },
+    "bi.fact_forecast_issue": {
+      "rows": 27,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.001
+    },
+    "bi.fact_historical_order_line": {
+      "rows": 7000,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.049
+    },
+    "bi.fact_inventory_daily": {
+      "rows": 6144,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.028
+    },
+    "bi.fact_order_line": {
+      "rows": 145660,
+      "nan_or_infinity_cells": 0,
+      "seconds": 3.326
+    },
+    "bi.forecast_evaluation": {
+      "rows": 6,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.605
+    },
+    "bi.inventory_health": {
+      "rows": 84,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.811
+    },
+    "bi.inventory_latest": {
+      "rows": 84,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.01
+    },
+    "bi.quality_order_header_conflicts": {
+      "rows": 28,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.635
+    },
+    "bi.quality_shop_identity": {
+      "rows": 0,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.002
+    }
+  },
+  "relationships": [
+    {
+      "dimension": "pq:Dim_Dates",
+      "key": "date_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "pq:Fact_Orders_Summary": 0,
+        "pq:Forecast_vs_Actual": 0,
+        "pq:Inventory_Health_Alerts": 0,
+        "pq:Historical_Demand_Daily": 0
+      }
+    },
+    {
+      "dimension": "pq:Dim_Products",
+      "key": "product_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "pq:Forecast_vs_Actual": 0,
+        "pq:Inventory_Health_Alerts": 0
+      }
+    },
+    {
+      "dimension": "pq:Dim_Geography",
+      "key": "geo_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {}
+    },
+    {
+      "dimension": "bi.dim_date",
+      "key": "date_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "bi.fact_order_line": 0,
+        "bi.fact_inventory_daily": 0,
+        "bi.inventory_health": 0,
+        "bi.forecast_evaluation": 0
+      }
+    },
+    {
+      "dimension": "bi.dim_product",
+      "key": "product_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "bi.fact_order_line": 0,
+        "bi.fact_inventory_daily": 0,
+        "bi.inventory_health": 0,
+        "bi.forecast_evaluation": 0,
+        "bi.fact_forecast_issue": 0
+      }
+    },
+    {
+      "dimension": "bi.dim_shop",
+      "key": "shop_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "bi.fact_order_line": 0
+      }
+    },
+    {
+      "dimension": "bi.dim_geography",
+      "key": "geo_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "bi.fact_order_line": 0
+      }
+    },
+    {
+      "dimension": "bi.dim_platform",
+      "key": "platform",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "bi.fact_order_line": 0,
+        "bi.dim_shop": 0
+      }
+    },
+    {
+      "dimension": "bi.dim_historical_product",
+      "key": "historical_product_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "bi.fact_historical_order_line": 0
+      }
+    }
+  ],
+  "checks": {
+    "all_sources_loaded": true,
+    "no_nan_or_infinity": true,
+    "dimension_keys_unique_not_null": true,
+    "no_orphan_fact_keys": true,
+    "shop_one_key_per_name": true,
+    "date_labels_trimmed": true,
+    "bi_fact_matches_public_fact": true,
+    "summary_units_match_line_fact": true
+  },
+  "kpi": {
+    "bi_units": "287171",
+    "summary_units": "287171",
+    "bi_lines": "145660",
+    "fact_lines": "145660"
+  },
+  "freshness": {
+    "last_loaded": "2026-11-16 13:21:11.075733",
+    "last_order": "2026-11-16 19:20:33.248608",
+    "minutes_since_load": "79.0738758500000000"
+  },
+  "header_conflicts_flagged": 28
+}

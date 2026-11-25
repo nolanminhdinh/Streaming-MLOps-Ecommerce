@@ -1,0 +1,43 @@
+{
+  "test": "tests/test_pipeline_completion.py::test_latency_uses_measured_ingestion_not_business_date",
+  "name": "measured-latency",
+  "inputs": [
+    {
+      "_pipeline_ingested_at": "2026-11-07T23:59:59+00:00",
+      "create_time": "2020-01-01"
+    },
+    {
+      "_pipeline_ingested_at": "2026-11-07T23:59:58+00:00",
+      "create_time": "2020-01-01"
+    },
+    {
+      "_pipeline_ingested_at": "2026-11-07T23:59:57+00:00",
+      "create_time": "2020-01-01"
+    },
+    {
+      "_pipeline_ingested_at": "2026-11-07T23:59:56+00:00",
+      "create_time": "2020-01-01"
+    },
+    {
+      "_pipeline_ingested_at": "2026-11-07T23:59:55+00:00",
+      "create_time": "2020-01-01"
+    },
+    {
+      "_pipeline_ingested_at": "bad"
+    },
+    {
+      "_pipeline_ingested_at": "2026-11-08T00:00:03+00:00"
+    }
+  ],
+  "expected": {
+    "measured_rows": 5,
+    "p95": 4.8
+  },
+  "actual": {
+    "measured_rows": 5,
+    "total_rows": 7,
+    "p50": 3.0,
+    "p95": 4.8,
+    "max": 5.0
+  }
+}

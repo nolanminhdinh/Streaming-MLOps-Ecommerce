@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_runtime_integrity_fixes.py::test_dedupe_chooses_source_version_independent_of_arrival_order",
+  "file": "cases\\test_dedupe_chooses_source_version_independent_of_arrival_order-ed412e5fb5",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0005727999377995729,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0810477000195533,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0003024999750778079,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

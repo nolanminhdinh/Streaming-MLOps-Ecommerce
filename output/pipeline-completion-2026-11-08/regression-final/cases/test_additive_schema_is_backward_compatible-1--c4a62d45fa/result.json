@@ -1,0 +1,34 @@
+{
+  "nodeid": "tests/test_pipeline_completion.py::test_additive_schema_is_backward_compatible[1]",
+  "file": "cases\\test_additive_schema_is_backward_compatible-1--c4a62d45fa",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0003781999694183469,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.02710300008766353,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0002419000957161188,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "version": "1"
+  },
+  "outcome": "passed"
+}

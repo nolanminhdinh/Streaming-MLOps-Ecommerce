@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_core_operations.py::test_storage_failure_never_commits_order_offsets",
+  "file": "cases\\test_storage_failure_never_commits_order-f2a65fdacb",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0005089000333100557,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0009431999642401934,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "ERROR    kafka-consumer-minio:consumer_to_minio.py:330 Lỗi flush cuối: lake down"
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00018159998580813408,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "ERROR    kafka-consumer-minio:consumer_to_minio.py:330 Lỗi flush cuối: lake down"
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

@@ -1,0 +1,282 @@
+{
+  "status": "PASS",
+  "cases": 6,
+  "results": [
+    {
+      "case": "backlog-too-old",
+      "status": "PASS",
+      "inputs": {
+        "pending_objects": 2,
+        "oldest_pending_seconds": 181
+      },
+      "expected_firing": true,
+      "exit_code": 0,
+      "stdout": "Unit Testing:  /tmp/backlog-too-old.yml\n  SUCCESS\n\n",
+      "stderr": "",
+      "specification": {
+        "rule_files": [
+          "/etc/prometheus/alert_rules.yml"
+        ],
+        "evaluation_interval": "15s",
+        "tests": [
+          {
+            "name": "backlog-too-old",
+            "interval": "15s",
+            "input_series": [
+              {
+                "series": "ecommerce_pipeline_pending_objects{instance=\"acceptance\"}",
+                "values": "2+0x12"
+              },
+              {
+                "series": "ecommerce_pipeline_oldest_pending_seconds{instance=\"acceptance\"}",
+                "values": "181+0x12"
+              }
+            ],
+            "alert_rule_test": [
+              {
+                "eval_time": "2m",
+                "alertname": "EcommercePipelineBacklogTooOld",
+                "exp_alerts": [
+                  {
+                    "exp_labels": {
+                      "instance": "acceptance",
+                      "severity": "warning"
+                    },
+                    "exp_annotations": {
+                      "summary": "Raw đang chờ ETL quá 180 giây"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "case": "idle-is-not-backlog",
+      "status": "PASS",
+      "inputs": {
+        "pending_objects": 0,
+        "oldest_pending_seconds": 999
+      },
+      "expected_firing": false,
+      "exit_code": 0,
+      "stdout": "Unit Testing:  /tmp/idle-is-not-backlog.yml\n  SUCCESS\n\n",
+      "stderr": "",
+      "specification": {
+        "rule_files": [
+          "/etc/prometheus/alert_rules.yml"
+        ],
+        "evaluation_interval": "15s",
+        "tests": [
+          {
+            "name": "idle-is-not-backlog",
+            "interval": "15s",
+            "input_series": [
+              {
+                "series": "ecommerce_pipeline_pending_objects{instance=\"acceptance\"}",
+                "values": "0+0x12"
+              },
+              {
+                "series": "ecommerce_pipeline_oldest_pending_seconds{instance=\"acceptance\"}",
+                "values": "999+0x12"
+              }
+            ],
+            "alert_rule_test": [
+              {
+                "eval_time": "2m",
+                "alertname": "EcommercePipelineBacklogTooOld",
+                "exp_alerts": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "case": "measured-batch-slow",
+      "status": "PASS",
+      "inputs": {
+        "latency_measured_rows": 8,
+        "ingest_to_warehouse_p95_seconds": 121
+      },
+      "expected_firing": true,
+      "exit_code": 0,
+      "stdout": "Unit Testing:  /tmp/measured-batch-slow.yml\n  SUCCESS\n\n",
+      "stderr": "",
+      "specification": {
+        "rule_files": [
+          "/etc/prometheus/alert_rules.yml"
+        ],
+        "evaluation_interval": "15s",
+        "tests": [
+          {
+            "name": "measured-batch-slow",
+            "interval": "15s",
+            "input_series": [
+              {
+                "series": "ecommerce_pipeline_latency_measured_rows{instance=\"acceptance\"}",
+                "values": "8+0x12"
+              },
+              {
+                "series": "ecommerce_pipeline_ingest_to_warehouse_p95_seconds{instance=\"acceptance\"}",
+                "values": "121+0x12"
+              }
+            ],
+            "alert_rule_test": [
+              {
+                "eval_time": "2m",
+                "alertname": "EcommercePipelineBatchSlow",
+                "exp_alerts": [
+                  {
+                    "exp_labels": {
+                      "instance": "acceptance",
+                      "severity": "warning"
+                    },
+                    "exp_annotations": {
+                      "summary": "P95 từ consumer đến hoàn tất mẻ ETL vượt 120 giây"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "case": "legacy-unmeasured-not-zero-latency",
+      "status": "PASS",
+      "inputs": {
+        "latency_measured_rows": 0,
+        "ingest_to_warehouse_p95_seconds": -1
+      },
+      "expected_firing": false,
+      "exit_code": 0,
+      "stdout": "Unit Testing:  /tmp/legacy-unmeasured-not-zero-latency.yml\n  SUCCESS\n\n",
+      "stderr": "",
+      "specification": {
+        "rule_files": [
+          "/etc/prometheus/alert_rules.yml"
+        ],
+        "evaluation_interval": "15s",
+        "tests": [
+          {
+            "name": "legacy-unmeasured-not-zero-latency",
+            "interval": "15s",
+            "input_series": [
+              {
+                "series": "ecommerce_pipeline_latency_measured_rows{instance=\"acceptance\"}",
+                "values": "0+0x12"
+              },
+              {
+                "series": "ecommerce_pipeline_ingest_to_warehouse_p95_seconds{instance=\"acceptance\"}",
+                "values": "-1+0x12"
+              }
+            ],
+            "alert_rule_test": [
+              {
+                "eval_time": "2m",
+                "alertname": "EcommercePipelineBatchSlow",
+                "exp_alerts": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "case": "volume-reference-ready",
+      "status": "PASS",
+      "inputs": {
+        "batch_volume_anomaly": 1,
+        "batch_volume_reference_batches": 6
+      },
+      "expected_firing": true,
+      "exit_code": 0,
+      "stdout": "Unit Testing:  /tmp/volume-reference-ready.yml\n  SUCCESS\n\n",
+      "stderr": "",
+      "specification": {
+        "rule_files": [
+          "/etc/prometheus/alert_rules.yml"
+        ],
+        "evaluation_interval": "15s",
+        "tests": [
+          {
+            "name": "volume-reference-ready",
+            "interval": "15s",
+            "input_series": [
+              {
+                "series": "ecommerce_pipeline_batch_volume_anomaly{instance=\"acceptance\"}",
+                "values": "1+0x12"
+              },
+              {
+                "series": "ecommerce_pipeline_batch_volume_reference_batches{instance=\"acceptance\"}",
+                "values": "6+0x12"
+              }
+            ],
+            "alert_rule_test": [
+              {
+                "eval_time": "2m",
+                "alertname": "EcommercePipelineBatchVolumeAnomaly",
+                "exp_alerts": [
+                  {
+                    "exp_labels": {
+                      "instance": "acceptance",
+                      "severity": "warning"
+                    },
+                    "exp_annotations": {
+                      "summary": "Khối lượng mẻ ETL lệch khỏi mức tham chiếu"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "case": "volume-reference-warming-up",
+      "status": "PASS",
+      "inputs": {
+        "batch_volume_anomaly": 1,
+        "batch_volume_reference_batches": 5
+      },
+      "expected_firing": false,
+      "exit_code": 0,
+      "stdout": "Unit Testing:  /tmp/volume-reference-warming-up.yml\n  SUCCESS\n\n",
+      "stderr": "",
+      "specification": {
+        "rule_files": [
+          "/etc/prometheus/alert_rules.yml"
+        ],
+        "evaluation_interval": "15s",
+        "tests": [
+          {
+            "name": "volume-reference-warming-up",
+            "interval": "15s",
+            "input_series": [
+              {
+                "series": "ecommerce_pipeline_batch_volume_anomaly{instance=\"acceptance\"}",
+                "values": "1+0x12"
+              },
+              {
+                "series": "ecommerce_pipeline_batch_volume_reference_batches{instance=\"acceptance\"}",
+                "values": "5+0x12"
+              }
+            ],
+            "alert_rule_test": [
+              {
+                "eval_time": "2m",
+                "alertname": "EcommercePipelineBatchVolumeAnomaly",
+                "exp_alerts": []
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

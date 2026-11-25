@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_warehouse_schema_v2.py::test_order_line_grain_shared_keys_and_distinct_business_order",
+  "file": "cases\\test_order_line_grain_shared_keys_and_distinct_business_order-997867c2dc",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.12895789998583496,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.010449100052937865,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00394399999640882,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

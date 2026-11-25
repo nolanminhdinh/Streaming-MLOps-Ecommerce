@@ -1,0 +1,56 @@
+<!doctype html><meta charset="utf-8"><title>pipeline-worker – điều phối consumer, ETL, coverage, mart</title>
+<style>body{font:14px/1.45 Segoe UI,Arial;margin:24px;background:#fff;color:#1d2433}
+h1{font-size:22px;margin:0 0 4px} .meta{color:#5b6475;margin-bottom:14px}
+h2{font-size:15px;margin:16px 0 6px;color:#24508f}
+pre{background:#f4f6fa;border:1px solid #d9dee8;border-radius:6px;padding:10px;font:12.5px/1.4 Consolas,monospace;
+white-space:pre-wrap;word-break:break-all;margin:0}</style>
+<h1>pipeline-worker – điều phối consumer, ETL, coverage, mart</h1><div class="meta">Kết quả lệnh kiểm tra chạy lúc 20/11/2026 00:17:45 (giờ Việt Nam)</div><h2>data/pipeline/status.json (heartbeat)</h2><pre>{
+  &quot;status&quot;: &quot;healthy&quot;,
+  &quot;checked_at&quot;: 1795108654.2806108,
+  &quot;pending_objects&quot;: 0,
+  &quot;oldest_pending_seconds&quot;: 0.0,
+  &quot;last_success_at&quot;: 1795107646.084291,
+  &quot;last_batch_volume&quot;: {
+    &quot;ratio&quot;: 1.1935483870967742,
+    &quot;anomaly&quot;: 0,
+    &quot;reference_median&quot;: 31.0,
+    &quot;reference_batches&quot;: 12
+  },
+  &quot;last_run_id&quot;: &quot;20261120T000045-eee9f57320954156bf782d340ab8ee0b&quot;,
+  &quot;ingest_to_warehouse_seconds&quot;: {
+    &quot;measured_rows&quot;: 37,
+    &quot;total_rows&quot;: 37,
+    &quot;p50&quot;: 25.542427,
+    &quot;p95&quot;: 43.5630364,
+    &quot;max&quot;: 45.357132
+  }
+}</pre><h2>docker compose logs --tail 30 pipeline-worker</h2><pre>pipeline-worker-1  | 2026-11-19 17:16:50 [INFO] kafka.conn: &lt;BrokerConnection node_id=bootstrap-0 host=kafka:9092 &lt;connected&gt; [IPv4 (&#x27;172.19.0.10&#x27;, 9092)]&gt;: Closing connection. 
+pipeline-worker-1  | 2026-11-19 17:16:50 [INFO] kafka.conn: &lt;BrokerConnection node_id=1 host=kafka:9092 &lt;connected&gt; [IPv4 (&#x27;172.19.0.10&#x27;, 9092)]&gt;: Closing connection. 
+pipeline-worker-1  | 2026-11-19 17:16:50 [INFO] kafka.conn: &lt;BrokerConnection node_id=1 host=kafka:9092 &lt;connected&gt; [IPv4 (&#x27;172.19.0.10&#x27;, 9092)]&gt;: Closing connection. 
+pipeline-worker-1  | 2026-11-19 17:16:50 [WARNING] etl.coverage: Giữ lại 1 ngày có khối lượng thấp bất thường, cần kiểm tra trước khi xác nhận tay: 2026-11-18
+pipeline-worker-1  | 2026-11-19 17:17:26 [INFO] kafka.conn: &lt;BrokerConnection node_id=bootstrap-0 host=kafka:9092 &lt;connecting&gt; [IPv4 (&#x27;172.19.0.10&#x27;, 9092)]&gt;: connecting to kafka:9092 [(&#x27;172.19.0.10&#x27;, 9092) IPv4]
+pipeline-worker-1  | 2026-11-19 17:17:26 [INFO] kafka.conn: Probing node bootstrap-0 broker version
+pipeline-worker-1  | 2026-11-19 17:17:26 [INFO] kafka.conn: &lt;BrokerConnection node_id=bootstrap-0 host=kafka:9092 &lt;connecting&gt; [IPv4 (&#x27;172.19.0.10&#x27;, 9092)]&gt;: Connection complete.
+pipeline-worker-1  | 2026-11-19 17:17:27 [INFO] kafka.conn: Broker version identified as 2.6.0
+pipeline-worker-1  | 2026-11-19 17:17:27 [INFO] kafka.conn: Set configuration api_version=(2, 6, 0) to skip auto check_version requests on startup
+pipeline-worker-1  | 2026-11-19 17:17:27 [INFO] kafka.conn: Probing node bootstrap-0 broker version
+pipeline-worker-1  | 2026-11-19 17:17:27 [INFO] kafka.conn: Broker version identified as 2.6.0
+pipeline-worker-1  | 2026-11-19 17:17:27 [INFO] kafka.conn: Set configuration api_version=(2, 6, 0) to skip auto check_version requests on startup
+pipeline-worker-1  | 2026-11-19 17:17:27 [INFO] kafka.conn: &lt;BrokerConnection node_id=1 host=kafka:9092 &lt;connecting&gt; [IPv4 (&#x27;172.19.0.10&#x27;, 9092)]&gt;: connecting to kafka:9092 [(&#x27;172.19.0.10&#x27;, 9092) IPv4]
+pipeline-worker-1  | 2026-11-19 17:17:27 [INFO] kafka.conn: Probing node 1 broker version
+pipeline-worker-1  | 2026-11-19 17:17:27 [INFO] kafka.conn: &lt;BrokerConnection node_id=1 host=kafka:9092 &lt;connecting&gt; [IPv4 (&#x27;172.19.0.10&#x27;, 9092)]&gt;: Connection complete.
+pipeline-worker-1  | 2026-11-19 17:17:27 [INFO] kafka.conn: &lt;BrokerConnection node_id=bootstrap-0 host=kafka:9092 &lt;connected&gt; [IPv4 (&#x27;172.19.0.10&#x27;, 9092)]&gt;: Closing connection. 
+pipeline-worker-1  | 2026-11-19 17:17:27 [INFO] kafka.conn: Broker version identified as 2.6.0
+pipeline-worker-1  | 2026-11-19 17:17:27 [INFO] kafka.conn: Set configuration api_version=(2, 6, 0) to skip auto check_version requests on startup
+pipeline-worker-1  | 2026-11-19 17:17:27 [INFO] kafka.conn: &lt;BrokerConnection node_id=bootstrap-0 host=kafka:9092 &lt;connecting&gt; [IPv4 (&#x27;172.19.0.10&#x27;, 9092)]&gt;: connecting to kafka:9092 [(&#x27;172.19.0.10&#x27;, 9092) IPv4]
+pipeline-worker-1  | 2026-11-19 17:17:27 [INFO] kafka.conn: Probing node bootstrap-0 broker version
+pipeline-worker-1  | 2026-11-19 17:17:27 [INFO] kafka.conn: &lt;BrokerConnection node_id=bootstrap-0 host=kafka:9092 &lt;connecting&gt; [IPv4 (&#x27;172.19.0.10&#x27;, 9092)]&gt;: Connection complete.
+pipeline-worker-1  | 2026-11-19 17:17:27 [INFO] kafka.conn: Broker version identified as 2.6.0
+pipeline-worker-1  | 2026-11-19 17:17:27 [INFO] kafka.conn: Set configuration api_version=(2, 6, 0) to skip auto check_version requests on startup
+pipeline-worker-1  | 2026-11-19 17:17:27 [WARNING] kafka.coordinator.consumer: group_id is None: disabling auto-commit.
+pipeline-worker-1  | 2026-11-19 17:17:27 [INFO] kafka.conn: &lt;BrokerConnection node_id=1 host=kafka:9092 &lt;connecting&gt; [IPv4 (&#x27;172.19.0.10&#x27;, 9092)]&gt;: connecting to kafka:9092 [(&#x27;172.19.0.10&#x27;, 9092) IPv4]
+pipeline-worker-1  | 2026-11-19 17:17:27 [INFO] kafka.conn: &lt;BrokerConnection node_id=1 host=kafka:9092 &lt;connecting&gt; [IPv4 (&#x27;172.19.0.10&#x27;, 9092)]&gt;: Connection complete.
+pipeline-worker-1  | 2026-11-19 17:17:27 [INFO] kafka.conn: &lt;BrokerConnection node_id=bootstrap-0 host=kafka:9092 &lt;connected&gt; [IPv4 (&#x27;172.19.0.10&#x27;, 9092)]&gt;: Closing connection. 
+pipeline-worker-1  | 2026-11-19 17:17:27 [INFO] kafka.conn: &lt;BrokerConnection node_id=1 host=kafka:9092 &lt;connected&gt; [IPv4 (&#x27;172.19.0.10&#x27;, 9092)]&gt;: Closing connection. 
+pipeline-worker-1  | 2026-11-19 17:17:27 [INFO] kafka.conn: &lt;BrokerConnection node_id=1 host=kafka:9092 &lt;connected&gt; [IPv4 (&#x27;172.19.0.10&#x27;, 9092)]&gt;: Closing connection. 
+pipeline-worker-1  | 2026-11-19 17:17:27 [WARNING] etl.coverage: Giữ lại 1 ngày có khối lượng thấp bất thường, cần kiểm tra trước khi xác nhận tay: 2026-11-18</pre>

@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_pipeline_completion.py::test_out_of_range_selected_object_is_rejected_before_io",
+  "file": "cases\\test_out_of_range_selected_object_is_rej-827c642db6",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0001876000314950943,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0007340000011026859,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0001268000341951847,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

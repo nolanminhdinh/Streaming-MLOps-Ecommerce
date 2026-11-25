@@ -10,6 +10,7 @@ Nếu không có `.env`, sẽ dùng giá trị mặc định phù hợp với do
 Hoàn thiện Tuần 2-3: tích hợp thực tế data_simulator → Kafka.
 """
 
+from datetime import datetime, timezone
 import json
 import logging
 import os
@@ -115,6 +116,10 @@ def send_event(producer: KafkaProducer, event: dict, topic: str = TOPIC_ORDERS):
     future = producer.send(topic, key=key_bytes, value=event)
     future.add_callback(on_success)
     future.add_errback(on_error)
+    # The simulator must not count an event as delivered when Kafka rejects it.
+    # Wait for broker acknowledgement; on failure stop rather than silently
+    # continuing with a gap in the generated stream.
+    return future.get(timeout=30)
 
 
 def send_inventory_snapshot(producer: KafkaProducer, simulator: ECommerceSimulator) -> int:
@@ -142,18 +147,22 @@ def run_producer(
     logger.info("═" * 60)
 
     producer = build_producer()
+    # Mã lượt chạy "R" + giờ khởi động (UTC, HHMMSS): mỗi lần chạy lại producer trong ngày có mã đơn riêng,
+    # không trùng/ghi đè đơn của lượt trước (ví dụ SPE261117R083015000001).
+    run_tag = "R" + datetime.now(timezone.utc).strftime("%H%M%S")
     simulator = ECommerceSimulator(
         shopee_ratio=shopee_ratio,
         cancel_rate=cancel_rate,
+        order_id_tag=run_tag,
     )
+    logger.info("  Mã lượt chạy trong mã đơn: %s", run_tag)
 
     total_sent = 0
     start_time = time.time()
-    # Gửi snapshot ngay khi khởi động để Fact_Inventory_Daily có dữ liệu sớm
-    send_inventory_snapshot(producer, simulator)
-    last_snapshot = time.time()
-
     try:
+        # Include the initial send in cleanup when Kafka is unavailable.
+        send_inventory_snapshot(producer, simulator)
+        last_snapshot = time.time()
         for event in simulator.stream(base_events_per_second=base_events_per_second):
             if not _running:
                 break
@@ -179,8 +188,10 @@ def run_producer(
         logger.info("Nhận Ctrl+C, đang dừng...")
     finally:
         logger.info("Flushing %d message còn trong buffer...", total_sent)
-        producer.flush(timeout=10)
-        producer.close(timeout=5)
+        try:
+            producer.flush(timeout=10)
+        finally:
+            producer.close(timeout=5)
         elapsed = time.time() - start_time
         logger.info(
             "Producer đã dừng. Tổng: %d events trong %.1f giây (%.1f evt/s)",

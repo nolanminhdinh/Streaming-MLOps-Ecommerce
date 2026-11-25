@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_runtime_integrity_fixes.py::test_failed_csv_write_preserves_previous_dataset",
+  "file": "cases\\test_failed_csv_write_preserves_previous-eb2bbfd08e",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.003730999887920916,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0010745000327005982,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0001574999187141657,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

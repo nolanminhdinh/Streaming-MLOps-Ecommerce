@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_pipeline_integrity.py::test_default_retraining_reads_deployment_csv_fingerprints",
+  "file": "cases\\test_default_retraining_reads_deployment-e795d717b8",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00014370004646480083,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.021574100013822317,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00015440001152455807,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

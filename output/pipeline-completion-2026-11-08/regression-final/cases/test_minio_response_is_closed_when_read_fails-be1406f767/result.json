@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_pipeline_integrity.py::test_minio_response_is_closed_when_read_fails",
+  "file": "cases\\test_minio_response_is_closed_when_read_fails-be1406f767",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00041069998405873775,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0005648999940603971,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00018390000332146883,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

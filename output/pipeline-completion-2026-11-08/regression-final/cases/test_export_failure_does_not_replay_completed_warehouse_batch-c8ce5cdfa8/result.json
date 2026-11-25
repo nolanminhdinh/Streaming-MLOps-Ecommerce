@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_powerbi_import.py::test_export_failure_does_not_replay_completed_warehouse_batch",
+  "file": "cases\\test_export_failure_does_not_replay_completed_warehouse_batch-c8ce5cdfa8",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.003396800020709634,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.003241600003093481,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00028000003658235073,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

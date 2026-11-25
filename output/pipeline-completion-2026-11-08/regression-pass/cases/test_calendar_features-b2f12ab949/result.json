@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_features.py::TestTimeSeriesFeatures::test_calendar_features",
+  "file": "cases\\test_calendar_features-b2f12ab949",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0006095999851822853,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.030554199940524995,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00024589989334344864,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

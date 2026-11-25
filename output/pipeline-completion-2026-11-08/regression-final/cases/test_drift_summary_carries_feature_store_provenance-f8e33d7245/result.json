@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_pipeline_integrity.py::test_drift_summary_carries_feature_store_provenance",
+  "file": "cases\\test_drift_summary_carries_feature_store_provenance-f8e33d7245",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0014486999716609716,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.01248260005377233,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00023120001424103975,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

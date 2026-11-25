@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_order_line_integrity.py::test_invalid_duplicate_identity_cannot_hide_rejections",
+  "file": "cases\\test_invalid_duplicate_identity_cannot_h-1d6c4cbed8",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0003101000329479575,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.04671930009499192,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0003901999443769455,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

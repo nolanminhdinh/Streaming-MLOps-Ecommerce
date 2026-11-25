@@ -1,0 +1,10 @@
+{
+  "round": "exploratory_followup_after_initial_comparison",
+  "created_at_utc": "2026-11-07T17:40:29.932085+00:00",
+  "base_model": "HistGradientBoostingRegressor Poisson direct horizons 1..14",
+  "rule": "factor=clip(sum actual / sum forecast in two prior OOF windows, 0.1, 2.0)",
+  "outer_actuals_used_for_calibration": false,
+  "candidate_or_scale_selected_from_outer_actuals": false,
+  "final_window_previously_exposed": true,
+  "external_prospective_validation": false
+}

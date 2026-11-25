@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "e91afd1f55f30c0a1d3b",
+  "position": {
+    "x": 80,
+    "y": 42,
+    "z": 3,
+    "width": 574,
+    "height": 30,
+    "tabOrder": 1
+  },
+  "visual": {
+    "visualType": "textbox",
+    "drillFilterOtherVisuals": true,
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Đặt SKU nào, bao nhiêu, trước ngày nào và vì sao — mức phục vụ A 98% / B 95% / C 90%",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "color": "#FFC6D0",
+                      "fontStyle": "italic"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

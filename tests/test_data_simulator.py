@@ -87,6 +87,17 @@ class TestECommerceSimulator(unittest.TestCase):
             ["TP.HCM", "Hà Nội", "Đà Nẵng", "Cần Thơ", "Hải Phòng", "Lâm Đồng", "Bình Dương", "Đồng Nai", "Khánh Hoà", "Nghệ An", "Thanh Hoá", "Long An"],
         )
 
+    def test_restarted_producer_never_reuses_order_ids(self):
+        """Hồi quy 16/11/2026: bộ đếm đơn bắt đầu lại mỗi tiến trình, hai lượt chạy cùng ngày từng cấp trùng mã."""
+        now = datetime(2026, 11, 16, 14, 0, 0, tzinfo=timezone.utc)
+        runs = [ECommerceSimulator(order_id_tag=tag) for tag in ("R141500", "R153900")]
+        ids = [{asdict(sim._generate_shopee_event(now))["order_sn"] for _ in range(5)}
+               | {asdict(sim._generate_tiktok_event(now))["order_id"] for _ in range(5)} for sim in runs]
+        self.assertEqual(ids[0] & ids[1], set())
+        self.assertTrue(all("R141500" in i for i in ids[0]))
+        # Không truyền tag (generator lịch sử): mã đơn giữ dạng cũ, ổn định theo seed.
+        self.assertEqual(asdict(ECommerceSimulator()._generate_shopee_event(now))["order_sn"], "SPE261116000001")
+
     def test_generate_tiktok_event(self):
         """Kiểm tra các trường bắt buộc của sự kiện đơn hàng TikTok Shop."""
         now = datetime(2026, 9, 24, 10, 0, 0, tzinfo=timezone.utc)

@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_ingestion.py::test_missing_or_invalid_timestamps_fall_back_to_vietnam_receipt_date",
+  "file": "cases\\test_missing_or_invalid_timestamps_fall_-1367d48b56",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00026860006619244814,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.017200300004333258,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00027740001678466797,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

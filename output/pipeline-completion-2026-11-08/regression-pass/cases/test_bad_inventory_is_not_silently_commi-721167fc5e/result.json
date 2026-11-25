@@ -1,0 +1,36 @@
+{
+  "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_inventory_is_not_silently_committed[updates2]",
+  "file": "cases\\test_bad_inventory_is_not_silently_commi-721167fc5e",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0004507999401539564,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.005885699996724725,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0005022999830543995,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "updates": {
+      "stock_on_hand": -1
+    }
+  },
+  "outcome": "passed"
+}

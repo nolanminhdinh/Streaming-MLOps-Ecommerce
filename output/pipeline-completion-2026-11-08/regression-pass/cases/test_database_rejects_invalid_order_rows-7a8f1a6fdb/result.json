@@ -1,0 +1,35 @@
+{
+  "nodeid": "tests/test_warehouse_schema_v2.py::test_database_rejects_invalid_order_rows[quantity-0]",
+  "file": "cases\\test_database_rejects_invalid_order_rows-7a8f1a6fdb",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.349276400054805,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0070056000258773565,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.006654200027696788,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "column": "quantity",
+    "value": "0"
+  },
+  "outcome": "passed"
+}

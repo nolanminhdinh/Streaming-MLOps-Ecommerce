@@ -1,0 +1,37 @@
+{
+  "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_optional_values_reach_quarantine[updates0-INVALID_DISCOUNTED_PRICE_TYPE]",
+  "file": "cases\\test_bad_optional_values_reach_quarantin-1b8fe17bad",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0006129000103101134,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.017217099899426103,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0001767999492585659,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "updates": {
+      "model_discounted_price": "bad"
+    },
+    "reason": "INVALID_DISCOUNTED_PRICE_TYPE"
+  },
+  "outcome": "passed"
+}

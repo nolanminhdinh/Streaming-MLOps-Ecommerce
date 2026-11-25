@@ -30,7 +30,7 @@ load_dotenv()
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from ml.mlflow.setup_tracking import configure_mlflow
-from ml.training.metrics import calculate_all_metrics, weighted_absolute_percentage_error
+from ml.training.metrics import EVALUATION_PROTOCOL, aggregate_fold_metrics, calculate_all_metrics, weighted_absolute_percentage_error
 from ml.features.time_series_features import TimeSeriesFeatureExtractor
 from ml.training.train_baseline import (
     select_feature_columns,
@@ -67,21 +67,21 @@ def evaluate_model_on_segments(
     if len(ax_ay) > 0 and ax_ay["actual"].sum() > 0:
         segment_wape["WAPE_AX_AY"] = weighted_absolute_percentage_error(ax_ay["actual"].values, ax_ay["predicted"].values)
     else:
-        segment_wape["WAPE_AX_AY"] = 0.0
+        segment_wape["WAPE_AX_AY"] = None
 
     # 2. Nhóm AZ / BZ (Doanh số cao nhưng biến động mạnh)
     az_bz = df_eval[df_eval["matrix_class"].isin(["AZ", "BZ"])]
     if len(az_bz) > 0 and az_bz["actual"].sum() > 0:
         segment_wape["WAPE_AZ_BZ"] = weighted_absolute_percentage_error(az_bz["actual"].values, az_bz["predicted"].values)
     else:
-        segment_wape["WAPE_AZ_BZ"] = 0.0
+        segment_wape["WAPE_AZ_BZ"] = None
 
     # 3. Nhóm C (Hàng đuôi dài)
     c_group = df_eval[df_eval["abc_class"] == "C"]
     if len(c_group) > 0 and c_group["actual"].sum() > 0:
         segment_wape["WAPE_Group_C"] = weighted_absolute_percentage_error(c_group["actual"].values, c_group["predicted"].values)
     else:
-        segment_wape["WAPE_Group_C"] = 0.0
+        segment_wape["WAPE_Group_C"] = None
 
     return segment_wape
 
@@ -244,15 +244,13 @@ def run_model_comparison(
             all_actuals.extend(y_test)
             all_preds.extend(preds)
 
-        # Trung bình metrics qua các folds
-        overall_wape = round(float(np.mean([fm["wape"] for fm in fold_metrics_list])), 2)
-        overall_mae = round(float(np.mean([fm["mae"] for fm in fold_metrics_list])), 2)
-        overall_rmse = round(float(np.mean([fm["rmse"] for fm in fold_metrics_list])), 2)
-        overall_r2 = round(float(np.mean([fm["r2"] for fm in fold_metrics_list])), 4)
-        overall_bias = round(float(np.mean([fm["bias"] for fm in fold_metrics_list])), 2)
+        pooled = aggregate_fold_metrics(fold_metrics_list, all_actuals, all_preds)
+        overall_wape, overall_mae = pooled["wape"], pooled["mae"]
+        overall_rmse, overall_r2, overall_bias = pooled["rmse"], pooled["r2"], pooled["bias"]
 
         seg_summary = {
-            k: round(float(np.mean([sm[k] for sm in seg_metrics_list])), 2)
+            k: (round(float(np.mean([sm[k] for sm in seg_metrics_list if sm[k] is not None])), 2)
+                if any(sm[k] is not None for sm in seg_metrics_list) else None)
             for k in ["WAPE_AX_AY", "WAPE_AZ_BZ", "WAPE_Group_C"]
         }
 
@@ -261,19 +259,25 @@ def run_model_comparison(
             with mlflow.start_run(run_name=f"compare_{m_name}"):
                 mlflow.log_param("model_name", m_name)
                 mlflow.log_param("evaluation_strategy", "recursive_multi_step")
-                mlflow.log_metric("cv_wape", overall_wape)
+                mlflow.log_param("evaluation_protocol", EVALUATION_PROTOCOL)
+                mlflow.log_param("metric_aggregation", "pooled_scored_pairs")
+                if overall_wape is not None:
+                    mlflow.log_metric("cv_wape", overall_wape)
                 mlflow.log_metric("cv_mae", overall_mae)
                 mlflow.log_metric("cv_rmse", overall_rmse)
                 mlflow.log_metric("cv_r2", overall_r2)
-                mlflow.log_metric("cv_bias", overall_bias)
+                if overall_bias is not None:
+                    mlflow.log_metric("cv_bias", overall_bias)
                 for sk, sv in seg_summary.items():
-                    mlflow.log_metric(f"segment_{sk.lower()}", sv)
+                    if sv is not None:
+                        mlflow.log_metric(f"segment_mean_fold_{sk.lower()}", sv)
         except Exception:
             pass
 
         row_data = {
             "Mô hình": m_name,
             "Evaluation strategy": "recursive_multi_step",
+            "Evaluation protocol": EVALUATION_PROTOCOL,
             "WAPE (%)": overall_wape,
             "MAE": overall_mae,
             "RMSE": overall_rmse,
@@ -284,6 +288,8 @@ def run_model_comparison(
         results.append(row_data)
 
     comparison_df = pd.DataFrame(results).sort_values(by="WAPE (%)", ascending=True).reset_index(drop=True)
+    if not np.isfinite(pd.to_numeric(comparison_df["WAPE (%)"], errors="coerce")).any():
+        raise ValueError("No model has a defined finite pooled WAPE; cannot rank models.")
 
     # Xuất biểu đồ so sánh
     saved_plots = plot_comparison_visuals(comparison_df, artifacts_dir)

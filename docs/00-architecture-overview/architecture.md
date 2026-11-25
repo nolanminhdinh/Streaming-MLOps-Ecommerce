@@ -1,6 +1,8 @@
 # Tài Liệu Thiết Kế Kiến Trúc Hệ Thống & Tech Stack
 ## Streaming MLOps E-Commerce (Shopee & TikTok Shop)
 
+> **Sơ đồ cập nhật 09/11/2026:** dùng [bộ 10 sơ đồ đối chiếu mã hiện hành](../08-so-do-thiet-ke/README.md) và tệp StarUML trong thư mục tài liệu bàn giao. Các sơ đồ mục tiêu phía dưới được giữ để tham khảo lịch sử; không dùng các nhãn champion/WAPE, vòng retraining tự động hoặc số lượng bảng của chúng làm mô tả hiện hành khi chưa đối chiếu lại.
+
 > **Phạm vi minh chứng:** Đây là kiến trúc mục tiêu, không phải bằng chứng tích hợp Shopee/TikTok API hoặc hiệu năng production. Nghiệm thu runtime 2026-10-09 xác nhận data path, Power BI, monitoring và HTTP fallback; P95 ở 200 users là 396,25 ms. Model ML vẫn chưa sẵn sàng do warehouse chưa đủ lịch sử; baseline trước sửa có P95 719,03 ms. Xem [báo cáo kiểm thử](../03-testing-and-benchmark/test_report_2026-10-09.md).
 
 > **Mục tiêu hệ thống**: Xây dựng nền tảng luồng dữ liệu (Data Streaming) kết hợp Vận hành Học máy (MLOps) phục vụ bài toán **Dự báo Nhu cầu (Demand Forecasting)** và **Tối ưu Quản trị Tồn kho Động (Stochastic Inventory Control)** cho ngành bán lẻ đa kênh tại Việt Nam.  

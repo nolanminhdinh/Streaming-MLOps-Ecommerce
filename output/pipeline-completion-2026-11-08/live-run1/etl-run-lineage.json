@@ -1,0 +1,74 @@
+[
+  {
+    "run_id": "20261108T224346-cb5f86a16b09459c9e88521b1bb5d02b",
+    "status": "SUCCESS",
+    "target_date": "ALL AVAILABLE",
+    "raw_records": 1,
+    "unified_records": 1,
+    "clean_records": 1,
+    "quarantined_records": 0,
+    "loaded_records": 1,
+    "elapsed_seconds": 0.46,
+    "duplicates_removed": 0,
+    "validation_errors": {},
+    "quarantine_object": null,
+    "contract": "ecommerce.orders/1.0",
+    "object_accounting": [
+      {
+        "source_object": "raw/orders/platform=shopee/year=2026/month=11/day=08/part-20261108T224346-927b1b38-1.parquet",
+        "raw": 1,
+        "valid": 1,
+        "duplicates": 0,
+        "rejected": 0
+      }
+    ],
+    "accounted_records": 1,
+    "completed_at": "2026-11-08T15:43:46.829965+00:00",
+    "ingest_to_warehouse_seconds": {
+      "measured_rows": 1,
+      "total_rows": 1,
+      "p50": 0.856986,
+      "p95": 0.856986,
+      "max": 0.856986
+    }
+  },
+  {
+    "run_id": "20261108T224416-8f5e692b99854cb1b0780ecf57fcac91",
+    "status": "SUCCESS",
+    "target_date": "ALL AVAILABLE",
+    "raw_records": 7,
+    "unified_records": 7,
+    "clean_records": 2,
+    "quarantined_records": 3,
+    "loaded_records": 2,
+    "elapsed_seconds": 0.19,
+    "duplicates_removed": 2,
+    "validation_errors": {
+      "CONTRACT_MISSING_ITEM_SKU": 1,
+      "MISSING_SKU": 1,
+      "CONTRACT_UNSUPPORTED_VERSION": 1,
+      "CONTRACT_INVALID_TYPE_QUANTITY": 1,
+      "NON_POSITIVE_QUANTITY": 1
+    },
+    "quarantine_object": "quarantine/orders/run_id=20261108T224416-8f5e692b99854cb1b0780ecf57fcac91/rejected.jsonl",
+    "contract": "ecommerce.orders/1.0",
+    "object_accounting": [
+      {
+        "source_object": "raw/orders/platform=shopee/year=2026/month=11/day=08/part-20261108T224356-137d5eee-7.parquet",
+        "raw": 7,
+        "valid": 2,
+        "duplicates": 2,
+        "rejected": 3
+      }
+    ],
+    "accounted_records": 7,
+    "completed_at": "2026-11-08T15:44:17.162973+00:00",
+    "ingest_to_warehouse_seconds": {
+      "measured_rows": 7,
+      "total_rows": 7,
+      "p50": 31.030647,
+      "p95": 31.0306762,
+      "max": 31.030684
+    }
+  }
+]

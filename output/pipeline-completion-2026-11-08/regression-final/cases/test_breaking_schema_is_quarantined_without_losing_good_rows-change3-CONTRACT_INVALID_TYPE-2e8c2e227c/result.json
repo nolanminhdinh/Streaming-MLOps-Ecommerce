@@ -1,0 +1,39 @@
+{
+  "nodeid": "tests/test_pipeline_completion.py::test_breaking_schema_is_quarantined_without_losing_good_rows[change3-CONTRACT_INVALID_TYPE_ORDER_LINE_ID]",
+  "file": "cases\\test_breaking_schema_is_quarantined_without_losing_good_rows-change3-CONTRACT_INVALID_TYPE-2e8c2e227c",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0004304000176489353,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "failed",
+      "duration_seconds": 0.026299600023776293,
+      "details": "tests\\test_pipeline_completion.py:44: in test_breaking_schema_is_quarantined_without_losing_good_rows\n    case_data(\"breaking-change\",inputs=rows,expected={\"valid\":1,\"rejected\":1,\"contains_error\":reason},actual=actual)\ntests\\pipeline_evidence_plugin.py:56: in record\n    with (folder/(stem+\"-\"+label+\".csv\")).open(\"w\",encoding=\"utf-8-sig\",newline=\"\") as output:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nC:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1105-1297-0_26.1105.1297.0_x64__3k8sg7r9htsxt\\dependencies\\python\\Lib\\pathlib.py:1013: in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE   FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Users\\\\MINH\\\\Đếm ngày xa trường\\\\temp-extract\\\\streaming-mlops-ecommerce\\\\output\\\\pipeline-completion-2026-11-08\\\\regression-final\\\\cases\\\\test_breaking_schema_is_quarantined_without_losing_good_rows-change3-CONTRACT_INVALID_TYPE-2e8c2e227c\\\\breaking-change-inputs.csv'",
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.000278900028206408,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "change": {
+      "order_line_id": [
+        1
+      ]
+    },
+    "reason": "CONTRACT_INVALID_TYPE_ORDER_LINE_ID"
+  },
+  "outcome": "failed"
+}

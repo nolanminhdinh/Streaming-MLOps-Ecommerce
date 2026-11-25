@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_ingestion.py::test_offset_free_timestamps_keep_utc_contract_shared_with_etl",
+  "file": "cases\\test_offset_free_timestamps_keep_utc_contract_shared_with_etl-b1418ecd08",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0006693999748677015,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.011229600058868527,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0003122999332845211,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

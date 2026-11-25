@@ -1,5 +1,9 @@
 # Phần 6 — Power BI và tổng hợp thực nghiệm
 
+> **Cập nhật 17/11/2026 (ghi đè các mô tả cũ bên dưới về nguồn và trang báo cáo):** báo cáo quản lý hiện hành là PBIP `powerbi/BaoCaoQuanLy/` dựng trên data mart star schema `mart`, Import từ PostgreSQL. Số trên báo cáo đã được đối chiếu với SQL độc lập sau lần Refresh ngày 17/11/2026 (mục 9). Hai tệp PBIX cũ giữ nguyên làm hiện vật lịch sử.
+
+> **Nguồn chính từ 01/11/2026:** Power BI đọc PostgreSQL bằng Import. CSV là snapshot dự phòng chạy riêng; checkpoint worker chỉ phụ thuộc ETL. Bộ query và cách chuyển PBIX tại [powerbi/import](../../powerbi/import/README.md). Các số liệu audit 19/10 bên dưới giữ nguyên phạm vi lịch sử; chưa xác nhận PBIX đã Apply/Refresh nguồn mới trong lượt này.
+
 Ngày kiểm tra: **19/10/2026**. Phạm vi: SQL, exporter, DAX tài liệu, cấu trúc PBIX, xuất CSV kiểm chứng bằng truy vấn chỉ đọc và tổng hợp bằng chứng kiểm thử. Không thay view, facts, coverage, PBIX hoặc bộ CSV chính trong `powerbi/data/`.
 
 ## 1. Vai trò và hiện vật Power BI
@@ -132,3 +136,125 @@ Các ưu tiên trước khi chốt kết luận báo cáo: phục hồi model v�
 - `evidence/pytest_full_2026-10-19.xml`: kết quả toàn suite.
 
 AI hỗ trợ đọc mã/hiện vật, chạy test, đối soát chỉ đọc, xuất snapshot riêng và biên soạn báo cáo. Chưa thay PBIX, SQL/DAX sản phẩm hoặc tự xác nhận coverage. Sinh viên xác nhận đóng góp tự thực hiện và hoàn thiện thông tin học thuật theo mẫu trường.
+
+## 9. Báo cáo quản lý PBIP trên data mart (16–17/11/2026)
+
+### 9.1. Mục tiêu và phạm vi
+
+Báo cáo phục vụ người quản lý kho và bán hàng. Người quản lý dùng số thực tế từ pipeline kết hợp dự báo AI để tự ra quyết định đặt hàng cuối cùng; báo cáo chỉ đề xuất. Phạm vi do sinh viên chốt ngày 16/11/2026:
+
+- **4 trang chính:** Sức khỏe tồn kho; Dự báo nhu cầu AI; Đặt hàng nhà cung cấp; Đơn hàng từ các sàn.
+- **2 trang phụ:** Chi tiết SKU; Độ tin cậy dữ liệu.
+- **Mức phục vụ theo nhóm ABC:** A 98%, B 95%, C 90%.
+- **Ngoài phạm vi:** hàng đang về (`incoming_stock`, `restock_eta`) được thu nhưng không đưa vào công thức (hướng mở rộng).
+
+### 9.2. Luồng dữ liệu và mô hình
+
+```
+Kafka → MinIO raw → ETL → PostgreSQL public → mart (star schema vật lý) → Power BI (Import) → PBIP BaoCaoQuanLy
+```
+
+- **Nguồn duy nhất của báo cáo là schema `mart`.** Gồm 9 bảng chiều và 5 bảng fact:
+  - `fact_sales_line`, `fact_sales_order`;
+  - `fact_inventory_daily`;
+  - `fact_demand_forecast`: giữ mọi phiên bản dự báo, kèm số thực tế khi ngày đã xác nhận;
+  - `fact_replenishment_daily`: lịch sử đề xuất theo ngày, không bao giờ bị xóa.
+- **Khóa ngày** có dạng `yyyymmdd`. Dòng `-1` là "không xác định"; dòng `-2` là "không áp dụng" (đơn chưa giao vận chuyển, đề xuất không dùng dự báo AI).
+- **Làm mới:** `pipeline-worker` làm mới mart gia tăng sau mỗi chu kỳ (khoảng 2 giây); `batch-forecaster` làm mới sau mỗi lượt dự báo. Người dùng chỉ cần nhấn Refresh trong Power BI Desktop.
+- **Mô hình ngữ nghĩa** sinh bằng `scripts/build_powerbi_project.py`: 15 bảng, 23 quan hệ, 63 measure, 6 trang, 55 visual. 66/66 tệp PBIP đạt JSON schema của Microsoft.
+
+### 9.3. Các quyết định định nghĩa chỉ số
+
+| Chỉ số | Định nghĩa | Lý do |
+|---|---|---|
+| Đơn hợp lệ, Doanh thu | Đơn không hủy; `net_amount` cấp đơn | Tách hẳn số đơn khỏi số dòng hàng (lỗi đếm đơn/AOV từng gặp ngày 19/10) |
+| Tăng trưởng DT 7 ngày | 7 ngày trọn vẹn đến hôm qua so với 7 ngày trước đó | Bản dùng `DATEADD` trên toàn khoảng luôn ra xấp xỉ 0 |
+| Hết hàng trong 7 ngày | Số SKU có `days_of_cover` khác trống và ≤ 7 | Lọc thẳng trên cột tính cả giá trị trống (65 thay vì 19) |
+| Tổng tồn kho theo ngày | Mỗi SKU lấy lần chụp tồn kho gần nhất tính đến ngày đó rồi cộng | Không bị tụt về gần 0 vào ngày ít bản tin |
+| Dự báo trên biểu đồ | Chỉ model huấn luyện trên `warehouse_live`, bản mới nhất cho mỗi SKU × ngày | Không trộn dự báo của model huấn luyện trên CSV công khai |
+| WAPE thực tế (t+1) | Model đang phục vụ, tầm dự báo 1 ngày, chỉ trên ngày đã xác nhận | Cùng giao thức với WAPE backtest (`origin_t_plus_1_pooled_wape_v2`) |
+| WAPE chung | Chỉ trên cùng SKU × ngày × tầm dự báo mà mọi phiên bản được chọn đều có | So sánh công bằng giữa các phiên bản |
+| Trang Chi tiết SKU | Chỉ hiện số khi chọn đúng 1 SKU; dòng tổng của bảng lịch sử để trống | Không cộng gộp tồn kho của nhiều ngày hoặc nhiều SKU |
+
+### 9.4. Đối chiếu số trên báo cáo với SQL độc lập (17/11/2026)
+
+Ảnh báo cáo được chụp sau lần Refresh có "Đơn mới nhất" là 17/11/2026 00:50. Các con số được tính lại bằng `scripts/check_powerbi_kpi_values.py --cutoff "2026-11-17 00:50:59"`. Script dùng SQL viết riêng trên `mart`, không dùng lại DAX. Producer và mart vẫn chạy sau lúc Refresh, nên các chỉ số đặt hàng của ngày hiện tại được tính lại vài phút sau và có thể lệch nhẹ.
+
+| Trang | Chỉ số | Trên báo cáo | SQL | Kết luận |
+|---|---|---:|---:|---|
+| Đơn hàng | Đơn hợp lệ | 131K | 130.693 | Khớp |
+| Đơn hàng | Doanh thu | 80bn ₫ | 79.562.008.660 ₫ | Khớp |
+| Đơn hàng | Giá trị đơn TB | 609K ₫ | 608.770 ₫ | Khớp |
+| Đơn hàng | Sản phẩm bán | 314K | 314.154 | Khớp |
+| Đơn hàng | Tỷ lệ hủy | 17,6% | 17,63% | Khớp |
+| Đơn hàng | Tăng trưởng DT 7 ngày (10–16/11 so với 03–09/11) | −5,1% | −5,08% | Khớp |
+| Đơn hàng | Tỷ trọng Shopee / TikTok Shop | 53,34% / 46,66% | 53,34% / 46,66% | Khớp |
+| Tồn kho | SKU cần đặt / ổn định / hết hàng trong 7 ngày | 20 / 62 / 24 | 20 / 62 / 24 | Khớp |
+| Tồn kho | Ma trận ABC × XYZ (A-Y, A-Z, B-Y, B-Z, C-Z) | 3, 8, 1, 4, 4 | 3, 8, 1, 4, 4 | Khớp |
+| Tồn kho | SKU nguy cấp; số ngày tồn trung vị | 14; 5,0 | 15; 4,85 | Lệch do tồn kho giảm tiếp sau lúc Refresh |
+| Đặt hàng | SKU đặt ngay / trong tuần | 13 / 7 | 13 / 7 | Khớp |
+| Đặt hàng | Tổng lượng đề xuất | 9K | 9.012 | Khớp |
+| Đặt hàng | Giá trị theo giá bán | 3bn ₫ | 2.809.924.000 ₫ | Khớp; thẻ làm tròn đến tỷ |
+| Đặt hàng | Lịch sử tổng đề xuất 16/11; 17/11 | khoảng 26K; khoảng 9K | 25.982; 9.012 | Khớp |
+| Dự báo | WAPE / bias backtest v4 | 58,2% / −23,1% | 58,22% / −23,07% | Khớp |
+| Dự báo | WAPE thực tế (t+1) / bias; số ngày chấm | 221,5% / 218,8%; 1 | 221,52% / 218,83%; 1 (129 dự báo) | Khớp |
+| Độ tin cậy | Ngày xác nhận gần nhất; SKU dùng lead time mặc định; đơn xung đột header | 16/11; 68; 16 | 16/11; 68; 16 | Khớp |
+
+**Kiểm tra công thức trên một SKU (BL-15-CS, nhóm B, mức phục vụ 95%):**
+- Điểm đặt hàng = nhu cầu 3 ngày lead time theo dự báo AI (27) + tồn an toàn (126) = 153.
+- Mức tồn đích = 153 + 7 ngày × 9/ngày = 216. Đề xuất = 216 − 113 = 103.
+- Số ngày tồn = 113 / 9 = 12,6.
+- Tồn 113 < tồn an toàn 126, nên trạng thái là **nguy cấp**.
+- Báo cáo hiển thị đúng các giá trị 113, 12,6, 103 và lý do "Tồn hiện có 113 ≤ điểm đặt hàng 153 = nhu cầu 3 ngày 27 (dự báo AI) + tồn an toàn 126".
+
+Sau khi đối chiếu, có hai chỉnh sửa trong bộ sinh PBIP:
+- **Bảng lịch sử đề xuất của trang Chi tiết SKU** từng có dòng tổng cộng tồn kho của các ngày (113 + 130 = 243). Dòng tổng nay để trống.
+- **Thẻ "WAPE thực tế"** chuyển sang tính riêng model đang phục vụ ở tầm t+1. Hiện chỉ có một phiên bản và một tầm nên số không đổi. Khi có nhiều phiên bản hoặc nhiều tầm dự báo được chấm, bản trước sẽ trộn chúng lại.
+
+### 9.5. Giải thích các con số dễ bị hiểu nhầm
+
+- **WAPE thực tế 221,5% với 1 ngày được chấm.** Model Naive dự báo ngày 16/11 bằng nhu cầu ngày 15/11 (3.071 sản phẩm), trong khi ngày 16/11 thực tế chỉ bán 1.103 sản phẩm. Producer mô phỏng chỉ chạy một phần ngày 16/11. Đây là giới hạn đã công bố của dữ liệu mô phỏng và model baseline, không phải lỗi pipeline. Con số chỉ có ý nghĩa khi tích lũy đủ ngày.
+- **Tổng đề xuất giảm từ 25.982 (16/11) xuống khoảng 9K (17/11).** Cùng nguyên nhân: nhu cầu trong lead time do Naive dự báo đổi theo khối lượng ngày gần nhất.
+- **Tổng tồn kho đi ngang 01–14/11 và có đỉnh ngày 15/11.**
+  - Trong khoảng 01–14/11 không có bản tin tồn kho, vì đợt bổ sung dữ liệu chỉ có đơn hàng, nên đường đi theo số ngày 31/10.
+  - Ngày 15/11 có thêm 15 SKU kiểm thử `RPT…` (khoảng 4,2K hàng).
+  - Từ 16/11 producer gửi lại số tồn thật.
+  - Theo quyết định ngày 16/11/2026, dữ liệu kiểm thử không bị gắn cờ hay lọc.
+- **16 đơn xung đột header** là các mã `DI2026101…`/`DI2026102…` do bài kiểm tra toàn vẹn ghi trực tiếp. 159 mã đơn bị simulator dùng lại (358 đơn thật) đã được khôi phục từ kho thô ngày 17/11/2026 (`docs/04-pipeline-updates/lan-15-…`).
+
+### 9.6. Quy trình demo và kiểm chứng
+
+1. Giữ toàn bộ service và producer chạy. Mart tự làm mới.
+2. `python scripts/check_powerbi_refresh_readiness.py --label <nhãn>`: mô phỏng Refresh chỉ đọc, gồm 16 kiểm tra (đủ nguồn, không NaN, khóa duy nhất, không khóa mồ côi, mart khớp `public`…). Kết quả ngày 17/11/2026: **PASS 16/16**.
+3. Mở `powerbi/BaoCaoQuanLy/BaoCaoQuanLy.pbip` và nhấn Refresh.
+4. `python scripts/check_powerbi_kpi_values.py --cutoff "<giờ trên thẻ Đơn mới nhất>"`: đọc số SQL để đối chiếu trực tiếp với báo cáo.
+
+### 9.7. Hiện vật
+
+- PBIP: `powerbi/BaoCaoQuanLy/` (sinh lại bằng `scripts/build_powerbi_project.py`). Đặc tả: `powerbi/dac-ta-bao-cao-quan-ly.md`.
+- Data mart: `warehouse/ddl/05_mart_star_schema.sql`, `warehouse/reporting/mart_refresh.sql`. Test: `tests/test_mart.py` (11 test trên PostgreSQL).
+- Bằng chứng:
+  - đối chiếu số liệu: `evidence/powerbi-kpi-20261117-005656-doi-chieu-anh-refresh-0050.json`;
+  - mô phỏng Refresh: `output/powerbi-refresh-check-2026-11-17/004715-PBIP-FIX-1711.json`.
+- Kiểm thử toàn bộ: 261 test đạt; test PostgreSQL và mart đạt.
+
+### 9.8. Giới hạn
+
+- Dữ liệu là mô phỏng, kể cả các lô kiểm thử có nhãn. Ngày 01–15/11/2026 là dữ liệu mô phỏng bổ sung.
+- Chưa tính hàng đang về. Lead time thiếu thì dùng 3 ngày (68 SKU, chủ yếu là SKU kiểm thử).
+- Giá trị đề xuất tính theo giá bán vì chưa có giá vốn.
+- Lịch sử đề xuất bắt đầu từ 16/11/2026. WAPE thực tế mới có 1 ngày được chấm.
+- Giao diện (bố cục, định dạng hiển thị) sẽ được sinh viên chỉnh tiếp. Các số trong mục 9.4 không phụ thuộc vào giao diện.
+
+### 9.9. Minh bạch sử dụng AI
+
+- **AI hỗ trợ:**
+  - thiết kế và cài đặt data mart;
+  - viết bộ sinh PBIP, các measure DAX và script đối chiếu;
+  - sửa các lỗi phát hiện qua ảnh chụp;
+  - chạy kiểm thử và biên soạn mục này.
+- **Sinh viên:**
+  - xác định mục tiêu nghiệp vụ, chọn cấu trúc trang, mức phục vụ ABC và star schema vật lý;
+  - Refresh báo cáo trên Power BI Desktop, chụp ảnh và phát hiện bất thường;
+  - duyệt các phương án sửa;
+  - sẽ chỉnh giao diện cuối cùng.

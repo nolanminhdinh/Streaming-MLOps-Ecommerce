@@ -11,7 +11,12 @@
   "panels": [
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
       "id": 100,
       "title": "HỆ THỐNG PHỤC VỤ MÔ HÌNH (MODEL SERVING STATUS)",
       "type": "row"
@@ -20,7 +25,12 @@
       "id": 1,
       "title": "Model Registry Status",
       "type": "stat",
-      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 1 },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 1
+      },
       "targets": [
         {
           "expr": "ecommerce_model_info",
@@ -30,13 +40,22 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "fixed", "fixedColor": "green" },
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "green"
+          },
           "mappings": [],
           "unit": "short"
         }
       },
       "options": {
-        "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" },
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        },
         "textMode": "auto"
       }
     },
@@ -44,7 +63,12 @@
       "id": 2,
       "title": "Service Uptime",
       "type": "stat",
-      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 1 },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 1
+      },
       "targets": [
         {
           "expr": "ecommerce_uptime_seconds",
@@ -54,26 +78,44 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "blue", "value": null },
-              { "color": "green", "value": 60 }
+              {
+                "color": "blue",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 60
+              }
             ]
           },
           "unit": "s"
         }
       },
       "options": {
-        "reduceOptions": { "values": false, "calcs": ["lastNotNull"] }
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
       }
     },
     {
       "id": 3,
       "title": "Total API Requests",
       "type": "stat",
-      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 1 },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 1
+      },
       "targets": [
         {
           "expr": "sum(ecommerce_api_requests_total)",
@@ -83,19 +125,31 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
+          "color": {
+            "mode": "palette-classic"
+          },
           "unit": "short"
         }
       },
       "options": {
-        "reduceOptions": { "values": false, "calcs": ["lastNotNull"] }
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
       }
     },
     {
       "id": 4,
       "title": "Data Drift Status",
       "type": "stat",
-      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 1 },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 1
+      },
       "targets": [
         {
           "expr": "ecommerce_data_drift_ratio",
@@ -105,25 +159,46 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "green", "value": null },
-              { "color": "yellow", "value": 0.20 },
-              { "color": "red", "value": 0.30 }
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0.2
+              },
+              {
+                "color": "red",
+                "value": 0.3
+              }
             ]
           },
           "unit": "percentunit"
         }
       },
       "options": {
-        "reduceOptions": { "values": false, "calcs": ["lastNotNull"] }
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
       }
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
       "id": 101,
       "title": "QUẢN TRỊ TỒN KHO & CẢNH BÁO NHẬP HÀNG (INVENTORY ALERTS)",
       "type": "row"
@@ -132,7 +207,12 @@
       "id": 5,
       "title": "🔴 CRITICAL (Báo động đỏ: Tồn kho <= Safety Stock)",
       "type": "stat",
-      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 6 },
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 0,
+        "y": 6
+      },
       "targets": [
         {
           "expr": "ecommerce_inventory_alerts_total{level=\"critical\"}",
@@ -142,19 +222,32 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "fixed", "fixedColor": "red" },
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "red"
+          },
           "unit": "short"
         }
       },
       "options": {
-        "reduceOptions": { "values": false, "calcs": ["lastNotNull"] }
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
       }
     },
     {
       "id": 6,
       "title": "🟡 WARNING (Cảnh báo vàng: Tồn kho <= Reorder Point)",
       "type": "stat",
-      "gridPos": { "h": 4, "w": 8, "x": 8, "y": 6 },
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 8,
+        "y": 6
+      },
       "targets": [
         {
           "expr": "ecommerce_inventory_alerts_total{level=\"warning\"}",
@@ -164,19 +257,32 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "fixed", "fixedColor": "yellow" },
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "yellow"
+          },
           "unit": "short"
         }
       },
       "options": {
-        "reduceOptions": { "values": false, "calcs": ["lastNotNull"] }
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
       }
     },
     {
       "id": 7,
       "title": "🟢 NORMAL (Tồn kho an toàn > Reorder Point)",
       "type": "stat",
-      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 6 },
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 16,
+        "y": 6
+      },
       "targets": [
         {
           "expr": "ecommerce_inventory_alerts_total{level=\"normal\"}",
@@ -186,17 +292,30 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "fixed", "fixedColor": "green" },
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "green"
+          },
           "unit": "short"
         }
       },
       "options": {
-        "reduceOptions": { "values": false, "calcs": ["lastNotNull"] }
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
       }
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 10 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 10
+      },
       "id": 102,
       "title": "LƯU LƯỢNG YÊU CẦU & HIỆU NĂNG PHỤC VỤ (TRAFFIC & LATENCY)",
       "type": "row"
@@ -205,7 +324,12 @@
       "id": 8,
       "title": "API Request Rate (RPS by Endpoint)",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 16, "x": 0, "y": 11 },
+      "gridPos": {
+        "h": 8,
+        "w": 16,
+        "x": 0,
+        "y": 11
+      },
       "targets": [
         {
           "expr": "rate(ecommerce_api_requests_total[1m])",
@@ -229,7 +353,12 @@
       "id": 9,
       "title": "Tỷ lệ phân bố trạng thái kho hàng",
       "type": "piechart",
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 11 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 11
+      },
       "targets": [
         {
           "expr": "ecommerce_inventory_alerts_total",
@@ -239,13 +368,20 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" }
+          "color": {
+            "mode": "palette-classic"
+          }
         }
       }
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 19 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
       "id": 103,
       "title": "ĐỘ SẴN SÀNG, FALLBACK & ĐỘ TRỄ (RELIABILITY)",
       "type": "row"
@@ -254,53 +390,136 @@
       "id": 10,
       "title": "Model Ready",
       "type": "stat",
-      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 20 },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 0,
+        "y": 20
+      },
       "targets": [
-        { "expr": "ecommerce_model_ready", "format": "time_series", "legendFormat": "Ready" }
+        {
+          "expr": "ecommerce_model_ready",
+          "format": "time_series",
+          "legendFormat": "Ready"
+        }
       ],
       "fieldConfig": {
         "defaults": {
           "mappings": [
-            { "options": { "0": { "text": "NOT READY", "color": "red" }, "1": { "text": "READY", "color": "green" } }, "type": "value" }
+            {
+              "options": {
+                "0": {
+                  "text": "NOT READY",
+                  "color": "red"
+                },
+                "1": {
+                  "text": "READY",
+                  "color": "green"
+                }
+              },
+              "type": "value"
+            }
           ],
           "unit": "short"
         }
       },
-      "options": { "reduceOptions": { "values": false, "calcs": ["lastNotNull"] }, "textMode": "value" }
+      "options": {
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "textMode": "value"
+      }
     },
     {
       "id": 11,
       "title": "Heuristic Fallback Forecasts / sec",
       "type": "timeseries",
-      "gridPos": { "h": 5, "w": 6, "x": 6, "y": 20 },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 6,
+        "y": 20
+      },
       "targets": [
-        { "expr": "sum(rate(ecommerce_predictions_total{model_source=~\"heuristic.*\"}[5m]))", "format": "time_series", "legendFormat": "Fallback forecasts" }
+        {
+          "expr": "sum(rate(ecommerce_predictions_total{model_source=~\"heuristic.*\"}[5m]))",
+          "format": "time_series",
+          "legendFormat": "Fallback forecasts"
+        }
       ],
-      "fieldConfig": { "defaults": { "unit": "reqps", "color": { "mode": "fixed", "fixedColor": "orange" } } }
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "orange"
+          }
+        }
+      }
     },
     {
       "id": 12,
       "title": "API Latency P95 by Endpoint",
       "type": "timeseries",
-      "gridPos": { "h": 5, "w": 6, "x": 12, "y": 20 },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 12,
+        "y": 20
+      },
       "targets": [
-        { "expr": "histogram_quantile(0.95, sum by (le, endpoint) (rate(ecommerce_api_request_duration_seconds_bucket[5m])))", "format": "time_series", "legendFormat": "{{endpoint}}" }
+        {
+          "expr": "histogram_quantile(0.95, sum by (le, endpoint) (rate(ecommerce_api_request_duration_seconds_bucket[5m])))",
+          "format": "time_series",
+          "legendFormat": "{{endpoint}}"
+        }
       ],
-      "fieldConfig": { "defaults": { "unit": "s", "color": { "mode": "palette-classic" } } }
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "color": {
+            "mode": "palette-classic"
+          }
+        }
+      }
     },
     {
       "id": 13,
       "title": "API Latency P99 by Endpoint",
       "type": "timeseries",
-      "gridPos": { "h": 5, "w": 6, "x": 18, "y": 20 },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 18,
+        "y": 20
+      },
       "targets": [
-        { "expr": "histogram_quantile(0.99, sum by (le, endpoint) (rate(ecommerce_api_request_duration_seconds_bucket[5m])))", "format": "time_series", "legendFormat": "{{endpoint}}" }
+        {
+          "expr": "histogram_quantile(0.99, sum by (le, endpoint) (rate(ecommerce_api_request_duration_seconds_bucket[5m])))",
+          "format": "time_series",
+          "legendFormat": "{{endpoint}}"
+        }
       ],
-      "fieldConfig": { "defaults": { "unit": "s", "color": { "mode": "palette-classic" } } }
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "color": {
+            "mode": "palette-classic"
+          }
+        }
+      }
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 25 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      },
       "id": 104,
       "title": "TRAINING DATA READINESS",
       "type": "row"
@@ -309,28 +528,68 @@
       "id": 14,
       "title": "Trạng thái dữ liệu huấn luyện",
       "type": "stat",
-      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 26 },
+      "gridPos": {
+        "h": 5,
+        "w": 8,
+        "x": 0,
+        "y": 26
+      },
       "targets": [
-        { "expr": "ecommerce_training_data_sufficient", "format": "time_series", "legendFormat": "Training readiness" }
+        {
+          "expr": "ecommerce_training_data_sufficient",
+          "format": "time_series",
+          "legendFormat": "Training readiness"
+        }
       ],
       "fieldConfig": {
         "defaults": {
           "mappings": [
-            { "options": { "-1": { "text": "CHƯA ĐÁNH GIÁ", "color": "gray" }, "0": { "text": "THIẾU LỊCH SỬ", "color": "red" }, "1": { "text": "ĐỦ DỮ LIỆU", "color": "green" } }, "type": "value" }
+            {
+              "options": {
+                "-1": {
+                  "text": "CHƯA ĐÁNH GIÁ",
+                  "color": "gray"
+                },
+                "0": {
+                  "text": "THIẾU LỊCH SỬ",
+                  "color": "red"
+                },
+                "1": {
+                  "text": "ĐỦ DỮ LIỆU",
+                  "color": "green"
+                }
+              },
+              "type": "value"
+            }
           ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "gray", "value": null },
-              { "color": "red", "value": 0 },
-              { "color": "green", "value": 1 }
+              {
+                "color": "gray",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
             ]
           },
           "unit": "short"
         }
       },
       "options": {
-        "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" },
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        },
         "textMode": "value"
       }
     },
@@ -338,47 +597,474 @@
       "id": 15,
       "title": "Coverage lịch sử: hiện có / yêu cầu (ngày)",
       "type": "timeseries",
-      "gridPos": { "h": 5, "w": 10, "x": 8, "y": 26 },
+      "gridPos": {
+        "h": 5,
+        "w": 10,
+        "x": 8,
+        "y": 26
+      },
       "targets": [
-        { "expr": "ecommerce_training_history_days{kind=\"available\"}", "format": "time_series", "legendFormat": "Hiện có" },
-        { "expr": "ecommerce_training_history_days{kind=\"required\"}", "format": "time_series", "legendFormat": "Yêu cầu tối thiểu" }
+        {
+          "expr": "ecommerce_training_history_days{kind=\"available\"}",
+          "format": "time_series",
+          "legendFormat": "Hiện có"
+        },
+        {
+          "expr": "ecommerce_training_history_days{kind=\"required\"}",
+          "format": "time_series",
+          "legendFormat": "Yêu cầu tối thiểu"
+        }
       ],
-      "fieldConfig": { "defaults": { "unit": "d", "color": { "mode": "palette-classic" } } }
+      "fieldConfig": {
+        "defaults": {
+          "unit": "d",
+          "color": {
+            "mode": "palette-classic"
+          }
+        }
+      }
     },
     {
       "id": 16,
       "title": "Cần nạp thêm (ngày)",
       "type": "stat",
-      "gridPos": { "h": 5, "w": 6, "x": 18, "y": 26 },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 18,
+        "y": 26
+      },
       "targets": [
-        { "expr": "ecommerce_training_history_days{kind=\"missing\"}", "format": "time_series", "legendFormat": "Ngày còn thiếu" }
+        {
+          "expr": "ecommerce_training_history_days{kind=\"missing\"}",
+          "format": "time_series",
+          "legendFormat": "Ngày còn thiếu"
+        }
       ],
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "green", "value": null },
-              { "color": "red", "value": 1 }
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
             ]
           },
           "unit": "d"
         }
       },
-      "options": { "reduceOptions": { "values": false, "calcs": ["lastNotNull"] }, "textMode": "value" }
+      "options": {
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "textMode": "value"
+      }
+    },
+    {
+      "id": 105,
+      "type": "row",
+      "title": "DATA PIPELINE END TO END",
+      "gridPos": {
+        "x": 0,
+        "y": 31,
+        "w": 24,
+        "h": 1
+      },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 17,
+      "type": "stat",
+      "title": "Pipeline Ready",
+      "description": "Operational demo metrics; -1 means not measured. Batch latency starts at Kafka consumer receipt.",
+      "gridPos": {
+        "x": 0,
+        "y": 32,
+        "w": 4,
+        "h": 5
+      },
+      "targets": [
+        {
+          "expr": "ecommerce_pipeline_ready",
+          "format": "time_series",
+          "legendFormat": "Pipeline Ready"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 2,
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "NOT READY",
+                  "color": "red"
+                },
+                "1": {
+                  "text": "READY",
+                  "color": "green"
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "textMode": "value"
+      }
+    },
+    {
+      "id": 18,
+      "type": "stat",
+      "title": "Objects awaiting ETL",
+      "description": "Operational demo metrics; -1 means not measured. Batch latency starts at Kafka consumer receipt.",
+      "gridPos": {
+        "x": 4,
+        "y": 32,
+        "w": 4,
+        "h": 5
+      },
+      "targets": [
+        {
+          "expr": "ecommerce_pipeline_pending_objects",
+          "format": "time_series",
+          "legendFormat": "Objects awaiting ETL"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 2,
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "-1": {
+                  "text": "NOT MEASURED",
+                  "color": "gray"
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 100
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "textMode": "value"
+      }
+    },
+    {
+      "id": 19,
+      "type": "stat",
+      "title": "Oldest pending raw",
+      "description": "Operational demo metrics; -1 means not measured. Batch latency starts at Kafka consumer receipt.",
+      "gridPos": {
+        "x": 8,
+        "y": 32,
+        "w": 4,
+        "h": 5
+      },
+      "targets": [
+        {
+          "expr": "ecommerce_pipeline_oldest_pending_seconds",
+          "format": "time_series",
+          "legendFormat": "Oldest pending raw"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 2,
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "-1": {
+                  "text": "NOT MEASURED",
+                  "color": "gray"
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 180
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "textMode": "value"
+      }
+    },
+    {
+      "id": 20,
+      "type": "stat",
+      "title": "Last batch ingest to warehouse P95",
+      "description": "Operational demo metrics; -1 means not measured. Batch latency starts at Kafka consumer receipt.",
+      "gridPos": {
+        "x": 12,
+        "y": 32,
+        "w": 4,
+        "h": 5
+      },
+      "targets": [
+        {
+          "expr": "ecommerce_pipeline_ingest_to_warehouse_p95_seconds",
+          "format": "time_series",
+          "legendFormat": "Last batch ingest to warehouse P95"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 2,
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "-1": {
+                  "text": "NOT MEASURED",
+                  "color": "gray"
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 120
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "textMode": "value"
+      }
+    },
+    {
+      "id": 21,
+      "type": "stat",
+      "title": "Last batch volume ratio",
+      "description": "Operational demo metrics; -1 means not measured. Batch latency starts at Kafka consumer receipt.",
+      "gridPos": {
+        "x": 16,
+        "y": 32,
+        "w": 4,
+        "h": 5
+      },
+      "targets": [
+        {
+          "expr": "ecommerce_pipeline_batch_volume_ratio",
+          "format": "time_series",
+          "legendFormat": "Last batch volume ratio"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 2,
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "-1": {
+                  "text": "NOT MEASURED",
+                  "color": "gray"
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 4
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "textMode": "value"
+      }
+    },
+    {
+      "id": 22,
+      "type": "stat",
+      "title": "Last batch volume anomaly",
+      "description": "Operational demo metrics; -1 means not measured. Batch latency starts at Kafka consumer receipt.",
+      "gridPos": {
+        "x": 20,
+        "y": 32,
+        "w": 4,
+        "h": 5
+      },
+      "targets": [
+        {
+          "expr": "ecommerce_pipeline_batch_volume_anomaly",
+          "format": "time_series",
+          "legendFormat": "Last batch volume anomaly"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 2,
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "-1": {
+                  "text": "NOT MEASURED",
+                  "color": "gray"
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "textMode": "value"
+      }
     }
   ],
   "refresh": "10s",
   "schemaVersion": 38,
   "style": "dark",
-  "tags": ["mlops", "ecommerce", "demand-forecasting", "inventory"],
+  "tags": [
+    "mlops",
+    "ecommerce",
+    "demand-forecasting",
+    "inventory"
+  ],
   "time": {
     "from": "now-30m",
     "to": "now"
   },
   "timepicker": {
-    "refresh_intervals": ["5s", "10s", "30s", "1m", "5m"]
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m"
+    ]
   },
   "timezone": "browser",
   "title": "E-Commerce Streaming MLOps: Serving, Inventory & Training Readiness Dashboard",

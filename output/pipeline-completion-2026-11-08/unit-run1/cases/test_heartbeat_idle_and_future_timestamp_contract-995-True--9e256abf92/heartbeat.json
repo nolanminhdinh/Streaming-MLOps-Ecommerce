@@ -1,0 +1,31 @@
+{
+  "test": "tests/test_pipeline_completion.py::test_heartbeat_idle_and_future_timestamp_contract[995-True]",
+  "name": "heartbeat",
+  "inputs": {
+    "status": "healthy",
+    "checked_at": 995,
+    "pending_objects": 0,
+    "oldest_pending_seconds": 0,
+    "last_success_at": 100
+  },
+  "expected": {
+    "ready": true,
+    "unmeasured_latency": null
+  },
+  "actual": {
+    "status": "healthy",
+    "ready": true,
+    "heartbeat_age_seconds": 5.0,
+    "pending_objects": 0.0,
+    "oldest_pending_seconds": 0.0,
+    "last_success_age_seconds": 900.0,
+    "last_run_id": null,
+    "ingest_to_warehouse_p95_seconds": null,
+    "latency_measured_rows": null,
+    "batch_volume_ratio": null,
+    "batch_volume_anomaly": 0,
+    "batch_volume_reference_batches": null,
+    "latency_definition": "Kafka consumer receipt to completion of the ETL batch; excludes upstream source/producer delay",
+    "unknown_numeric_metric_value": -1
+  }
+}

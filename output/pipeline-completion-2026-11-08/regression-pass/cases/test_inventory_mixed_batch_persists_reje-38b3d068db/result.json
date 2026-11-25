@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_runtime_integrity_fixes.py::test_inventory_mixed_batch_persists_reject_and_valid_snapshot",
+  "file": "cases\\test_inventory_mixed_batch_persists_reje-38b3d068db",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0004059000639244914,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.017673299997113645,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "WARNING  kafka-consumer-inventory:consumer_inventory_to_postgres.py:192 Quarantined 1 invalid inventory snapshots"
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00030990003142505884,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "WARNING  kafka-consumer-inventory:consumer_inventory_to_postgres.py:192 Quarantined 1 invalid inventory snapshots"
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

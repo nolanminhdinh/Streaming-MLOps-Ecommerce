@@ -11,7 +11,7 @@ const stages = [
   {key:'source',name:'Nguồn dữ liệu',icon:'⇢',description:'Simulator tạo payload Shopee và TikTok. Mỗi đợt có mã WEB… và hai SKU riêng. Hai snapshot tồn kho được gửi trên topic inventory.logs.',evidence:()=>state.run?.run_id ? `Đợt ${state.run.run_id}; ${number(state.run.sent_orders)} bản tin đơn đã được Kafka xác nhận.` : 'Chưa phát đợt demo. Mở Luồng dữ liệu để bắt đầu.'},
   {key:'kafka',name:'Kafka',icon:'≋',description:'Broker nhận bản tin, phân partition và cấp offset. ACK là bằng chứng Kafka đã ghi; trạng thái kết nối chỉ kiểm tra cổng TCP.',evidence:()=>`${number(state.run?.sent_orders || 0)} ACK đơn; ${number(state.run?.sent_inventory || 0)} ACK tồn kho trong đợt hiện tại.`},
   {key:'minio',name:'MinIO Lake',icon:'▱',description:'Consumer lưu dữ liệu thô thành Parquet, phân vùng theo sàn và ngày nghiệp vụ. Bằng chứng đếm bản tin theo mã đơn của đợt demo.',evidence:()=>state.lake?.ok ? `${number(state.lake.raw_rows)} bản tin của đợt trong ${number(state.lake.objects?.length)} tệp Parquet.` : 'Chưa đọc được Data Lake. Không có số liệu thay thế.'},
-  {key:'worker',name:'ETL & kiểm định',icon:'⇄',description:'Worker tự chuẩn hóa, kiểm định, cách ly lỗi và nạp dữ liệu. Checkpoint chỉ tăng sau khi ETL và xuất CSV thành công.',evidence:()=>state.worker?.ok ? `Heartbeat ${timestamp(state.worker.checked_at)}; ${number(state.lake?.processed_objects)} object của đợt đã checkpoint.` : 'Worker chưa sẵn sàng hoặc heartbeat đã cũ.'},
+  {key:'worker',name:'ETL & kiểm định',icon:'⇄',description:'Worker tự chuẩn hóa, kiểm định, cách ly lỗi và nạp dữ liệu. Checkpoint tăng sau khi ETL thành công. Power BI Import đọc PostgreSQL; CSV dự phòng chạy riêng.',evidence:()=>state.worker?.ok ? `Heartbeat ${timestamp(state.worker.checked_at)}; ${number(state.lake?.processed_objects)} object của đợt đã checkpoint.` : 'Worker chưa sẵn sàng hoặc heartbeat đã cũ.'},
   {key:'postgres',name:'PostgreSQL',icon:'▤',description:'Star Schema lưu dòng đơn và snapshot tồn kho. Khóa nghiệp vụ và upsert xử lý bản tin gửi trùng. Bảng chi tiết lọc đúng mã đợt demo.',evidence:()=>state.warehouse?.ok ? `${number(state.warehouse.run_count)} dòng đơn của đợt; ${number(state.warehouse.orders)} đơn trong toàn bộ kho streaming.` : 'Chưa truy vấn được PostgreSQL.'},
   {key:'model',name:'Model & API',icon:'⌁',description:'FastAPI phục vụ model hiện có và tính cảnh báo nhập hàng. Dự báo dùng nguồn lịch sử theo model; đợt streaming mới không tự huấn luyện lại model.',evidence:()=>{const m=state.api?.model?.data;return m ? `${m.champion_algorithm} · v${m.version} · ${m.model_source}.` : 'Chưa đọc được metadata từ API phục vụ.'}}
 ];
@@ -61,13 +61,13 @@ function render(){
   $('run-id').textContent=run.run_id||'Chưa có đợt demo';$('run-message').textContent=run.message||(state.services?.kafka?.ok?'Bấm “Phát đợt mới” để bắt đầu.':'Kafka chưa kết nối. Chạy start_demo_web.bat sau khi Docker Desktop sẵn sàng.');
   const rawExpected=run.sent_orders||0, objects=lake.objects||[];
   const allProcessed=lake.ok&&objects.length>0&&lake.processed_objects===objects.length&&lake.raw_rows>=rawExpected;
-  if(run.status==='published'&&allProcessed&&wh.ok&&wh.run_count===run.valid_orders&&(!run.invalid_orders||lake.rejected_count>0))$('run-message').textContent='Đã đối chiếu đủ dữ liệu: raw, đơn hợp lệ, kiểm định và checkpoint sau xuất CSV.';
+  if(run.status==='published'&&allProcessed&&wh.ok&&wh.run_count===run.valid_orders&&(!run.invalid_orders||lake.rejected_count>0))$('run-message').textContent='Đã đối chiếu đủ dữ liệu: raw, đơn hợp lệ, kiểm định và checkpoint sau ETL; Power BI đọc PostgreSQL bằng Import.';
   const steps=[
     [!!run.sent_orders,'Kafka xác nhận bản tin',`${number(run.sent_orders||0)} ACK đơn`],
     [lake.ok&&lake.raw_rows>=rawExpected&&rawExpected>0,'Consumer lưu Parquet',`${number(lake.ok?lake.raw_rows:null)} bản tin`],
     [wh.ok&&wh.run_count===run.valid_orders,'ETL nạp đơn hợp lệ',`${number(wh.ok?wh.run_count:null)} / ${number(run.valid_orders||0)}`],
     [lake.ok&&(run.invalid_orders?lake.rejected_count>0:!!run.run_id),'Validation cách ly bản tin lỗi',run.invalid_orders?`${number(lake.ok?lake.rejected_count:null)} lần ghi lỗi`:'Không yêu cầu lỗi'],
-    [allProcessed,'Checkpoint sau ETL & xuất CSV',`${number(lake.processed_objects||0)} / ${objects.length} object`]
+    [allProcessed,'Checkpoint sau ETL',`${number(lake.processed_objects||0)} / ${objects.length} object`]
   ];
   $('run-progress').innerHTML=steps.map(([done,label,note],i)=>`<div class="progress-step ${done?'done':''}"><span>${done?'✓':String(i+1).padStart(2,'0')}</span>${label}<small>${esc(note)}</small></div>`).join('');
   if(run.replay_count){
@@ -85,7 +85,7 @@ function render(){
   $('lake-evidence').innerHTML=(objects.length?objects.slice(-8).map(obj=>`<div class="evidence-line"><strong>${number(obj.rows)} bản tin đúng mã đợt</strong> · ${completedLabel(obj.name,worker,lake)}<code>${esc(obj.name)}</code></div>`).join(''):empty(lake.ok?'Chờ consumer lưu bản tin của đợt thành Parquet.':'Chưa đọc được MinIO.'))+`<div class="evidence-line">Worker: <strong>${worker.ok?'heartbeat còn hiệu lực':'chưa sẵn sàng'}</strong> · Lần đọc ${timestamp(worker.checked_at)}<small>ETL gần nhất toàn worker: ${esc(worker.last_etl?.status||'chưa có')} · checkpoint ${timestamp(worker.checkpoint_at)}. Các số ETL toàn worker có thể gồm đợt khác.</small></div>`;
   $('quarantine-evidence').innerHTML=lake.rejected?.length?lake.rejected.map(row=>`<div class="evidence-line"><strong>${esc(row.order_id)}</strong><small>Lý do: ${esc(Array.isArray(row.reasons)?row.reasons.join(', '):row.reasons)}</small><code>${esc(row.object)}</code></div>`).join(''):empty(lake.ok?'Chưa ghi nhận bản tin lỗi của đợt trong quarantine.':'Chưa đọc được vùng cách ly.');
   $('stock-evidence').innerHTML=wh.stocks?.length?wh.stocks.map(row=>`<div class="evidence-line"><strong>${esc(row.sku)}</strong> · ${number(row.stock_on_hand)} sản phẩm<small>Nguồn: Fact_Inventory_Daily · ${esc(row.snapshot_at)}</small></div>`).join(''):empty('Chưa thấy snapshot của đợt demo.');
-  $('csv-evidence').innerHTML=state.csvs?.length?state.csvs.map(file=>`<div class="evidence-line"><strong>${esc(file.name)}</strong><small>Sửa lần cuối ${timestamp(file.modified_at)} · ${number(file.bytes)} byte</small></div>`).join(''):empty('Chưa thấy tệp CSV Power BI.');
+  $('csv-evidence').innerHTML=state.csvs?.length?state.csvs.map(file=>`<div class="evidence-line"><strong>${esc(file.name)}</strong><small>Sửa lần cuối ${timestamp(file.modified_at)} · ${number(file.bytes)} byte</small></div>`).join(''):empty('Chưa có CSV dự phòng; Power BI dùng PostgreSQL Import.');
   renderCatalog(wh.catalog||[],ready);
   renderScenarios();
 }

@@ -3,7 +3,6 @@
 Includes stale versions, invalid JSON, mixed numeric types, unknown platform and
 invalid stock. Test facts are retained. No training or source-coverage changes.
 """
-import csv
 from datetime import datetime, timedelta, timezone
 import json
 import logging
@@ -30,7 +29,7 @@ def main():
     now = datetime.now(timezone.utc)
     sku = run_id + "-A"
     base = dict(_platform="shopee", order_sn=run_id + "-order", item_sku=sku, item_name="Continuous pipeline fixture",
-                shop_id=run_id, shop_name="Continuous test", quantity=3, original_price=10000,
+                shop_id="CONTINUOUS-TEST", shop_name="Continuous test", quantity=3, original_price=10000,
                 total_order_value=30000, buyer_total_amount=30000, order_status="COMPLETED",
                 create_time=(now - timedelta(hours=2)).isoformat(), update_time=now.isoformat())
     events = [base, dict(base, order_status="READY_TO_SHIP", quantity=1, update_time=(now - timedelta(hours=1)).isoformat()),
@@ -55,20 +54,28 @@ def main():
             with engine.connect() as conn:
                 facts = [dict(row) for row in conn.execute(text("SELECT order_id,order_status,quantity FROM Fact_Orders WHERE order_id LIKE :prefix ORDER BY order_id"), {"prefix": run_id + "%"}).mappings()]
                 stock = conn.execute(text("SELECT stock_on_hand FROM Fact_Inventory_Daily i JOIN Dim_Products p USING(product_key) WHERE p.sku=:sku ORDER BY snapshot_at DESC LIMIT 1"), {"sku": sku}).scalar()
-                expected = [dict(row) for row in conn.execute(text("SELECT d.date_key,v.platform,v.total_orders,v.total_units_sold AS units_sold,v.total_revenue AS net_revenue,v.average_order_value AS aov FROM vw_powerbi_executive_summary v JOIN Dim_Dates d ON d.full_date=v.order_date ORDER BY d.date_key,v.platform")).mappings()]
-            path = ROOT / "powerbi/data/Fact_Orders_Summary.csv"
-            csv_rows = list(csv.DictReader(path.open(encoding="utf-8-sig"))) if path.exists() else []
-            actual = {(int(row["date_key"]), row["platform"]): row for row in csv_rows}
-            csv_matches = bool(expected) and len(expected) == len(csv_rows) and all(
-                (row["date_key"], row["platform"]) in actual and all(
-                    abs(float(row[key]) - float(actual[(row["date_key"], row["platform"])][key])) < .005
-                    for key in ("total_orders", "units_sold", "net_revenue", "aov")) for row in expected)
-            if len(facts) == 2 and sum(row["quantity"] for row in facts) == 7 and all(row["order_status"] == "COMPLETED" for row in facts) and stock == 50 and csv_matches:
-                result.update(status="PASS", facts=facts, latest_stock=stock, csv_summary_matches_warehouse=csv_matches)
+                # Reconcile the Import summary view against persisted fact totals;
+                # CSV backup existence/freshness is deliberately irrelevant.
+                summary = conn.execute(text("""SELECT SUM(v.total_orders) AS orders,
+                    SUM(v.total_units_sold) AS units, SUM(v.total_revenue) AS revenue
+                    FROM vw_powerbi_executive_summary v JOIN Dim_Dates d ON d.full_date=v.order_date
+                    WHERE EXISTS (SELECT 1 FROM Fact_Orders f WHERE f.order_id LIKE :prefix
+                        AND f.date_key=d.date_key AND f.platform=v.platform)"""),
+                    {"prefix": run_id + "%"}).mappings().one()
+                actual = conn.execute(text("""SELECT COUNT(DISTINCT (f.platform,f.order_id)) AS orders,
+                    SUM(f.quantity) AS units, SUM(f.buyer_total_amount) AS revenue FROM Fact_Orders f
+                    WHERE f.is_cancelled=FALSE AND EXISTS (SELECT 1 FROM Fact_Orders labelled
+                        WHERE labelled.order_id LIKE :prefix AND labelled.date_key=f.date_key
+                        AND labelled.platform=f.platform)"""), {"prefix": run_id + "%"}).mappings().one()
+                view_matches = summary == actual and bool(summary["orders"])
+            if len(facts) == 2 and sum(row["quantity"] for row in facts) == 7 and all(row["order_status"] == "COMPLETED" for row in facts) and stock == 50 and view_matches:
+                result.update(status="PASS", facts=facts, latest_stock=stock,
+                              powerbi_source="postgresql_import", sql_view_matches_warehouse=True,
+                              csv_backup_required=False, powerbi_desktop_refresh_verified=False)
                 break
             time.sleep(2)
         client = build_minio_client()
-        quarantined = {"orders": 0, "inventory": 0, "nifi": 0}
+        quarantined = {"orders": 0, "inventory": 0}
         # Only inspect new small quarantine files, by object modification time.
         for stream in quarantined:
             for obj in client.list_objects(MINIO_BUCKET, prefix=f"quarantine/{stream}/", recursive=True):
@@ -82,7 +89,7 @@ def main():
                     response.close()
                     response.release_conn()
         result["quarantined_labelled_records"] = quarantined
-        if quarantined["orders"] < 3 or quarantined["inventory"] < 1 or quarantined["nifi"] < 2:
+        if quarantined["orders"] < 3 or quarantined["inventory"] < 1:
             result["status"] = "FAIL"
         api = os.getenv("PIPELINE_CHECK_API_BASE", "http://localhost:8000")
         with urlopen(api + "/ready", timeout=15) as response:

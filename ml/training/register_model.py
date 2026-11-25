@@ -31,6 +31,7 @@ except ImportError:
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from ml.mlflow.setup_tracking import configure_mlflow
+from ml.training.metrics import EVALUATION_PROTOCOL
 
 logging.basicConfig(
     level=logging.INFO,
@@ -79,6 +80,11 @@ def find_best_run(
             )
             return None
         runs = compatible_runs
+        protocol_col = "params.evaluation_protocol"
+        if protocol_col not in runs.columns:
+            logger.warning("No run records the corrected evaluation protocol; retrain before registering.")
+            return None
+        runs = runs[runs[protocol_col] == EVALUATION_PROTOCOL]
 
         if required_data_origin:
             origin_col = "params.data_origin"
@@ -105,6 +111,9 @@ def find_best_run(
         from mlflow.tracking import MlflowClient
         client = MlflowClient(tracking_uri=mlflow.get_tracking_uri())
         for _, candidate in runs.iterrows():
+            wape = candidate.get("metrics.cv_wape")
+            if wape is None or not math.isfinite(float(wape)):
+                continue
             model_name = candidate.get("params.model_name", "lightgbm")
             model_file = f"{str(model_name).lower()}_model.joblib"
             run_id = candidate["run_id"]
@@ -138,6 +147,7 @@ def find_best_run(
                 "rmse": candidate.get("metrics.cv_rmse"),
                 "artifact_uri": candidate.get("artifact_uri", ""),
                 "model_file": model_file,
+                "evaluation_protocol": EVALUATION_PROTOCOL,
             }
         logger.warning("Không có run khớp dữ liệu hiện hành nào lưu đủ model artifact và feature spec.")
         return None
@@ -149,10 +159,13 @@ def find_best_run(
     if os.path.exists(csv_path):
         import pandas as pd
         comp_df = pd.read_csv(csv_path)
-        if "Evaluation strategy" not in comp_df.columns:
+        if "Evaluation strategy" not in comp_df.columns or "Evaluation protocol" not in comp_df.columns:
             logger.warning("Bảng so sánh cũ chưa có nhãn evaluation strategy; bỏ qua metric cũ.")
             return None
-        comp_df = comp_df[comp_df["Evaluation strategy"] == REQUIRED_EVALUATION_STRATEGY]
+        comp_df = comp_df[(comp_df["Evaluation strategy"] == REQUIRED_EVALUATION_STRATEGY)
+                          & (comp_df["Evaluation protocol"] == EVALUATION_PROTOCOL)]
+        numeric_wape = pd.to_numeric(comp_df["WAPE (%)"], errors="coerce")
+        comp_df = comp_df[numeric_wape.map(math.isfinite)].sort_values("WAPE (%)")
         if comp_df.empty:
             logger.warning("Bảng so sánh chưa có kết quả '%s'.", REQUIRED_EVALUATION_STRATEGY)
             return None
@@ -165,6 +178,7 @@ def find_best_run(
             "rmse": top["RMSE"],
             "artifact_uri": "data/champion_model.joblib",
             "model_file": f"{str(top['Mô hình']).lower()}_model.joblib",
+            "evaluation_protocol": EVALUATION_PROTOCOL,
         }
 
     # Không còn trả về metrics "mặc định" (24.5 / 1.85 / 2.60): không có run thật thì
@@ -366,6 +380,7 @@ def register_champion_model(
         "status": "READY_FOR_SERVING",
         "data_origin": data_origin,
         "source_datasets": artifact_datasets,
+        "evaluation_protocol": best_info.get("evaluation_protocol"),
     }
 
     manifest_dir = os.path.abspath(

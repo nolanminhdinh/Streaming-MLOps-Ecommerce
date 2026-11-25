@@ -1,0 +1,1 @@
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{"__name__":"ecommerce_pipeline_ingest_to_warehouse_p95_seconds","app":"ecommerce-mlops","environment":"production","instance":"fastapi:8000","job":"fastapi-serving"},"value":[1794153137.467,"31.0306762"]}]}}

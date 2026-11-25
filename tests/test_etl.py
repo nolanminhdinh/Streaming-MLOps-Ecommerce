@@ -193,6 +193,23 @@ class TestETLPipeline(unittest.TestCase):
         self.assertIn("NEGATIVE_ORIGINAL_PRICE", report.error_counts)
         self.assertIn("PAY_TIME_BEFORE_CREATE_TIME", report.error_counts)
 
+    def test_mixed_platform_batch_keeps_shop_identity(self):
+        """Hồi quy 16/11/2026: lô trộn sàn từng biến shop_id TikTok thành NaN (dồn vào shop rỗng)
+        và shop_id Shopee bị thiếu thành chuỗi 'nan'."""
+        rows = [
+            {"_platform": "shopee", "order_sn": "S1", "item_sku": "A", "shop_id": "10000001",
+             "shop_name": "MockStore Official Mall"},
+            {"_platform": "shopee", "order_sn": "S2", "item_sku": "A", "shop_name": "Shop thiếu id"},
+            {"_platform": "tiktok", "order_id": "T1", "seller_sku": "B", "shop_name": "MockStore Official Shop"},
+        ]
+        unified = unify_schema(pd.DataFrame(rows)).set_index("order_id")
+        self.assertEqual(unified.loc["T1", "shop_id"], "MockStore Official Shop")
+        self.assertEqual(unified.loc["S1", "shop_id"], "10000001")
+        self.assertEqual(unified.loc["S2", "shop_id"], "")
+        # Kết quả không phụ thuộc lô có trộn sàn hay không.
+        alone = unify_schema(pd.DataFrame([rows[2]])).iloc[0]
+        self.assertEqual(alone["shop_id"], unified.loc["T1", "shop_id"])
+
 
 if __name__ == "__main__":
     unittest.main()

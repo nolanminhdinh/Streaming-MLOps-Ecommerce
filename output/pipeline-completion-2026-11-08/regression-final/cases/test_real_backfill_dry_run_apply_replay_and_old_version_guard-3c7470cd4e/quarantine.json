@@ -1,0 +1,28 @@
+{
+  "test": "tests/test_pipeline_completion_postgres.py::test_real_backfill_dry_run_apply_replay_and_old_version_guard",
+  "name": "quarantine",
+  "inputs": [
+    {
+      "_platform": "shopee",
+      "order_sn": "BACKFILL-C",
+      "item_sku": "A",
+      "quantity": {
+        "breaking": "type"
+      },
+      "original_price": 10,
+      "total_order_value": 20,
+      "buyer_total_amount": 20,
+      "create_time": "2026-10-13T17:01:00Z",
+      "order_status": "COMPLETED"
+    }
+  ],
+  "expected": {
+    "contains": "CONTRACT_INVALID_TYPE_QUANTITY"
+  },
+  "actual": {
+    "jsonl": [
+      "{\"run_id\": \"20261108T224753-f615a061ba9046209198514a74a3b737\", \"status\": \"rejected\", \"order_id\": \"BACKFILL-C\", \"platform\": \"shopee\", \"sku\": \"A\", \"product_name\": null, \"category\": null, \"shop_id\": \"\", \"shop_name\": null, \"order_status\": \"COMPLETED\", \"is_cancelled\": false, \"cancel_reason\": null, \"quantity\": null, \"original_price\": 10, \"discounted_price\": null, \"subtotal\": 20, \"buyer_total_amount\": 20, \"seller_discount\": 0, \"platform_discount\": 0, \"voucher_total\": 0, \"commission_fee\": 0, \"service_fee\": 0, \"transaction_fee\": 0, \"shipping_fee\": 0, \"original_shipping\": 0, \"tax_amount\": 0, \"payment_method\": null, \"carrier_name\": null, \"shipping_carrier\": null, \"state\": null, \"city\": null, \"district\": null, \"country\": \"VN\", \"weight_kg\": null, \"create_time\": \"2026-10-14T00:01:00\", \"pay_time\": null, \"shipped_time\": null, \"completed_time\": null, \"cancel_time\": null, \"source_line_id\": \"sku:A\", \"source_updated_at\": \"2026-10-14T00:01:00\", \"source_object\": \"acceptance/backfill.parquet\", \"source_row\": 3, \"raw_payload\": {\"_platform\": \"shopee\", \"order_sn\": \"BACKFILL-C\", \"item_sku\": \"A\", \"quantity\": {\"breaking\": \"type\"}, \"original_price\": 10, \"total_order_value\": 20, \"buyer_total_amount\": 20, \"create_time\": \"2026-10-13T17:01:00Z\", \"order_status\": \"COMPLETED\", \"update_time\": null, \"_source_object\": \"acceptance/backfill.parquet\", \"_source_row\": 3, \"_pipeline_ingested_at\": \"2026-11-08T15:47:51.920146+00:00\"}, \"contract_errors\": [\"CONTRACT_INVALID_TYPE_QUANTITY\"], \"_invalid_discounted_price\": false, \"_invalid_voucher_total\": false, \"_invalid_create_time\": false, \"_invalid_pay_time\": false, \"_invalid_shipped_time\": false, \"_invalid_completed_time\": false, \"_invalid_cancel_time\": false, \"_invalid_source_updated_at\": false, \"order_date\": \"2026-10-14\", \"rejection_reasons\": \"CONTRACT_INVALID_TYPE_QUANTITY; NON_POSITIVE_QUANTITY\"}\n",
+      "{\"run_id\": \"20261108T224754-ab6f4d38be914034860132394e807e55\", \"status\": \"rejected\", \"order_id\": \"BACKFILL-C\", \"platform\": \"shopee\", \"sku\": \"A\", \"product_name\": null, \"category\": null, \"shop_id\": \"\", \"shop_name\": null, \"order_status\": \"COMPLETED\", \"is_cancelled\": false, \"cancel_reason\": null, \"quantity\": null, \"original_price\": 10, \"discounted_price\": null, \"subtotal\": 20, \"buyer_total_amount\": 20, \"seller_discount\": 0, \"platform_discount\": 0, \"voucher_total\": 0, \"commission_fee\": 0, \"service_fee\": 0, \"transaction_fee\": 0, \"shipping_fee\": 0, \"original_shipping\": 0, \"tax_amount\": 0, \"payment_method\": null, \"carrier_name\": null, \"shipping_carrier\": null, \"state\": null, \"city\": null, \"district\": null, \"country\": \"VN\", \"weight_kg\": null, \"create_time\": \"2026-10-14T00:01:00\", \"pay_time\": null, \"shipped_time\": null, \"completed_time\": null, \"cancel_time\": null, \"source_line_id\": \"sku:A\", \"source_updated_at\": \"2026-10-14T00:01:00\", \"source_object\": \"acceptance/backfill.parquet\", \"source_row\": 3, \"raw_payload\": {\"_platform\": \"shopee\", \"order_sn\": \"BACKFILL-C\", \"item_sku\": \"A\", \"quantity\": {\"breaking\": \"type\"}, \"original_price\": 10, \"total_order_value\": 20, \"buyer_total_amount\": 20, \"create_time\": \"2026-10-13T17:01:00Z\", \"order_status\": \"COMPLETED\", \"update_time\": null, \"_source_object\": \"acceptance/backfill.parquet\", \"_source_row\": 3, \"_pipeline_ingested_at\": \"2026-11-08T15:47:51.920146+00:00\"}, \"contract_errors\": [\"CONTRACT_INVALID_TYPE_QUANTITY\"], \"_invalid_discounted_price\": false, \"_invalid_voucher_total\": false, \"_invalid_create_time\": false, \"_invalid_pay_time\": false, \"_invalid_shipped_time\": false, \"_invalid_completed_time\": false, \"_invalid_cancel_time\": false, \"_invalid_source_updated_at\": false, \"order_date\": \"2026-10-14\", \"rejection_reasons\": \"CONTRACT_INVALID_TYPE_QUANTITY; NON_POSITIVE_QUANTITY\"}\n"
+    ]
+  }
+}

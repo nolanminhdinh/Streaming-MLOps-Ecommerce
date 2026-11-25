@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_warehouse_schema_v2.py::test_external_catalog_uses_source_and_dataset_not_live_product_key",
+  "file": "cases\\test_external_catalog_uses_source_and_dataset_not_live_product_key-e6e249de4e",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.29215909994672984,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.018403900088742375,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.004297399893403053,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

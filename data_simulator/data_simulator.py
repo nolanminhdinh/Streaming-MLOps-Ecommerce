@@ -480,7 +480,12 @@ class ECommerceSimulator:
         start_date: Optional[datetime] = None,
         enterprise_config: Optional[dict] = None,
         initial_stock_override: Optional[dict] = None,
+        order_id_tag: str = "",
     ):
+        # Mã lượt chạy chèn vào mã đơn. Bộ đếm đơn bắt đầu lại từ 0 mỗi tiến trình, nên producer chạy lại
+        # trong cùng ngày từng cấp trùng mã (SPE261116000002…) và làm gộp/ghi đè đơn khác nhau (16/11/2026).
+        # Producer truyền tag theo giờ khởi động; generator lịch sử để trống để mã đơn ổn định theo seed.
+        self.order_id_tag = order_id_tag
         self.shopee_ratio = shopee_ratio
         self.cancel_rate = cancel_rate
         self.trend_weekly_pct = trend_weekly_pct
@@ -985,7 +990,7 @@ class ECommerceSimulator:
         addr = self._pick_address()
         shop_name, shop_id, conn_id = self._pick_shop(Platform.SHOPEE)
 
-        order_sn = f"SPE{now.strftime('%y%m%d')}{self._order_counter:06d}"
+        order_sn = f"SPE{now.strftime('%y%m%d')}{self.order_id_tag}{self._order_counter:06d}"
 
         qty = random.choices([1, 2, 3, 4, 5], weights=[50, 25, 12, 8, 5])[0]
         # Flash sale → tăng quantity
@@ -1103,7 +1108,7 @@ class ECommerceSimulator:
         shop_name, shop_id, conn_id = self._pick_shop(Platform.TIKTOK)
         warehouse_id = self.enterprise["central_warehouse"]["warehouse_id"]
 
-        order_id = f"TT{now.strftime('%y%m%d')}{self._order_counter:06d}"
+        order_id = f"TT{now.strftime('%y%m%d')}{self.order_id_tag}{self._order_counter:06d}"
 
         qty = random.choices([1, 2, 3, 4, 5], weights=[55, 22, 12, 7, 4])[0]
         if self._is_flash_sale(now):

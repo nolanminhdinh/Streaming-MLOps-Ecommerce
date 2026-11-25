@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_monitoring.py::TestPrometheusMetricsExposition::test_metrics_prometheus_text_format",
+  "file": "cases\\test_metrics_prometheus_text_format-55f6245dd4",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0002902999985963106,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0009966000216081738,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00018440000712871552,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

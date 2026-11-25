@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_runtime_integrity_fixes.py::test_mixed_numeric_and_text_payloads_survive_parquet_roundtrip",
+  "file": "cases\\test_mixed_numeric_and_text_payloads_sur-f5d8828f39",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00013810000382363796,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.04082160000689328,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0003755999496206641,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_order_line_integrity.py::test_numeric_line_id_is_stable_across_nullable_parquet_batches",
+  "file": "cases\\test_numeric_line_id_is_stable_across_nu-fdeada4506",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00012119999155402184,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.00017290003597736359,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0001311999512836337,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

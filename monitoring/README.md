@@ -40,3 +40,10 @@ docker compose run --rm trainer ml/training/train_baseline.py
 
 Khi chưa đủ, lệnh trả exit code 2 và hướng dẫn số ngày cần nạp thêm; sau khi đủ, lệnh đi tiếp qua
 feature engineering, walk-forward training và MLflow tracking.
+## Giám sát pipeline hoàn thiện ngày 08 tháng 11 năm 2026
+
+API `/pipeline/status` phân biệt heartbeat, số raw chờ, tuổi raw chờ, tuổi lần ETL hoàn tất và P95 từ consumer nhận đến hoàn tất mẻ. Giá trị chưa đo là null; ở Prometheus là -1. Pipeline không có dữ liệu mới không tự bị xem là lỗi freshness. P95 này không bao gồm thời gian ở nguồn/producer và không phải độ trễ HTTP.
+
+Ba rule mới xét backlog >180 giây, P95 mẻ >120 giây và volume ngoài [0,25; 4] lần trung vị sau ít nhất 6 mẻ tham chiếu. Đây là ngưỡng local; số dòng mẻ không được diễn giải thành nhu cầu thị trường. Grafana được provision thêm 6 panel tại hàng DATA PIPELINE END TO END.
+
+Compose có Alertmanager và receiver nội bộ. `http://localhost:9094/events` cho xem 100 nhóm cảnh báo gần nhất; toàn bộ nhật ký được giữ trong `data/monitoring/alerts*.jsonl`, có luân chuyển tệp khi lớn. Không có email/Slack/người nhận bên ngoài được cấu hình trong đợt này. [Dữ liệu kiểm thử và cảnh báo thật đã nhận](../output/pipeline-completion-2026-11-08/Ket_qua_kiem_thu.html).

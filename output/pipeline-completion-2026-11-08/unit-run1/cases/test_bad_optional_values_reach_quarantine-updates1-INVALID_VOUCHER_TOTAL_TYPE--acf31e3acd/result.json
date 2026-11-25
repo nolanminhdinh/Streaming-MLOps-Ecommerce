@@ -1,0 +1,37 @@
+{
+  "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_optional_values_reach_quarantine[updates1-INVALID_VOUCHER_TOTAL_TYPE]",
+  "file": "cases\\test_bad_optional_values_reach_quarantine-updates1-INVALID_VOUCHER_TOTAL_TYPE--acf31e3acd",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0006647000554949045,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.037135599995963275,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0006371999625116587,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "updates": {
+      "voucher_from_seller": "bad"
+    },
+    "reason": "INVALID_VOUCHER_TOTAL_TYPE"
+  },
+  "outcome": "passed"
+}

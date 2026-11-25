@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_pipeline_completion.py::test_batch_volume_warms_up_before_signalling_anomaly",
+  "file": "cases\\test_batch_volume_warms_up_before_signal-72e5f94013",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0002837000647559762,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0009637000039219856,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0001849000109359622,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_model_recovery.py::test_startup_failure_recovers_without_blocking_readiness",
+  "file": "cases\\test_startup_failure_recovers_without_bl-65ce3f890d",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00024079997092485428,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.004926300025545061,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "WARNING  mlops.serving.model_loader:model_loader.py:185 Chưa có model ML; thử lại sau 5.0 giây."
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00024419999681413174,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "WARNING  mlops.serving.model_loader:model_loader.py:185 Chưa có model ML; thử lại sau 5.0 giây."
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

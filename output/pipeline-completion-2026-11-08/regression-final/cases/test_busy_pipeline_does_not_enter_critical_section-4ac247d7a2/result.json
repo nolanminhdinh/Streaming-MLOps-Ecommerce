@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_pipeline_completion.py::test_busy_pipeline_does_not_enter_critical_section",
+  "file": "cases\\test_busy_pipeline_does_not_enter_critical_section-4ac247d7a2",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0003241999074816704,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0021141000324860215,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00035530002787709236,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

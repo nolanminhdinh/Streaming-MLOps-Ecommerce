@@ -66,7 +66,7 @@ class WarehouseRepository:
         return self.enabled and time.time() >= self._down_until
 
     def _query(self, cache_key: Any, fn: Callable[[Any], Any], ttl: float = CACHE_TTL_SECONDS) -> Any:
-        """Chạy truy vấn có cache; lỗi kết nối → ngắt mạch và trả về None."""
+        """Chạy truy vấn có cache (ttl <= 0: luôn đọc kho, không lưu cache); lỗi kết nối → ngắt mạch, trả None."""
         if not self.available():
             return None
         now = time.time()
@@ -82,6 +82,8 @@ class WarehouseRepository:
             logger.warning("Không truy vấn được Data Warehouse (%s) — dùng nguồn dự phòng trong %.0fs.",
                            e.__class__.__name__, DB_RETRY_SECONDS)
             return None
+        if ttl <= 0:
+            return value
         with self._lock:
             if len(self._cache) > 2000:  # chặn cache phình vô hạn theo (sku, ngày)
                 self._cache = {k: v for k, v in self._cache.items() if now - v[0] < ttl}
@@ -125,6 +127,13 @@ class WarehouseRepository:
                     WHERE data_origin = :data_origin AND is_cancelled = FALSE
                       AND (:filter_datasets = FALSE OR source_dataset = ANY(CAST(:source_datasets AS TEXT[])))
                 """), {"data_origin": data_origin, "filter_datasets": source_datasets is not None, "source_datasets": source_datasets or []}).scalar()
+            if data_origin == "warehouse_live":
+                # Model huấn luyện trên ngày đã xác nhận đủ dữ liệu; ngày đang diễn ra chỉ có một phần đơn,
+                # dùng làm mốc cuối sẽ kéo dự báo (đặc biệt Naive = nhu cầu ngày cuối) xuống thấp.
+                return conn.execute(text("""
+                    SELECT MAX(full_date) FROM Warehouse_Daily_Coverage
+                    WHERE data_origin = 'warehouse_live' AND source_dataset = ''
+                """)).scalar()
             return conn.execute(text(
                 "SELECT MAX(create_time)::date FROM Fact_Orders WHERE is_cancelled = FALSE"
             )).scalar()
@@ -261,6 +270,29 @@ class WarehouseRepository:
         stocks = self._query("latest_stock", run, ttl=30)
         return stocks or None
 
+    def get_stock_for_skus(self, skus: List[str]) -> Dict[str, Dict[str, Any]]:
+        """Đọc thẳng kho (không cache) snapshot mới nhất của các SKU chưa có trong cache.
+
+        Cache toàn bảng 30 giây có thể được tạo trước khi SKU mới vào kho; không tra lại thì
+        API sẽ trả tồn kho giả lập dù kho đã có số thật.
+        """
+        if not skus:
+            return {}
+        from sqlalchemy import text
+
+        def run(conn):
+            rows = conn.execute(text("""
+                SELECT DISTINCT ON (p.sku) p.sku, i.stock_on_hand, d.full_date
+                FROM Fact_Inventory_Daily i
+                JOIN Dim_Products p ON p.product_key = i.product_key
+                JOIN Dim_Dates d ON d.date_key = i.date_key
+                WHERE p.sku = ANY(:skus)
+                ORDER BY p.sku, d.full_date DESC, i.loaded_at DESC
+            """), {"skus": sorted(set(skus))})
+            return {r[0]: {"stock_on_hand": int(r[1]), "as_of": str(r[2])} for r in rows}
+
+        return self._query(("stock_for_skus",), run, ttl=0) or {}
+
     def record_served_forecasts(
         self,
         sku: str,
@@ -300,6 +332,8 @@ class WarehouseRepository:
                     "sku": sku,
                     "target_date": target_date,
                     "predicted_quantity": max(0.0, float(item["predicted_quantity"])),
+                    "lower_bound": None if item.get("lower_bound") is None else max(0.0, float(item["lower_bound"])),
+                    "upper_bound": None if item.get("upper_bound") is None else max(0.0, float(item["upper_bound"])),
                     "model_name": model_name,
                     "model_version": str(model_version),
                     "model_source": model_source,
@@ -330,10 +364,12 @@ class WarehouseRepository:
                 result = conn.execute(text("""
                     INSERT INTO Fact_Forecast_Predictions (
                         product_key, target_date, predicted_quantity, model_name,
-                        model_version, model_source, history_source, history_end_date, data_origin, source_datasets
+                        model_version, model_source, history_source, history_end_date, data_origin, source_datasets,
+                        lower_bound, upper_bound
                     )
                     SELECT p.product_key, :target_date, :predicted_quantity, :model_name,
-                           :model_version, :model_source, :history_source, :history_end_date, :data_origin, CAST(:source_datasets AS JSONB)
+                           :model_version, :model_source, :history_source, :history_end_date, :data_origin, CAST(:source_datasets AS JSONB),
+                           :lower_bound, :upper_bound
                     FROM Dim_Products p
                     WHERE p.sku = :sku
                     ON CONFLICT ON CONSTRAINT uq_fact_forecasts_issue

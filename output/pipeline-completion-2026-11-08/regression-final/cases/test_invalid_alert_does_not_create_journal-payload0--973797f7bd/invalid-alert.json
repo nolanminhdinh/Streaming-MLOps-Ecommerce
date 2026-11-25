@@ -1,0 +1,11 @@
+{
+  "test": "tests/test_pipeline_completion.py::test_invalid_alert_does_not_create_journal[payload0]",
+  "name": "invalid-alert",
+  "inputs": {},
+  "expected": {
+    "journal_created": false
+  },
+  "actual": {
+    "journal_created": false
+  }
+}

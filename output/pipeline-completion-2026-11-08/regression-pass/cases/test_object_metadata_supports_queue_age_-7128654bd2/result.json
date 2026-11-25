@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_pipeline_completion.py::test_object_metadata_supports_queue_age_without_guessing",
+  "file": "cases\\test_object_metadata_supports_queue_age_-7128654bd2",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0003336999798193574,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.003025699988938868,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0002047000452876091,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

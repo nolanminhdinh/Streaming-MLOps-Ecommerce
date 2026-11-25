@@ -1,0 +1,25 @@
+{
+  "test": "tests/test_pipeline_completion.py::test_object_metadata_supports_queue_age_without_guessing",
+  "name": "queue-metadata",
+  "inputs": {
+    "objects": [
+      "raw/a.parquet",
+      "raw/other.txt"
+    ]
+  },
+  "expected": {
+    "selected": 1,
+    "size": 123
+  },
+  "actual": {
+    "names": [
+      "raw/a.parquet"
+    ],
+    "metadata": {
+      "raw/a.parquet": {
+        "last_modified": 1794096000.0,
+        "size": 123
+      }
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_order_line_integrity.py::test_features_count_orders_not_lines_for_repeated_sku",
+  "file": "cases\\test_features_count_orders_not_lines_for-4e18478186",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0003100000321865082,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.11726620001718402,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0004368999507278204,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

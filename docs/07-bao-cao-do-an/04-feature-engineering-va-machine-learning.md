@@ -1,5 +1,9 @@
 # Phần 4 — Feature engineering, đánh giá mô hình và MLflow
 
+**Đánh giá mới ngày 08/11/2026:** xem [đối soát CSV và mô hình nhu cầu thưa](cai-thien-du-bao-2026-11-08.md). Kết quả ở dưới giữ ngày đo ban đầu. Thử nghiệm mới là hồi cứu, không có holdout độc lập mới; ứng viên Hurdle chưa được phê duyệt cho kỳ vọng nhập hàng và hiệu chỉnh Poisson bị loại.
+
+> **Bản khắc phục 07/11/2026:** xem [baseline, WAPE gộp và holdout sau sửa](khac-phuc-cam-nang-2026-11-07.md). Nội dung dưới là audit ngày 19/10; các lỗi căn chỉnh baseline, quy ước WAPE=0 và gate độ dài chuỗi nêu trong audit không mặc định còn là hành vi mã hiện tại. Artifact v2 lịch sử vẫn giữ công thức cũ để tái lập.
+
 Ngày kiểm tra: **19/10/2026**. Phạm vi: đọc mã, chạy 18 kiểm thử, đối soát artifact với warehouse và MLflow, đánh giá lại ba baseline có sẵn. Không huấn luyện lại model triển khai, đăng ký version, chuyển stage hoặc reload API.
 
 ## 1. Bài toán học máy và nguồn dữ liệu

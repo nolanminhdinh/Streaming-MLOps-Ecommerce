@@ -1,0 +1,45 @@
+{
+  "test": "tests/test_pipeline_completion.py::test_backfill_defaults_to_read_only_validation",
+  "name": "dry-run",
+  "inputs": {
+    "start": "2026-10-14",
+    "end": "2026-10-15"
+  },
+  "expected": {
+    "calls": 2,
+    "all_dry_run": true,
+    "checkpoint_modified": false
+  },
+  "actual": {
+    "calls": [
+      {
+        "target_date": "2026-10-14",
+        "dry_run": true
+      },
+      {
+        "target_date": "2026-10-15",
+        "dry_run": true
+      }
+    ],
+    "result": {
+      "status": "DRY_RUN",
+      "start": "2026-10-14",
+      "end": "2026-10-15",
+      "checkpoint_modified": false,
+      "source_version_guard_enabled": true,
+      "results": [
+        {
+          "status": "DRY_RUN_SUCCESS",
+          "raw_records": 2
+        },
+        {
+          "status": "DRY_RUN_SUCCESS",
+          "raw_records": 2
+        }
+      ],
+      "before": null,
+      "after": null,
+      "business_output_unchanged": null
+    }
+  }
+}

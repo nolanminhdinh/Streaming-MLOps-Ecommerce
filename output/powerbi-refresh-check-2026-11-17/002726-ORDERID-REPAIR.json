@@ -1,0 +1,480 @@
+{
+  "checked_at": "2026-11-17T00:27:26.082647+07:00",
+  "label": "ORDERID-REPAIR",
+  "status": "PASS",
+  "transaction_read_only": true,
+  "powerbi_desktop_refresh_verified": false,
+  "sources": {
+    "pq:Dim_Dates": {
+      "rows": 1095,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.008
+    },
+    "pq:Dim_Products": {
+      "rows": 204,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.751
+    },
+    "pq:Dim_Geography": {
+      "rows": 20,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.481
+    },
+    "pq:Fact_Orders_Summary": {
+      "rows": 640,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.456
+    },
+    "pq:Forecast_vs_Actual": {
+      "rows": 1912,
+      "nan_or_infinity_cells": 0,
+      "seconds": 4.627
+    },
+    "pq:Inventory_Health_Alerts": {
+      "rows": 82,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.722
+    },
+    "pq:Historical_Demand_Daily": {
+      "rows": 2211,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.02
+    },
+    "bi.data_freshness": {
+      "rows": 1,
+      "nan_or_infinity_cells": 0,
+      "seconds": 7.334
+    },
+    "bi.dim_date": {
+      "rows": 1095,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.008
+    },
+    "bi.dim_geography": {
+      "rows": 20,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.001
+    },
+    "bi.dim_historical_product": {
+      "rows": 230,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.035
+    },
+    "bi.dim_platform": {
+      "rows": 2,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.001
+    },
+    "bi.dim_product": {
+      "rows": 204,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.611
+    },
+    "bi.dim_shop": {
+      "rows": 59,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.002
+    },
+    "bi.fact_forecast_issue": {
+      "rows": 3705,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.022
+    },
+    "bi.fact_historical_order_line": {
+      "rows": 7000,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.062
+    },
+    "bi.fact_inventory_daily": {
+      "rows": 6168,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.032
+    },
+    "bi.fact_order_line": {
+      "rows": 157919,
+      "nan_or_infinity_cells": 0,
+      "seconds": 3.399
+    },
+    "bi.fact_sales_order": {
+      "rows": 157893,
+      "nan_or_infinity_cells": 0,
+      "seconds": 12.461
+    },
+    "bi.forecast_daily": {
+      "rows": 2043,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.045
+    },
+    "bi.forecast_evaluation": {
+      "rows": 1912,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.793
+    },
+    "bi.inventory_health": {
+      "rows": 88,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.696
+    },
+    "bi.inventory_latest": {
+      "rows": 88,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.006
+    },
+    "bi.model_serving_history": {
+      "rows": 2,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.002
+    },
+    "bi.model_status": {
+      "rows": 1,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.002
+    },
+    "bi.quality_order_header_conflicts": {
+      "rows": 16,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.639
+    },
+    "bi.quality_shop_identity": {
+      "rows": 0,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.002
+    },
+    "bi.replenishment_recommendation": {
+      "rows": 88,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.771
+    },
+    "mart.dim_date": {
+      "rows": 1095,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.009
+    },
+    "mart.dim_product": {
+      "rows": 205,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.004
+    },
+    "mart.dim_platform": {
+      "rows": 3,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.002
+    },
+    "mart.dim_shop": {
+      "rows": 60,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.002
+    },
+    "mart.dim_geography": {
+      "rows": 21,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.002
+    },
+    "mart.dim_payment": {
+      "rows": 10,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.002
+    },
+    "mart.dim_carrier": {
+      "rows": 9,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.002
+    },
+    "mart.dim_order_status": {
+      "rows": 11,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.003
+    },
+    "mart.dim_model": {
+      "rows": 6,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.003
+    },
+    "mart.fact_sales_line": {
+      "rows": 157919,
+      "nan_or_infinity_cells": 0,
+      "seconds": 2.359
+    },
+    "mart.fact_sales_order": {
+      "rows": 157893,
+      "nan_or_infinity_cells": 0,
+      "seconds": 2.515
+    },
+    "mart.fact_inventory_daily": {
+      "rows": 6168,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.027
+    },
+    "mart.fact_demand_forecast": {
+      "rows": 3705,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.019
+    },
+    "mart.fact_replenishment_daily": {
+      "rows": 176,
+      "nan_or_infinity_cells": 0,
+      "seconds": 0.004
+    }
+  },
+  "relationships": [
+    {
+      "dimension": "pq:Dim_Dates",
+      "key": "date_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "pq:Fact_Orders_Summary": 0,
+        "pq:Forecast_vs_Actual": 0,
+        "pq:Inventory_Health_Alerts": 0,
+        "pq:Historical_Demand_Daily": 0
+      }
+    },
+    {
+      "dimension": "pq:Dim_Products",
+      "key": "product_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "pq:Forecast_vs_Actual": 0,
+        "pq:Inventory_Health_Alerts": 0
+      }
+    },
+    {
+      "dimension": "pq:Dim_Geography",
+      "key": "geo_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {}
+    },
+    {
+      "dimension": "bi.dim_date",
+      "key": "date_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "bi.fact_order_line": 0,
+        "bi.fact_inventory_daily": 0,
+        "bi.inventory_health": 0,
+        "bi.forecast_evaluation": 0,
+        "bi.forecast_daily": 0,
+        "bi.fact_sales_order": 0,
+        "bi.replenishment_recommendation": 0
+      }
+    },
+    {
+      "dimension": "bi.dim_product",
+      "key": "product_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "bi.fact_order_line": 0,
+        "bi.fact_inventory_daily": 0,
+        "bi.inventory_health": 0,
+        "bi.forecast_evaluation": 0,
+        "bi.fact_forecast_issue": 0,
+        "bi.forecast_daily": 0,
+        "bi.replenishment_recommendation": 0
+      }
+    },
+    {
+      "dimension": "bi.dim_shop",
+      "key": "shop_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "bi.fact_order_line": 0,
+        "bi.fact_sales_order": 0
+      }
+    },
+    {
+      "dimension": "bi.dim_geography",
+      "key": "geo_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "bi.fact_order_line": 0,
+        "bi.fact_sales_order": 0
+      }
+    },
+    {
+      "dimension": "bi.dim_platform",
+      "key": "platform",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "bi.fact_order_line": 0,
+        "bi.dim_shop": 0,
+        "bi.fact_sales_order": 0
+      }
+    },
+    {
+      "dimension": "bi.fact_sales_order",
+      "key": "order_business_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {}
+    },
+    {
+      "dimension": "bi.replenishment_recommendation",
+      "key": "product_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {}
+    },
+    {
+      "dimension": "bi.dim_historical_product",
+      "key": "historical_product_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "bi.fact_historical_order_line": 0
+      }
+    },
+    {
+      "dimension": "mart.dim_date",
+      "key": "date_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "mart.fact_sales_line": 0,
+        "mart.fact_sales_order": 0,
+        "mart.fact_inventory_daily": 0,
+        "mart.fact_demand_forecast": 0,
+        "mart.fact_replenishment_daily": 0
+      }
+    },
+    {
+      "dimension": "mart.dim_product",
+      "key": "product_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "mart.fact_sales_line": 0,
+        "mart.fact_inventory_daily": 0,
+        "mart.fact_demand_forecast": 0,
+        "mart.fact_replenishment_daily": 0
+      }
+    },
+    {
+      "dimension": "mart.dim_platform",
+      "key": "platform_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "mart.fact_sales_line": 0,
+        "mart.fact_sales_order": 0,
+        "mart.dim_shop": 0
+      }
+    },
+    {
+      "dimension": "mart.dim_shop",
+      "key": "shop_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "mart.fact_sales_line": 0,
+        "mart.fact_sales_order": 0
+      }
+    },
+    {
+      "dimension": "mart.dim_geography",
+      "key": "geo_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "mart.fact_sales_line": 0,
+        "mart.fact_sales_order": 0
+      }
+    },
+    {
+      "dimension": "mart.dim_payment",
+      "key": "payment_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "mart.fact_sales_order": 0
+      }
+    },
+    {
+      "dimension": "mart.dim_carrier",
+      "key": "carrier_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "mart.fact_sales_order": 0
+      }
+    },
+    {
+      "dimension": "mart.dim_order_status",
+      "key": "status_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "mart.fact_sales_line": 0,
+        "mart.fact_sales_order": 0
+      }
+    },
+    {
+      "dimension": "mart.dim_model",
+      "key": "model_key",
+      "duplicate_keys": 0,
+      "null_keys": 0,
+      "facts": {
+        "mart.fact_demand_forecast": 0,
+        "mart.fact_replenishment_daily": 0
+      }
+    }
+  ],
+  "checks": {
+    "all_sources_loaded": true,
+    "no_nan_or_infinity": true,
+    "dimension_keys_unique_not_null": true,
+    "no_orphan_fact_keys": true,
+    "shop_one_key_per_name": true,
+    "date_labels_trimmed": true,
+    "model_status_present": true,
+    "data_freshness_one_row": true,
+    "sales_orders_reconcile_lines": true,
+    "recommendations_consistent": true,
+    "mart_reconciles_public": true,
+    "mart_refreshed_recently": true,
+    "mart_has_today_recommendations": true,
+    "mart_date_contiguous": true,
+    "bi_fact_matches_public_fact": true,
+    "summary_units_match_line_fact": true
+  },
+  "decision_summary": [
+    {
+      "action_status": "CRITICAL",
+      "skus": 8,
+      "qty": "2968"
+    },
+    {
+      "action_status": "NO_DEMAND_DATA",
+      "skus": 6,
+      "qty": "0"
+    },
+    {
+      "action_status": "OK",
+      "skus": 64,
+      "qty": "0"
+    },
+    {
+      "action_status": "REORDER",
+      "skus": 10,
+      "qty": "3462"
+    }
+  ],
+  "kpi": {
+    "bi_units": "312933",
+    "summary_units": "312933",
+    "bi_lines": "157919",
+    "fact_lines": "157919"
+  },
+  "freshness": {
+    "last_loaded": "2026-11-16 17:24:06.575186",
+    "last_order": "2026-11-16 22:41:46.113740",
+    "minutes_since_load": "3.3287875333333333"
+  },
+  "header_conflicts_flagged": 16
+}

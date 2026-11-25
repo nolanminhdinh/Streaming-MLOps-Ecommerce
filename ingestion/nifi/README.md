@@ -1,3 +1,12 @@
+# Tạm hoãn ngoài phạm vi final (01/11/2026)
+
+NiFi không tham gia luồng chính hoặc nghiệm thu end-to-end. Cấu hình nằm riêng
+ở `docker-compose.nifi.yml`; các script deploy/repair/demo tại đây được giữ làm
+tài liệu mở rộng. Không chạy các script này trong quá trình nghiệm thu luồng Python.
+Sau khi hoàn thiện luồng chính, có thể chủ động bật phần mở rộng bằng
+`docker compose -f docker-compose.yml -f docker-compose.nifi.yml up -d nifi`.
+Việc khởi động container chưa tự triển khai flow.
+
 # Apache NiFi — Trực quan hóa Luồng Dữ liệu Streaming E-Commerce
 
 Phân hệ này cung cấp giao diện trực quan hóa dòng chảy dữ liệu (Dataflow Canvas) theo thời gian thực bằng **Apache NiFi**, giúp quan sát trực tiếp các gói tin đơn hàng (FlowFiles) di chuyển qua từng giai đoạn từ **Kafka Broker** qua các bước bóc tách, rẽ nhánh sàn TMĐT (**Shopee / TikTok Shop**), và ghi xuống **MinIO Data Lake**.

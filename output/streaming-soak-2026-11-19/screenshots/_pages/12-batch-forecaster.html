@@ -1,0 +1,14 @@
+<!doctype html><meta charset="utf-8"><title>batch-forecaster – dự báo 14 ngày theo lô</title>
+<style>body{font:14px/1.45 Segoe UI,Arial;margin:24px;background:#fff;color:#1d2433}
+h1{font-size:22px;margin:0 0 4px} .meta{color:#5b6475;margin-bottom:14px}
+h2{font-size:15px;margin:16px 0 6px;color:#24508f}
+pre{background:#f4f6fa;border:1px solid #d9dee8;border-radius:6px;padding:10px;font:12.5px/1.4 Consolas,monospace;
+white-space:pre-wrap;word-break:break-all;margin:0}</style>
+<h1>batch-forecaster – dự báo 14 ngày theo lô</h1><div class="meta">Kết quả lệnh kiểm tra chạy lúc 20/11/2026 00:17:45 (giờ Việt Nam)</div><h2>Model_Serving_Snapshot gần nhất</h2><pre>snapshot_at          | model_version | algorithm | history_end | forecast_from | forecast_to | skus_model | skus_heuristic | skus_failed 
+-------------------------------+---------------+-----------+-------------+---------------+-------------+------------+----------------+-------------
+ 2026-11-19 17:13:09.739163+00 | 4             | naive     | 2026-11-19  | 2026-11-20    | 2026-12-03  |        101 |              6 |           0
+ 2026-11-19 15:53:39.074172+00 | 4             | naive     | 2026-11-17  | 2026-11-19    | 2026-12-02  |        101 |              6 |           0
+ 2026-11-16 17:13:38.833234+00 | 4             | naive     | 2026-11-16  | 2026-11-17    | 2026-11-30  |        133 |              6 |           0
+ 2026-11-16 15:37:39.776007+00 | 4             | naive     | 2026-11-15  | 2026-11-16    | 2026-11-29  |        129 |             14 |           0
+(4 rows)</pre><h2>docker compose logs --tail 20 batch-forecaster</h2><pre>batch-forecaster-1  | 2026-11-19 15:53:42,893 [INFO] forecast.batch: Dự báo theo lô SUCCESS: 107 SKU, nguồn {&#x27;mlflow_registry&#x27;: 101, &#x27;heuristic_catalog&#x27;: 6}, 4.0s
+batch-forecaster-1  | 2026-11-19 17:13:17,368 [INFO] forecast.batch: Dự báo theo lô SUCCESS: 107 SKU, nguồn {&#x27;mlflow_registry&#x27;: 101, &#x27;heuristic_catalog&#x27;: 6}, 2.4s</pre>

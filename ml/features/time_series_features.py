@@ -29,7 +29,7 @@ class TimeSeriesFeatureExtractor:
 
     def __init__(
         self,
-        lags: List[int] = [1, 2, 3, 7, 14, 28],
+        lags: List[int] = [1, 2, 3, 6, 7, 14, 28],
         rolling_windows: List[int] = [7, 14, 28],
         ema_spans: List[int] = [7, 14],
     ):

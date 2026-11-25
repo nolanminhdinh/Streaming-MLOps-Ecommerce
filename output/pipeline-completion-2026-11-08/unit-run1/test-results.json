@@ -1,0 +1,2689 @@
+{
+  "exit_status": 0,
+  "tests": 79,
+  "counts": {
+    "passed": 78,
+    "failed": 0,
+    "skipped": 1
+  },
+  "cases": [
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_additive_schema_is_backward_compatible[None]",
+      "file": "cases\\test_additive_schema_is_backward_compatible-None--55030eb242",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00041740003507584333,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.060017600073479116,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0006497999420389533,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "version": null
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_additive_schema_is_backward_compatible[1]",
+      "file": "cases\\test_additive_schema_is_backward_compatible-1--c4a62d45fa",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0006502000615000725,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.033452500007115304,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0009579000761732459,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "version": "1"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_additive_schema_is_backward_compatible[1.0]",
+      "file": "cases\\test_additive_schema_is_backward_compatible-1-0--c78687fd91",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005731999408453703,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.04399149992968887,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005726999370381236,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "version": "1.0"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_additive_schema_is_backward_compatible[1.7]",
+      "file": "cases\\test_additive_schema_is_backward_compatible-1-7--ad05b0032f",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00044460000935941935,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.027034500031732023,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00023110001347959042,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "version": "1.7"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_breaking_schema_is_quarantined_without_losing_good_rows[change0-CONTRACT_MISSING_ITEM_SKU]",
+      "file": "cases\\test_breaking_schema_is_quarantined_without_losing_good_rows-change0-CONTRACT_MISSING_ITEM-00be4f646b",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0004085999680683017,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.02791199996136129,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005472999764606357,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "change": {
+          "item_sku": null
+        },
+        "reason": "CONTRACT_MISSING_ITEM_SKU"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_breaking_schema_is_quarantined_without_losing_good_rows[change1-CONTRACT_MISSING_ORIGINAL_PRICE]",
+      "file": "cases\\test_breaking_schema_is_quarantined_without_losing_good_rows-change1-CONTRACT_MISSING_ORIG-c95018b77f",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0009221000364050269,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.02890610008034855,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0004627000307664275,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "change": {
+          "original_price": null,
+          "renamed_price": 10
+        },
+        "reason": "CONTRACT_MISSING_ORIGINAL_PRICE"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_breaking_schema_is_quarantined_without_losing_good_rows[change2-CONTRACT_INVALID_TYPE_QUANTITY]",
+      "file": "cases\\test_breaking_schema_is_quarantined_without_losing_good_rows-change2-CONTRACT_INVALID_TYPE-e3ff0eb5a5",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00047010008711367846,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.047742799972184,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005420999368652701,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "change": {
+          "quantity": [
+            1,
+            2
+          ]
+        },
+        "reason": "CONTRACT_INVALID_TYPE_QUANTITY"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_breaking_schema_is_quarantined_without_losing_good_rows[change3-CONTRACT_INVALID_TYPE_ORDER_LINE_ID]",
+      "file": "cases\\test_breaking_schema_is_quarantined_without_losing_good_rows-change3-CONTRACT_INVALID_TYPE-2e8c2e227c",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0006410999922081828,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.04457389994058758,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.000408399966545403,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "change": {
+          "order_line_id": [
+            1
+          ]
+        },
+        "reason": "CONTRACT_INVALID_TYPE_ORDER_LINE_ID"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_breaking_schema_is_quarantined_without_losing_good_rows[change4-CONTRACT_INVALID_TYPE_VOUCHER_FROM_SELLER]",
+      "file": "cases\\test_breaking_schema_is_quarantined_without_losing_good_rows-change4-CONTRACT_INVALID_TYPE-85f0141b87",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0006667999550700188,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.048705299966968596,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.000443900004029274,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "change": {
+          "voucher_from_seller": {
+            "bad": 1
+          }
+        },
+        "reason": "CONTRACT_INVALID_TYPE_VOUCHER_FROM_SELLER"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_breaking_schema_is_quarantined_without_losing_good_rows[change5-CONTRACT_UNSUPPORTED_VERSION]",
+      "file": "cases\\test_breaking_schema_is_quarantined_without_losing_good_rows-change5-CONTRACT_UNSUPPORTED_-2d3f1d75fe",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0006404999876394868,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.06963690009433776,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005397999193519354,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "change": {
+          "schema_version": "2.0"
+        },
+        "reason": "CONTRACT_UNSUPPORTED_VERSION"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_breaking_schema_is_quarantined_without_losing_good_rows[change6-CONTRACT_INVALID_TYPE_ORDER_STATUS]",
+      "file": "cases\\test_breaking_schema_is_quarantined_without_losing_good_rows-change6-CONTRACT_INVALID_TYPE-82569d101c",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0009620999917387962,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.09182969992980361,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0004901000065729022,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "change": {
+          "order_status": true
+        },
+        "reason": "CONTRACT_INVALID_TYPE_ORDER_STATUS"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_backfill_defaults_to_read_only_validation",
+      "file": "cases\\test_backfill_defaults_to_read_only_validation-d8fc8cc473",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0006383999716490507,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0033947000047191978,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003880999283865094,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_backfill_rejects_unbounded_or_reversed_interval[start0-end0]",
+      "file": "cases\\test_backfill_rejects_unbounded_or_reversed_interval-start0-end0--daddb59289",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00043919996824115515,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.005822200095281005,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0007603000849485397,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "start": "2026-10-15",
+        "end": "2026-10-14"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_backfill_rejects_unbounded_or_reversed_interval[start1-end1]",
+      "file": "cases\\test_backfill_rejects_unbounded_or_reversed_interval-start1-end1--f9b1643c28",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0022897999733686447,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.004828799981623888,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003706000279635191,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "start": "2026-01-01",
+        "end": "2026-03-01"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_backfill_stops_at_first_unsuccessful_day",
+      "file": "cases\\test_backfill_stops_at_first_unsuccessful_day-2d7ab46e69",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0007773999823257327,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.003983900067396462,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0013105000834912062,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_latency_uses_measured_ingestion_not_business_date",
+      "file": "cases\\test_latency_uses_measured_ingestion_not_business_date-71466cf23a",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.000686099985614419,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.014933900092728436,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00021570001263171434,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_heartbeat_idle_and_future_timestamp_contract[995-True]",
+      "file": "cases\\test_heartbeat_idle_and_future_timestamp_contract-995-True--9e256abf92",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.01143499999307096,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.002797699999064207,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00040110002737492323,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "checked": 995,
+        "expected": true
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_heartbeat_idle_and_future_timestamp_contract[100-False]",
+      "file": "cases\\test_heartbeat_idle_and_future_timestamp_contract-100-False--96e204dcba",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0055238999193534255,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0022683999268338084,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0008243999909609556,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "checked": 100,
+        "expected": false
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_heartbeat_idle_and_future_timestamp_contract[1007-False]",
+      "file": "cases\\test_heartbeat_idle_and_future_timestamp_contract-1007-False--10199f599c",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.003948800032958388,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.007409599958918989,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003804001025855541,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "checked": 1007,
+        "expected": false
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_batch_volume_warms_up_before_signalling_anomaly",
+      "file": "cases\\test_batch_volume_warms_up_before_signalling_anomaly-72e5f94013",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00037480005994439125,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.003015900030732155,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00026020000223070383,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_object_metadata_supports_queue_age_without_guessing",
+      "file": "cases\\test_object_metadata_supports_queue_age_without_guessing-7128654bd2",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0007074000313878059,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0018897000700235367,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0007096000481396914,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_busy_pipeline_does_not_enter_critical_section",
+      "file": "cases\\test_busy_pipeline_does_not_enter_critical_section-4ac247d7a2",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.002657499979250133,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.005832900060340762,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00035610003396868706,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_core_operations.py::test_producer_propagates_broker_rejection",
+      "file": "cases\\test_producer_propagates_broker_rejection-3007b6f8f9",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0004126999992877245,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0016457999590784311,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00048290006816387177,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_core_operations.py::test_storage_failure_never_commits_order_offsets",
+      "file": "cases\\test_storage_failure_never_commits_order_offsets-f2a65fdacb",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005505000008270144,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.002962699974887073,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "ERROR    kafka-consumer-minio:consumer_to_minio.py:330 Lỗi flush cuối: lake down"
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0004934000317007303,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "ERROR    kafka-consumer-minio:consumer_to_minio.py:330 Lỗi flush cuối: lake down"
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_core_operations.py::test_exited_consumer_is_failure_even_on_clean_exit[0]",
+      "file": "cases\\test_exited_consumer_is_failure_even_on_clean_exit-0--966be324d2",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0006229999708011746,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.001150400028564036,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0004857999738305807,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "exit_code": 0
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_core_operations.py::test_exited_consumer_is_failure_even_on_clean_exit[1]",
+      "file": "cases\\test_exited_consumer_is_failure_even_on_clean_exit-1--64a327235f",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00036070006899535656,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.00040600006468594074,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00047279999125748873,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "exit_code": 1
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_core_operations.py::test_exited_consumer_is_failure_even_on_clean_exit[-15]",
+      "file": "cases\\test_exited_consumer_is_failure_even_on_clean_exit--15--d663b51866",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0007814000127837062,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0004477000329643488,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00025379995349794626,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "exit_code": -15
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_core_operations.py::test_worker_invalidates_healthy_status_before_failed_startup",
+      "file": "cases\\test_worker_invalidates_healthy_status_before_failed_startup-27473371f5",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.004288800060749054,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.007647300022654235,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005100000416859984,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_core_operations.py::test_consumer_dying_during_etl_never_reports_healthy",
+      "file": "cases\\test_consumer_dying_during_etl_never_reports_healthy-e8e093d51f",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0026720999740064144,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.009967299993149936,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "ERROR    pipeline.worker:run_pipeline_worker.py:108 Pipeline cycle failed; checkpoint unchanged, will retry\nTraceback (most recent call last):\n  File \"C:\\Users\\MINH\\Đếm ngày xa trường\\temp-extract\\streaming-mlops-ecommerce\\warehouse\\etl\\..\\..\\ingestion\\..\\ingestion\\..\\scripts\\run_pipeline_worker.py\", line 102, in main\n    check_consumers(consumers)\n  File \"C:\\Users\\MINH\\Đếm ngày xa trường\\temp-extract\\streaming-mlops-ecommerce\\warehouse\\etl\\..\\..\\ingestion\\..\\ingestion\\..\\scripts\\run_pipeline_worker.py\", line 45, in check_consumers\n    raise RuntimeError(f\"Consumer exited (code={code}); restart worker to replay uncommitted offsets\")\nRuntimeError: Consumer exited (code=1); restart worker to replay uncommitted offsets"
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.000341300037689507,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "ERROR    pipeline.worker:run_pipeline_worker.py:108 Pipeline cycle failed; checkpoint unchanged, will retry\nTraceback (most recent call last):\n  File \"C:\\Users\\MINH\\Đếm ngày xa trường\\temp-extract\\streaming-mlops-ecommerce\\warehouse\\etl\\..\\..\\ingestion\\..\\ingestion\\..\\scripts\\run_pipeline_worker.py\", line 102, in main\n    check_consumers(consumers)\n  File \"C:\\Users\\MINH\\Đếm ngày xa trường\\temp-extract\\streaming-mlops-ecommerce\\warehouse\\etl\\..\\..\\ingestion\\..\\ingestion\\..\\scripts\\run_pipeline_worker.py\", line 45, in check_consumers\n    raise RuntimeError(f\"Consumer exited (code={code}); restart worker to replay uncommitted offsets\")\nRuntimeError: Consumer exited (code=1); restart worker to replay uncommitted offsets"
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_powerbi_import.py::test_import_sources_match_backup_queries_and_checked_in_files",
+      "file": "cases\\test_import_sources_match_backup_queries_and_checked_in_files-ecd99c4472",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0025525999953970313,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.01974110002629459,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003173999721184373,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_powerbi_import.py::test_export_failure_does_not_replay_completed_warehouse_batch",
+      "file": "cases\\test_export_failure_does_not_replay_completed_warehouse_batch-c8ce5cdfa8",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.004134100046940148,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.009151300066150725,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00043239991646260023,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_powerbi_import.py::test_failed_etl_status_does_not_advance_checkpoint[FAILED]",
+      "file": "cases\\test_failed_etl_status_does_not_advance_checkpoint-FAILED--dc6c7c2c0b",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.002204400021582842,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0017746000085026026,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00040040002204477787,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "status": "FAILED"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_powerbi_import.py::test_failed_etl_status_does_not_advance_checkpoint[LOAD_ERROR]",
+      "file": "cases\\test_failed_etl_status_does_not_advance_checkpoint-LOAD_ERROR--537643b10d",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.004772100015543401,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.002010200056247413,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0004931000294163823,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "status": "LOAD_ERROR"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_order_line_integrity.py::test_multi_sku_and_same_sku_explicit_line_ids_survive_replay",
+      "file": "cases\\test_multi_sku_and_same_sku_explicit_line_ids_survive_replay-f8207337a8",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002628000220283866,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.06017499999143183,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00030509999487549067,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_order_line_integrity.py::test_invalid_duplicate_identity_cannot_hide_rejections",
+      "file": "cases\\test_invalid_duplicate_identity_cannot_hide_rejections-1d6c4cbed8",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00022980000358074903,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.05841229995712638,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003130999393761158,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_order_line_integrity.py::test_unknown_platform_and_invalid_money_are_auditable",
+      "file": "cases\\test_unknown_platform_and_invalid_money_are_auditable-aefc123d51",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00027920003049075603,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.049558900063857436,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00048239994794130325,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_order_line_integrity.py::test_quarantine_payload_and_storage_failure",
+      "file": "cases\\test_quarantine_payload_and_storage_failure-948e9de2fa",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003030999796465039,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.05709660006687045,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.000408699968829751,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_order_line_integrity.py::test_quality_report_does_not_count_invalid_rows_as_duplicates",
+      "file": "cases\\test_quality_report_does_not_count_invalid_rows_as_duplicates-9d5bd54995",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002753000007942319,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.035342799965292215,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.000304899993352592,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_order_line_integrity.py::test_baseline_fast_path_matches_recursive_dataframe_predictions",
+      "file": "cases\\test_baseline_fast_path_matches_recursive_dataframe_predictions-1ea730ffa8",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00029779993928968906,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.14588349999394268,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00036639999598264694,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_order_line_integrity.py::test_features_count_orders_not_lines_for_repeated_sku",
+      "file": "cases\\test_features_count_orders_not_lines_for_repeated_sku-4e18478186",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002720000920817256,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.08721239992883056,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00023809995036572218,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_order_line_integrity.py::test_numeric_line_id_is_stable_across_nullable_parquet_batches",
+      "file": "cases\\test_numeric_line_id_is_stable_across_nullable_parquet_batches-fdeada4506",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002172000240534544,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002794000320136547,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.000224500079639256,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_order_line_integrity.py::test_pipeline_cannot_load_when_quarantine_storage_fails",
+      "file": "cases\\test_pipeline_cannot_load_when_quarantine_storage_fails-3c68660eae",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002253999700769782,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.033047599950805306,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.000246899900957942,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_null_empty_and_unsupported_platforms_are_preserved",
+      "file": "cases\\test_null_empty_and_unsupported_platforms_are_preserved-8ebd270f74",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00019880000036209822,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 4.724908799980767,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00023150001652538776,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_date_extraction_includes_unknown_partition",
+      "file": "cases\\test_date_extraction_includes_unknown_partition-4914d8f180",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0004594000056385994,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.003057900001294911,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003325999714434147,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_optional_values_reach_quarantine[updates0-INVALID_DISCOUNTED_PRICE_TYPE]",
+      "file": "cases\\test_bad_optional_values_reach_quarantine-updates0-INVALID_DISCOUNTED_PRICE_TYPE--1b8fe17bad",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0007760999724268913,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.03381820011418313,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0008328000549226999,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "model_discounted_price": "bad"
+        },
+        "reason": "INVALID_DISCOUNTED_PRICE_TYPE"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_optional_values_reach_quarantine[updates1-INVALID_VOUCHER_TOTAL_TYPE]",
+      "file": "cases\\test_bad_optional_values_reach_quarantine-updates1-INVALID_VOUCHER_TOTAL_TYPE--acf31e3acd",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0006647000554949045,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.037135599995963275,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0006371999625116587,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "voucher_from_seller": "bad"
+        },
+        "reason": "INVALID_VOUCHER_TOTAL_TYPE"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_optional_values_reach_quarantine[updates2-INVALID_SOURCE_UPDATED_AT_TYPE]",
+      "file": "cases\\test_bad_optional_values_reach_quarantine-updates2-INVALID_SOURCE_UPDATED_AT_TYPE--fcc28c5fa1",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0009101000614464283,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.04190690000541508,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0008063999703153968,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "update_time": "bad"
+        },
+        "reason": "INVALID_SOURCE_UPDATED_AT_TYPE"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_optional_values_reach_quarantine[updates3-INVALID_PAY_TIME_TYPE]",
+      "file": "cases\\test_bad_optional_values_reach_quarantine-updates3-INVALID_PAY_TIME_TYPE--16e57fc245",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003858000272884965,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.028218099963851273,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00033730000723153353,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "pay_time": "bad"
+        },
+        "reason": "INVALID_PAY_TIME_TYPE"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_optional_values_reach_quarantine[updates4-INVALID_WEIGHT_KG]",
+      "file": "cases\\test_bad_optional_values_reach_quarantine-updates4-INVALID_WEIGHT_KG--dc11bd9f0f",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0006298000225797296,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.040078400052152574,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0004811000544577837,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "item_weight": "bad"
+        },
+        "reason": "INVALID_WEIGHT_KG"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_optional_values_reach_quarantine[updates5-TOO_LONG_PRODUCT_NAME]",
+      "file": "cases\\test_bad_optional_values_reach_quarantine-updates5-TOO_LONG_PRODUCT_NAME--1004402103",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0008192999521270394,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.02770859992597252,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.000588199938647449,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "item_name": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        },
+        "reason": "TOO_LONG_PRODUCT_NAME"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_dedupe_chooses_source_version_independent_of_arrival_order",
+      "file": "cases\\test_dedupe_chooses_source_version_independent_of_arrival_order-ed412e5fb5",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00025290006306022406,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.05341319995932281,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0007051000138744712,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_inventory_is_not_silently_committed[updates0]",
+      "file": "cases\\test_bad_inventory_is_not_silently_committed-updates0--a25fae8072",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003501999890431762,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.004414300085045397,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.000624899985268712,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "loaded_at": "bad"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_inventory_is_not_silently_committed[updates1]",
+      "file": "cases\\test_bad_inventory_is_not_silently_committed-updates1--6f4cc7bc3f",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0007971000159159303,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.002791999955661595,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005444999551400542,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "sku": " "
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_inventory_is_not_silently_committed[updates2]",
+      "file": "cases\\test_bad_inventory_is_not_silently_committed-updates2--721167fc5e",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00034330005291849375,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0028944999212399125,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005911999614909291,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "stock_on_hand": -1
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_inventory_is_not_silently_committed[updates3]",
+      "file": "cases\\test_bad_inventory_is_not_silently_committed-updates3--59536fe53e",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003952999832108617,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0034871998941525817,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00024770002346485853,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "stock_on_hand": 1.5
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_inventory_is_not_silently_committed[updates4]",
+      "file": "cases\\test_bad_inventory_is_not_silently_committed-updates4--4a6280ce0c",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005738999461755157,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.003663600073195994,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0007194000063464046,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "stock_on_hand": null
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_inventory_is_not_silently_committed[updates5]",
+      "file": "cases\\test_bad_inventory_is_not_silently_committed-updates5--f6785c0e25",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0007325999904423952,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.001838300027884543,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002443999983370304,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "sku": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_nonfinite_amounts_are_rejected_and_quarantine_is_valid_json",
+      "file": "cases\\test_nonfinite_amounts_are_rejected_and_quarantine_is_valid_json-27f26de4ff",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00021550001110881567,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.036830400000326335,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0006060999585315585,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_sparse_source_dates_cannot_pass_training_gate",
+      "file": "cases\\test_sparse_source_dates_cannot_pass_training_gate-395a2f05b5",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00040819996502250433,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.026369999977760017,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00024610001128166914,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_prices_never_backfill_from_future_or_other_sku",
+      "file": "cases\\test_prices_never_backfill_from_future_or_other_sku-6bd1da9b02",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002489999169483781,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.023012600024230778,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003146999515593052,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_inventory_request_rejects_invalid_business_parameters[updates0]",
+      "file": "cases\\test_inventory_request_rejects_invalid_business_parameters-updates0--92aabce8b9",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005994000239297748,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.47033640008885413,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003378000110387802,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "lead_time_days": -1
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_inventory_request_rejects_invalid_business_parameters[updates1]",
+      "file": "cases\\test_inventory_request_rejects_invalid_business_parameters-updates1--04832c4708",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00048020004760473967,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0006778000388294458,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0004968000575900078,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "lead_time_days": 31
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_inventory_request_rejects_invalid_business_parameters[updates2]",
+      "file": "cases\\test_inventory_request_rejects_invalid_business_parameters-updates2--c797f9fb43",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0007453999714925885,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0008885000133886933,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005931999767199159,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "service_level": 2
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_inventory_request_rejects_invalid_business_parameters[updates3]",
+      "file": "cases\\test_inventory_request_rejects_invalid_business_parameters-updates3--6ffbfcdc42",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0008757000323385,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.000623399973846972,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00045579997822642326,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "service_level": null
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_inventory_request_rejects_invalid_business_parameters[updates4]",
+      "file": "cases\\test_inventory_request_rejects_invalid_business_parameters-updates4--736bef7a06",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0015466000186279416,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0006674999604001641,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0004969999426975846,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "current_stocks": {
+            "A": -3
+          }
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_malformed_json_reaches_raw_quarantine_instead_of_crashing_deserializer",
+      "file": "cases\\test_malformed_json_reaches_raw_quarantine_instead_of_crashing_deserializer-790553c0a6",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005534000229090452,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.10919470002409071,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003367000026628375,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_mixed_numeric_and_text_payloads_survive_parquet_roundtrip",
+      "file": "cases\\test_mixed_numeric_and_text_payloads_survive_parquet_roundtrip-f5d8828f39",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002901999978348613,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.08000369998626411,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0006532999686896801,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_inventory_quarantine_failure_prevents_database_write",
+      "file": "cases\\test_inventory_quarantine_failure_prevents_database_write-5bf22ed32a",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.000571100041270256,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0027966999914497137,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00044080009683966637,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_inventory_mixed_batch_persists_reject_and_valid_snapshot",
+      "file": "cases\\test_inventory_mixed_batch_persists_reject_and_valid_snapshot-38b3d068db",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00031589996069669724,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.017085300059989095,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "WARNING  kafka-consumer-inventory:consumer_inventory_to_postgres.py:192 Quarantined 1 invalid inventory snapshots"
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005138999549672008,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "WARNING  kafka-consumer-inventory:consumer_inventory_to_postgres.py:192 Quarantined 1 invalid inventory snapshots"
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_worker_checkpoints_after_etl_without_csv_export",
+      "file": "cases\\test_worker_checkpoints_after_etl_without_csv_export-3c0929c1f5",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0035761999897658825,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.004628299968317151,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002704000798985362,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_worker_never_checkpoints_failed_etl",
+      "file": "cases\\test_worker_never_checkpoints_failed_etl-43cf51b679",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.002705699997022748,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0010645999573171139,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.000251700053922832,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_failed_csv_write_preserves_previous_dataset",
+      "file": "cases\\test_failed_csv_write_preserves_previous_dataset-eb2bbfd08e",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0023720000172033906,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0021660999627783895,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00035720004234462976,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_postgres_rejects_stale_order_and_inventory_and_extends_calendar",
+      "file": "cases\\test_postgres_rejects_stale_order_and_inventory_and_extends_calendar-2bf670cf59",
+      "phases": {
+        "setup": {
+          "outcome": "skipped",
+          "duration_seconds": 0.00022660009562969208,
+          "details": "('C:\\\\Users\\\\MINH\\\\Đếm ngày xa trường\\\\temp-extract\\\\streaming-mlops-ecommerce\\\\tests\\\\test_runtime_integrity_fixes.py', 191, 'Skipped: Opt-in PostgreSQL integration')",
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00025669997557997704,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "skipped"
+    },
+    {
+      "nodeid": "tests/test_ingestion.py::test_mixed_platform_batch_uses_each_events_historical_date",
+      "file": "cases\\test_mixed_platform_batch_uses_each_events_historical_date-cf0678f807",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00021920003928244114,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0328499999595806,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00036319997161626816,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_ingestion.py::test_vietnam_midnight_year_boundary_and_mixed_iso_formats[shopee-create_time]",
+      "file": "cases\\test_vietnam_midnight_year_boundary_and_mixed_iso_formats-shopee-create_time--a7114d7582",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003621999640017748,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.017053999938070774,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00036450009793043137,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "platform": "shopee",
+        "time_column": "create_time"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_ingestion.py::test_vietnam_midnight_year_boundary_and_mixed_iso_formats[tiktok-created_time]",
+      "file": "cases\\test_vietnam_midnight_year_boundary_and_mixed_iso_formats-tiktok-created_time--3fd68b54e6",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005256000440567732,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.01747979992069304,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002378999488428235,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "platform": "tiktok",
+        "time_column": "created_time"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_ingestion.py::test_invalid_primary_timestamp_uses_valid_alternative",
+      "file": "cases\\test_invalid_primary_timestamp_uses_valid_alternative-5bacdce262",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00017479993402957916,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.013272000011056662,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00021520000882446766,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_ingestion.py::test_missing_or_invalid_timestamps_fall_back_to_vietnam_receipt_date",
+      "file": "cases\\test_missing_or_invalid_timestamps_fall_back_to_vietnam_receipt_date-1367d48b56",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00019210006576031446,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.016784799983724952,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005243000341579318,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_ingestion.py::test_offset_free_timestamps_keep_utc_contract_shared_with_etl",
+      "file": "cases\\test_offset_free_timestamps_keep_utc_contract_shared_with_etl-b1418ecd08",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0006693999748677015,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.011229600058868527,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003122999332845211,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    }
+  ]
+}

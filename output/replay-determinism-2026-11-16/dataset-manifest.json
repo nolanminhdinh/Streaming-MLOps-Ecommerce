@@ -1,0 +1,53 @@
+{
+  "label": "RPT11161927",
+  "seed": 20261115,
+  "base_time": "2026-11-15T01:00:00+00:00",
+  "messages": 41,
+  "sha256": "849189ade330103094e85ef33ac02d93fb93ab80086271d9345b56f07c258029",
+  "expected": {
+    "order_messages": 34,
+    "inventory_messages": 7,
+    "valid_order_lines": 24,
+    "expected_stock": {
+      "RPT11161927-OL-IP15PM": 344,
+      "RPT11161927-ATN-CB-001": 249,
+      "RPT11161927-SN-65W-GAN": 280,
+      "RPT11161927-OMO-6KG": 299,
+      "RPT11161927-TN-TWS-PRO": 220
+    },
+    "rejected_orders": 4,
+    "rejected_inventory": 1,
+    "cases": {
+      "exact_duplicate": [
+        "RPT11161927-SPE261115000001",
+        "RPT11161927-TT261115000002"
+      ],
+      "newer_version_wins": [
+        "RPT11161927-SPE261115000003",
+        "RPT11161927-TT261115000002"
+      ],
+      "stale_version_ignored": [
+        "RPT11161927-SPE261115000003",
+        "RPT11161927-TT261115000002"
+      ],
+      "invalid_price": [
+        "RPT11161927-BAD-PRICE"
+      ],
+      "invalid_quantity": [
+        "RPT11161927-ZERO-QTY"
+      ],
+      "unknown_platform": [
+        "RPT11161927-NO-PLATFORM"
+      ],
+      "invalid_json": [
+        "RPT11161927-BAD-JSON"
+      ],
+      "stale_inventory_ignored": [
+        "RPT11161927-OL-IP15PM"
+      ],
+      "negative_inventory": [
+        "RPT11161927-ATN-CB-001"
+      ]
+    }
+  }
+}

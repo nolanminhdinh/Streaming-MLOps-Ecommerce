@@ -1,5 +1,11 @@
 # Báo cáo tổng hợp đồ án Streaming MLOps E-Commerce
 
+> **Trạng thái cập nhật 07/11/2026:** [Bản khắc phục theo cẩm nang và bằng chứng mới](khac-phuc-cam-nang-2026-11-07.md). Đã sửa baseline/WAPE, bổ sung holdout, EDA và khai báo sinh viên; báo cáo Word có bản cập nhật ngày 07/11 trong output/docx. Nội dung từ phần Tóm tắt bên dưới là audit 19/10 được giữ theo ngày gốc, không phải trạng thái runtime hiện tại. Lỗi nạp model và KPI đã có bản sửa sau đó; phục hồi và tải 04/11 được ghi trong bản cập nhật.
+
+> **Cập nhật BI 01/11/2026:** Nguồn chính là PostgreSQL Import; CSV chuyển thành tác vụ dự phòng riêng. Worker checkpoint sau ETL, không phụ thuộc xuất CSV. [Hướng dẫn chuyển nguồn và nghiệm thu Desktop](../../powerbi/import/README.md). PBIX chưa được đổi nguồn/Refresh bằng Desktop trong lượt sửa mã.
+
+> **Phạm vi final 01/11/2026:** NiFi hoãn sang hướng mở rộng trực quan hóa, đã loại khỏi Compose mặc định và điều kiện kiểm tra end-to-end. Luồng chính dùng Python consumer/ETL do `pipeline-worker` quản lý. Xem [hướng dẫn hiện hành](../05-how-to-run/core-pipeline.md). Các kết quả runtime có ngày bên dưới giữ nguyên phạm vi lịch sử.
+
 > **Cập nhật lần 9, 20/10/2026:** Đã có worker Kafka → MinIO → ETL → PostgreSQL → CSV chạy liên tục, giữ checkpoint sau restart; sửa lưu lỗi/null platform, version đơn/tồn kho, validation và policy inventory. 145 test đạt; hai lượt đối soát thực tế đạt, API ready 200. [Báo cáo lần 9](../04-pipeline-updates/lan-09-on-dinh-end-to-end-2026-10-20.md) phân biệt các phần đã sửa và các mục ML/PBIX/coverage chưa nghiệm thu. Những con số audit cũ bên dưới giữ nguyên ngày đo.
 
 > **Cập nhật KPI 20/10/2026:** Đã sửa số đơn/AOV trong SQL view và exporter; dữ liệu runtime khớp 11.646 đơn không hủy, AOV tổng 653.440,57. Toàn suite gồm SQL integration đạt 114 test. Xem [báo cáo khắc phục lần 8](../04-pipeline-updates/lan-08-powerbi-orders-aov-2026-10-20.md). Chưa refresh/render PBIX; các kết quả audit cũ bên dưới giữ nguyên để đối chiếu.

@@ -1,0 +1,37 @@
+{
+  "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_optional_values_reach_quarantine[updates3-INVALID_PAY_TIME_TYPE]",
+  "file": "cases\\test_bad_optional_values_reach_quarantin-16e57fc245",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00030339998193085194,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0177034999942407,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00019430008251219988,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "updates": {
+      "pay_time": "bad"
+    },
+    "reason": "INVALID_PAY_TIME_TYPE"
+  },
+  "outcome": "passed"
+}

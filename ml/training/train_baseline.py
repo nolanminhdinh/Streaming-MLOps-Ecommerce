@@ -40,12 +40,13 @@ load_dotenv()
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from ml.mlflow.setup_tracking import configure_mlflow
-from ml.training.metrics import calculate_all_metrics
+from ml.training.metrics import EVALUATION_PROTOCOL, aggregate_fold_metrics, calculate_all_metrics
 from ml.features.time_series_features import TimeSeriesFeatureExtractor
 from serving.app.baseline_models import NaiveModel, SeasonalNaiveModel, MovingAverageModel
 from ml.features.feature_pipeline import (
     DEFAULT_LAGS,
     PUBLIC_HISTORY_ORIGIN,
+    WAREHOUSE_LIVE_ORIGIN,
     load_orders_data,
     build_feature_store,
 )
@@ -289,18 +290,14 @@ def evaluate_walk_forward(
         all_preds.extend(preds)
 
         logger.info(
-            "  [%s] Fold %d/%d ➔ WAPE: %.2f%% | MAE: %.2f | RMSE: %.2f",
-            model_name.upper(), fold_idx, n_splits, metrics["wape"], metrics["mae"], metrics["rmse"],
+            "  [%s] Fold %d/%d ➔ WAPE: %s | MAE: %.2f | RMSE: %.2f",
+            model_name.upper(), fold_idx, n_splits,
+            "undefined (zero actual)" if metrics["wape"] is None else f"{metrics['wape']:.2f}%",
+            metrics["mae"], metrics["rmse"],
         )
 
-    # Tính trung bình các folds
-    avg_metrics: Dict[str, float] = {}
-    for metric_key in ["wape", "mae", "rmse", "mape", "r2", "bias"]:
-        vals = [fm[metric_key] for fm in fold_metrics]
-        avg_metrics[metric_key] = (
-            round(float(np.mean(vals)), 2 if "pe" in metric_key or metric_key == "bias" else 4)
-            if vals else float("nan")
-        )
+    # Main metrics pool all scored rows. Mean fold WAPE is diagnostic only.
+    avg_metrics = aggregate_fold_metrics(fold_metrics, all_actuals, all_preds)
 
     return avg_metrics, np.array(all_actuals), np.array(all_preds)
 
@@ -456,13 +453,13 @@ def run_training_pipeline(
         # Khởi tạo đối tượng mô hình
         if m_name == "naive":
             model_obj = NaiveModel()
-            params = {"method": "lag_1", "lags": [1]}
+            params = {"method": "latest_observed_y_t", "baseline_alignment_version": 2}
         elif m_name == "seasonal_naive":
             model_obj = SeasonalNaiveModel()
-            params = {"method": "lag_7", "lags": [7]}
+            params = {"method": "target_same_weekday_lag_6", "lags": [6], "baseline_alignment_version": 2}
         elif m_name == "moving_average":
             model_obj = MovingAverageModel()
-            params = {"method": "rolling_mean_7", "window": 7}
+            params = {"method": "mean_y_t_minus_6_through_t", "window": 7, "baseline_alignment_version": 2}
         elif m_name == "ridge":
             params = {"alpha": 10.0}
             model_obj = get_ml_model("ridge", params)
@@ -507,6 +504,9 @@ def run_training_pipeline(
                 mlflow.log_param("n_features", len(feature_cols))
                 mlflow.log_param("n_walk_forward_splits", n_splits)
                 mlflow.log_param("evaluation_strategy", "recursive_multi_step")
+                mlflow.log_param("evaluation_protocol", EVALUATION_PROTOCOL)
+                mlflow.log_param("metric_aggregation", "pooled_scored_pairs")
+                mlflow.log_param("mape_definition", "mean_abs_error_over_actual_plus_1")
                 mlflow.log_param("data_origin", recorded_origin)
                 mlflow.log_param("data_source", str(feature_spec.get("data_source", "unknown")))
                 mlflow.log_param("history_days", history_days)
@@ -519,7 +519,8 @@ def run_training_pipeline(
 
                 # Log Metrics
                 for mk, mv in avg_metrics.items():
-                    mlflow.log_metric(f"cv_{mk}", mv)
+                    if mv is not None and np.isfinite(mv):
+                        mlflow.log_metric(f"cv_{mk}", mv)
 
                 # Log Artifacts (Plots)
                 for plot_file in saved_plots:
@@ -545,6 +546,7 @@ def run_training_pipeline(
 
         results_table.append({
             "Mô hình": m_name.upper(),
+            "Evaluation protocol": EVALUATION_PROTOCOL,
             "WAPE (%)": avg_metrics["wape"],
             "MAE": avg_metrics["mae"],
             "RMSE": avg_metrics["rmse"],
@@ -554,13 +556,15 @@ def run_training_pipeline(
         })
 
     summary_df = pd.DataFrame(results_table).sort_values(by="WAPE (%)", ascending=True).reset_index(drop=True)
+    if not np.isfinite(pd.to_numeric(summary_df["WAPE (%)"], errors="coerce")).any():
+        raise ValueError("No model has a defined finite pooled WAPE; cannot select a champion.")
 
     logger.info("═" * 60)
     logger.info("  BẢNG TỔNG HỢP SO SÁNH HIỆU NĂNG CÁC MÔ HÌNH BASELINE")
     logger.info("═" * 60)
     for idx, row in summary_df.iterrows():
         logger.info(
-            "  #%d %-18s | WAPE: %6.2f%% | MAE: %6.2f | RMSE: %6.2f | R2: %5.2f | Bias: %6.2f%%",
+            "  #%d %-18s | WAPE: %s | MAE: %6.2f | RMSE: %6.2f | R2: %5.2f | Bias: %s",
             idx + 1, row["Mô hình"], row["WAPE (%)"], row["MAE"], row["RMSE"], row["R2"], row["Bias (%)"]
         )
     logger.info("═" * 60)
@@ -589,7 +593,7 @@ def main():
     parser.add_argument("--models", nargs="+", default=["naive", "seasonal_naive", "moving_average", "ridge", "lightgbm"])
     parser.add_argument(
         "--data-origin",
-        choices=[PUBLIC_HISTORY_ORIGIN],
+        choices=[PUBLIC_HISTORY_ORIGIN, WAREHOUSE_LIVE_ORIGIN],
         default=None,
         help="Yêu cầu Feature Store đúng nguồn này; tự dựng lại nếu Feature Spec hiện tại dùng nguồn khác.",
     )

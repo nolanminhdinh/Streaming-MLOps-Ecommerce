@@ -1,0 +1,135 @@
+{
+  "evaluation_type": "retrospective; final window previously exposed; no independent new test",
+  "test_result": {
+    "tests": 125,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 1,
+    "passed": 124
+  },
+  "error_decomposition": {
+    "moving_average7": {
+      "error_on_zero_actual": 628.6164299717434,
+      "error_on_positive_actual": 666.4989584213811,
+      "absolute_error_sum": 1295.1153883931245,
+      "positive_actual_cells": 523,
+      "predicted_positive_cells": 1848
+    },
+    "hurdle_direct": {
+      "error_on_zero_actual": 165.0,
+      "error_on_positive_actual": 869.0,
+      "absolute_error_sum": 1034.0,
+      "positive_actual_cells": 523,
+      "predicted_positive_cells": 365
+    },
+    "histgb_poisson_direct": {
+      "error_on_zero_actual": 1056.1953566567117,
+      "error_on_positive_actual": 714.0521580516402,
+      "absolute_error_sum": 1770.2475147083521,
+      "positive_actual_cells": 523,
+      "predicted_positive_cells": 8484
+    }
+  },
+  "baseline_top10_sku_error_share": 0.47264967795332297,
+  "baseline_top10_sku_errors": [
+    {
+      "sku": "P25*****15",
+      "actual_units": 119.0,
+      "absolute_error": 102.83444911186471,
+      "zero_day_error": 22.793207955440316
+    },
+    {
+      "sku": "P25*****02",
+      "actual_units": 109.0,
+      "absolute_error": 84.23827013957099,
+      "zero_day_error": 15.608960964958136
+    },
+    {
+      "sku": "P23*****03",
+      "actual_units": 112.0,
+      "absolute_error": 65.91489281174034,
+      "zero_day_error": 13.041829214768274
+    },
+    {
+      "sku": "P24*****08",
+      "actual_units": 83.0,
+      "absolute_error": 57.965996892230265,
+      "zero_day_error": 14.884955601762059
+    },
+    {
+      "sku": "P23*****01",
+      "actual_units": 51.0,
+      "absolute_error": 55.770534597003234,
+      "zero_day_error": 23.064824181700743
+    },
+    {
+      "sku": "P25*****01",
+      "actual_units": 74.0,
+      "absolute_error": 53.72366813740098,
+      "zero_day_error": 21.479514283794366
+    },
+    {
+      "sku": "P24*****01",
+      "actual_units": 46.0,
+      "absolute_error": 50.70158863530722,
+      "zero_day_error": 18.028531989852116
+    },
+    {
+      "sku": "P24*****11",
+      "actual_units": 56.0,
+      "absolute_error": 49.46241269696943,
+      "zero_day_error": 15.732604339810809
+    },
+    {
+      "sku": "P25*****14",
+      "actual_units": 48.0,
+      "absolute_error": 46.3219363415901,
+      "zero_day_error": 20.238763831396597
+    },
+    {
+      "sku": "SK-*****UA",
+      "actual_units": 41.0,
+      "absolute_error": 45.20212187272567,
+      "zero_day_error": 20.406625386154325
+    }
+  ],
+  "hurdle_paired_sku_bootstrap_wape_reduction_95pct_points": [
+    10.894235518982978,
+    52.178322824523754
+  ],
+  "bootstrap_limit": "exploratory fixed-candidate paired SKU resampling; not time-series or source-coverage uncertainty",
+  "candidate_decisions": {
+    "hurdle_direct": {
+      "decision": "experimental_daily_point_forecast_only",
+      "inventory_approved": false,
+      "reason": "retrospective WAPE improved but total volume underpredicted 65.86%; nested selection WAPE 102.15%"
+    },
+    "histgb_l1_direct": {
+      "decision": "rejected_all_zero",
+      "inventory_approved": false
+    },
+    "calibrated_mean_candidate": {
+      "decision": "rejected",
+      "inventory_approved": false,
+      "reason": "pooled WAPE 231.46% and lead14 RMSE 9.28 versus MA7 121.15% and 3.99"
+    },
+    "production_change": {
+      "registry_updated": false,
+      "serving_reloaded": false,
+      "data_manifest_feature_spec_unchanged": true
+    }
+  },
+  "evaluation_scope": {
+    "all_sku_units_in_outer_dates": 1191.0,
+    "known_sku_scored_units": 1069.0,
+    "cold_start_units_outside_comparison": 122.0,
+    "cold_start_evaluated": false,
+    "scored_sku_day_pairs": 8484
+  },
+  "deployment_hashes_rechecked": {
+    "data/daily_history.parquet": true,
+    "data/features_daily.parquet": true,
+    "data/feature_spec.json": true,
+    "data/model_manifest.json": true
+  }
+}

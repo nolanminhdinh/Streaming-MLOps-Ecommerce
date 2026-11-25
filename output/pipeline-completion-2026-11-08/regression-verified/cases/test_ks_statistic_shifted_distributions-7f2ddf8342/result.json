@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_monitoring.py::TestStatisticalDriftFunctions::test_ks_statistic_shifted_distributions",
+  "file": "cases\\test_ks_statistic_shifted_distributions-7f2ddf8342",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0002718000905588269,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0007693999214097857,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00020350003615021706,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

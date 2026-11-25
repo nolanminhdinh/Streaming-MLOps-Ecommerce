@@ -1,0 +1,28 @@
+{
+  "daily_demand_description": {
+    "count": 49032.0,
+    "mean": 0.11743351280796215,
+    "std": 1.6212009957380846,
+    "min": 0.0,
+    "25%": 0.0,
+    "50%": 0.0,
+    "75%": 0.0,
+    "max": 232.0
+  },
+  "daily_demand_median": 0.0,
+  "zero_fraction": 0.9549069995105237,
+  "missing_by_column": {
+    "sku": 0,
+    "date": 0,
+    "daily_demand": 0,
+    "daily_revenue": 0,
+    "avg_unit_price": 0,
+    "total_discount": 0,
+    "order_count": 0,
+    "product_name": 0,
+    "category": 49032,
+    "lag_6": 1296
+  },
+  "duplicate_sku_date_keys": 0,
+  "note": "Missing lag_6 in first six days is burn-in; no raw cleaning or coverage certification performed."
+}

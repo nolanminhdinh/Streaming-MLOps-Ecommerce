@@ -1,0 +1,1479 @@
+{
+  "checked_at": "2026-11-01T13:55:37.064968+07:00",
+  "mode": "read_only_repeatable_read",
+  "tables": {
+    "dim_products": {
+      "rows": 126,
+      "columns": [
+        {
+          "name": "product_key",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": "nextval('dim_products_product_key_seq'::regclass)",
+          "autoincrement": true,
+          "comment": null
+        },
+        {
+          "name": "sku",
+          "type": "VARCHAR(50)",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "product_name",
+          "type": "VARCHAR(500)",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "category",
+          "type": "VARCHAR(100)",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "sub_category",
+          "type": "VARCHAR(100)",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "unit_cost",
+          "type": "NUMERIC(14, 2)",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "weight_kg",
+          "type": "NUMERIC(8, 3)",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": "now()",
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": "now()",
+          "autoincrement": false,
+          "comment": null
+        }
+      ],
+      "pk": {
+        "constrained_columns": [
+          "product_key"
+        ],
+        "name": "dim_products_pkey",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": []
+        }
+      },
+      "foreign_keys": [],
+      "unique_constraints": [
+        {
+          "column_names": [
+            "sku"
+          ],
+          "name": "dim_products_sku_key",
+          "comment": null,
+          "dialect_options": {
+            "postgresql_include": [],
+            "postgresql_nulls_not_distinct": false
+          }
+        }
+      ],
+      "checks": []
+    },
+    "dim_shops": {
+      "rows": 22047,
+      "columns": [
+        {
+          "name": "shop_key",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": "nextval('dim_shops_shop_key_seq'::regclass)",
+          "autoincrement": true,
+          "comment": null
+        },
+        {
+          "name": "shop_id",
+          "type": "VARCHAR(50)",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "shop_name",
+          "type": "VARCHAR(255)",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "platform",
+          "type": "VARCHAR(20)",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "connection_id",
+          "type": "VARCHAR(50)",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": "now()",
+          "autoincrement": false,
+          "comment": null
+        }
+      ],
+      "pk": {
+        "constrained_columns": [
+          "shop_key"
+        ],
+        "name": "dim_shops_pkey",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": []
+        }
+      },
+      "foreign_keys": [],
+      "unique_constraints": [
+        {
+          "column_names": [
+            "shop_id",
+            "platform"
+          ],
+          "name": "dim_shops_shop_id_platform_key",
+          "comment": null,
+          "dialect_options": {
+            "postgresql_include": [],
+            "postgresql_nulls_not_distinct": false
+          }
+        }
+      ],
+      "checks": []
+    },
+    "dim_geography": {
+      "rows": 20,
+      "columns": [
+        {
+          "name": "geo_key",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": "nextval('dim_geography_geo_key_seq'::regclass)",
+          "autoincrement": true,
+          "comment": null
+        },
+        {
+          "name": "state",
+          "type": "VARCHAR(100)",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "city",
+          "type": "VARCHAR(100)",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "district",
+          "type": "VARCHAR(100)",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "country",
+          "type": "VARCHAR(10)",
+          "nullable": true,
+          "default": "'VN'::character varying",
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "region",
+          "type": "VARCHAR(50)",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": "now()",
+          "autoincrement": false,
+          "comment": null
+        }
+      ],
+      "pk": {
+        "constrained_columns": [
+          "geo_key"
+        ],
+        "name": "dim_geography_pkey",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": []
+        }
+      },
+      "foreign_keys": [],
+      "unique_constraints": [
+        {
+          "column_names": [
+            "state",
+            "city",
+            "district"
+          ],
+          "name": "dim_geography_state_city_district_key",
+          "comment": null,
+          "dialect_options": {
+            "postgresql_include": [],
+            "postgresql_nulls_not_distinct": false
+          }
+        }
+      ],
+      "checks": []
+    },
+    "dim_dates": {
+      "rows": 1095,
+      "columns": [
+        {
+          "name": "date_key",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": "nextval('dim_dates_date_key_seq'::regclass)",
+          "autoincrement": true,
+          "comment": null
+        },
+        {
+          "name": "full_date",
+          "type": "DATE",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "day_of_week",
+          "type": "SMALLINT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "day_name",
+          "type": "VARCHAR(20)",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "week_of_year",
+          "type": "SMALLINT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "month",
+          "type": "SMALLINT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "month_name",
+          "type": "VARCHAR(20)",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "quarter",
+          "type": "SMALLINT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "year",
+          "type": "SMALLINT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "is_weekend",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "is_holiday",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": "false",
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "is_mega_sale",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": "false",
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": "now()",
+          "autoincrement": false,
+          "comment": null
+        }
+      ],
+      "pk": {
+        "constrained_columns": [
+          "date_key"
+        ],
+        "name": "dim_dates_pkey",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": []
+        }
+      },
+      "foreign_keys": [],
+      "unique_constraints": [
+        {
+          "column_names": [
+            "full_date"
+          ],
+          "name": "dim_dates_full_date_key",
+          "comment": null,
+          "dialect_options": {
+            "postgresql_include": [],
+            "postgresql_nulls_not_distinct": false
+          }
+        }
+      ],
+      "checks": []
+    },
+    "dim_payment": {
+      "rows": 9,
+      "columns": [
+        {
+          "name": "payment_key",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": "nextval('dim_payment_payment_key_seq'::regclass)",
+          "autoincrement": true,
+          "comment": null
+        },
+        {
+          "name": "payment_method",
+          "type": "VARCHAR(50)",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "is_cod",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": "false",
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": "now()",
+          "autoincrement": false,
+          "comment": null
+        }
+      ],
+      "pk": {
+        "constrained_columns": [
+          "payment_key"
+        ],
+        "name": "dim_payment_pkey",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": []
+        }
+      },
+      "foreign_keys": [],
+      "unique_constraints": [
+        {
+          "column_names": [
+            "payment_method"
+          ],
+          "name": "dim_payment_payment_method_key",
+          "comment": null,
+          "dialect_options": {
+            "postgresql_include": [],
+            "postgresql_nulls_not_distinct": false
+          }
+        }
+      ],
+      "checks": []
+    },
+    "dim_carriers": {
+      "rows": 7,
+      "columns": [
+        {
+          "name": "carrier_key",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": "nextval('dim_carriers_carrier_key_seq'::regclass)",
+          "autoincrement": true,
+          "comment": null
+        },
+        {
+          "name": "carrier_name",
+          "type": "VARCHAR(100)",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": "now()",
+          "autoincrement": false,
+          "comment": null
+        }
+      ],
+      "pk": {
+        "constrained_columns": [
+          "carrier_key"
+        ],
+        "name": "dim_carriers_pkey",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": []
+        }
+      },
+      "foreign_keys": [],
+      "unique_constraints": [
+        {
+          "column_names": [
+            "carrier_name"
+          ],
+          "name": "dim_carriers_carrier_name_key",
+          "comment": null,
+          "dialect_options": {
+            "postgresql_include": [],
+            "postgresql_nulls_not_distinct": false
+          }
+        }
+      ],
+      "checks": []
+    },
+    "fact_orders": {
+      "rows": 144851,
+      "columns": [
+        {
+          "name": "order_fact_id",
+          "type": "BIGINT",
+          "nullable": false,
+          "default": "nextval('fact_orders_order_fact_id_seq'::regclass)",
+          "autoincrement": true,
+          "comment": null
+        },
+        {
+          "name": "product_key",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "shop_key",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "geo_key",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "date_key",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "payment_key",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "carrier_key",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "order_id",
+          "type": "VARCHAR(50)",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "platform",
+          "type": "VARCHAR(20)",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "order_status",
+          "type": "VARCHAR(30)",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "is_cancelled",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": "false",
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "cancel_reason",
+          "type": "VARCHAR(255)",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "quantity",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "original_price",
+          "type": "NUMERIC(14, 2)",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "discounted_price",
+          "type": "NUMERIC(14, 2)",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "subtotal",
+          "type": "NUMERIC(14, 2)",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "buyer_total_amount",
+          "type": "NUMERIC(14, 2)",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "seller_discount",
+          "type": "NUMERIC(14, 2)",
+          "nullable": true,
+          "default": "0",
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "platform_discount",
+          "type": "NUMERIC(14, 2)",
+          "nullable": true,
+          "default": "0",
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "voucher_total",
+          "type": "NUMERIC(14, 2)",
+          "nullable": true,
+          "default": "0",
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "commission_fee",
+          "type": "NUMERIC(14, 2)",
+          "nullable": true,
+          "default": "0",
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "service_fee",
+          "type": "NUMERIC(14, 2)",
+          "nullable": true,
+          "default": "0",
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "transaction_fee",
+          "type": "NUMERIC(14, 2)",
+          "nullable": true,
+          "default": "0",
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "shipping_fee",
+          "type": "NUMERIC(14, 2)",
+          "nullable": true,
+          "default": "0",
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "original_shipping",
+          "type": "NUMERIC(14, 2)",
+          "nullable": true,
+          "default": "0",
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "tax_amount",
+          "type": "NUMERIC(14, 2)",
+          "nullable": true,
+          "default": "0",
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "create_time",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "pay_time",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "shipped_time",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "completed_time",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "cancel_time",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "loaded_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": "now()",
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "source_line_id",
+          "type": "VARCHAR(128)",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "source_updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        }
+      ],
+      "pk": {
+        "constrained_columns": [
+          "order_fact_id"
+        ],
+        "name": "fact_orders_pkey",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": []
+        }
+      },
+      "foreign_keys": [
+        {
+          "name": "fact_orders_carrier_key_fkey",
+          "constrained_columns": [
+            "carrier_key"
+          ],
+          "referred_schema": null,
+          "referred_table": "dim_carriers",
+          "referred_columns": [
+            "carrier_key"
+          ],
+          "options": {},
+          "comment": null
+        },
+        {
+          "name": "fact_orders_date_key_fkey",
+          "constrained_columns": [
+            "date_key"
+          ],
+          "referred_schema": null,
+          "referred_table": "dim_dates",
+          "referred_columns": [
+            "date_key"
+          ],
+          "options": {},
+          "comment": null
+        },
+        {
+          "name": "fact_orders_geo_key_fkey",
+          "constrained_columns": [
+            "geo_key"
+          ],
+          "referred_schema": null,
+          "referred_table": "dim_geography",
+          "referred_columns": [
+            "geo_key"
+          ],
+          "options": {},
+          "comment": null
+        },
+        {
+          "name": "fact_orders_payment_key_fkey",
+          "constrained_columns": [
+            "payment_key"
+          ],
+          "referred_schema": null,
+          "referred_table": "dim_payment",
+          "referred_columns": [
+            "payment_key"
+          ],
+          "options": {},
+          "comment": null
+        },
+        {
+          "name": "fact_orders_product_key_fkey",
+          "constrained_columns": [
+            "product_key"
+          ],
+          "referred_schema": null,
+          "referred_table": "dim_products",
+          "referred_columns": [
+            "product_key"
+          ],
+          "options": {},
+          "comment": null
+        },
+        {
+          "name": "fact_orders_shop_key_fkey",
+          "constrained_columns": [
+            "shop_key"
+          ],
+          "referred_schema": null,
+          "referred_table": "dim_shops",
+          "referred_columns": [
+            "shop_key"
+          ],
+          "options": {},
+          "comment": null
+        }
+      ],
+      "unique_constraints": [],
+      "checks": []
+    },
+    "fact_inventory_daily": {
+      "rows": 6098,
+      "columns": [
+        {
+          "name": "inventory_fact_id",
+          "type": "BIGINT",
+          "nullable": false,
+          "default": "nextval('fact_inventory_daily_inventory_fact_id_seq'::regclass)",
+          "autoincrement": true,
+          "comment": null
+        },
+        {
+          "name": "product_key",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "shop_key",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "date_key",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "stock_on_hand",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": "0",
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "safety_stock",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "reorder_point",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "loaded_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": "now()",
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "snapshot_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        }
+      ],
+      "pk": {
+        "constrained_columns": [
+          "inventory_fact_id"
+        ],
+        "name": "fact_inventory_daily_pkey",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": []
+        }
+      },
+      "foreign_keys": [
+        {
+          "name": "fact_inventory_daily_date_key_fkey",
+          "constrained_columns": [
+            "date_key"
+          ],
+          "referred_schema": null,
+          "referred_table": "dim_dates",
+          "referred_columns": [
+            "date_key"
+          ],
+          "options": {},
+          "comment": null
+        },
+        {
+          "name": "fact_inventory_daily_product_key_fkey",
+          "constrained_columns": [
+            "product_key"
+          ],
+          "referred_schema": null,
+          "referred_table": "dim_products",
+          "referred_columns": [
+            "product_key"
+          ],
+          "options": {},
+          "comment": null
+        },
+        {
+          "name": "fact_inventory_daily_shop_key_fkey",
+          "constrained_columns": [
+            "shop_key"
+          ],
+          "referred_schema": null,
+          "referred_table": "dim_shops",
+          "referred_columns": [
+            "shop_key"
+          ],
+          "options": {},
+          "comment": null
+        }
+      ],
+      "unique_constraints": [],
+      "checks": []
+    },
+    "fact_forecast_predictions": {
+      "rows": 13,
+      "columns": [
+        {
+          "name": "forecast_id",
+          "type": "BIGINT",
+          "nullable": false,
+          "default": "nextval('fact_forecast_predictions_forecast_id_seq'::regclass)",
+          "autoincrement": true,
+          "comment": null
+        },
+        {
+          "name": "product_key",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "target_date",
+          "type": "DATE",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "predicted_quantity",
+          "type": "NUMERIC(14, 3)",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "model_name",
+          "type": "VARCHAR(255)",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "model_version",
+          "type": "VARCHAR(100)",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "model_source",
+          "type": "VARCHAR(50)",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "history_source",
+          "type": "VARCHAR(50)",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "history_end_date",
+          "type": "DATE",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "forecast_generated_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": "now()",
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "data_origin",
+          "type": "TEXT",
+          "nullable": false,
+          "default": "'unknown'::text",
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "source_datasets",
+          "type": "JSONB",
+          "nullable": false,
+          "default": "'[]'::jsonb",
+          "autoincrement": false,
+          "comment": null
+        }
+      ],
+      "pk": {
+        "constrained_columns": [
+          "forecast_id"
+        ],
+        "name": "fact_forecast_predictions_pkey",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": []
+        }
+      },
+      "foreign_keys": [
+        {
+          "name": "fact_forecast_predictions_product_key_fkey",
+          "constrained_columns": [
+            "product_key"
+          ],
+          "referred_schema": null,
+          "referred_table": "dim_products",
+          "referred_columns": [
+            "product_key"
+          ],
+          "options": {},
+          "comment": null
+        }
+      ],
+      "unique_constraints": [
+        {
+          "column_names": [
+            "product_key",
+            "target_date",
+            "model_name",
+            "model_version",
+            "history_end_date",
+            "data_origin",
+            "source_datasets"
+          ],
+          "name": "uq_fact_forecasts_issue",
+          "comment": null,
+          "dialect_options": {
+            "postgresql_include": [],
+            "postgresql_nulls_not_distinct": false
+          }
+        }
+      ],
+      "checks": [
+        {
+          "name": "fact_forecast_predictions_predicted_quantity_check",
+          "sqltext": "predicted_quantity >= 0::numeric",
+          "comment": null
+        }
+      ]
+    },
+    "fact_historical_order_lines": {
+      "rows": 7000,
+      "columns": [
+        {
+          "name": "historical_line_id",
+          "type": "BIGINT",
+          "nullable": false,
+          "default": "nextval('fact_historical_order_lines_historical_line_id_seq'::regclass)",
+          "autoincrement": true,
+          "comment": null
+        },
+        {
+          "name": "source_dataset",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "source_record_id",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "data_origin",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "source_order_id",
+          "type": "VARCHAR(128)",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "platform",
+          "type": "VARCHAR(20)",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "sku",
+          "type": "VARCHAR(128)",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "product_name",
+          "type": "VARCHAR(500)",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "order_status",
+          "type": "VARCHAR(40)",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "is_cancelled",
+          "type": "BOOLEAN",
+          "nullable": false,
+          "default": "false",
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "quantity",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "create_time",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "loaded_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": "now()",
+          "autoincrement": false,
+          "comment": null
+        }
+      ],
+      "pk": {
+        "constrained_columns": [
+          "historical_line_id"
+        ],
+        "name": "fact_historical_order_lines_pkey",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": []
+        }
+      },
+      "foreign_keys": [],
+      "unique_constraints": [
+        {
+          "column_names": [
+            "source_dataset",
+            "platform",
+            "source_record_id"
+          ],
+          "name": "uq_historical_order_line_source",
+          "comment": null,
+          "dialect_options": {
+            "postgresql_include": [],
+            "postgresql_nulls_not_distinct": false
+          }
+        }
+      ],
+      "checks": [
+        {
+          "name": "fact_historical_order_lines_quantity_check",
+          "sqltext": "quantity > 0",
+          "comment": null
+        }
+      ]
+    },
+    "warehouse_daily_coverage": {
+      "rows": 0,
+      "columns": [
+        {
+          "name": "data_origin",
+          "type": "TEXT",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "source_dataset",
+          "type": "TEXT",
+          "nullable": false,
+          "default": "''::text",
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "full_date",
+          "type": "DATE",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false,
+          "comment": null
+        },
+        {
+          "name": "confirmed_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": "now()",
+          "autoincrement": false,
+          "comment": null
+        }
+      ],
+      "pk": {
+        "constrained_columns": [
+          "data_origin",
+          "source_dataset",
+          "full_date"
+        ],
+        "name": "warehouse_daily_coverage_pkey",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": []
+        }
+      },
+      "foreign_keys": [],
+      "unique_constraints": [],
+      "checks": []
+    }
+  },
+  "checks": {
+    "orders_required_keys_missing": [
+      {
+        "count": 0
+      }
+    ],
+    "orders_optional_keys_missing": [
+      {
+        "shop": 29,
+        "geography": 8,
+        "payment": 8,
+        "carrier": 39179
+      }
+    ],
+    "orders_invalid_values": [
+      {
+        "count": 0
+      }
+    ],
+    "orders_wrong_date_key": [
+      {
+        "count": 0
+      }
+    ],
+    "orders_shop_platform_mismatch": [
+      {
+        "count": 0
+      }
+    ],
+    "orders_conflicting_header": [
+      {
+        "count": 28
+      }
+    ],
+    "orders_multiple_lines": [
+      {
+        "count": 29
+      }
+    ],
+    "inventory_invalid_values": [
+      {
+        "count": 0
+      }
+    ],
+    "inventory_missing_event_time": [
+      {
+        "count": 24
+      }
+    ],
+    "inventory_noncentral_shop_keys": [
+      {
+        "count": 0
+      }
+    ],
+    "inventory_missing_from_health_view": [
+      {
+        "count": 0
+      }
+    ],
+    "geography_nullable_business_keys": [
+      {
+        "count": 0
+      }
+    ],
+    "geography_normalized_duplicates": [
+      {
+        "count": 0
+      }
+    ],
+    "forecast_nullable_identity": [
+      {
+        "count": 0
+      }
+    ],
+    "forecast_duplicate_identity": [
+      {
+        "count": 0
+      }
+    ],
+    "historical_sku_too_long_for_product_dimension": [
+      {
+        "count": 0
+      }
+    ],
+    "historical_unmapped_skus": [
+      {
+        "count": 226
+      }
+    ],
+    "forecast_multiple_evaluation_rows": [
+      {
+        "count": 0
+      }
+    ],
+    "orders_baseline": [
+      {
+        "lines": 118688,
+        "orders": 118650,
+        "units": 286178,
+        "buyer_amount": "72953914380.00"
+      }
+    ],
+    "inventory_baseline": [
+      {
+        "snapshots": 6098,
+        "stock": 1743739
+      }
+    ]
+  }
+}

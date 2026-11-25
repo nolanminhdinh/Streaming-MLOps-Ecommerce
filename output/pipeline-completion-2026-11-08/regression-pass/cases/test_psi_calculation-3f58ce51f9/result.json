@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_monitoring.py::TestStatisticalDriftFunctions::test_psi_calculation",
+  "file": "cases\\test_psi_calculation-3f58ce51f9",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0005945999873802066,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0006203000666573644,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0004797999281436205,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

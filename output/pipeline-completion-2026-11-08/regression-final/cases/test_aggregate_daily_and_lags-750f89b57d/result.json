@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_features.py::TestTimeSeriesFeatures::test_aggregate_daily_and_lags",
+  "file": "cases\\test_aggregate_daily_and_lags-750f89b57d",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0003253000322729349,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.026317899930290878,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00021389999892562628,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

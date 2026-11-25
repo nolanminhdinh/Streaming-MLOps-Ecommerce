@@ -1,0 +1,11 @@
+{
+  "status": "failed_before_first_scored_origin",
+  "error": "Native LightGBM LGBM_DatasetSetField access violation",
+  "scores_not_available": true,
+  "workarounds_tested": [
+    "existing safe_call wrapper",
+    "contiguous float32 buffers",
+    "project Python interpreter"
+  ],
+  "replacement_explicitly_named": "sklearn HistGradientBoosting; fresh protocol before scoring"
+}

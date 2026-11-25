@@ -1,0 +1,47 @@
+{
+  "test": "tests/test_pipeline_completion.py::test_additive_schema_is_backward_compatible[None]",
+  "name": "additive-change",
+  "inputs": [
+    {
+      "_platform": "shopee",
+      "order_sn": "order",
+      "item_sku": "A",
+      "quantity": 2,
+      "original_price": 10,
+      "total_order_value": 20,
+      "buyer_total_amount": 20,
+      "create_time": "2026-10-13T17:01:00Z",
+      "order_status": "COMPLETED",
+      "schema_version": null,
+      "new_optional_field": {
+        "campaign": "acceptance",
+        "nested": [
+          1,
+          2
+        ]
+      }
+    }
+  ],
+  "expected": {
+    "valid": 1,
+    "rejected": 0,
+    "preserved": {
+      "campaign": "acceptance",
+      "nested": [
+        1,
+        2
+      ]
+    }
+  },
+  "actual": {
+    "valid": 1,
+    "rejected": 0,
+    "preserved": {
+      "campaign": "acceptance",
+      "nested": [
+        1,
+        2
+      ]
+    }
+  }
+}

@@ -1,0 +1,199 @@
+{
+  "test": "tests/test_pipeline_completion_postgres.py::test_real_backfill_dry_run_apply_replay_and_old_version_guard",
+  "name": "backfill-before-after",
+  "inputs": {
+    "date": "2026-10-14"
+  },
+  "expected": {
+    "dry_run_unchanged": true,
+    "second_apply_unchanged": true
+  },
+  "actual": {
+    "dry_run": {
+      "status": "DRY_RUN",
+      "start": "2026-10-14",
+      "end": "2026-10-14",
+      "checkpoint_modified": false,
+      "source_version_guard_enabled": true,
+      "results": [
+        {
+          "run_id": "20261108T224922-1b8c805a6f8d4ff090c689e407322119",
+          "status": "DRY_RUN_SUCCESS",
+          "target_date": "2026-10-14",
+          "raw_records": 4,
+          "unified_records": 4,
+          "clean_records": 2,
+          "quarantined_records": 1,
+          "loaded_records": 0,
+          "elapsed_seconds": 0.03,
+          "duplicates_removed": 1,
+          "validation_errors": {
+            "CONTRACT_INVALID_TYPE_QUANTITY": 1,
+            "NON_POSITIVE_QUANTITY": 1
+          },
+          "quarantine_object": null,
+          "contract": "ecommerce.orders/1.0",
+          "object_accounting": [
+            {
+              "source_object": "acceptance/backfill.parquet",
+              "raw": 4,
+              "valid": 2,
+              "duplicates": 1,
+              "rejected": 1
+            }
+          ],
+          "accounted_records": 4,
+          "completed_at": "2026-11-08T15:49:22.819950+00:00",
+          "ingest_to_warehouse_seconds": null
+        }
+      ],
+      "before": [
+        {
+          "date": "2026-10-14",
+          "rows": 1,
+          "quantity": 7,
+          "buyer_amount": "70.00",
+          "business_sha": "67b2a1ec9c1a68a132579dae9e41c709"
+        }
+      ],
+      "after": [
+        {
+          "date": "2026-10-14",
+          "rows": 1,
+          "quantity": 7,
+          "buyer_amount": "70.00",
+          "business_sha": "67b2a1ec9c1a68a132579dae9e41c709"
+        }
+      ],
+      "business_output_unchanged": true
+    },
+    "first_apply": {
+      "status": "APPLIED",
+      "start": "2026-10-14",
+      "end": "2026-10-14",
+      "checkpoint_modified": false,
+      "source_version_guard_enabled": true,
+      "results": [
+        {
+          "run_id": "20261108T224922-bce7190601aa42e8958d152ea2736574",
+          "status": "SUCCESS",
+          "target_date": "2026-10-14",
+          "raw_records": 4,
+          "unified_records": 4,
+          "clean_records": 2,
+          "quarantined_records": 1,
+          "loaded_records": 1,
+          "elapsed_seconds": 0.24,
+          "duplicates_removed": 1,
+          "validation_errors": {
+            "CONTRACT_INVALID_TYPE_QUANTITY": 1,
+            "NON_POSITIVE_QUANTITY": 1
+          },
+          "quarantine_object": "quarantine/orders/run_id=20261108T224922-bce7190601aa42e8958d152ea2736574/rejected.jsonl",
+          "contract": "ecommerce.orders/1.0",
+          "object_accounting": [
+            {
+              "source_object": "acceptance/backfill.parquet",
+              "raw": 4,
+              "valid": 2,
+              "duplicates": 1,
+              "rejected": 1
+            }
+          ],
+          "accounted_records": 4,
+          "completed_at": "2026-11-08T15:49:23.059689+00:00",
+          "ingest_to_warehouse_seconds": {
+            "measured_rows": 4,
+            "total_rows": 4,
+            "p50": 2.278137,
+            "p95": 2.278137,
+            "max": 2.278137
+          }
+        }
+      ],
+      "before": [
+        {
+          "date": "2026-10-14",
+          "rows": 1,
+          "quantity": 7,
+          "buyer_amount": "70.00",
+          "business_sha": "67b2a1ec9c1a68a132579dae9e41c709"
+        }
+      ],
+      "after": [
+        {
+          "date": "2026-10-14",
+          "rows": 2,
+          "quantity": 10,
+          "buyer_amount": "100.00",
+          "business_sha": "ce1c465824a11d70ff7f531207e6d1ed"
+        }
+      ],
+      "business_output_unchanged": false
+    },
+    "second_apply": {
+      "status": "APPLIED",
+      "start": "2026-10-14",
+      "end": "2026-10-14",
+      "checkpoint_modified": false,
+      "source_version_guard_enabled": true,
+      "results": [
+        {
+          "run_id": "20261108T224923-ce04c9110939491297787f55df21b3a1",
+          "status": "SUCCESS",
+          "target_date": "2026-10-14",
+          "raw_records": 4,
+          "unified_records": 4,
+          "clean_records": 2,
+          "quarantined_records": 1,
+          "loaded_records": 1,
+          "elapsed_seconds": 0.14,
+          "duplicates_removed": 1,
+          "validation_errors": {
+            "CONTRACT_INVALID_TYPE_QUANTITY": 1,
+            "NON_POSITIVE_QUANTITY": 1
+          },
+          "quarantine_object": "quarantine/orders/run_id=20261108T224923-ce04c9110939491297787f55df21b3a1/rejected.jsonl",
+          "contract": "ecommerce.orders/1.0",
+          "object_accounting": [
+            {
+              "source_object": "acceptance/backfill.parquet",
+              "raw": 4,
+              "valid": 2,
+              "duplicates": 1,
+              "rejected": 1
+            }
+          ],
+          "accounted_records": 4,
+          "completed_at": "2026-11-08T15:49:23.196231+00:00",
+          "ingest_to_warehouse_seconds": {
+            "measured_rows": 4,
+            "total_rows": 4,
+            "p50": 2.414679,
+            "p95": 2.414679,
+            "max": 2.414679
+          }
+        }
+      ],
+      "before": [
+        {
+          "date": "2026-10-14",
+          "rows": 2,
+          "quantity": 10,
+          "buyer_amount": "100.00",
+          "business_sha": "ce1c465824a11d70ff7f531207e6d1ed"
+        }
+      ],
+      "after": [
+        {
+          "date": "2026-10-14",
+          "rows": 2,
+          "quantity": 10,
+          "buyer_amount": "100.00",
+          "business_sha": "ce1c465824a11d70ff7f531207e6d1ed"
+        }
+      ],
+      "business_output_unchanged": true
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_powerbi_import.py::test_import_sources_match_backup_queries_and_checked_in_files",
+  "file": "cases\\test_import_sources_match_backup_queries-ecd99c4472",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0011358000338077545,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.008201700053177774,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00031640008091926575,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

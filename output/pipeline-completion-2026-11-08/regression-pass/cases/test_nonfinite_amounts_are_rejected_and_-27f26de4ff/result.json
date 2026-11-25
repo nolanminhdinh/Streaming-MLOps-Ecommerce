@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_runtime_integrity_fixes.py::test_nonfinite_amounts_are_rejected_and_quarantine_is_valid_json",
+  "file": "cases\\test_nonfinite_amounts_are_rejected_and_-27f26de4ff",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00032350001856684685,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.07630680000875145,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0007937999907881021,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

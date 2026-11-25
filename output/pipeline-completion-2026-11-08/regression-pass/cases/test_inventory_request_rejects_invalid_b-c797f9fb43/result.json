@@ -1,0 +1,36 @@
+{
+  "nodeid": "tests/test_runtime_integrity_fixes.py::test_inventory_request_rejects_invalid_business_parameters[updates2]",
+  "file": "cases\\test_inventory_request_rejects_invalid_b-c797f9fb43",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0006425000028684735,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0007343000033870339,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00033629999961704016,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "updates": {
+      "service_level": 2
+    }
+  },
+  "outcome": "passed"
+}

@@ -64,9 +64,9 @@ Các nút không cung cấp thao tác xóa dữ liệu, reset offset hay triển
 - **Quarantine:** lọc `order_id` đúng mã đợt trong `quarantine/orders/`, hiển thị
   `rejection_reasons`. Gửi lại có thể tạo thêm lần ghi lỗi, nên đây là số bản ghi
   quarantine quan sát được, không phải số đơn lỗi duy nhất.
-- **Checkpoint & CSV:** object được checkpoint nghĩa là worker đã hoàn thành ETL
-  và export. Thời gian CSV là thời gian sửa tệp, không chứng minh Power BI Desktop
-  đã refresh hoặc render PBIX. Các số `last_etl` là phạm vi toàn worker.
+- **Checkpoint & CSV dự phòng:** object được checkpoint nghĩa là worker đã hoàn thành ETL.
+  Power BI Import đọc trực tiếp PostgreSQL, cần Refresh. CSV được xuất riêng, lỗi backup
+  không chặn checkpoint; thời gian CSV không chứng minh Desktop đã refresh hoặc render PBIX. Các số `last_etl` là phạm vi toàn worker.
 - **Dự báo:** danh mục gợi ý theo nguồn lịch sử của model, tối đa 40 SKU có nhiều
   dòng lịch sử nhất. Chọn ngày sau lịch sử SKU để trình bày đúng phạm vi. Kết quả
   hiển thị model/history source; đường dẫn dự phòng được cảnh báo rõ.

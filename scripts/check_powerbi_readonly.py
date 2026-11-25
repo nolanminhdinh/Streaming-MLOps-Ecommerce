@@ -25,7 +25,10 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def pbix_structure():
     pages, visuals = [], []
-    with zipfile.ZipFile(ROOT / "powerbi/Report_PowerBI.pbix") as archive:
+    path = ROOT / "powerbi/Report_PowerBI.pbix"
+    if not path.exists():  # PBIX CSV cũ đã xóa ngày 22/11/2026; báo cáo chính là PBIP powerbi/BaoCaoQuanLy
+        return {"pages": [], "visuals": [], "visual_type_counts": {}, "skipped": "legacy PBIX removed 2026-11-22"}
+    with zipfile.ZipFile(path) as archive:
         for name in archive.namelist():
             if name.endswith("/page.json"):
                 item = json.loads(archive.read(name))

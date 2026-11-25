@@ -1,0 +1,43 @@
+{
+  "verified_at_utc": "2026-11-07T18:00:41.677713+00:00",
+  "tests": {
+    "tests": 125,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 1,
+    "passed": 124
+  },
+  "python_files_parsed": [
+    "serving/app/sparse_demand.py",
+    "serving/app/model_loader.py",
+    "scripts/audit_forecast_data.py",
+    "scripts/improve_sparse_forecast.py",
+    "scripts/evaluate_volume_calibration.py",
+    "scripts/summarize_forecast_improvement.py",
+    "scripts/update_thesis_sparse_forecast.py",
+    "scripts/qa_forecast_thesis.py",
+    "scripts/validate_forecast_delivery.py",
+    "tests/test_sparse_demand.py"
+  ],
+  "git_diff_check": "passed with native CRLF handling",
+  "docx": "output/docx/Bao_cao_DATN_Dinh_Cong_Minh_2026-11-08.docx",
+  "docx_sha256": "667437945fea4bd776cb35987172d62e4c3dc96e8b4563f86b3dbec8dff3a353",
+  "markdown_matches_canonical": true,
+  "markdown_image_links_exist": true,
+  "pdf_pages": 101,
+  "renderer": "native Microsoft Word, then Poppler PNG",
+  "packaged_renderer_limitation": "LibreOffice soffice.exe missing; diagnosed before Word fallback",
+  "new_tables_repeat_headers": true,
+  "deployment_hashes_unchanged": {
+    "data/daily_history.parquet": true,
+    "data/features_daily.parquet": true,
+    "data/feature_spec.json": true,
+    "data/model_manifest.json": true
+  },
+  "model_registered": false,
+  "serving_reloaded": false,
+  "model_artifact_hash_matches_card": true,
+  "cross_version_container_load_tested": false,
+  "visual_review": "contact sheets of all pages; revised pages, tables, charts, references and appendices inspected at full page size",
+  "evaluation_type": "retrospective; final window previously exposed"
+}

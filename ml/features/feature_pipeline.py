@@ -47,7 +47,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger("ml.feature_pipeline")
 PUBLIC_HISTORY_ORIGIN = "public_anonymized_historical_csv"
-DEFAULT_LAGS = (1, 2, 3, 7, 14, 21, 28)
+# Kho streaming, chỉ các ngày đã xác nhận đủ dữ liệu (Warehouse_Daily_Coverage, warehouse/etl/coverage.py).
+# Khác 'unverified_warehouse' (mọi dòng, chưa xác nhận) — nguồn đó vẫn bị chặn khi đăng ký model.
+WAREHOUSE_LIVE_ORIGIN = "warehouse_live"
+DEFAULT_LAGS = (1, 2, 3, 6, 7, 14, 21, 28)
 
 
 def load_orders_data(data_origin: Optional[str] = None, source_datasets: Optional[list[str]] = None) -> pd.DataFrame:
@@ -99,6 +102,31 @@ def load_orders_data(data_origin: Optional[str] = None, source_datasets: Optiona
             "Nạp %d dòng SKU từ Fact_Historical_Order_Lines (origin=%s, %d dataset).",
             len(df), data_origin, len(df.attrs["source_datasets"]),
         )
+        return df
+
+    if data_origin == WAREHOUSE_LIVE_ORIGIN:
+        try:
+            engine = get_engine()
+            df = pd.read_sql(text("""
+                SELECT f.order_id, f.source_line_id, f.platform, p.sku, p.product_name, p.category,
+                       f.create_time, f.quantity, f.original_price, f.buyer_total_amount,
+                       f.seller_discount, f.is_cancelled, f.order_status
+                FROM Fact_Orders f
+                JOIN Dim_Products p ON f.product_key = p.product_key
+                WHERE f.is_cancelled = FALSE
+                  AND f.create_time::date IN (SELECT full_date FROM Warehouse_Daily_Coverage
+                                              WHERE data_origin = :origin AND source_dataset = '')
+                ORDER BY f.create_time ASC
+            """), engine, params={"origin": data_origin})
+        except Exception as exc:
+            raise RuntimeError("Không đọc được Fact_Orders/Warehouse_Daily_Coverage cho warehouse_live.") from exc
+        if df.empty:
+            raise ValueError("Chưa có ngày nào được xác nhận coverage warehouse_live; worker xác nhận ngày đã qua "
+                             "khi không còn object chờ và lag Kafka bằng 0.")
+        df.attrs["data_source"] = "warehouse"
+        df.attrs["data_origin"] = data_origin
+        df.attrs["source_datasets"] = []
+        logger.info("Nạp %d dòng đơn từ Fact_Orders trên các ngày đã xác nhận coverage (origin=%s).", len(df), data_origin)
         return df
 
     # 1. Thử nạp từ PostgreSQL
@@ -360,6 +388,8 @@ def save_feature_spec(
         }
 
     spec = {
+        "feature_contract_version": 2,
+        "baseline_alignment_version": 2,
         "target_column": TARGET_COL,
         "feature_columns": feature_columns,
         "lags": list(lags),
@@ -385,7 +415,7 @@ def main():
     parser.add_argument("--output", type=str, default=None, help="Đường dẫn file parquet đầu ra")
     parser.add_argument(
         "--data-origin",
-        choices=[PUBLIC_HISTORY_ORIGIN],
+        choices=[PUBLIC_HISTORY_ORIGIN, WAREHOUSE_LIVE_ORIGIN],
         default=None,
         help="Chọn đúng nguồn dữ liệu huấn luyện thay vì trộn mọi dòng trong warehouse.",
     )

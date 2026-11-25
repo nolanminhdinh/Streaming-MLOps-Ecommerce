@@ -1,0 +1,12 @@
+{
+  "test": "tests/test_pipeline_completion_postgres.py::test_real_postgres_lock_excludes_overlapping_jobs",
+  "name": "database-isolation",
+  "inputs": {
+    "schema": "pipeline_acceptance_299cbea82b5f",
+    "public_facts_written": false
+  },
+  "expected": "rollback-only schema",
+  "actual": {
+    "schema": "pipeline_acceptance_299cbea82b5f"
+  }
+}

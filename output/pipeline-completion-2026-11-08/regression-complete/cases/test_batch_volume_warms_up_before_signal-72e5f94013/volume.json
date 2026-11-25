@@ -1,0 +1,66 @@
+{
+  "test": "tests/test_pipeline_completion.py::test_batch_volume_warms_up_before_signalling_anomaly",
+  "name": "volume",
+  "inputs": {
+    "history": [
+      10,
+      10,
+      10,
+      10,
+      10,
+      10
+    ],
+    "new_batch": 1000
+  },
+  "expected": {
+    "warmup_anomaly": 0,
+    "spike_anomaly": 1,
+    "normal_anomaly": 0
+  },
+  "actual": {
+    "warmup": {
+      "ratio": null,
+      "anomaly": 0,
+      "reference_median": null,
+      "reference_batches": 5,
+      "history": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        1000
+      ]
+    },
+    "spike": {
+      "ratio": 100.0,
+      "anomaly": 1,
+      "reference_median": 10.0,
+      "reference_batches": 6,
+      "history": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        1000
+      ]
+    },
+    "normal": {
+      "ratio": 1.0,
+      "anomaly": 0,
+      "reference_median": 10.0,
+      "reference_batches": 6,
+      "history": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ]
+    }
+  }
+}

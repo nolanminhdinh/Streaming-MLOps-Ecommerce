@@ -1,0 +1,51 @@
+{
+  "case": "measured-batch-slow",
+  "status": "PASS",
+  "inputs": {
+    "latency_measured_rows": 8,
+    "ingest_to_warehouse_p95_seconds": 121
+  },
+  "expected_firing": true,
+  "exit_code": 0,
+  "stdout": "Unit Testing:  /tmp/measured-batch-slow.yml\n  SUCCESS\n\n",
+  "stderr": "",
+  "specification": {
+    "rule_files": [
+      "/etc/prometheus/alert_rules.yml"
+    ],
+    "evaluation_interval": "15s",
+    "tests": [
+      {
+        "name": "measured-batch-slow",
+        "interval": "15s",
+        "input_series": [
+          {
+            "series": "ecommerce_pipeline_latency_measured_rows{instance=\"acceptance\"}",
+            "values": "8+0x12"
+          },
+          {
+            "series": "ecommerce_pipeline_ingest_to_warehouse_p95_seconds{instance=\"acceptance\"}",
+            "values": "121+0x12"
+          }
+        ],
+        "alert_rule_test": [
+          {
+            "eval_time": "2m",
+            "alertname": "EcommercePipelineBatchSlow",
+            "exp_alerts": [
+              {
+                "exp_labels": {
+                  "instance": "acceptance",
+                  "severity": "warning"
+                },
+                "exp_annotations": {
+                  "summary": "P95 từ consumer đến hoàn tất mẻ ETL vượt 120 giây"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -91,7 +91,10 @@ def objective_lightgbm(
         n_splits=2,
         daily_history=daily_history,
     )
-    return avg_metrics["wape"]
+    wape = avg_metrics["wape"]
+    if wape is None or not np.isfinite(wape):
+        raise ValueError("Tuning requires a defined finite pooled WAPE.")
+    return wape
 
 
 def run_tuning(

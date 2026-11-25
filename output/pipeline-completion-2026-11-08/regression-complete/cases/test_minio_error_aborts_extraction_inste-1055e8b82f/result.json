@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_pipeline_integrity.py::test_minio_error_aborts_extraction_instead_of_partial_success",
+  "file": "cases\\test_minio_error_aborts_extraction_inste-1055e8b82f",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00018350000027567148,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.002433600020594895,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00017939996905624866,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

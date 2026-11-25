@@ -1,0 +1,25 @@
+{
+  "run_id": "CMP20261108c96f7bfb",
+  "status": "PASS",
+  "expected": {
+    "order_acks": 8,
+    "inventory_acks": 2,
+    "raw_rows": 8,
+    "fact_rows": 2,
+    "quantity": 10,
+    "stock": 50,
+    "rejected_source_events": 3
+  },
+  "writes": "labelled acceptance rows retained; no model/coverage change",
+  "actual": {
+    "kafka_readback": 8,
+    "raw_rows": 8,
+    "raw_objects": 2,
+    "fact_rows": 2,
+    "quantity": 10,
+    "rejected_events": 3,
+    "checkpointed_objects": 2,
+    "stock": 50,
+    "observed_completion_seconds": 33.20299999997951
+  }
+}

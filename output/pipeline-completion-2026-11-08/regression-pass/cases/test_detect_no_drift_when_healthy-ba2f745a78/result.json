@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_monitoring.py::TestDriftDetector::test_detect_no_drift_when_healthy",
+  "file": "cases\\test_detect_no_drift_when_healthy-ba2f745a78",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0007717000553384423,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0077059000032022595,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0002615000121295452,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

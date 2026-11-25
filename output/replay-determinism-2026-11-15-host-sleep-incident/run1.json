@@ -1,0 +1,179 @@
+{
+  "run": 1,
+  "processed_within_timeout": false,
+  "seconds_to_processed": 880.8,
+  "kafka": {
+    "sent": {
+      "ecom.orders.raw": 34,
+      "inventory.logs": 7
+    },
+    "offset_delta": {
+      "ecom.orders.raw": 34,
+      "inventory.logs": 7
+    },
+    "consumer_lag_after": {
+      "minio-writer-group": 0,
+      "inventory-postgres-writer-group": 0
+    }
+  },
+  "lake": {
+    "raw_rows": 34,
+    "raw_objects": [
+      "raw/orders/platform=shopee/year=2026/month=11/day=15/part-20261115T141022-a677ccc7-1.parquet",
+      "raw/orders/platform=shopee/year=2026/month=11/day=15/part-20261115T141032-88ccf2b4-20.parquet",
+      "raw/orders/platform=tiktok/year=2026/month=11/day=15/part-20261115T141032-88ccf2b4-11.parquet",
+      "raw/orders/platform=unknown/year=2026/month=11/day=15/part-20261115T141032-88ccf2b4-2.parquet"
+    ],
+    "quarantine": {
+      "orders": {},
+      "inventory": {
+        "records": 1,
+        "Invalid nonnegative integer inventory field: stock_on_hand": 1
+      }
+    },
+    "quarantine_objects": [
+      "quarantine/inventory/run_id=cb4e53f1f3e84c03a79b1eebd0cd0fe0/rejected.jsonl"
+    ]
+  },
+  "warehouse": {
+    "fact_rows": 0,
+    "dim_products": 5,
+    "duplicate_business_keys": 0,
+    "units": 0,
+    "buyer_amount": 0.0,
+    "status_mix": {},
+    "cancelled_rows": 0,
+    "fact_business_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "bi_business_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "bi_rows": 0,
+    "bi_units": 0,
+    "bi_buyer_amount": 0.0,
+    "inventory_business_sha256": "f13bcc33461c6070f53744b700460044af5a4dfd3d432185590a8fe612708987",
+    "latest_stock": {
+      "RPT11151410-ATN-CB-001": 249,
+      "RPT11151410-OL-IP15PM": 344,
+      "RPT11151410-OMO-6KG": 299,
+      "RPT11151410-SN-65W-GAN": 280,
+      "RPT11151410-TN-TWS-PRO": 220
+    },
+    "order_status_by_id": {},
+    "technical": {
+      "order_fact_ids": [],
+      "fact_loaded_at": [],
+      "inventory_fact_ids": [
+        12221,
+        12220,
+        12223,
+        12222,
+        12224
+      ],
+      "inventory_loaded_at": [
+        "2026-11-15 07:10:28.047786",
+        "2026-11-15 07:10:28.047786",
+        "2026-11-15 07:10:28.047786",
+        "2026-11-15 07:10:28.047786",
+        "2026-11-15 07:10:28.047786"
+      ]
+    }
+  },
+  "lineage": [],
+  "api": {
+    "inventory_alerts_sha256": "f004e68d8f00fc9925907532db3abd570b19e8d31898dc3db70642a97d4fb514",
+    "inventory_alerts": {
+      "total_skus_evaluated": 5,
+      "skus_needing_reorder": 0,
+      "critical_count": 0,
+      "warning_count": 0,
+      "normal_count": 5,
+      "alerts": [
+        {
+          "sku": "RPT11151410-TN-TWS-PRO",
+          "product_name": "Sản phẩm RPT11151410-TN-TWS-PRO",
+          "category": "Khác",
+          "matrix_segment": "BX",
+          "current_stock": 220,
+          "avg_daily_demand": 10.0,
+          "lead_time_days": 3,
+          "safety_stock": 9,
+          "reorder_point": 39,
+          "needs_reorder": false,
+          "alert_level": "NORMAL",
+          "days_until_stockout": 22.0,
+          "recommended_reorder_qty": 0,
+          "stock_source": "warehouse_snapshot:2026-11-15",
+          "demand_source": "fallback_catalog"
+        },
+        {
+          "sku": "RPT11151410-ATN-CB-001",
+          "product_name": "Sản phẩm RPT11151410-ATN-CB-001",
+          "category": "Khác",
+          "matrix_segment": "BX",
+          "current_stock": 249,
+          "avg_daily_demand": 10.0,
+          "lead_time_days": 3,
+          "safety_stock": 9,
+          "reorder_point": 39,
+          "needs_reorder": false,
+          "alert_level": "NORMAL",
+          "days_until_stockout": 24.9,
+          "recommended_reorder_qty": 0,
+          "stock_source": "warehouse_snapshot:2026-11-15",
+          "demand_source": "fallback_catalog"
+        },
+        {
+          "sku": "RPT11151410-SN-65W-GAN",
+          "product_name": "Sản phẩm RPT11151410-SN-65W-GAN",
+          "category": "Khác",
+          "matrix_segment": "BX",
+          "current_stock": 280,
+          "avg_daily_demand": 10.0,
+          "lead_time_days": 3,
+          "safety_stock": 9,
+          "reorder_point": 39,
+          "needs_reorder": false,
+          "alert_level": "NORMAL",
+          "days_until_stockout": 28.0,
+          "recommended_reorder_qty": 0,
+          "stock_source": "warehouse_snapshot:2026-11-15",
+          "demand_source": "fallback_catalog"
+        },
+        {
+          "sku": "RPT11151410-OMO-6KG",
+          "product_name": "Sản phẩm RPT11151410-OMO-6KG",
+          "category": "Khác",
+          "matrix_segment": "BX",
+          "current_stock": 299,
+          "avg_daily_demand": 10.0,
+          "lead_time_days": 3,
+          "safety_stock": 9,
+          "reorder_point": 39,
+          "needs_reorder": false,
+          "alert_level": "NORMAL",
+          "days_until_stockout": 29.9,
+          "recommended_reorder_qty": 0,
+          "stock_source": "warehouse_snapshot:2026-11-15",
+          "demand_source": "fallback_catalog"
+        },
+        {
+          "sku": "RPT11151410-OL-IP15PM",
+          "product_name": "Sản phẩm RPT11151410-OL-IP15PM",
+          "category": "Khác",
+          "matrix_segment": "BX",
+          "current_stock": 344,
+          "avg_daily_demand": 10.0,
+          "lead_time_days": 3,
+          "safety_stock": 9,
+          "reorder_point": 39,
+          "needs_reorder": false,
+          "alert_level": "NORMAL",
+          "days_until_stockout": 34.4,
+          "recommended_reorder_qty": 0,
+          "stock_source": "warehouse_snapshot:2026-11-15",
+          "demand_source": "fallback_catalog"
+        }
+      ]
+    },
+    "pipeline_status": "healthy",
+    "ready": false
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_order_line_integrity.py::test_multi_sku_and_same_sku_explicit_line_ids_survive_replay",
+  "file": "cases\\test_multi_sku_and_same_sku_explicit_lin-f8207337a8",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.000519299996085465,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.07706070004496723,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0007739999564364552,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

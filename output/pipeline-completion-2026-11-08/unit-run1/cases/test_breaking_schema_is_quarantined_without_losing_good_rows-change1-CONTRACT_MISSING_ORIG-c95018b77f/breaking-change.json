@@ -1,0 +1,39 @@
+{
+  "test": "tests/test_pipeline_completion.py::test_breaking_schema_is_quarantined_without_losing_good_rows[change1-CONTRACT_MISSING_ORIGINAL_PRICE]",
+  "name": "breaking-change",
+  "inputs": [
+    {
+      "_platform": "shopee",
+      "order_sn": "GOOD",
+      "item_sku": "A",
+      "quantity": 2,
+      "original_price": 10,
+      "total_order_value": 20,
+      "buyer_total_amount": 20,
+      "create_time": "2026-10-13T17:01:00Z",
+      "order_status": "COMPLETED"
+    },
+    {
+      "_platform": "shopee",
+      "order_sn": "BAD",
+      "item_sku": "A",
+      "quantity": 2,
+      "original_price": null,
+      "total_order_value": 20,
+      "buyer_total_amount": 20,
+      "create_time": "2026-10-13T17:01:00Z",
+      "order_status": "COMPLETED",
+      "renamed_price": 10
+    }
+  ],
+  "expected": {
+    "valid": 1,
+    "rejected": 1,
+    "contains_error": "CONTRACT_MISSING_ORIGINAL_PRICE"
+  },
+  "actual": {
+    "valid": 1,
+    "rejected": 1,
+    "errors": "CONTRACT_MISSING_ORIGINAL_PRICE; INVALID_ORIGINAL_PRICE_TYPE"
+  }
+}

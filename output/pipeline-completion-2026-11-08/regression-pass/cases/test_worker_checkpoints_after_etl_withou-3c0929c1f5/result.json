@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_runtime_integrity_fixes.py::test_worker_checkpoints_after_etl_without_csv_export",
+  "file": "cases\\test_worker_checkpoints_after_etl_withou-3c0929c1f5",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0032562999986112118,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.004439100041054189,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00035630003549158573,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

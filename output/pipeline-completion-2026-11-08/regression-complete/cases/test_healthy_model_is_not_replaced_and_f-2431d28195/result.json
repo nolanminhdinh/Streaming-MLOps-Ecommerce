@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_model_recovery.py::test_healthy_model_is_not_replaced_and_failed_reload_keeps_lock",
+  "file": "cases\\test_healthy_model_is_not_replaced_and_f-2431d28195",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00012510002125054598,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.001116100000217557,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "ERROR    mlops.serving.model_loader:model_loader.py:165 Reload model thất bại; giữ nguyên model heuristic_catalog vunknown đang phục vụ."
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00037349993363022804,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "ERROR    mlops.serving.model_loader:model_loader.py:165 Reload model thất bại; giữ nguyên model heuristic_catalog vunknown đang phục vụ."
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

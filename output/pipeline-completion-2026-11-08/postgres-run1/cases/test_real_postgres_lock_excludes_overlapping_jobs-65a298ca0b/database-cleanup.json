@@ -1,0 +1,13 @@
+{
+  "test": "tests/test_pipeline_completion_postgres.py::test_real_postgres_lock_excludes_overlapping_jobs",
+  "name": "database-cleanup",
+  "inputs": {
+    "schema": "pipeline_acceptance_299cbea82b5f"
+  },
+  "expected": {
+    "schemas_remaining": 0
+  },
+  "actual": {
+    "schemas_remaining": 0
+  }
+}

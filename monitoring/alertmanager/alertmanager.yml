@@ -1,0 +1,13 @@
+global:
+  resolve_timeout: 1m
+route:
+  receiver: local-evidence
+  group_by: [alertname]
+  group_wait: 5s
+  group_interval: 30s
+  repeat_interval: 4h
+receivers:
+  - name: local-evidence
+    webhook_configs:
+      - url: http://alert-receiver:9094/alerts
+        send_resolved: true

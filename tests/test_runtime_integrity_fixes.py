@@ -56,8 +56,19 @@ def test_dedupe_chooses_source_version_independent_of_arrival_order():
         assert count == 1 and latest.iloc[0].order_status == "COMPLETED"
 
 
+def test_inventory_supply_fields_are_kept_for_replenishment():
+    """16/11/2026: lead time, hàng đang về và ETA từ bản tin được giữ để tính vị thế tồn kho."""
+    frame = prepare_snapshots([dict(sku="A", loaded_at="2026-10-20T00:00:00Z", stock_on_hand=3,
+                                    lead_time_days=4, incoming_stock=150, restock_eta="2026-10-24T00:00:00Z"),
+                               dict(sku="B", loaded_at="2026-10-20T00:00:00Z", stock_on_hand=5)])
+    a, b = frame.set_index("sku").loc["A"], frame.set_index("sku").loc["B"]
+    assert (a.lead_time_days, a.incoming_stock, a.restock_eta.isoformat()) == (4, 150, "2026-10-24T00:00:00+00:00")
+    assert pd.isna(b.get("lead_time_days")) and pd.isna(b.get("incoming_stock"))  # thiếu là chưa biết, không phải 0
+
+
 @pytest.mark.parametrize("updates", [{"loaded_at": "bad"}, {"sku": " "}, {"stock_on_hand": -1},
-                                      {"stock_on_hand": 1.5}, {"stock_on_hand": None}, {"sku": "x" * 51}])
+                                      {"stock_on_hand": 1.5}, {"stock_on_hand": None}, {"sku": "x" * 51},
+                                      {"lead_time_days": 0}, {"incoming_stock": -1}, {"restock_eta": "không phải ngày"}])
 def test_bad_inventory_is_not_silently_committed(updates):
     record = dict(sku="A", loaded_at="2026-10-20T00:00:00Z", stock_on_hand=3)
     record.update(updates)
@@ -146,24 +157,33 @@ def test_inventory_mixed_batch_persists_reject_and_valid_snapshot():
     assert len(quarantine.call_args.args[1]) == 1 and quarantine.call_args.kwargs["stream"] == "inventory"
 
 
-def test_worker_only_checkpoints_after_export_and_retries_idempotently(tmp_path):
+def test_worker_checkpoints_after_etl_without_csv_export(tmp_path):
     from scripts import run_pipeline_worker as worker
     path = tmp_path / "checkpoint.json"
     state = {"completed_objects": ["old"]}
     with mock.patch.object(worker, "build_minio_client"), \
          mock.patch.object(worker, "list_parquet_files", return_value=["new", "old"]), \
          mock.patch.object(worker, "run_etl_pipeline", return_value={"status": "SUCCESS"}) as etl, \
-         mock.patch.object(worker, "export_powerbi_data", side_effect=RuntimeError("export failed")) as export:
-        with pytest.raises(RuntimeError):
-            worker.run_cycle(state, path)
-        assert not path.exists() and state == {"completed_objects": ["old"]}
-        export.side_effect = None
+         mock.patch("powerbi.export_powerbi_dataset.export_powerbi_data", side_effect=PermissionError("CSV locked")) as export:
         updated = worker.run_cycle(state, path)
         assert updated["completed_objects"] == ["new", "old"] and path.exists()
-        assert etl.call_count == 2
+        assert state == {"completed_objects": ["old"]}
+        assert etl.call_count == 1
         worker.run_cycle(updated, path)
-        assert etl.call_count == 2 and export.call_count == 3
-        assert export.call_args.kwargs == {"install_views": False}
+        assert etl.call_count == 1
+        export.assert_not_called()
+
+
+def test_worker_never_checkpoints_failed_etl(tmp_path):
+    from scripts import run_pipeline_worker as worker
+    path = tmp_path / "checkpoint.json"
+    state = {"completed_objects": ["old"]}
+    with mock.patch.object(worker, "build_minio_client"), \
+         mock.patch.object(worker, "list_parquet_files", return_value=["new", "old"]), \
+         mock.patch.object(worker, "run_etl_pipeline", side_effect=RuntimeError("DB down")):
+        with pytest.raises(RuntimeError, match="DB down"):
+            worker.run_cycle(state, path)
+    assert not path.exists() and state == {"completed_objects": ["old"]}
 
 
 def test_failed_csv_write_preserves_previous_dataset(tmp_path):
@@ -210,6 +230,9 @@ def test_postgres_rejects_stale_order_and_inventory_and_extends_calendar():
                 written = upsert_inventory(proxy, prepare_snapshots([dict(sku="A", stock_on_hand=stock, loaded_at=ts)]))
                 assert written == (1 if stock == 50 else 0)
             assert conn.execute(text("SELECT stock_on_hand FROM Fact_Inventory_Daily")).scalar_one() == 50
+            upsert_inventory(proxy, prepare_snapshots([dict(sku="A", stock_on_hand=40, loaded_at="2032-01-01T03:00:00Z",
+                                                            lead_time_days=5, incoming_stock=120, restock_eta="2032-01-06T00:00:00Z")]))
+            assert conn.execute(text("SELECT stock_on_hand, lead_time_days, incoming_stock FROM Fact_Inventory_Daily")).one() == (40, 5, 120)
             assert conn.execute(text("SELECT COUNT(*) FROM Dim_Dates")).scalar_one() == 1
         finally:
             transaction.rollback()

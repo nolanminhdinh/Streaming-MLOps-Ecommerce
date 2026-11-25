@@ -6,7 +6,7 @@ Tài liệu này cung cấp toàn bộ các công thức DAX được tối ưu 
 
 ## 1. Nhóm chỉ số Tài chính & Đơn hàng (Core Business Measures)
 
-Các measure dưới đây dùng **đường import CSV** `Fact_Orders_Summary`. Exporter đã loại dòng hủy và đếm distinct `(platform, order_id)` theo ngày/platform. Một đơn phải có cùng ngày tạo nghiệp vụ cho các dòng của nó. Không lấy trung bình cột `aov` giữa các ngày/platform: luôn tính lại tỷ số từ tổng tiền và tổng số đơn trong filter context.
+Các measure dưới đây dùng bảng **PostgreSQL Import** `Fact_Orders_Summary`, với SELECT trong `import/Fact_Orders_Summary.pq`; CSV dự phòng giữ cùng schema. SQL loại dòng hủy và đếm distinct `(platform, order_id)` theo ngày/platform. Một đơn phải có cùng ngày tạo nghiệp vụ cho các dòng của nó. Không lấy trung bình cột `aov` giữa các ngày/platform: luôn tính lại tỷ số từ tổng tiền và tổng số đơn trong filter context.
 
 ### 1.1. Tổng tiền người mua của đơn không hủy (Net Revenue)
 ```dax

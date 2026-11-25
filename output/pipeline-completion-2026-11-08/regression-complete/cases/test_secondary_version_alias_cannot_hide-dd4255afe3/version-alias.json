@@ -1,0 +1,41 @@
+{
+  "test": "tests/test_pipeline_completion.py::test_secondary_version_alias_cannot_hide_a_breaking_version[1.0]",
+  "name": "version-alias",
+  "inputs": [
+    {
+      "_platform": "shopee",
+      "order_sn": "GOOD-ALIAS",
+      "item_sku": "A",
+      "quantity": 2,
+      "original_price": 10,
+      "total_order_value": 20,
+      "buyer_total_amount": 20,
+      "create_time": "2026-10-13T17:01:00Z",
+      "order_status": "COMPLETED",
+      "schema_version": "1.0"
+    },
+    {
+      "_platform": "shopee",
+      "order_sn": "BAD-ALIAS",
+      "item_sku": "A",
+      "quantity": 2,
+      "original_price": 10,
+      "total_order_value": 20,
+      "buyer_total_amount": 20,
+      "create_time": "2026-10-13T17:01:00Z",
+      "order_status": "COMPLETED",
+      "_schema_version": "2.0",
+      "schema_version": "1.0"
+    }
+  ],
+  "expected": {
+    "valid": 1,
+    "rejected": 1,
+    "contains": "CONTRACT_UNSUPPORTED_VERSION"
+  },
+  "actual": {
+    "valid": 1,
+    "rejected": 1,
+    "errors": "CONTRACT_UNSUPPORTED_VERSION"
+  }
+}

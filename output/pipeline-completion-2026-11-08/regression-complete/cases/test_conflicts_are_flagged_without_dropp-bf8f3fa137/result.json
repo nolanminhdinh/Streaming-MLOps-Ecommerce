@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_warehouse_schema_v2.py::test_conflicts_are_flagged_without_dropping_or_rewriting_lines",
+  "file": "cases\\test_conflicts_are_flagged_without_dropp-bf8f3fa137",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.09051990008447319,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.005295999930240214,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0020361999049782753,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

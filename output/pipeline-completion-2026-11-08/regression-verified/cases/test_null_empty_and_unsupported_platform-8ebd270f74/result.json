@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_runtime_integrity_fixes.py::test_null_empty_and_unsupported_platforms_are_preserved",
+  "file": "cases\\test_null_empty_and_unsupported_platform-8ebd270f74",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0001542000100016594,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.029364699963480234,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00018099998123943806,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

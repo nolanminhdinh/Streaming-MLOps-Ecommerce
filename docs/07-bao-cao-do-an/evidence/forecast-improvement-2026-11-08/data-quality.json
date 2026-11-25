@@ -1,0 +1,212 @@
+{
+  "daily_rows": 49032,
+  "skus": 216,
+  "days": 227,
+  "target_finite_nonnegative": true,
+  "duplicate_sku_date": 0,
+  "target_t_plus_1_mismatches": 0,
+  "missing_target_dates": 0,
+  "zero_fraction": 0.9549069995105237,
+  "pre_first_sale_zero_cells": 25866,
+  "skus_with_at_most_3_positive_days": 140,
+  "median_positive_days_per_sku": 2.0,
+  "positive_quantity_quantiles": {
+    "0.5": 1.0,
+    "0.9": 5.0,
+    "0.95": 7.0,
+    "0.99": 18.0,
+    "1.0": 232.0
+  },
+  "top_10_daily_cells_share_units": 0.13268496005557484,
+  "largest_daily_cell": 232.0,
+  "monthly": [
+    {
+      "month": "2025-12",
+      "units": 12.0,
+      "positive_cells": 12
+    },
+    {
+      "month": "2026-01",
+      "units": 1947.0,
+      "positive_cells": 458
+    },
+    {
+      "month": "2026-02",
+      "units": 391.0,
+      "positive_cells": 190
+    },
+    {
+      "month": "2026-03",
+      "units": 191.0,
+      "positive_cells": 139
+    },
+    {
+      "month": "2026-04",
+      "units": 254.0,
+      "positive_cells": 175
+    },
+    {
+      "month": "2026-05",
+      "units": 252.0,
+      "positive_cells": 176
+    },
+    {
+      "month": "2026-06",
+      "units": 1520.0,
+      "positive_cells": 460
+    },
+    {
+      "month": "2026-07",
+      "units": 988.0,
+      "positive_cells": 496
+    },
+    {
+      "month": "2026-08",
+      "units": 203.0,
+      "positive_cells": 105
+    }
+  ],
+  "missing_by_column": {
+    "sku": 0,
+    "date": 0,
+    "daily_demand": 0,
+    "daily_revenue": 0,
+    "avg_unit_price": 0,
+    "total_discount": 0,
+    "order_count": 0,
+    "product_name": 0,
+    "category": 49032,
+    "month": 0
+  },
+  "zero_fill_completeness": "unverified; zero is not inferred to mean a confirmed no-sale day",
+  "outlier_policy": "preserve all actuals; no removal or clipping of evaluation labels",
+  "original_csv": {
+    "status": "allowlist_read_only_verified",
+    "sources": [
+      {
+        "platform": "shopee",
+        "source_dataset": "shopee:sha256:6ae345e246481a2bd3b656838396e4fd31ce821c253945de6aa1370b2008f18d",
+        "source_rows": 5000,
+        "valid_rows": 5000,
+        "rejected_rows": 0,
+        "cancelled_rows": 867,
+        "active_skus": 54,
+        "active_days": 226,
+        "active_start": "2025-12-28",
+        "active_end": "2026-08-11",
+        "order_ids_reused_across_dates": 31,
+        "matches_deployment_fingerprint": true,
+        "identical_allowlisted_rows": 98,
+        "timestamps_with_explicit_offset": 0,
+        "status_counts": {
+          "COMPLETED": 4094,
+          "CANCELLED": 867,
+          "TO_CONFIRM_RECEIVE": 23,
+          "TO_RETURN": 8,
+          "SHIPPED": 5,
+          "PROCESSED": 3
+        }
+      },
+      {
+        "platform": "tiktok",
+        "source_dataset": "tiktok:sha256:881e893f6b318bc6fbf42f518f4bacb7f74bb4002076c33d8e7e7452176656fb",
+        "source_rows": 2000,
+        "valid_rows": 2000,
+        "rejected_rows": 0,
+        "cancelled_rows": 399,
+        "active_skus": 164,
+        "active_days": 46,
+        "active_start": "2026-01-01",
+        "active_end": "2026-08-06",
+        "order_ids_reused_across_dates": 18,
+        "matches_deployment_fingerprint": true,
+        "identical_allowlisted_rows": 19,
+        "timestamps_with_explicit_offset": 0,
+        "status_counts": {
+          "DELIVERED": 1152,
+          "COMPLETED": 429,
+          "CANCELLED": 399,
+          "IN_TRANSIT": 20
+        }
+      }
+    ],
+    "rebuilt_daily_value_mismatches": 0,
+    "shared_skus_across_datasets": 2,
+    "active_units_with_shared_skus": 153,
+    "monthly_non_cancelled_units": [
+      {
+        "platform": "shopee",
+        "month": "2025-12",
+        "quantity": 12
+      },
+      {
+        "platform": "shopee",
+        "month": "2026-01",
+        "quantity": 1762
+      },
+      {
+        "platform": "shopee",
+        "month": "2026-02",
+        "quantity": 389
+      },
+      {
+        "platform": "shopee",
+        "month": "2026-03",
+        "quantity": 191
+      },
+      {
+        "platform": "shopee",
+        "month": "2026-04",
+        "quantity": 254
+      },
+      {
+        "platform": "shopee",
+        "month": "2026-05",
+        "quantity": 252
+      },
+      {
+        "platform": "shopee",
+        "month": "2026-06",
+        "quantity": 179
+      },
+      {
+        "platform": "shopee",
+        "month": "2026-07",
+        "quantity": 917
+      },
+      {
+        "platform": "shopee",
+        "month": "2026-08",
+        "quantity": 201
+      },
+      {
+        "platform": "tiktok",
+        "month": "2026-01",
+        "quantity": 185
+      },
+      {
+        "platform": "tiktok",
+        "month": "2026-02",
+        "quantity": 2
+      },
+      {
+        "platform": "tiktok",
+        "month": "2026-06",
+        "quantity": 1341
+      },
+      {
+        "platform": "tiktok",
+        "month": "2026-07",
+        "quantity": 71
+      },
+      {
+        "platform": "tiktok",
+        "month": "2026-08",
+        "quantity": 2
+      }
+    ],
+    "timezone_status": "all raw timestamps are naive; UTC assumption retained for reproducibility, not externally certified",
+    "deduplication_policy": "no deletion: identical allowlisted values and reused anonymized IDs are not proof of a duplicate source event",
+    "coverage_status": "complete read of supplied files verified; complete collection of each business day is not established"
+  }
+}

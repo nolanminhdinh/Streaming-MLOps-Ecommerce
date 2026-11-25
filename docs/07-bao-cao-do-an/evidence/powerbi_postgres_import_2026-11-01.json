@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "source": "postgresql_import",
+  "transaction_read_only": true,
+  "powerbi_desktop_refresh_verified": false,
+  "datasets": {
+    "Dim_Dates": {
+      "columns_match": true,
+      "rows": 1095
+    },
+    "Dim_Products": {
+      "columns_match": true,
+      "rows": 126
+    },
+    "Dim_Geography": {
+      "columns_match": true,
+      "rows": 20
+    },
+    "Fact_Orders_Summary": {
+      "columns_match": true,
+      "rows": 608
+    },
+    "Forecast_vs_Actual": {
+      "columns_match": true,
+      "rows": 6
+    },
+    "Inventory_Health_Alerts": {
+      "columns_match": true,
+      "rows": 38
+    },
+    "Historical_Demand_Daily": {
+      "columns_match": true,
+      "rows": 2211
+    }
+  },
+  "summary_matches_warehouse": true,
+  "summary_totals": {
+    "orders": "118650",
+    "units": "286178",
+    "revenue": "72953914380.00"
+  }
+}

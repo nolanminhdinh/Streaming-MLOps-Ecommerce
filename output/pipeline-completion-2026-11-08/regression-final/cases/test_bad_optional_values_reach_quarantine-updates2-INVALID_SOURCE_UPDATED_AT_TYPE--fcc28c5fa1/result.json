@@ -1,0 +1,37 @@
+{
+  "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_optional_values_reach_quarantine[updates2-INVALID_SOURCE_UPDATED_AT_TYPE]",
+  "file": "cases\\test_bad_optional_values_reach_quarantine-updates2-INVALID_SOURCE_UPDATED_AT_TYPE--fcc28c5fa1",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0007022999925538898,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.054366700001992285,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00047990004532039165,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "updates": {
+      "update_time": "bad"
+    },
+    "reason": "INVALID_SOURCE_UPDATED_AT_TYPE"
+  },
+  "outcome": "passed"
+}

@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_pipeline_integrity.py::test_retraining_rejects_changed_origin_before_training",
+  "file": "cases\\test_retraining_rejects_changed_origin_before_training-87fdaf1fa6",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00016930000856518745,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0019450000254437327,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00020590005442500114,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

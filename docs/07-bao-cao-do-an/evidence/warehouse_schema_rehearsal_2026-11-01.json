@@ -1,0 +1,33 @@
+{
+  "mode": "rehearsal_rollback",
+  "status": "REHEARSAL_PASSED_ROLLED_BACK",
+  "checked_at": "2026-11-01T13:59:07.201072+07:00",
+  "before": {
+    "order_lines": 144851,
+    "units": 346819,
+    "buyer_amount": "88881805910.00",
+    "inventory_snapshots": 6098,
+    "stock": 1743739,
+    "forecast_issues": 13,
+    "historical_lines": 7000
+  },
+  "validation": {
+    "order_lines": true,
+    "daily_inventory": true,
+    "forecasts": true,
+    "historical_lines": true,
+    "historical_keys_complete": true,
+    "inventory_policy_does_not_drop_skus": true,
+    "order_header_conflicts": 28,
+    "legacy_inventory_unknown_time": 24
+  },
+  "after": {
+    "order_lines": 144851,
+    "units": 346819,
+    "buyer_amount": "88881805910.00",
+    "inventory_snapshots": 6098,
+    "stock": 1743739,
+    "forecast_issues": 13,
+    "historical_lines": 7000
+  }
+}

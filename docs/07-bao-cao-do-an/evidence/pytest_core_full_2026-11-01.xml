@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="5" skipped="0" tests="56" time="10.229" timestamp="2026-11-01T13:12:14.710493+07:00" hostname="LAPTOP-SIO6S5EC"><testcase classname="tests.test_core_operations" name="test_producer_propagates_broker_rejection" time="0.003" /><testcase classname="tests.test_core_operations" name="test_storage_failure_never_commits_order_offsets" time="0.004" /><testcase classname="tests.test_core_operations" name="test_exited_consumer_is_failure_even_on_clean_exit[0]" time="0.002" /><testcase classname="tests.test_core_operations" name="test_exited_consumer_is_failure_even_on_clean_exit[1]" time="0.002" /><testcase classname="tests.test_core_operations" name="test_exited_consumer_is_failure_even_on_clean_exit[-15]" time="0.002" /><testcase classname="tests.test_core_operations" name="test_worker_invalidates_healthy_status_before_failed_startup" time="0.028" /><testcase classname="tests.test_core_operations" name="test_consumer_dying_during_etl_never_reports_healthy" time="0.011" /><testcase classname="tests.test_data_readiness.TestTrainingDataReadiness" name="test_assessment_counts_distinct_calendar_days_and_ignores_cancelled_orders" time="0.019" /><testcase classname="tests.test_data_readiness.TestTrainingDataReadiness" name="test_default_and_closed_loop_history_requirements" time="0.001" /><testcase classname="tests.test_data_readiness.TestTrainingDataReadiness" name="test_exact_minimum_coverage_is_ready" time="0.007" /><testcase classname="tests.test_data_readiness.TestTrainingDataReadiness" name="test_insufficient_history_persists_supervisor_status_before_raising" time="0.017" /><testcase classname="tests.test_data_simulator.TestECommerceSimulator" name="test_cancellation_release_stock_before_shipping" time="0.002" /><testcase classname="tests.test_data_simulator.TestECommerceSimulator" name="test_enterprise_storefront_identity" time="0.002" /><testcase classname="tests.test_data_simulator.TestECommerceSimulator" name="test_flash_sale_logic" time="0.002" /><testcase classname="tests.test_data_simulator.TestECommerceSimulator" name="test_generate_shopee_event" time="0.008" /><testcase classname="tests.test_data_simulator.TestECommerceSimulator" name="test_generate_tiktok_event" time="0.002" /><testcase classname="tests.test_data_simulator.TestECommerceSimulator" name="test_inventory_alert_levels" time="0.002" /><testcase classname="tests.test_data_simulator.TestECommerceSimulator" name="test_inventory_decrement_on_order" time="0.001" /><testcase classname="tests.test_data_simulator.TestECommerceSimulator" name="test_inventory_out_of_stock_triggers_cancellation" time="0.002" /><testcase classname="tests.test_data_simulator.TestECommerceSimulator" name="test_inventory_reorder_trigger_and_restock" time="0.002" /><testcase classname="tests.test_data_simulator.TestECommerceSimulator" name="test_manual_restock" time="0.002" /><testcase classname="tests.test_data_simulator.TestECommerceSimulator" name="test_mega_sale_multiplier" time="0.001" /><testcase classname="tests.test_data_simulator.TestECommerceSimulator" name="test_order_stream_distribution" time="1.044" /><testcase classname="tests.test_data_simulator.TestECommerceSimulator" name="test_pareto_product_distribution" time="0.005" /><testcase classname="tests.test_data_simulator.TestECommerceSimulator" name="test_payday_seasonality" time="0.002" /><testcase classname="tests.test_data_simulator.TestECommerceSimulator" name="test_reverse_logistics_return_restock" time="0.004" /><testcase classname="tests.test_data_simulator.TestECommerceSimulator" name="test_simulator_initialization" time="0.002" /><testcase classname="tests.test_data_simulator.TestECommerceSimulator" name="test_tiktok_livestream_order_type" time="0.014" /><testcase classname="tests.test_deep_learning.TestDeepLearningData" name="test_sliding_window_dimensions" time="0.002" /><testcase classname="tests.test_deep_learning.TestDeepLearningTrainer" name="test_predict_non_negative_constraint" time="0.002" /><testcase classname="tests.test_deep_learning.TestDeepLearningTrainer" name="test_trainer_initialization" time="0.005" /><testcase classname="tests.test_deep_learning.TestModelRegistry" name="test_register_model_manifest" time="0.041" /><testcase classname="tests.test_deep_learning.TestModelRegistry" name="test_register_without_runs_writes_nothing" time="0.043" /><testcase classname="tests.test_demo_web.DemoDataTests" name="test_fixture_passes_real_transform_and_quarantines_only_injected_error" time="0.363" /><testcase classname="tests.test_demo_web.ConsoleTests" name="test_ack_failure_does_not_increment_count_and_is_persisted" time="0.025" /><testcase classname="tests.test_demo_web.ConsoleTests" name="test_concurrent_batches_are_rejected" time="0.006" /><testcase classname="tests.test_demo_web.ConsoleTests" name="test_count_bounds_are_enforced_before_any_publish" time="0.007" /><testcase classname="tests.test_demo_web.ConsoleTests" name="test_new_run_never_displays_previous_run_evidence" time="0.006" /><testcase classname="tests.test_demo_web.ConsoleTests" name="test_replay_preserves_payload_and_records_complete_baseline" time="0.012" /><testcase classname="tests.test_demo_web.ConsoleTests" name="test_restart_marks_unfinished_publish_as_interrupted" time="0.011" /><testcase classname="tests.test_demo_web.ConsoleTests" name="test_stop_keeps_acknowledged_records" time="0.017" /><testcase classname="tests.test_demo_web.HttpContractTests" name="test_assets_and_report_work_without_pipeline_and_hide_token" time="4.603"><failure message="urllib.error.URLError: &lt;urlopen error [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions&gt;">..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:1344: in do_open
+    h.request(req.get_method(), req.selector, req.data, headers,
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1386: in request
+    self._send_request(method, url, body, headers, encode_chunked)
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1432: in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1381: in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1141: in _send_output
+    self.send(msg)
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1085: in send
+    self.connect()
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1051: in connect
+    self.sock = self._create_connection(
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\socket.py:865: in create_connection
+    raise exceptions[0]
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\socket.py:850: in create_connection
+    sock.connect(sa)
+E   PermissionError: [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions
+
+During handling of the above exception, another exception occurred:
+tests\test_demo_web.py:145: in test_assets_and_report_work_without_pipeline_and_hide_token
+    with self.subTest(path=path), self.request(path) as response:
+                                  ^^^^^^^^^^^^^^^^^^
+tests\test_demo_web.py:140: in request
+    return urlopen(Request(self.base + path, data=json.dumps(data).encode() if data is not None else None,
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:215: in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:515: in open
+    response = self._open(req, data)
+               ^^^^^^^^^^^^^^^^^^^^^
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:532: in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:492: in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:1373: in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:1347: in do_open
+    raise URLError(err)
+E   urllib.error.URLError: &lt;urlopen error [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions&gt;</failure><failure message="urllib.error.URLError: &lt;urlopen error [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions&gt;">..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:1344: in do_open
+    h.request(req.get_method(), req.selector, req.data, headers,
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1386: in request
+    self._send_request(method, url, body, headers, encode_chunked)
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1432: in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1381: in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1141: in _send_output
+    self.send(msg)
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1085: in send
+    self.connect()
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1051: in connect
+    self.sock = self._create_connection(
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\socket.py:865: in create_connection
+    raise exceptions[0]
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\socket.py:850: in create_connection
+    sock.connect(sa)
+E   PermissionError: [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions
+
+During handling of the above exception, another exception occurred:
+tests\test_demo_web.py:145: in test_assets_and_report_work_without_pipeline_and_hide_token
+    with self.subTest(path=path), self.request(path) as response:
+                                  ^^^^^^^^^^^^^^^^^^
+tests\test_demo_web.py:140: in request
+    return urlopen(Request(self.base + path, data=json.dumps(data).encode() if data is not None else None,
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:215: in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:515: in open
+    response = self._open(req, data)
+               ^^^^^^^^^^^^^^^^^^^^^
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:532: in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:492: in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:1373: in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:1347: in do_open
+    raise URLError(err)
+E   urllib.error.URLError: &lt;urlopen error [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions&gt;</failure><failure message="urllib.error.URLError: &lt;urlopen error [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions&gt;">..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:1344: in do_open
+    h.request(req.get_method(), req.selector, req.data, headers,
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1386: in request
+    self._send_request(method, url, body, headers, encode_chunked)
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1432: in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1381: in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1141: in _send_output
+    self.send(msg)
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1085: in send
+    self.connect()
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1051: in connect
+    self.sock = self._create_connection(
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\socket.py:865: in create_connection
+    raise exceptions[0]
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\socket.py:850: in create_connection
+    sock.connect(sa)
+E   PermissionError: [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions
+
+During handling of the above exception, another exception occurred:
+tests\test_demo_web.py:145: in test_assets_and_report_work_without_pipeline_and_hide_token
+    with self.subTest(path=path), self.request(path) as response:
+                                  ^^^^^^^^^^^^^^^^^^
+tests\test_demo_web.py:140: in request
+    return urlopen(Request(self.base + path, data=json.dumps(data).encode() if data is not None else None,
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:215: in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:515: in open
+    response = self._open(req, data)
+               ^^^^^^^^^^^^^^^^^^^^^
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:532: in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:492: in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:1373: in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:1347: in do_open
+    raise URLError(err)
+E   urllib.error.URLError: &lt;urlopen error [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions&gt;</failure><failure message="urllib.error.URLError: &lt;urlopen error [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions&gt;">..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:1344: in do_open
+    h.request(req.get_method(), req.selector, req.data, headers,
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1386: in request
+    self._send_request(method, url, body, headers, encode_chunked)
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1432: in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1381: in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1141: in _send_output
+    self.send(msg)
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1085: in send
+    self.connect()
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1051: in connect
+    self.sock = self._create_connection(
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\socket.py:865: in create_connection
+    raise exceptions[0]
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\socket.py:850: in create_connection
+    sock.connect(sa)
+E   PermissionError: [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions
+
+During handling of the above exception, another exception occurred:
+tests\test_demo_web.py:145: in test_assets_and_report_work_without_pipeline_and_hide_token
+    with self.subTest(path=path), self.request(path) as response:
+                                  ^^^^^^^^^^^^^^^^^^
+tests\test_demo_web.py:140: in request
+    return urlopen(Request(self.base + path, data=json.dumps(data).encode() if data is not None else None,
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:215: in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:515: in open
+    response = self._open(req, data)
+               ^^^^^^^^^^^^^^^^^^^^^
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:532: in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:492: in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:1373: in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:1347: in do_open
+    raise URLError(err)
+E   urllib.error.URLError: &lt;urlopen error [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions&gt;</failure><failure message="urllib.error.URLError: &lt;urlopen error [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions&gt;">..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:1344: in do_open
+    h.request(req.get_method(), req.selector, req.data, headers,
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1386: in request
+    self._send_request(method, url, body, headers, encode_chunked)
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1432: in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1381: in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1141: in _send_output
+    self.send(msg)
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1085: in send
+    self.connect()
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py:1051: in connect
+    self.sock = self._create_connection(
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\socket.py:865: in create_connection
+    raise exceptions[0]
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\socket.py:850: in create_connection
+    sock.connect(sa)
+E   PermissionError: [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions
+
+During handling of the above exception, another exception occurred:
+tests\test_demo_web.py:145: in test_assets_and_report_work_without_pipeline_and_hide_token
+    with self.subTest(path=path), self.request(path) as response:
+                                  ^^^^^^^^^^^^^^^^^^
+tests\test_demo_web.py:140: in request
+    return urlopen(Request(self.base + path, data=json.dumps(data).encode() if data is not None else None,
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:215: in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:515: in open
+    response = self._open(req, data)
+               ^^^^^^^^^^^^^^^^^^^^^
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:532: in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:492: in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:1373: in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py:1347: in do_open
+    raise URLError(err)
+E   urllib.error.URLError: &lt;urlopen error [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions&gt;</failure></testcase></testsuite></testsuites>

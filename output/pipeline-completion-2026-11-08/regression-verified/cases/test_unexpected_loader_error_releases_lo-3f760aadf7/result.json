@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_model_recovery.py::test_unexpected_loader_error_releases_lock_and_schedules_retry",
+  "file": "cases\\test_unexpected_loader_error_releases_lo-3f760aadf7",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00015899993013590574,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.001415099948644638,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "ERROR    mlops.serving.model_loader:model_loader.py:159 Nạp ứng viên model thất bại; giữ nguyên trạng thái đang phục vụ.\nTraceback (most recent call last):\n  File \"C:\\Users\\MINH\\Đếm ngày xa trường\\temp-extract\\streaming-mlops-ecommerce\\tests\\..\\serving\\app\\model_loader.py\", line 157, in _load_model_locked\n    candidate._load_model_candidate()\n  File \"C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1105-1297-0_26.1105.1297.0_x64__3k8sg7r9htsxt\\dependencies\\python\\Lib\\unittest\\mock.py\", line 1139, in __call__\n    return self._mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1105-1297-0_26.1105.1297.0_x64__3k8sg7r9htsxt\\dependencies\\python\\Lib\\unittest\\mock.py\", line 1143, in _mock_call\n    return self._execute_mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1105-1297-0_26.1105.1297.0_x64__3k8sg7r9htsxt\\dependencies\\python\\Lib\\unittest\\mock.py\", line 1198, in _execute_mock_call\n    raise effect\nRuntimeError: transient\nWARNING  mlops.serving.model_loader:model_loader.py:185 Chưa có model ML; thử lại sau 5.0 giây."
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00019560009241104126,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "ERROR    mlops.serving.model_loader:model_loader.py:159 Nạp ứng viên model thất bại; giữ nguyên trạng thái đang phục vụ.\nTraceback (most recent call last):\n  File \"C:\\Users\\MINH\\Đếm ngày xa trường\\temp-extract\\streaming-mlops-ecommerce\\tests\\..\\serving\\app\\model_loader.py\", line 157, in _load_model_locked\n    candidate._load_model_candidate()\n  File \"C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1105-1297-0_26.1105.1297.0_x64__3k8sg7r9htsxt\\dependencies\\python\\Lib\\unittest\\mock.py\", line 1139, in __call__\n    return self._mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1105-1297-0_26.1105.1297.0_x64__3k8sg7r9htsxt\\dependencies\\python\\Lib\\unittest\\mock.py\", line 1143, in _mock_call\n    return self._execute_mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1105-1297-0_26.1105.1297.0_x64__3k8sg7r9htsxt\\dependencies\\python\\Lib\\unittest\\mock.py\", line 1198, in _execute_mock_call\n    raise effect\nRuntimeError: transient\nWARNING  mlops.serving.model_loader:model_loader.py:185 Chưa có model ML; thử lại sau 5.0 giây."
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

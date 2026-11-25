@@ -1,9 +1,25 @@
 # Streaming MLOps E-commerce — Dự báo nhu cầu hàng hóa
 
+**Hoàn thiện pipeline 08/11/2026:** [134 kiểm thử đạt, schema/backfill/giám sát và đối soát E2E](docs/07-bao-cao-do-an/hoan-thien-pipeline-2026-11-08.md). [Mở kết quả từng bài và dữ liệu JSON/CSV](output/pipeline-completion-2026-11-08/Ket_qua_kiem_thu.html). Backfill dry-run/apply/replay trên đúng hai object giữ nguyên nội dung nghiệp vụ; 6 ca rule cảnh báo đạt và đã nhận cảnh báo thật ở receiver nội bộ. Model giữ nguyên; Power BI do sinh viên tự hoàn thiện. [Báo cáo Word mới](output/docx/Bao_cao_DATN_Dinh_Cong_Minh_2026-11-08_pipeline.docx).
+
+**Mục tiêu đồ án được xác nhận 08/11/2026:** ưu tiên pipeline dữ liệu end-to-end đúng, có kiểm soát chất lượng, chống trùng, phục hồi và truy vết; ML là nhánh tiêu thụ dữ liệu minh họa MLOps. [Đối chiếu đủ 29 câu hỏi pipeline](docs/07-bao-cao-do-an/doi-chieu-29-cau-hoi-pipeline-2026-11-08.md) phân biệt phần đã kiểm chứng, phần còn thiếu và các công nghệ ngoài phạm vi. WAPE cao giới hạn ứng dụng dự báo, không tự phủ định việc pipeline chạy đúng.
+
+**Kiểm tra dữ liệu và dự báo (08/11/2026):** [CSV gốc, nhu cầu thưa và thử nghiệm mô hình](docs/07-bao-cao-do-an/cai-thien-du-bao-2026-11-08.md). Hai CSV khớp fingerprint, tái dựng nhãn không lệch. Hurdle có WAPE hồi cứu 96,73% nhưng thiếu tổng lượng 65,86%; lựa chọn lồng nhau đạt 102,15%. 124 kiểm thử đạt, 1 PostgreSQL opt-in bỏ qua. Ứng viên chưa được triển khai; [báo cáo Word cập nhật](output/docx/Bao_cao_DATN_Dinh_Cong_Minh_2026-11-08.docx).
+
+**Khắc phục theo cẩm nang (07/11/2026):** [Baseline, WAPE gộp, holdout và cập nhật báo cáo](docs/07-bao-cao-do-an/khac-phuc-cam-nang-2026-11-07.md). Đánh giá offline giữ nguyên model đang phục vụ; kết quả chất lượng và những yêu cầu chưa đóng được công bố riêng.
+
+**Schema warehouse hiện hành (01/11/2026):** [Bảng gốc và schema báo cáo `bi`](warehouse/README.md).
+Power BI dựng mới dùng fact chi tiết `bi.fact_order_line` để lọc đúng theo sản phẩm/shop/địa lý.
+Các view tổng hợp public và CSV cũ được giữ tương thích, không phải mô hình đích cho PBIX mới.
+
 Đồ án tốt nghiệp: Xây dựng kiến trúc hạ tầng dữ liệu luồng (Streaming Pipeline) và MLOps
 phục vụ dự báo nhu cầu hàng hóa trong Thương mại điện tử.
 
-**Vận hành liên tục (20/10/2026):** `docker compose up -d --build` khởi động thêm `pipeline-worker`, tự chạy consumer → ETL theo object mới → xuất CSV Power BI và lưu checkpoint. [Báo cáo sửa lỗi end-to-end, cách kiểm tra và giới hạn còn lại](docs/04-pipeline-updates/lan-09-on-dinh-end-to-end-2026-10-20.md).
+**Phạm vi final từ 01/11/2026:** tập trung luồng Python end-to-end và phục hồi lỗi vận hành.
+NiFi đã tách sang `docker-compose.nifi.yml`, không chạy mặc định và không thuộc tiêu chí nghiệm thu.
+Xem [hướng dẫn luồng chính và xử lý sự cố](docs/05-how-to-run/core-pipeline.md).
+
+**Vận hành hiện hành (01/11/2026):** `docker compose up -d --build` chạy `pipeline-worker`, tự chạy consumer → ETL theo object mới → PostgreSQL và lưu checkpoint. [Power BI dùng PostgreSQL Import](powerbi/import/README.md); CSV là tác vụ dự phòng riêng, lỗi xuất CSV không chặn worker. [Báo cáo sửa lỗi trước đây](docs/04-pipeline-updates/lan-09-on-dinh-end-to-end-2026-10-20.md) giữ nguyên phạm vi lịch sử.
 
 ## 1. Mục tiêu dự án
 
@@ -76,7 +92,6 @@ streaming-mlops-ecommerce/
 | Model Serving | FastAPI |
 | Giám sát hạ tầng | Prometheus + Grafana |
 | Giám sát Data Drift | Evidently AI |
-| Trực quan hóa Dataflow | Apache NiFi |
 | BI/Báo cáo | Microsoft Power BI |
 
 ## 5. Lộ trình thực hiện (10 tuần)
@@ -118,11 +133,11 @@ docker compose up -d postgres
 python scripts/init_warehouse.py
 
 # Khởi động các hạ tầng còn lại
-docker compose up -d --build zookeeper kafka minio mlflow nifi prometheus grafana
+docker compose up -d --build
 docker compose ps
 ```
 
-Producer, hai Kafka consumer, ETL, huấn luyện và đăng ký model chạy riêng trên host. Xem [hướng dẫn nghiệm thu end-to-end](docs/05-how-to-run/how-to-run-week10.md) để chạy đúng thứ tự. `/health` xác nhận tiến trình API còn sống; `/ready` chỉ trả HTTP 200 khi model ML và lịch sử warehouse sẵn sàng.
+`pipeline-worker` tự chạy hai Kafka consumer và ETL. Power BI Import đọc trực tiếp PostgreSQL sau Refresh. CSV dự phòng chạy riêng bằng `docker compose --profile backup run --rm csv-backup`. Producer và training/đăng ký model là tác vụ riêng; không chạy thêm consumer/ETL thủ công cùng worker. Xem [hướng dẫn luồng chính](docs/05-how-to-run/core-pipeline.md). `/health` xác nhận tiến trình API còn sống; `/ready` chỉ trả HTTP 200 khi model ML và lịch sử warehouse sẵn sàng.
 
 Hướng dẫn chi tiết từng bước cho từng giai đoạn:
 - Tuần 2 (Hạ tầng Docker & Kafka): xem [docs/05-how-to-run/how-to-run-week2.md](docs/05-how-to-run/how-to-run-week2.md).

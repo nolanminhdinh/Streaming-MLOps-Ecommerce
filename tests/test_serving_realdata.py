@@ -88,6 +88,25 @@ class FakeRepository:
     def get_latest_stock(self):
         return self.stocks
 
+    def get_stock_for_skus(self, skus):
+        return {sku: self.stocks[sku] for sku in skus if sku in self.stocks}
+
+
+class StaleCacheRepository(FakeRepository):
+    """Cache toàn bảng được tạo trước khi SKU mới vào kho; kho thật đã có snapshot."""
+
+    def __init__(self, daily, cached, warehouse):
+        super().__init__(daily, warehouse)
+        self.cached = cached
+        self.direct_lookups = []
+
+    def get_latest_stock(self):
+        return self.cached
+
+    def get_stock_for_skus(self, skus):
+        self.direct_lookups.append(sorted(skus))
+        return super().get_stock_for_skus(skus)
+
 
 class TestOnlineFeatureParity(unittest.TestCase):
 
@@ -202,6 +221,26 @@ class TestServingWithWarehouseHistory(unittest.TestCase):
 
         no_snapshot = svc.evaluate_sku("SKU-LOW", lead_time_days=3)
         self.assertEqual(no_snapshot.stock_source, "simulated_demo")
+
+    def test_inventory_rereads_warehouse_when_cache_misses_new_sku(self):
+        """Hồi quy 15/11/2026: SKU mới chưa có trong cache không được trả tồn kho giả lập."""
+        repo = StaleCacheRepository(self.daily, cached={"SKU-HIGH": {"stock_on_hand": 5, "as_of": "2026-01-01"}},
+                                    warehouse={"SKU-HIGH": {"stock_on_hand": 5, "as_of": "2026-01-01"},
+                                               "SKU-MID": {"stock_on_hand": 249, "as_of": "2026-01-02"}})
+        data_access.set_repository(repo)
+        try:
+            svc = InventoryService.__new__(InventoryService)
+            svc.model_manager = self.manager
+            result = svc.evaluate_all(skus=["SKU-HIGH", "SKU-MID", "SKU-LOW"], custom_stocks={"SKU-LOW": 7})
+            by_sku = {item.sku: item for item in result.alerts}
+            self.assertEqual(by_sku["SKU-MID"].current_stock, 249)
+            self.assertEqual(by_sku["SKU-MID"].stock_source, "warehouse_snapshot:2026-01-02")
+            self.assertEqual(by_sku["SKU-LOW"].stock_source, "request")
+            # Chỉ tra trực tiếp SKU thiếu trong cache, không tra SKU có số do request gửi lên.
+            self.assertEqual(repo.direct_lookups, [["SKU-MID"]])
+            self.assertEqual(svc.evaluate_sku("SKU-MID", lead_time_days=3).current_stock, 249)
+        finally:
+            data_access.set_repository(self.repo)
 
 
 class TestFallbackIsExplicit(unittest.TestCase):

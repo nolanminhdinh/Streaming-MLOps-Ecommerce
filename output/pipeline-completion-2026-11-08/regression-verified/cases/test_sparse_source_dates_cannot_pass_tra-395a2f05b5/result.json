@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_runtime_integrity_fixes.py::test_sparse_source_dates_cannot_pass_training_gate",
+  "file": "cases\\test_sparse_source_dates_cannot_pass_tra-395a2f05b5",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00036559998989105225,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.01619550003670156,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00022219994571059942,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

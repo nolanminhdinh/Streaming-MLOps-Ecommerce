@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_runtime_integrity_fixes.py::test_postgres_rejects_stale_order_and_inventory_and_extends_calendar",
+  "file": "cases\\test_postgres_rejects_stale_order_and_in-2bf670cf59",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00034010002855211496,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.1821087000425905,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0004988000728189945,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

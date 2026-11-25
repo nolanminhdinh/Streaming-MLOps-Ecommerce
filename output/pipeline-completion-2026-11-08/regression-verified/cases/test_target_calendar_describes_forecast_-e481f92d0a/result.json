@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_features.py::TestTimeSeriesFeatures::test_target_calendar_describes_forecast_day",
+  "file": "cases\\test_target_calendar_describes_forecast_-e481f92d0a",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0002489000326022506,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.019894100027158856,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00021730002481490374,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

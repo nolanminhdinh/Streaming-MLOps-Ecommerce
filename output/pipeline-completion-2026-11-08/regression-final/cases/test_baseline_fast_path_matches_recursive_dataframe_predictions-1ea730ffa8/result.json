@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_order_line_integrity.py::test_baseline_fast_path_matches_recursive_dataframe_predictions",
+  "file": "cases\\test_baseline_fast_path_matches_recursive_dataframe_predictions-1ea730ffa8",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00020960008259862661,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.07032729999627918,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0004724999889731407,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

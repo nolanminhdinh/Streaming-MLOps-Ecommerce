@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_pipeline_integrity.py::test_empty_warehouse_does_not_publish_powerbi_csvs",
+  "file": "cases\\test_empty_warehouse_does_not_publish_po-769e6badcc",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0015918000135570765,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.01027940004132688,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00021440000273287296,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

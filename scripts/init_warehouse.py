@@ -18,6 +18,8 @@ import os
 import sys
 import time
 
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import OperationalError
@@ -121,6 +123,15 @@ def init_warehouse(drop_first: bool = False):
         logger.info("Thực thi script DDL 01_star_schema.sql...")
         # PostgreSQL thực thi toàn bộ script trong 1 khối
         conn.execute(text(ddl_sql))
+        from pathlib import Path
+        from powerbi.export_powerbi_dataset import _install_views
+        from warehouse.reporting.install import install_bi_schema
+        integrity = Path(ddl_path).with_name('04_integrity_constraints.sql')
+        conn.exec_driver_sql(integrity.read_text(encoding='utf-8'))
+        _install_views(conn)
+        install_bi_schema(conn)
+        from warehouse.reporting.mart import install_mart
+        install_mart(conn)   # star schema mart; dữ liệu nạp ở lần mart.refresh() đầu tiên (worker)
 
     ensure_mlflow_database(engine)
 

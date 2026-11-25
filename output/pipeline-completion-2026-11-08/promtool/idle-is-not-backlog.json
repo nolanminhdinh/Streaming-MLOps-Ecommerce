@@ -1,0 +1,41 @@
+{
+  "case": "idle-is-not-backlog",
+  "status": "PASS",
+  "inputs": {
+    "pending_objects": 0,
+    "oldest_pending_seconds": 999
+  },
+  "expected_firing": false,
+  "exit_code": 0,
+  "stdout": "Unit Testing:  /tmp/idle-is-not-backlog.yml\n  SUCCESS\n\n",
+  "stderr": "",
+  "specification": {
+    "rule_files": [
+      "/etc/prometheus/alert_rules.yml"
+    ],
+    "evaluation_interval": "15s",
+    "tests": [
+      {
+        "name": "idle-is-not-backlog",
+        "interval": "15s",
+        "input_series": [
+          {
+            "series": "ecommerce_pipeline_pending_objects{instance=\"acceptance\"}",
+            "values": "0+0x12"
+          },
+          {
+            "series": "ecommerce_pipeline_oldest_pending_seconds{instance=\"acceptance\"}",
+            "values": "999+0x12"
+          }
+        ],
+        "alert_rule_test": [
+          {
+            "eval_time": "2m",
+            "alertname": "EcommercePipelineBacklogTooOld",
+            "exp_alerts": []
+          }
+        ]
+      }
+    ]
+  }
+}

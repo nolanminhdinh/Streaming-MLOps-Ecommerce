@@ -57,9 +57,10 @@ class TestMetrics(unittest.TestCase):
         y_pred = [1.0, 2.0, 0.0]
 
         metrics = calculate_all_metrics(y_true, y_pred)
-        self.assertIsInstance(metrics["wape"], float)
+        self.assertIsNone(metrics["wape"])
         self.assertIsInstance(metrics["mape"], float)
-        self.assertEqual(metrics["wape"], 0.0)
+        self.assertIsNone(metrics["bias"])
+        self.assertEqual(metrics["mae"], 1.0)
 
     def test_forecast_bias(self):
         """Kiểm tra đo lường độ thiên lệch dự báo (Bias)."""
@@ -73,8 +74,8 @@ class TestMetrics(unittest.TestCase):
 
 class TestBaselineModels(unittest.TestCase):
 
-    def test_naive_model_dictionary_input(self):
-        """Kiểm tra NaiveModel dự báo đúng theo lag_1."""
+    def test_naive_model_uses_latest_observation(self):
+        """Dự báo t+1 lặp lại y[t], không dùng y[t-1]."""
         if not HAS_ML_DEPS:
             self.skipTest("Cần cài đặt dependencies (chạy trong .venv)")
 
@@ -83,7 +84,7 @@ class TestBaselineModels(unittest.TestCase):
             def columns(self):
                 return list(self.keys())
 
-        mock_df = MockDataFrame({"lag_1": type("MockSeries", (), {"fillna": lambda s, v: type("M", (), {"values": [5.0, 12.0, 8.0]})()})()})
+        mock_df = MockDataFrame({"daily_demand": type("MockSeries", (), {"fillna": lambda s, v: type("M", (), {"values": [5.0, 12.0, 8.0]})()})()})
         model = NaiveModel()
         preds = model.predict(mock_df)
         self.assertEqual(list(preds), [5.0, 12.0, 8.0])

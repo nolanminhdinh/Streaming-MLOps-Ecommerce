@@ -37,7 +37,7 @@
       <section class="card run-card"><div class="card-heading"><h2>Đợt demo hiện tại</h2><a class="text-link" href="/api/report" download>Tải bằng chứng ↓</a></div><div class="run-id" id="run-id">Chưa có đợt demo</div><p id="run-message" class="secondary">Bấm “Phát đợt mới” để bắt đầu.</p><div class="metrics compact" id="run-metrics"></div><div id="run-progress" class="progress-steps"></div><div id="replay-note"></div></section></div>
       <div class="two-columns"><section class="card"><div class="card-heading"><div><h2>Nhật ký Kafka ACK</h2><p>Partition và offset do broker trả về.</p></div><span id="ack-count" class="pill light">0</span></div><div class="scroll-area"><table><thead><tr><th>Mã bản tin</th><th>Luồng</th><th>Partition / Offset</th></tr></thead><tbody id="ack-rows"></tbody></table></div></section><section class="card"><div class="card-heading"><div><h2>Đơn đã vào Warehouse</h2><p>Đọc trực tiếp Fact_Orders theo tiền tố đợt.</p></div><span id="warehouse-count" class="pill light">—</span></div><div class="scroll-area"><table><thead><tr><th>Mã đơn</th><th>Sàn</th><th>SL</th><th>Trạng thái</th></tr></thead><tbody id="warehouse-rows"></tbody></table></div></section></div>
       <div class="two-columns"><section class="card"><div class="card-heading"><h2>Bằng chứng Data Lake & ETL</h2></div><div id="lake-evidence"></div></section><section class="card"><div class="card-heading"><h2>Bản tin bị cách ly</h2><span class="pill amber">Data quality</span></div><div id="quarantine-evidence"></div></section></div>
-      <section class="card"><div class="card-heading"><div><h2>Tồn kho & dữ liệu báo cáo</h2><p>Snapshot đọc từ PostgreSQL. Thời gian CSV lấy từ tệp xuất thực tế.</p></div></div><div class="two-columns flush"><div id="stock-evidence"></div><div id="csv-evidence"></div></div></section>
+      <section class="card"><div class="card-heading"><div><h2>Tồn kho & dữ liệu báo cáo</h2><p>Power BI Import đọc PostgreSQL. CSV hiển thị bên dưới chỉ là snapshot dự phòng.</p></div></div><div class="two-columns flush"><div id="stock-evidence"></div><div id="csv-evidence"></div></div></section>
     </section>
 
     <section class="view" id="view-forecast" hidden>
@@ -59,7 +59,7 @@
       </div>
       <div class="scenario-status"><span class="tiny-dot"></span><span id="scenario-current-sku">SKU tồn kho: chưa chọn</span><span>Truy vấn tồn kho giả định không ghi vào Warehouse.</span></div>
     </section>
-    <footer><span>FLOWLAB <span class="footer-separator">/</span> Streaming MLOps E-commerce</span><div id="tool-links"><a href="http://localhost:8080/nifi/" target="_blank" rel="noopener">NiFi ↗</a><a href="http://localhost:5000" target="_blank" rel="noopener">MLflow ↗</a><a href="http://localhost:3000" target="_blank" rel="noopener">Grafana ↗</a><a href="http://localhost:9001" target="_blank" rel="noopener">MinIO ↗</a><a href="http://localhost:8000/docs" target="_blank" rel="noopener">API ↗</a></div></footer>
+    <footer><span>FLOWLAB <span class="footer-separator">/</span> Streaming MLOps E-commerce</span><div id="tool-links"><a href="http://localhost:5000" target="_blank" rel="noopener">MLflow ↗</a><a href="http://localhost:3000" target="_blank" rel="noopener">Grafana ↗</a><a href="http://localhost:9001" target="_blank" rel="noopener">MinIO ↗</a><a href="http://localhost:8000/docs" target="_blank" rel="noopener">API ↗</a></div></footer>
   </div>
 </main>
 <div id="toast" role="status" aria-live="polite" hidden></div>

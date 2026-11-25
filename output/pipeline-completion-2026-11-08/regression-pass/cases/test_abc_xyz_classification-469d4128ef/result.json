@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_features.py::TestABCXYZClassifier::test_abc_xyz_classification",
+  "file": "cases\\test_abc_xyz_classification-469d4128ef",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0007242999272421002,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.038750600069761276,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0002695999573916197,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

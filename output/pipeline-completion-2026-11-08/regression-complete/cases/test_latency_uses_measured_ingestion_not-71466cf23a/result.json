@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_pipeline_completion.py::test_latency_uses_measured_ingestion_not_business_date",
+  "file": "cases\\test_latency_uses_measured_ingestion_not-71466cf23a",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0001884999219328165,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.005258699995465577,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00019829999655485153,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

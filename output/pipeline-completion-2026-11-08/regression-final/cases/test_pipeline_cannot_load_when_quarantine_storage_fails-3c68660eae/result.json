@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_order_line_integrity.py::test_pipeline_cannot_load_when_quarantine_storage_fails",
+  "file": "cases\\test_pipeline_cannot_load_when_quarantine_storage_fails-3c68660eae",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00021749990992248058,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.042861999943852425,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00047119997907429934,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

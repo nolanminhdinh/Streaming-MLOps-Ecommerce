@@ -1,0 +1,31 @@
+{
+  "status": "WAITING_FOR_USER_QUERY_PERMISSIONS",
+  "original_pbix": "powerbi/Report_PowerBI.pbix",
+  "working_copy": "powerbi/Report_PowerBI_Postgres.pbix",
+  "original_file_preserved": true,
+  "ui_observed": {
+    "report_pages": 1,
+    "inventory_cards": 5,
+    "power_query_tables": ["Dim_Geography", "Dim_Products", "Fact_Orders_Summary", "Forecast_vs_Actual", "Inventory_Health_Alerts"]
+  },
+  "pending_query_changes_in_power_query_editor": {
+    "source": "PostgreSQL.Database",
+    "server": "localhost:5432",
+    "database": "ecom_warehouse",
+    "table_names_preserved": true,
+    "native_query_permission_required": true,
+    "applied_to_model": false,
+    "saved_to_disk": false
+  },
+  "warehouse_inventory_baseline": {
+    "critical_sku_count": 4,
+    "normal_sku_count": 30,
+    "warning_sku_count": 4,
+    "total_current_stock": 9306,
+    "total_recommended_reorder_qty": 2670,
+    "read_only_transaction": true,
+    "note": "Snapshot before Power BI Refresh; totals may change if source facts change."
+  },
+  "powerbi_desktop_refresh_verified": false,
+  "visual_values_reconciled": false
+}

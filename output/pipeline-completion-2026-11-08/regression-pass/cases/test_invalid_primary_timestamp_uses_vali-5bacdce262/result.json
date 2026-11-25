@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_ingestion.py::test_invalid_primary_timestamp_uses_valid_alternative",
+  "file": "cases\\test_invalid_primary_timestamp_uses_vali-5bacdce262",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00026240001898258924,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.01579860004130751,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00044219999108463526,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

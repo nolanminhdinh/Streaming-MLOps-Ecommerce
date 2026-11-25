@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_warehouse_schema_v2.py::test_database_rejects_negative_and_per_shop_central_stock",
+  "file": "cases\\test_database_rejects_negative_and_per_s-d0010763ff",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.1184217999689281,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.010700699989683926,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.002696300041861832,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

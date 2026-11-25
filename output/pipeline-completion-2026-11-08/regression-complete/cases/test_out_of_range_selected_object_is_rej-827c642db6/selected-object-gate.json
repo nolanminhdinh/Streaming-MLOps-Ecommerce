@@ -1,0 +1,13 @@
+{
+  "test": "tests/test_pipeline_completion.py::test_out_of_range_selected_object_is_rejected_before_io",
+  "name": "selected-object-gate",
+  "inputs": [
+    "raw/orders/platform=shopee/year=2026/month=10/day=13/acceptance.parquet"
+  ],
+  "expected": {
+    "etl_calls": 0
+  },
+  "actual": {
+    "etl_calls": 0
+  }
+}

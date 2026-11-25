@@ -1,0 +1,13 @@
+{
+  "test": "tests/test_pipeline_completion_postgres.py::test_real_backfill_dry_run_apply_replay_and_old_version_guard",
+  "name": "database-cleanup",
+  "inputs": {
+    "schema": "pipeline_acceptance_309f0c05c664"
+  },
+  "expected": {
+    "schemas_remaining": 0
+  },
+  "actual": {
+    "schemas_remaining": 0
+  }
+}

@@ -25,7 +25,7 @@ import math
 from datetime import date, timedelta
 from typing import Any, Dict, List, Optional, Sequence
 
-DEFAULT_LAGS = [1, 2, 3, 7, 14, 21, 28]
+DEFAULT_LAGS = [1, 2, 3, 6, 7, 14, 21, 28]
 DEFAULT_ROLLING_WINDOWS = [7, 14, 28]
 DEFAULT_EMA_SPANS = [7, 14]
 

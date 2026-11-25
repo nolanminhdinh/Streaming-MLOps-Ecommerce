@@ -1,0 +1,41 @@
+{
+  "case": "volume-reference-warming-up",
+  "status": "PASS",
+  "inputs": {
+    "batch_volume_anomaly": 1,
+    "batch_volume_reference_batches": 5
+  },
+  "expected_firing": false,
+  "exit_code": 0,
+  "stdout": "Unit Testing:  /tmp/volume-reference-warming-up.yml\n  SUCCESS\n\n",
+  "stderr": "",
+  "specification": {
+    "rule_files": [
+      "/etc/prometheus/alert_rules.yml"
+    ],
+    "evaluation_interval": "15s",
+    "tests": [
+      {
+        "name": "volume-reference-warming-up",
+        "interval": "15s",
+        "input_series": [
+          {
+            "series": "ecommerce_pipeline_batch_volume_anomaly{instance=\"acceptance\"}",
+            "values": "1+0x12"
+          },
+          {
+            "series": "ecommerce_pipeline_batch_volume_reference_batches{instance=\"acceptance\"}",
+            "values": "5+0x12"
+          }
+        ],
+        "alert_rule_test": [
+          {
+            "eval_time": "2m",
+            "alertname": "EcommercePipelineBatchVolumeAnomaly",
+            "exp_alerts": []
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "mode": "rehearsal",
+  "status": "REHEARSAL_PASSED_ROLLED_BACK",
+  "checked_at": "2026-11-16T21:47:13.933814+07:00",
+  "blank_shop_keys": [
+    5520
+  ],
+  "facts_on_blank_shop": 61759,
+  "before": {
+    "shopee": [
+      82811,
+      200772,
+      "47477344400.00"
+    ],
+    "tiktok": [
+      63081,
+      147499,
+      "41604624500.00"
+    ]
+  },
+  "after": {
+    "shopee": [
+      82811,
+      200772,
+      "47477344400.00"
+    ],
+    "tiktok": [
+      63081,
+      147499,
+      "41604624500.00"
+    ]
+  },
+  "facts_repointed": 61759,
+  "blank_shop_rows_deleted": 1,
+  "attribution": {
+    "generator_code → MockStore Official Shop": 54181,
+    "raw_lake → DEMO WEB20261104162313c84ab6": 24,
+    "raw_lake → MockStore Official Shop": 3045,
+    "unknown → Không xác định (TikTok, simulator cũ)": 4509
+  },
+  "checks": {
+    "fact_totals_per_platform_unchanged": true,
+    "all_blank_shop_facts_repointed": true,
+    "no_facts_on_blank_tiktok_shop": true,
+    "one_key_per_shop_name": true,
+    "no_orphan_shop_keys": true
+  },
+  "attribution_csv": "output\\shop-consolidation-2026-11-16\\tiktok_shop_attribution_rehearsal.csv"
+}

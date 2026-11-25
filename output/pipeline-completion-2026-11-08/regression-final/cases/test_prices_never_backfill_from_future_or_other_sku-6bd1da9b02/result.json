@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_runtime_integrity_fixes.py::test_prices_never_backfill_from_future_or_other_sku",
+  "file": "cases\\test_prices_never_backfill_from_future_or_other_sku-6bd1da9b02",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00024179997853934765,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.020646000048145652,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00022439996246248484,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

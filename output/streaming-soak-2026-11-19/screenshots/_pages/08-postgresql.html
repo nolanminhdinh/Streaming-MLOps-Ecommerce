@@ -1,0 +1,32 @@
+<!doctype html><meta charset="utf-8"><title>PostgreSQL – kho dữ liệu và data mart</title>
+<style>body{font:14px/1.45 Segoe UI,Arial;margin:24px;background:#fff;color:#1d2433}
+h1{font-size:22px;margin:0 0 4px} .meta{color:#5b6475;margin-bottom:14px}
+h2{font-size:15px;margin:16px 0 6px;color:#24508f}
+pre{background:#f4f6fa;border:1px solid #d9dee8;border-radius:6px;padding:10px;font:12.5px/1.4 Consolas,monospace;
+white-space:pre-wrap;word-break:break-all;margin:0}</style>
+<h1>PostgreSQL – kho dữ liệu và data mart</h1><div class="meta">Kết quả lệnh kiểm tra chạy lúc 20/11/2026 00:17:45 (giờ Việt Nam)</div><h2>Số dòng các bảng chính</h2><pre>bang              | count  
+-------------------------------+--------
+ mart.fact_replenishment_daily |    352
+ Fact_Inventory_Daily          |   6228
+ mart.fact_sales_line          | 162858
+ Fact_Orders                   | 162858
+(4 rows)</pre><h2>10 dòng đơn nạp gần nhất</h2><pre>order_id        | platform | order_status | quantity |        create_time         |         loaded_at         
+------------------------+----------+--------------+----------+----------------------------+---------------------------
+ SPE261119R160042003287 | shopee   | CANCELLED    |        1 | 2026-11-20 00:00:05.816179 | 2026-11-19 17:00:45.99785
+ TT261119R160042003290  | tiktok   | CANCELLED    |        1 | 2026-11-20 00:00:09.001685 | 2026-11-19 17:00:45.99785
+ SPE261119R160042003284 | shopee   | CANCELLED    |        4 | 2026-11-20 00:00:02.611239 | 2026-11-19 17:00:45.99785
+ TT261119R160042003286  | tiktok   | CANCELLED    |        1 | 2026-11-20 00:00:04.749441 | 2026-11-19 17:00:45.99785
+ TT261119R160042003288  | tiktok   | CANCELLED    |        5 | 2026-11-20 00:00:06.876015 | 2026-11-19 17:00:45.99785
+ SPE261119R160042003289 | shopee   | CANCELLED    |        1 | 2026-11-20 00:00:07.93618  | 2026-11-19 17:00:45.99785
+ TT261119R160042003282  | tiktok   | CANCELLED    |        1 | 2026-11-20 00:00:00.483786 | 2026-11-19 17:00:45.99785
+ TT261119R160042003283  | tiktok   | CANCELLED    |        1 | 2026-11-20 00:00:01.550113 | 2026-11-19 17:00:45.99785
+ TT261119R160042003285  | tiktok   | CANCELLED    |        1 | 2026-11-20 00:00:03.670552 | 2026-11-19 17:00:45.99785
+ TT261119R160042003291  | tiktok   | CANCELLED    |        1 | 2026-11-20 00:00:10.065249 | 2026-11-19 17:00:45.99785
+(10 rows)</pre><h2>Số dòng nạp theo phút (10 phút gần nhất)</h2><pre>phut | count 
+------+-------
+(0 rows)</pre><h2>Kết nối đang mở</h2><pre>state  | count 
+--------+-------
+        |     5
+ active |     1
+ idle   |     9
+(3 rows)</pre>

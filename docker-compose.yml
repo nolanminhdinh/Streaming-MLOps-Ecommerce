@@ -1,5 +1,5 @@
 # Đồ án tốt nghiệp: Streaming Pipeline + MLOps cho dự báo nhu cầu TMĐT
-# Toàn bộ stack: Kafka/Zookeeper, MinIO, PostgreSQL, NiFi, MLflow, FastAPI, Prometheus, Grafana.
+# Luồng chính: Kafka/Zookeeper, MinIO, PostgreSQL, worker, MLflow, FastAPI, monitoring.
 # (Khóa `version:` đã bị Docker Compose v2 loại bỏ nên không khai báo nữa.)
 #
 # Cách chạy (Docker Desktop - Windows/Mac):
@@ -14,6 +14,10 @@ services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.6.0
     container_name: zookeeper
+    restart: unless-stopped
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
+      - zookeeper-log:/var/lib/zookeeper/log
     environment:
       ZOOKEEPER_CLIENT_PORT: ${ZOOKEEPER_CLIENT_PORT:-2181}
       ZOOKEEPER_TICK_TIME: 2000
@@ -30,6 +34,9 @@ services:
   kafka:
     image: confluentinc/cp-kafka:7.6.0
     container_name: kafka
+    restart: unless-stopped
+    volumes:
+      - kafka-data:/var/lib/kafka/data
     depends_on:
       zookeeper:
         condition: service_healthy
@@ -43,6 +50,7 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LOG_RETENTION_HOURS: ${KAFKA_LOG_RETENTION_HOURS:-240}
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
     ports:
       - "9092:9092"
@@ -77,6 +85,7 @@ services:
   minio:
     image: minio/minio:latest
     container_name: minio
+    restart: unless-stopped
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
@@ -115,6 +124,7 @@ services:
   postgres:
     image: postgres:16
     container_name: postgres
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-ecom}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ecom_password}
@@ -130,33 +140,7 @@ services:
       timeout: 5s
       retries: 10
     # Bắt buộc cùng mạng ecom-net: thiếu khối này Postgres nằm ở mạng `default`,
-    # MLflow/FastAPI/NiFi (ở ecom-net) sẽ không resolve được hostname `postgres`.
-    networks:
-      - ecom-net
-
-  # --- Luồng Trực quan hóa Dữ liệu (Apache NiFi Canvas) ---
-  nifi:
-    image: apache/nifi:1.26.0
-    container_name: nifi
-    environment:
-      - NIFI_WEB_HTTP_PORT=8080
-      - NIFI_WEB_HTTP_HOST=0.0.0.0
-      - NIFI_WEB_HTTPS_PORT=
-      - NIFI_JVM_HEAP_INIT=1024m
-      - NIFI_JVM_HEAP_MAX=2048m
-      - SINGLE_USER_CREDENTIALS_USERNAME=${NIFI_USERNAME:-admin}
-      - SINGLE_USER_CREDENTIALS_PASSWORD=${NIFI_PASSWORD:-adminadmin1234}
-    ports:
-      - "${NIFI_PORT:-8080}:8080"
-    volumes:
-      - ./ingestion/nifi/ecommerce_streaming_flow.xml:/opt/nifi/nifi-current/conf/templates/ecommerce_streaming_flow.xml:ro
-    depends_on:
-      kafka:
-        condition: service_healthy
-      minio:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
+    # MLflow/FastAPI (ở ecom-net) sẽ không resolve được hostname `postgres`.
     networks:
       - ecom-net
 
@@ -170,6 +154,8 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
     environment:
       # Tách database riêng cho metadata MLflow, không trộn bảng MLflow với Star Schema.
       # Database `mlflow` được tạo bởi warehouse/ddl/00_create_mlflow_db.sql khi khởi tạo volume.
@@ -290,17 +276,19 @@ services:
       KAFKA_TOPIC_INVENTORY: ${KAFKA_TOPIC_INVENTORY:-inventory.logs}
       BUSINESS_TZ: ${BUSINESS_TZ:-Asia/Ho_Chi_Minh}
       CONSUMER_BATCH_TIMEOUT: ${CONSUMER_BATCH_TIMEOUT:-10}
+      MINIO_SECURE: "false"
       PIPELINE_POLL_SECONDS: ${PIPELINE_POLL_SECONDS:-30}
       PIPELINE_OBJECT_BATCH_SIZE: ${PIPELINE_OBJECT_BATCH_SIZE:-100}
     volumes:
       - ./:/workspace:ro
       - ./data:/workspace/data
-      - ./powerbi/data:/workspace/powerbi/data
     depends_on:
       kafka-init:
         condition: service_completed_successfully
       minio:
         condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
       postgres:
         condition: service_healthy
     healthcheck:
@@ -309,6 +297,60 @@ services:
       timeout: 5s
       retries: 3
       start_period: 60s
+    networks:
+      - ecom-net
+
+  # Dự báo theo lô 14 ngày cho SKU đang hoạt động khi có ngày mới được xác nhận đủ dữ liệu hoặc model
+  # đổi phiên bản; gọi API serving nên dùng đúng logic và provenance. Lỗi ở đây không chặn ingestion/ETL.
+  batch-forecaster:
+    build: ./ingestion
+    image: streaming-mlops-ecommerce-pipeline-worker:latest
+    pull_policy: build
+    restart: unless-stopped
+    init: true
+    working_dir: /workspace
+    command: ["python", "scripts/run_batch_forecast.py"]
+    environment:
+      FORECAST_API_BASE: http://fastapi:8000
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      FORECAST_HORIZON_DAYS: ${FORECAST_HORIZON_DAYS:-14}
+      FORECAST_POLL_SECONDS: ${FORECAST_POLL_SECONDS:-900}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-ecom_warehouse}
+      POSTGRES_USER: ${POSTGRES_USER:-ecom}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ecom_password}
+      BUSINESS_TZ: ${BUSINESS_TZ:-Asia/Ho_Chi_Minh}
+    volumes:
+      - ./:/workspace:ro
+      - ./data/forecast:/workspace/data/forecast
+    depends_on:
+      fastapi:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - ecom-net
+
+  # Optional CSV snapshot. Failure never changes the main worker/checkpoint.
+  # docker compose --profile backup run --rm csv-backup
+  csv-backup:
+    build: ./ingestion
+    profiles: ["backup"]
+    working_dir: /workspace
+    command: ["python", "powerbi/export_powerbi_dataset.py", "--no-install-views"]
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-ecom_warehouse}
+      POSTGRES_USER: ${POSTGRES_USER:-ecom}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ecom_password}
+    volumes:
+      - ./:/workspace:ro
+      - ./powerbi/data:/workspace/powerbi/data
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
       - ecom-net
 
@@ -357,6 +399,14 @@ services:
   prometheus:
     image: prom/prometheus:v2.52.0
     container_name: prometheus
+    # Giám sát phải tự chạy lại sau khi Docker khởi động lại; thiếu dòng này cảnh báo ngừng âm thầm (16/11/2026).
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./monitoring/prometheus/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro
@@ -366,9 +416,51 @@ services:
     networks:
       - ecom-net
 
+  alertmanager:
+    image: quay.io/prometheus/alertmanager:v0.27.0
+    container_name: ecom-alertmanager
+    restart: unless-stopped
+    command: ["--config.file=/etc/alertmanager/alertmanager.yml", "--storage.path=/alertmanager"]
+    volumes:
+      - ./monitoring/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager-data:/alertmanager
+    ports:
+      - "127.0.0.1:9093:9093"
+    networks:
+      - ecom-net
+
+  alert-receiver:
+    build: ./ingestion
+    image: streaming-mlops-ecommerce-pipeline-worker:latest
+    pull_policy: build
+    restart: unless-stopped
+    working_dir: /workspace
+    command: ["python", "scripts/local_alert_receiver.py"]
+    environment:
+      ALERT_EVENTS_PATH: /workspace/data/monitoring/alerts.jsonl
+    volumes:
+      - ./:/workspace:ro
+      - ./data/monitoring:/workspace/data/monitoring
+    ports:
+      - "127.0.0.1:9094:9094"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9094/health',timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    networks:
+      - ecom-net
+
   grafana:
     image: grafana/grafana:11.0.0
     container_name: grafana
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     depends_on:
       - prometheus
     environment:
@@ -388,7 +480,11 @@ networks:
     driver: bridge
 
 volumes:
+  kafka-data:
+  zookeeper-data:
+  zookeeper-log:
   minio-data:
   postgres-data:
   prometheus-data:
   grafana-data:
+  alertmanager-data:

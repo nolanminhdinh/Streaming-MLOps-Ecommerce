@@ -1,0 +1,12 @@
+{
+  "test": "tests/test_pipeline_completion_postgres.py::test_real_backfill_dry_run_apply_replay_and_old_version_guard",
+  "name": "database-isolation",
+  "inputs": {
+    "schema": "pipeline_acceptance_bac6cccbeae3",
+    "public_facts_written": false
+  },
+  "expected": "rollback-only schema",
+  "actual": {
+    "schema": "pipeline_acceptance_bac6cccbeae3"
+  }
+}

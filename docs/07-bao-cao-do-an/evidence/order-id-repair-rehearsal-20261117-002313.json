@@ -1,0 +1,58 @@
+{
+  "mode": "rehearsal",
+  "status": "PASS",
+  "checked_at": "2026-11-17T00:23:13.690283+07:00",
+  "raw_lake": {
+    "rows": 20272,
+    "rejected_rows": 76,
+    "shared_order_ids": 159,
+    "distinct_orders_behind_shared_ids": 358,
+    "shared_ids_by_prefix": {
+      "SPE261116": 80,
+      "TT2611160": 65,
+      "SPE261006": 8,
+      "TT2610060": 6
+    }
+  },
+  "expected_after": {
+    "orders": 358,
+    "lines": 358,
+    "units": 723,
+    "amount": "165626560.0"
+  },
+  "before": {
+    "affected": {
+      "orders": 159,
+      "lines": 340,
+      "units": 678,
+      "amount": "157946470.00"
+    },
+    "fact_orders": {
+      "lines": 157901,
+      "units": 377710,
+      "amount": "96134756720.00"
+    }
+  },
+  "after": {
+    "affected": {
+      "orders": 358,
+      "lines": 358,
+      "units": 723,
+      "amount": "165626560.00"
+    },
+    "fact_orders": {
+      "lines": 157919,
+      "units": 377755,
+      "amount": "96142436810.00"
+    },
+    "deleted_lines": 340,
+    "loaded_lines": 358
+  },
+  "checks": {
+    "every_raw_order_restored": true,
+    "lines_match_raw": true,
+    "units_match_raw": true,
+    "amount_matches_raw": true,
+    "no_other_fact_changed": true
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "nodeid": "tests/test_runtime_integrity_fixes.py::test_inventory_request_rejects_invalid_business_parameters[updates4]",
+  "file": "cases\\test_inventory_request_rejects_invalid_business_parameters-updates4--736bef7a06",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00028799998108297586,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.00024149997625499964,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00029770005494356155,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "updates": {
+      "current_stocks": {
+        "A": -3
+      }
+    }
+  },
+  "outcome": "passed"
+}

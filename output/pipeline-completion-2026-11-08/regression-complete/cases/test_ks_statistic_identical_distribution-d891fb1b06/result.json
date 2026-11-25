@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_monitoring.py::TestStatisticalDriftFunctions::test_ks_statistic_identical_distributions",
+  "file": "cases\\test_ks_statistic_identical_distribution-d891fb1b06",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0003627999685704708,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.00025779998395591974,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00016599998343735933,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

@@ -100,14 +100,21 @@ def prepare_snapshots(records: list[dict]) -> pd.DataFrame:
     ts = pd.to_datetime(df["loaded_at"], format="mixed", errors="coerce", utc=True)
     if ts.isna().any() or df["sku"].isna().any() or df["sku"].astype(str).str.strip().eq("").any():
         raise ValueError("Inventory snapshot has invalid sku or loaded_at; offset must not be committed")
-    for column in ("stock_on_hand", "safety_stock", "reorder_point"):
+    for column in ("stock_on_hand", "safety_stock", "reorder_point", "incoming_stock", "lead_time_days"):
         if column in df:
             numbers = pd.to_numeric(df[column], errors="coerce")
             supplied = df[column].notna() if column != "stock_on_hand" else pd.Series(True, index=df.index)
             invalid = numbers.isna() | (numbers < 0) | (numbers > 2_147_483_647) | (numbers % 1 != 0)
+            if column == "lead_time_days":
+                invalid = invalid | (numbers < 1)
             if (supplied & invalid).any():
                 raise ValueError(f"Invalid nonnegative integer inventory field: {column}")
             df[column] = numbers
+    if "restock_eta" in df:
+        eta = pd.to_datetime(df["restock_eta"], format="mixed", errors="coerce", utc=True)
+        if (df["restock_eta"].notna() & eta.isna()).any():
+            raise ValueError("Invalid inventory restock_eta")
+        df["restock_eta"] = eta
     df["snapshot_ts"] = ts.dt.tz_convert(BUSINESS_TZ)
     df["snapshot_date"] = df["snapshot_ts"].dt.date
 
@@ -143,6 +150,9 @@ def upsert_inventory(engine, df: pd.DataFrame) -> int:
             "stock": int(r.get("stock_on_hand") or 0),
             "ss": int(r["safety_stock"]) if pd.notna(r.get("safety_stock")) else None,
             "rop": int(r["reorder_point"]) if pd.notna(r.get("reorder_point")) else None,
+            "lead": int(r["lead_time_days"]) if pd.notna(r.get("lead_time_days")) else None,
+            "incoming": int(r["incoming_stock"]) if pd.notna(r.get("incoming_stock")) else None,
+            "eta": r["restock_eta"].to_pydatetime() if pd.notna(r.get("restock_eta")) else None,
         }
         for r in df.to_dict(orient="records")
     ]
@@ -157,16 +167,21 @@ def upsert_inventory(engine, df: pd.DataFrame) -> int:
         """), products)
 
         result = conn.execute(text("""
-            INSERT INTO Fact_Inventory_Daily (product_key, date_key, stock_on_hand, safety_stock, reorder_point, snapshot_at)
-            SELECT p.product_key, d.date_key, v.stock, v.ss, v.rop, v.snapshot_at
-            FROM (VALUES (:sku, CAST(:full_date AS DATE), :stock, CAST(:ss AS INTEGER), CAST(:rop AS INTEGER), CAST(:snapshot_at AS TIMESTAMPTZ)))
-                 AS v(sku, full_date, stock, ss, rop, snapshot_at)
+            INSERT INTO Fact_Inventory_Daily (product_key, date_key, stock_on_hand, safety_stock, reorder_point, snapshot_at,
+                                              lead_time_days, incoming_stock, restock_eta)
+            SELECT p.product_key, d.date_key, v.stock, v.ss, v.rop, v.snapshot_at, v.lead, v.incoming, v.eta
+            FROM (VALUES (:sku, CAST(:full_date AS DATE), :stock, CAST(:ss AS INTEGER), CAST(:rop AS INTEGER), CAST(:snapshot_at AS TIMESTAMPTZ),
+                          CAST(:lead AS INTEGER), CAST(:incoming AS INTEGER), CAST(:eta AS TIMESTAMPTZ)))
+                 AS v(sku, full_date, stock, ss, rop, snapshot_at, lead, incoming, eta)
             JOIN Dim_Products p ON p.sku = v.sku
             JOIN Dim_Dates d ON d.full_date = v.full_date
             ON CONFLICT (product_key, date_key) DO UPDATE SET
                 stock_on_hand = EXCLUDED.stock_on_hand,
                 safety_stock  = EXCLUDED.safety_stock,
                 reorder_point = EXCLUDED.reorder_point,
+                lead_time_days = EXCLUDED.lead_time_days,
+                incoming_stock = EXCLUDED.incoming_stock,
+                restock_eta    = EXCLUDED.restock_eta,
                 loaded_at     = NOW(),
                 snapshot_at   = EXCLUDED.snapshot_at
             WHERE EXCLUDED.snapshot_at >= COALESCE(Fact_Inventory_Daily.snapshot_at,

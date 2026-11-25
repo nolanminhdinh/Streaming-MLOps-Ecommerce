@@ -1,0 +1,35 @@
+{
+  "nodeid": "tests/test_warehouse_schema_v2.py::test_database_rejects_invalid_order_rows[product_key-NULL]",
+  "file": "cases\\test_database_rejects_invalid_order_rows-19a8c30f06",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.15471659996546805,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.006025000009685755,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00403740000911057,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "column": "product_key",
+    "value": "NULL"
+  },
+  "outcome": "passed"
+}

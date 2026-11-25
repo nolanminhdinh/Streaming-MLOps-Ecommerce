@@ -1,0 +1,88 @@
+{
+  "created_at_utc": "2026-11-07T17:33:37.537221+00:00",
+  "candidates": {
+    "moving_average7": {
+      "method": "moving_average7"
+    },
+    "mean28": {
+      "method": "mean28"
+    },
+    "median28": {
+      "method": "median28"
+    },
+    "croston_sba": {
+      "method": "sba",
+      "alpha": 0.1
+    },
+    "tsb_slow": {
+      "method": "tsb",
+      "alpha": 0.1,
+      "beta": 0.05
+    },
+    "tsb_fast": {
+      "method": "tsb",
+      "alpha": 0.1,
+      "beta": 0.2
+    },
+    "lightgbm_l1_direct": {
+      "objective": "regression_l1"
+    },
+    "lightgbm_poisson_direct": {
+      "objective": "poisson"
+    },
+    "hurdle_direct": {
+      "objective": "hurdle"
+    },
+    "zero_diagnostic": {
+      "method": "zero"
+    }
+  },
+  "outer_test_starts": [
+    "2026-07-01",
+    "2026-07-15",
+    "2026-07-29"
+  ],
+  "horizon": 14,
+  "inner_windows": 2,
+  "inner_window_days": 14,
+  "seed": 42,
+  "trees": 100,
+  "training_window_days": 120,
+  "selection_metric": "pooled daily WAPE; zero excluded from selection",
+  "inventory_companion_selection": "minimum inner lead14 RMSE among mean28, SBA, TSB and Poisson",
+  "previously_exposed_final_window": true,
+  "experiment_type": "retrospective nested rolling evaluation; no claim of an untouched external test",
+  "features": [
+    "last",
+    "lag6",
+    "lag7",
+    "mean7",
+    "mean14",
+    "mean28",
+    "mean56",
+    "median28",
+    "std28",
+    "positive_rate7",
+    "positive_rate28",
+    "positive_rate56",
+    "positive_size_mean28",
+    "max28",
+    "days_since_positive",
+    "observed_age",
+    "positive_count56",
+    "lifetime_positive_rate",
+    "lifetime_mean",
+    "target_dow_sin",
+    "target_dow_cos",
+    "target_weekend",
+    "target_day",
+    "horizon"
+  ],
+  "source_sha256": {
+    "data/daily_history.parquet": "c16c90d8d91a08d5c0ef2873ebb4fc7fd0c365ff60f5af7b66aeded191fbb367",
+    "data/features_daily.parquet": "924e295a6187bef5a72d3b07870c815fd5a973cce696f2239a7e49bbd507b16c",
+    "data/feature_spec.json": "ef9cb79c644a8a8715ade20558f95a740e4e1458d93cf238bf37214ad01dab2e",
+    "data/model_manifest.json": "05154ddeb0c3539ae98cd2d592a8df9d5a8b107a2de3f33ab38b862119669f16"
+  },
+  "actual_policy": "no clipping, deletion, deduplication or coverage certification"
+}

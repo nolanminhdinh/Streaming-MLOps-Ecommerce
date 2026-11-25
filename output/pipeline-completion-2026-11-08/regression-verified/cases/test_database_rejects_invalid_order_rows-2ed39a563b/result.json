@@ -1,0 +1,35 @@
+{
+  "nodeid": "tests/test_warehouse_schema_v2.py::test_database_rejects_invalid_order_rows[original_price-'NaN'::numeric]",
+  "file": "cases\\test_database_rejects_invalid_order_rows-2ed39a563b",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.14020369993522763,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.02806619997136295,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.003251899965107441,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "column": "original_price",
+    "value": "'NaN'::numeric"
+  },
+  "outcome": "passed"
+}

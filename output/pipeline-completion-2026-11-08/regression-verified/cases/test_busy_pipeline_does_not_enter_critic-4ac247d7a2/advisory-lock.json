@@ -1,0 +1,13 @@
+{
+  "test": "tests/test_pipeline_completion.py::test_busy_pipeline_does_not_enter_critical_section",
+  "name": "advisory-lock",
+  "inputs": {
+    "lock_available": false
+  },
+  "expected": {
+    "entered": false
+  },
+  "actual": {
+    "entered": false
+  }
+}

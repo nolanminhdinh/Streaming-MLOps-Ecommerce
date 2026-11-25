@@ -1,0 +1,35 @@
+{
+  "nodeid": "tests/test_pipeline_completion.py::test_heartbeat_idle_and_future_timestamp_contract[1007-False]",
+  "file": "cases\\test_heartbeat_idle_and_future_timestamp-10199f599c",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0016827000072225928,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0012335999635979533,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00016120006330311298,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "checked": 1007,
+    "expected": false
+  },
+  "outcome": "passed"
+}

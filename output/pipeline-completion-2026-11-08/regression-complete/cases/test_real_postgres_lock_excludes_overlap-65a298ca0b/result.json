@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_pipeline_completion_postgres.py::test_real_postgres_lock_excludes_overlapping_jobs",
+  "file": "cases\\test_real_postgres_lock_excludes_overlap-65a298ca0b",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.17972100002225488,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.06828939996194094,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.013851700001396239,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

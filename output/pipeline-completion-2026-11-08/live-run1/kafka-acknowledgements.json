@@ -1,0 +1,50 @@
+[
+  {
+    "order_id": "CMP20261108c96f7bfb-A",
+    "topic": "ecom.orders.raw",
+    "partition": 0,
+    "offset": 3340
+  },
+  {
+    "order_id": "CMP20261108c96f7bfb-B",
+    "topic": "ecom.orders.raw",
+    "partition": 2,
+    "offset": 3446
+  },
+  {
+    "order_id": "CMP20261108c96f7bfb-A",
+    "topic": "ecom.orders.raw",
+    "partition": 0,
+    "offset": 3341
+  },
+  {
+    "order_id": "CMP20261108c96f7bfb-BADTYPE",
+    "topic": "ecom.orders.raw",
+    "partition": 0,
+    "offset": 3342
+  },
+  {
+    "order_id": "CMP20261108c96f7bfb-BADVERSION",
+    "topic": "ecom.orders.raw",
+    "partition": 1,
+    "offset": 3483
+  },
+  {
+    "order_id": "CMP20261108c96f7bfb-BADKEY",
+    "topic": "ecom.orders.raw",
+    "partition": 2,
+    "offset": 3447
+  },
+  {
+    "order_id": "CMP20261108c96f7bfb-A",
+    "topic": "ecom.orders.raw",
+    "partition": 0,
+    "offset": 3343
+  },
+  {
+    "order_id": "CMP20261108c96f7bfb-B",
+    "topic": "ecom.orders.raw",
+    "partition": 2,
+    "offset": 3448
+  }
+]

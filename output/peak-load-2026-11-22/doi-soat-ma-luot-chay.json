@@ -1,0 +1,20 @@
+{
+  "checked_at": "2026-11-22T00:47:00+07:00",
+  "run_tag": "R172444",
+  "command": "python scripts/check_streaming_soak.py --minutes 20 --interval 30 --fixed-rate 12 --out output/peak-load-2026-11-22",
+  "producer_rate_evt_s": 12.0,
+  "kafka_orders_messages": 14380,
+  "fact_orders_rows_with_run_tag": 14380,
+  "fact_orders_distinct_order_id_with_run_tag": 14380,
+  "mart_fact_sales_line_rows_with_run_tag": 14380,
+  "missing": 0,
+  "duplicates": 0,
+  "ingest_to_warehouse_p95_s_range": [33.4, 45.7],
+  "ingest_to_warehouse_p95_s_final": 44.4,
+  "max_lag_minio_writer_group": 117,
+  "max_pending_objects": 0,
+  "drained_seconds_after_stop": 66.9,
+  "stack_cpu_cores_avg": 1.45,
+  "stack_mem_gb_range": [2.39, 2.82],
+  "note": "fact_orders_added trong summary.json là 14.406: 26 dòng dư thuộc lượt thử bị dừng trước đó (bộ phát cũ chỉ đạt 7 sự kiện/giây), được nạp ngay sau mốc đo. Đối soát theo mã lượt chạy R172444 cho kết quả khớp 14.380 = 14.380 = 14.380."
+}

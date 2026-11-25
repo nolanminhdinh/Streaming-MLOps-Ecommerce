@@ -21,6 +21,7 @@ from datetime import datetime
 
 import numpy as np
 import pandas as pd
+from warehouse.etl.contracts import check_order_contract, safe_scalar_source
 
 logger = logging.getLogger("etl.transform")
 
@@ -86,8 +87,10 @@ def unify_schema(df: pd.DataFrame) -> pd.DataFrame:
 
     # Dùng to_dict('records') thay vì df.iterrows() để tăng tốc gấp hàng trăm lần
     records = df.to_dict(orient="records")
-    for row in records:
+    for source_row in records:
+        row = safe_scalar_source(source_row)
         platform = row.get("_platform", "unknown")
+        contract_errors = check_order_contract(source_row, platform)
 
         if platform == "shopee":
             unified = _unify_shopee_row(row)
@@ -101,13 +104,22 @@ def unify_schema(df: pd.DataFrame) -> pd.DataFrame:
                        source_updated_at=next((row.get(key) for key in ("update_time", "updated_time", "updatedAt")
                                                if pd.notna(row.get(key)) and str(row.get(key)).strip()), None),
                        source_object=row.get("_source_object"), source_row=row.get("_source_row"),
-                       raw_payload=row)
+                       raw_payload=source_row, contract_errors=contract_errors)
         unified_rows.append(unified)
 
     if not unified_rows:
         return pd.DataFrame()
 
     return pd.DataFrame(unified_rows)
+
+
+def _present_text(value):
+    """Chuỗi đã strip, hoặc None khi thiếu. Lô trộn Shopee + TikTok làm cột của sàn kia thành NaN,
+    mà `NaN or x` trả về NaN (NaN là truthy) — lỗi này từng dồn mọi đơn TikTok vào shop_id rỗng (16/11/2026)."""
+    if value is None or (not isinstance(value, (dict, list, tuple, set)) and pd.isna(value)):
+        return None
+    text_value = str(value).strip()
+    return text_value or None
 
 
 def _unify_shopee_row(row: dict | pd.Series) -> dict:
@@ -118,7 +130,7 @@ def _unify_shopee_row(row: dict | pd.Series) -> dict:
         "sku": row.get("item_sku"),
         "product_name": row.get("item_name"),
         "category": row.get("model_name"),  # model_name lưu category trong simulator
-        "shop_id": str(row.get("shop_id", "")),
+        "shop_id": _present_text(row.get("shop_id")) or "",
         "shop_name": row.get("shop_name"),
         "order_status": row.get("order_status"),
         "is_cancelled": row.get("order_status") == "CANCELLED",
@@ -158,6 +170,8 @@ def _unify_shopee_row(row: dict | pd.Series) -> dict:
 
 def _optional_amount(value):
     """Missing fees default to zero; malformed supplied fees reach quarantine."""
+    if isinstance(value, (dict, list, tuple, set)):
+        return float("nan")
     return 0 if value is None or pd.isna(value) else pd.to_numeric(value, errors="coerce")
 
 
@@ -171,7 +185,7 @@ def _unify_tiktok_row(row: dict | pd.Series) -> dict:
         "category": None,  # TikTok không có category trong simulator hiện tại
         # Simulator/source TikTok hiện cung cấp shop_name thay vì shop_id.
         # Dùng tên shop làm business key ổn định để khớp seed_dim_tables và load.py.
-        "shop_id": row.get("shop_id") or row.get("shop_name") or "",
+        "shop_id": _present_text(row.get("shop_id")) or _present_text(row.get("shop_name")) or "",
         "shop_name": row.get("shop_name"),
         "order_status": row.get("order_status"),
         "is_cancelled": row.get("order_status") == "CANCELLED",

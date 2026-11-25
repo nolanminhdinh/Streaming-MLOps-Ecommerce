@@ -1,0 +1,35 @@
+{
+  "nodeid": "tests/test_ingestion.py::test_vietnam_midnight_year_boundary_and_mixed_iso_formats[tiktok-created_time]",
+  "file": "cases\\test_vietnam_midnight_year_boundary_and_-3fd68b54e6",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00026320002507418394,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.01001109997741878,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00018630002159625292,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "platform": "tiktok",
+    "time_column": "created_time"
+  },
+  "outcome": "passed"
+}

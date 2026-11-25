@@ -1,0 +1,38 @@
+{
+  "nodeid": "tests/test_pipeline_completion.py::test_breaking_schema_is_quarantined_without_losing_good_rows[change1-CONTRACT_MISSING_ORIGINAL_PRICE]",
+  "file": "cases\\test_breaking_schema_is_quarantined_without_losing_good_rows-change1-CONTRACT_MISSING_ORIG-c95018b77f",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0009221000364050269,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.02890610008034855,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0004627000307664275,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "change": {
+      "original_price": null,
+      "renamed_price": 10
+    },
+    "reason": "CONTRACT_MISSING_ORIGINAL_PRICE"
+  },
+  "outcome": "passed"
+}

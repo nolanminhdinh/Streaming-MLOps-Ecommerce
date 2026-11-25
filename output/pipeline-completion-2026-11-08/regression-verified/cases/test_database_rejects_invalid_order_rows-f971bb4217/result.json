@@ -1,0 +1,35 @@
+{
+  "nodeid": "tests/test_warehouse_schema_v2.py::test_database_rejects_invalid_order_rows[buyer_total_amount--1]",
+  "file": "cases\\test_database_rejects_invalid_order_rows-f971bb4217",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.40961570001672953,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.006995900068432093,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.002137599978595972,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "column": "buyer_total_amount",
+    "value": "-1"
+  },
+  "outcome": "passed"
+}

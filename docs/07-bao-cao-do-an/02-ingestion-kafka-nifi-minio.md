@@ -1,4 +1,6 @@
-# Phần 2 — Thu nhận dữ liệu: Simulator, Kafka, NiFi và MinIO
+# Phần 2 — Thu nhận dữ liệu: Simulator, Kafka và MinIO
+
+> **Phạm vi final 01/11/2026:** chỉ nghiệm thu nhánh Python. NiFi đã tách khỏi Compose mặc định; các nội dung/evidence NiFi còn lại trong chương là lịch sử và hướng mở rộng. Tên file được giữ để không gãy liên kết.
 
 Ngày đối chiếu: 16/10/2026. Phạm vi: đọc mã/cấu hình, chạy kiểm thử cục bộ và thử lỗi bằng client giả lập; đối chiếu hiện vật demo ngày 14/10. Chưa chạy lại luồng trên dịch vụ thật trong lượt này.
 
@@ -15,13 +17,11 @@ flowchart LR
     C --> Q[MinIO: raw/orders - Parquet]
     Q --> E[ETL]
     E --> W[PostgreSQL]
-    O --> N[NiFi: nifi-ecom-orders-consumer]
-    N --> J[MinIO: raw/nifi/orders - JSON]
     I --> IC[Inventory consumer]
     IC --> W
 ```
 
-NiFi và Python consumer đọc độc lập, không nối tiếp nhau. NiFi phục vụ quan sát, routing và lưu JSON; nhánh Python ghi Parquet mới là đầu vào mặc định của ETL. Nhánh tồn kho đi thẳng từ Kafka vào PostgreSQL, không qua MinIO trong mã hiện tại.
+Python consumer ghi Parquet là đầu vào của ETL. Nhánh tồn kho đi thẳng từ Kafka vào PostgreSQL, không qua MinIO trong mã hiện tại. NiFi trước đây đọc bằng group riêng để quan sát và lưu JSON; nhánh đó đã được hoãn, không nằm giữa Kafka và Python consumer.
 
 ## 2. Producer và Kafka
 
@@ -194,6 +194,8 @@ Theo báo cáo đi kèm, 64 event là 32 đơn phát hai lần để thử repla
 **Vì sao ngày partition JSON khác Parquet?** JSON NiFi đặt theo ngày nhận, Parquet theo ngày tạo sự kiện sau đổi sang múi giờ nghiệp vụ. Dữ liệu đến muộn/replay có thể thuộc hai ngày thư mục khác nhau.
 
 **Làm sao chứng minh không mất dữ liệu?** Cần đối soát sự kiện đã được ACK, offsets, số dòng/object và kết quả valid/duplicate/rejected ở ETL; đồng thời thử lỗi và phục hồi. Bộ đếm gửi hoặc canvas xanh chưa đủ.
+
+**Vì sao MinIO tăng khi gửi lại cùng dữ liệu, có ảnh hưởng luồng không?** Raw lake ghi mọi lần nhận (at-least-once) để giữ bằng chứng và backfill; chống trùng ở warehouse. Kiểm tra ngày 16/11 cho thấy hai lượt cùng dữ liệu cho cùng nội dung fact. Giới hạn còn lại là chưa có chính sách giữ dữ liệu và checkpoint liệt kê toàn bộ object mỗi chu kỳ; xem [Lần 12](../04-pipeline-updates/lan-12-chay-lai-du-lieu-va-gioi-han-luu-tru-2026-11-16.md).
 
 ## 10. Minh bạch sử dụng AI
 

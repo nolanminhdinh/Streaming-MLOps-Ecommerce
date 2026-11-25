@@ -1,0 +1,36 @@
+{
+  "nodeid": "tests/test_pipeline_completion.py::test_invalid_alert_does_not_create_journal[payload2]",
+  "file": "cases\\test_invalid_alert_does_not_create_journal-payload2--2a692488e0",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0032331999391317368,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0010676999809220433,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0004888999974355102,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "payload": {
+      "alerts": "bad"
+    }
+  },
+  "outcome": "passed"
+}

@@ -1,0 +1,54 @@
+{
+  "test": "tests/test_pipeline_completion.py::test_selected_object_backfill_never_expands_to_other_partitions",
+  "name": "selected-objects",
+  "inputs": [
+    "raw/orders/platform=shopee/year=2026/month=10/day=14/acceptance.parquet"
+  ],
+  "expected": {
+    "day1": [
+      "raw/orders/platform=shopee/year=2026/month=10/day=14/acceptance.parquet"
+    ],
+    "day2": []
+  },
+  "actual": {
+    "calls": [
+      {
+        "target_date": "2026-10-14",
+        "dry_run": true,
+        "object_names": [
+          "raw/orders/platform=shopee/year=2026/month=10/day=14/acceptance.parquet"
+        ]
+      },
+      {
+        "target_date": "2026-10-15",
+        "dry_run": true,
+        "object_names": []
+      }
+    ],
+    "result": {
+      "status": "DRY_RUN",
+      "start": "2026-10-14",
+      "end": "2026-10-15",
+      "checkpoint_modified": false,
+      "source_version_guard_enabled": true,
+      "results": [
+        {
+          "status": "DRY_RUN_SUCCESS",
+          "execution_mode": "backfill",
+          "latency_interpretation": "replay age, not a new live-traffic SLA measurement"
+        },
+        {
+          "status": "DRY_RUN_SUCCESS",
+          "execution_mode": "backfill",
+          "latency_interpretation": "replay age, not a new live-traffic SLA measurement"
+        }
+      ],
+      "before": null,
+      "after": null,
+      "selected_objects": [
+        "raw/orders/platform=shopee/year=2026/month=10/day=14/acceptance.parquet"
+      ],
+      "business_output_unchanged": null
+    }
+  }
+}

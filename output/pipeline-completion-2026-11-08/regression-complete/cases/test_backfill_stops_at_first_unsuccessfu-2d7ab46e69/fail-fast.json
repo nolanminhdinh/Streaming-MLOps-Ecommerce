@@ -1,0 +1,30 @@
+{
+  "test": "tests/test_pipeline_completion.py::test_backfill_stops_at_first_unsuccessful_day",
+  "name": "fail-fast",
+  "inputs": {
+    "days": 3
+  },
+  "expected": {
+    "etl_calls": 1,
+    "failed_date": "2026-10-14"
+  },
+  "actual": {
+    "etl_calls": 1,
+    "audit": {
+      "status": "FAILED",
+      "start": "2026-10-14",
+      "end": "2026-10-16",
+      "failed_date": "2026-10-14",
+      "checkpoint_modified": false,
+      "results": [
+        {
+          "status": "LOAD_ERROR",
+          "execution_mode": "backfill",
+          "latency_interpretation": "replay age, not a new live-traffic SLA measurement"
+        }
+      ],
+      "before": null,
+      "completed_dates_may_have_committed": false
+    }
+  }
+}

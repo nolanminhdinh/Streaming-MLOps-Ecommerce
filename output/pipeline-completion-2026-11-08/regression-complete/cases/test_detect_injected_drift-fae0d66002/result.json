@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_monitoring.py::TestDriftDetector::test_detect_injected_drift",
+  "file": "cases\\test_detect_injected_drift-fae0d66002",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00017689995002001524,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0017368000699207187,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00015159999020397663,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

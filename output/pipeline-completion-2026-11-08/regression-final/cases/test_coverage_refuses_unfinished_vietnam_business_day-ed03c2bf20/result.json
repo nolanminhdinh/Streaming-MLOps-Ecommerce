@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_pipeline_integrity.py::test_coverage_refuses_unfinished_vietnam_business_day",
+  "file": "cases\\test_coverage_refuses_unfinished_vietnam_business_day-ed03c2bf20",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00020000000949949026,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.003899000003002584,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00019440008327364922,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

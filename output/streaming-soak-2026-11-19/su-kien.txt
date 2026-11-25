@@ -1,0 +1,20 @@
+23:04:15 dừng container ngoài dự án
+cvat_worker_annotation
+nuclio-nuclio-pth-facebookresearch-sam-vit-h
+cvat_worker_webhooks
+cvat_worker_chunks
+cvat_worker_quality_reports
+cvat_worker_utils
+cvat_worker_import
+cvat_worker_consensus
+cvat_ui
+cvat_worker_export
+cvat_db
+cvat_redis_inmem
+cvat_grafana
+cvat_clickhouse
+cvat_redis_ondisk
+cvat_opa
+23:04:20 đã dừng xong
+23:19:45-23:22:30 chụp màn hình giữa test (Chrome headless, tăng CPU máy)
+23:22:40-23:24:20 chụp lại Grafana và MinIO

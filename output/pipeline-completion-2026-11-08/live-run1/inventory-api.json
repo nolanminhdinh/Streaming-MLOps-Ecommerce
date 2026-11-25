@@ -1,0 +1,30 @@
+{
+  "http_status": 200,
+  "body": {
+    "total_skus_evaluated": 1,
+    "skus_needing_reorder": 0,
+    "critical_count": 0,
+    "warning_count": 0,
+    "normal_count": 1,
+    "alerts": [
+      {
+        "sku": "CMP20261108c96f7bfb-A",
+        "product_name": "Sản phẩm CMP20261108c96f7bfb-A",
+        "category": "Khác",
+        "matrix_segment": "BX",
+        "current_stock": 50,
+        "avg_daily_demand": 10.0,
+        "lead_time_days": 3,
+        "safety_stock": 9,
+        "reorder_point": 39,
+        "needs_reorder": false,
+        "alert_level": "NORMAL",
+        "days_until_stockout": 5.0,
+        "recommended_reorder_qty": 0,
+        "stock_source": "warehouse_snapshot:2026-11-08",
+        "demand_source": "fallback_catalog"
+      }
+    ],
+    "generated_at": "2026-11-08T15:44:19.257485+00:00"
+  }
+}

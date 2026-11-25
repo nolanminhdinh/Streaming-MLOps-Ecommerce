@@ -1,0 +1,39 @@
+{
+  "nodeid": "tests/test_pipeline_completion.py::test_breaking_schema_is_quarantined_without_losing_good_rows[change4-CONTRACT_INVALID_TYPE_VOUCHER_FROM_SELLER]",
+  "file": "cases\\test_breaking_schema_is_quarantined_without_losing_good_rows-change4-CONTRACT_INVALID_TYPE-85f0141b87",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0006667999550700188,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.048705299966968596,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.000443900004029274,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "change": {
+      "voucher_from_seller": {
+        "bad": 1
+      }
+    },
+    "reason": "CONTRACT_INVALID_TYPE_VOUCHER_FROM_SELLER"
+  },
+  "outcome": "passed"
+}

@@ -1,0 +1,35 @@
+{
+  "nodeid": "tests/test_warehouse_schema_v2.py::test_database_rejects_invalid_order_rows[date_key-NULL]",
+  "file": "cases\\test_database_rejects_invalid_order_rows-0f395aeea5",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.1709986999630928,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.006058200029656291,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00328770000487566,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "column": "date_key",
+    "value": "NULL"
+  },
+  "outcome": "passed"
+}

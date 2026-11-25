@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "0963b449a2cdf7b00e39",
+  "position": {
+    "x": 80,
+    "y": 42,
+    "z": 3,
+    "width": 424,
+    "height": 30,
+    "tabOrder": 1
+  },
+  "visual": {
+    "visualType": "textbox",
+    "drillFilterOtherVisuals": true,
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "14 ngày tới bán bao nhiêu và AI tin cậy đến đâu",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "color": "#FFC6D0",
+                      "fontStyle": "italic"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

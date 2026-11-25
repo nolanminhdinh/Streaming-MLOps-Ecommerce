@@ -1,0 +1,75 @@
+{
+  "test": "tests/test_pipeline_completion_postgres.py::test_real_backfill_dry_run_apply_replay_and_old_version_guard",
+  "name": "raw-events",
+  "inputs": [
+    {
+      "_platform": "shopee",
+      "order_sn": "BACKFILL-A",
+      "item_sku": "A",
+      "quantity": 2,
+      "original_price": 10,
+      "total_order_value": 20,
+      "buyer_total_amount": 20,
+      "create_time": "2026-10-13T17:01:00Z",
+      "order_status": "COMPLETED",
+      "update_time": "2026-10-14T01:00:00Z"
+    },
+    {
+      "_platform": "shopee",
+      "order_sn": "BACKFILL-B",
+      "item_sku": "B",
+      "quantity": 3,
+      "original_price": 10,
+      "total_order_value": 30,
+      "buyer_total_amount": 30,
+      "create_time": "2026-10-13T17:01:00Z",
+      "order_status": "COMPLETED"
+    },
+    {
+      "_platform": "shopee",
+      "order_sn": "BACKFILL-B",
+      "item_sku": "B",
+      "quantity": 3,
+      "original_price": 10,
+      "total_order_value": 30,
+      "buyer_total_amount": 30,
+      "create_time": "2026-10-13T17:01:00Z",
+      "order_status": "COMPLETED"
+    },
+    {
+      "_platform": "shopee",
+      "order_sn": "BACKFILL-C",
+      "item_sku": "A",
+      "quantity": {
+        "breaking": "type"
+      },
+      "original_price": 10,
+      "total_order_value": 20,
+      "buyer_total_amount": 20,
+      "create_time": "2026-10-13T17:01:00Z",
+      "order_status": "COMPLETED"
+    }
+  ],
+  "expected": {
+    "A": 7,
+    "B": 3,
+    "C": "quarantined",
+    "lines": 2
+  },
+  "actual": [
+    {
+      "order_id": "BACKFILL-A",
+      "source_line_id": "sku:A",
+      "quantity": 7,
+      "order_status": "COMPLETED",
+      "source_updated_at": "2026-10-14 10:00:00"
+    },
+    {
+      "order_id": "BACKFILL-B",
+      "source_line_id": "sku:B",
+      "quantity": 3,
+      "order_status": "COMPLETED",
+      "source_updated_at": "2026-10-14 00:01:00"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="780" height="350" preserveAspectRatio="xMinYMin meet" viewBox="0 0 780 350" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="780" height="350"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-350)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="0" width="780" height="350" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<text x="20" y="320" style="font-family: Times-Roman; font-size: 17px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,640) scale(1,-1)">Historical observed units by calendar day</text>
+			<g transform="">
+				<g transform="">
+					<g transform="">
+						<path d="M 65,65 L 725,65 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+					</g>
+					<g transform="">
+						<path d="M 65,65 L 65,60 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 152.610619,65 L 152.610619,60 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 240.221239,65 L 240.221239,60 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 327.831858,65 L 327.831858,60 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 415.442478,65 L 415.442478,60 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 503.053097,65 L 503.053097,60 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 590.663717,65 L 590.663717,60 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 678.274336,65 L 678.274336,60 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+					</g>
+					<g transform="">
+						<g transform=" matrix(1,0,0,1,65,60)">
+							<text x="-2.5" y="-10.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-20) scale(1,-1)">0</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,152.610619,60)">
+							<text x="-5.0" y="-10.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-20) scale(1,-1)">30</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,240.221239,60)">
+							<text x="-5.0" y="-10.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-20) scale(1,-1)">60</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,327.831858,60)">
+							<text x="-5.0" y="-10.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-20) scale(1,-1)">90</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,415.442478,60)">
+							<text x="-7.5" y="-10.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-20) scale(1,-1)">120</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,503.053097,60)">
+							<text x="-7.5" y="-10.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-20) scale(1,-1)">150</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,590.663717,60)">
+							<text x="-7.5" y="-10.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-20) scale(1,-1)">180</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,678.274336,60)">
+							<text x="-7.5" y="-10.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-20) scale(1,-1)">210</text>
+						</g>
+					</g>
+				</g>
+				<g transform="">
+					<g transform="">
+						<path d="M 65,65 L 65,290 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+					</g>
+					<g transform="">
+						<path d="M 65,65 L 60,65 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 65,119.479419 L 60,119.479419 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 65,173.958838 L 60,173.958838 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 65,228.438257 L 60,228.438257 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 65,282.917676 L 60,282.917676 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+					</g>
+					<g transform="">
+						<g transform=" matrix(1,0,0,1,60,65)">
+							<text x="-5.0" y="-4.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-8) scale(1,-1)">0</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,60,119.479419)">
+							<text x="-15.0" y="-4.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-8) scale(1,-1)">100</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,60,173.958838)">
+							<text x="-15.0" y="-4.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-8) scale(1,-1)">200</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,60,228.438257)">
+							<text x="-15.0" y="-4.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-8) scale(1,-1)">300</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,60,282.917676)">
+							<text x="-15.0" y="-4.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-8) scale(1,-1)">400</text>
+						</g>
+					</g>
+				</g>
+				<g transform="">
+					<polyline points="65 66.63438, 67.92035 66.63438, 70.84071 66.08959, 73.76106 67.17918, 76.68142 182.6755, 79.60177 88.97094, 82.52212 79.70944, 85.44248 85.70218, 88.36283 83.523, 91.28319 78.61985, 94.20354 86.24697, 97.12389 86.24697, 100.0442 92.23971, 102.9646 84.61259, 105.885 92.23971, 108.8053 88.97094, 111.7257 82.43341, 114.646 81.88862, 117.5664 101.5012, 120.4867 82.97821, 123.4071 74.8063, 126.3274 70.44794, 129.2478 70.99274, 132.1681 69.35835, 135.0885 68.26877, 138.0088 106.9492, 140.9292 110.2179, 143.8496 120.0242, 146.7699 162.5182, 149.6903 140.7264, 152.6106 124.9274, 155.531 121.1138, 158.4513 126.5617, 161.3717 132.0097, 164.292 98.23245, 167.2124 74.8063, 170.1327 77.53027, 173.0531 76.98547, 175.9735 70.99274, 178.8938 79.70944, 181.8142 84.0678, 184.7345 80.25424, 187.6549 72.62712, 190.5752 73.71671, 193.4956 72.62712, 196.4159 76.44068, 199.3363 75.35109, 202.2566 72.62712, 205.177 68.26877, 208.0973 67.17918, 211.0177 66.08959, 213.9381 65.54479, 216.8584 66.63438, 219.7788 68.26877, 222.6991 66.63438, 225.6195 67.72397, 228.5398 67.72397, 231.4602 69.90315, 234.3805 74.2615, 237.3009 74.8063, 240.2212 78.61985, 243.1416 72.08232, 246.0619 71.53753, 248.9823 69.90315, 251.9027 70.44794, 254.823 67.72397, 257.7434 67.72397, 260.6637 67.17918, 263.5841 69.35835, 266.5044 66.08959, 269.4248 67.72397, 272.3451 67.72397, 275.2655 67.72397, 278.1858 68.26877, 281.1062 69.35835, 284.0265 67.17918, 286.9469 68.26877, 289.8673 67.17918, 292.7876 70.44794, 295.708 66.08959, 298.6283 71.53753, 301.5487 67.72397, 304.469 68.26877, 307.3894 67.72397, 310.3097 69.90315, 313.2301 68.26877, 316.1504 67.72397, 319.0708 67.72397, 321.9912 69.90315, 324.9115 67.17918, 327.8319 68.26877, 330.7522 67.17918, 333.6726 70.99274, 336.5929 68.26877, 339.5133 70.44794, 342.4336 72.62712, 345.354 69.35835, 348.2743 74.8063, 351.1947 69.90315, 354.115 68.81356, 357.0354 69.35835, 359.9558 65.54479, 362.8761 67.17918, 365.7965 68.81356, 368.7168 72.08232, 371.6372 71.53753, 374.5575 69.35835, 377.4779 71.53753, 380.3982 69.35835, 383.3186 71.53753, 386.2389 73.71671, 389.1593 67.17918, 392.0796 67.17918, 395 68.81356, 397.9204 70.44794, 400.8407 67.72397, 403.7611 68.26877, 406.6814 70.44794, 409.6018 68.81356, 412.5221 68.26877, 415.4425 67.17918, 418.3628 70.44794, 421.2832 69.90315, 424.2035 67.72397, 427.1239 68.81356, 430.0442 68.26877, 432.9646 67.72397, 435.885 68.81356, 438.8053 75.89588, 441.7257 69.35835, 444.646 67.72397, 447.5664 69.90315, 450.4867 69.35835, 453.4071 68.26877, 456.3274 70.44794, 459.2478 68.26877, 462.1681 68.81356, 465.0885 71.53753, 468.0088 73.17191, 470.9292 69.35835, 473.8496 67.17918, 476.7699 71.53753, 479.6903 71.53753, 482.6106 69.90315, 485.531 69.90315, 488.4513 68.81356, 491.3717 65.54479, 494.292 68.26877, 497.2124 71.53753, 500.1327 69.90315, 503.0531 69.35835, 505.9735 66.08959, 508.8938 70.44794, 511.8142 69.35835, 514.7345 67.17918, 517.6549 65.54479, 520.5752 66.63438, 523.4956 66.63438, 526.4159 66.63438, 529.3363 66.63438, 532.2566 72.08232, 535.177 68.81356, 538.0973 65.54479, 541.0177 67.72397, 543.9381 65, 546.8584 67.72397, 549.7788 77.53027, 552.6991 81.88862, 555.6195 74.2615, 558.5398 69.35835, 561.4602 76.98547, 564.3805 159.2494, 567.3009 155.4358, 570.2212 290, 573.1416 214.2736, 576.0619 80.79903, 578.9823 100.9564, 581.9027 86.79177, 584.823 92.7845, 587.7434 83.523, 590.6637 81.34383, 593.5841 75.89588, 596.5044 80.25424, 599.4248 82.97821, 602.3451 74.8063, 605.2655 82.43341, 608.1858 85.70218, 611.1062 81.88862, 614.0265 75.35109, 616.9469 77.53027, 619.8673 92.23971, 622.7876 112.3971, 625.708 97.14286, 628.6283 79.16465, 631.5487 87.33656, 634.469 82.97821, 637.3894 78.61985, 640.3097 80.25424, 643.2301 84.61259, 646.1504 101.5012, 649.0708 85.70218, 651.9912 75.35109, 654.9115 77.53027, 657.8319 74.2615, 660.7522 87.33656, 663.6726 75.89588, 666.5929 76.98547, 669.5133 70.99274, 672.4336 81.88862, 675.354 84.61259, 678.2743 83.523, 681.1947 78.61985, 684.115 79.16465, 687.0354 72.08232, 689.9558 76.98547, 692.8761 73.17191, 695.7965 75.35109, 698.7168 70.44794, 701.6372 70.44794, 704.5575 72.08232, 707.4779 74.2615, 710.3982 76.44068, 713.3186 80.79903, 716.2389 92.23971, 719.1593 78.61985, 722.0796 69.35835, 725 65.54479" style="stroke: rgb(20%,36%,49%); stroke-linecap: round; stroke-width: 1; fill: None; fill-rule: evenodd;"/>
+				</g>
+			</g>
+			<text x="65" y="28" style="font-family: Times-Roman; font-size: 11px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,56) scale(1,-1)">Day index from 2025-12-28 through 2026-08-11; units/day</text>
+			<text x="65" y="12" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,24) scale(1,-1)">Blank cells were zero-filled by the saved pipeline; completeness is not certified.</text>
+		</g>
+	</g>
+</svg>

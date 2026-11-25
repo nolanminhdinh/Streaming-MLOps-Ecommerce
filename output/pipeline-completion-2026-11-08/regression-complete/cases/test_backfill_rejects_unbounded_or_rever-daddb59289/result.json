@@ -1,0 +1,35 @@
+{
+  "nodeid": "tests/test_pipeline_completion.py::test_backfill_rejects_unbounded_or_reversed_interval[start0-end0]",
+  "file": "cases\\test_backfill_rejects_unbounded_or_rever-daddb59289",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00029159989207983017,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0006898000137880445,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00014260003808885813,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "start": "2026-10-15",
+    "end": "2026-10-14"
+  },
+  "outcome": "passed"
+}

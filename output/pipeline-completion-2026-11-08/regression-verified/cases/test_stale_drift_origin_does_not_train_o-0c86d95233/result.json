@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_pipeline_integrity.py::test_stale_drift_origin_does_not_train_or_change_manifest",
+  "file": "cases\\test_stale_drift_origin_does_not_train_o-0c86d95233",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0030556999845430255,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.005335999885573983,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "WARNING  mlops.monitoring.retraining:trigger_retraining.py:197 🚨 KÍCH HOẠT TÁI HUẤN LUYỆN (data_drift) | drift_share=0.0% | target_drift=False | nguồn=feature_store\nERROR    mlops.monitoring.retraining:trigger_retraining.py:263 ✗ Huấn luyện lại THẤT BẠI: Drift summary provenance differs from the deployed model; regenerate it. — giữ nguyên mô hình v2."
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0005501999985426664,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "WARNING  mlops.monitoring.retraining:trigger_retraining.py:197 🚨 KÍCH HOẠT TÁI HUẤN LUYỆN (data_drift) | drift_share=0.0% | target_drift=False | nguồn=feature_store\nERROR    mlops.monitoring.retraining:trigger_retraining.py:263 ✗ Huấn luyện lại THẤT BẠI: Drift summary provenance differs from the deployed model; regenerate it. — giữ nguyên mô hình v2."
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

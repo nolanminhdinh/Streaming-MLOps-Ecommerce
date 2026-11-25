@@ -114,6 +114,9 @@ class DataValidator:
         # 2. Kiểm tra từng bản ghi
         for idx, row in enumerate(records):
             row_errors = errors_per_row[idx]
+            contract_errors = row.get("contract_errors")
+            if isinstance(contract_errors, list):
+                row_errors.extend(contract_errors)
             for column in ("discounted_price", "voucher_total", "source_updated_at", "pay_time", "shipped_time", "completed_time", "cancel_time"):
                 if row.get("_invalid_" + column, False):
                     row_errors.append("INVALID_" + column.upper() + "_TYPE")

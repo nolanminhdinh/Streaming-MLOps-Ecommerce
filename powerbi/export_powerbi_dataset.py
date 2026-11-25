@@ -50,6 +50,72 @@ DATASETS: dict[str, Sequence[str]] = {
 }
 
 
+DATASET_QUERIES = {
+    "Dim_Dates.csv": """
+        SELECT date_key, full_date, day_of_week, day_name, month, month_name,
+               quarter, year, is_weekend, is_mega_sale
+        FROM Dim_Dates
+        ORDER BY full_date
+    """,
+    "Dim_Products.csv": """
+        SELECT p.product_key, p.sku, p.product_name, p.category,
+               COALESCE(m.avg_daily_demand, 0) AS base_demand,
+               COALESCE(m.std_daily_demand, 0) AS sigma,
+               COALESCE(m.matrix_segment, 'NA') AS matrix_segment
+        FROM Dim_Products p
+        LEFT JOIN vw_powerbi_abc_xyz_matrix m ON m.sku = p.sku
+        ORDER BY p.product_key
+    """,
+    "Dim_Geography.csv": """
+        SELECT g.geo_key, g.state, g.region,
+               COALESCE(SUM(f.buyer_total_amount), 0) AS total_revenue,
+               COALESCE(SUM(f.quantity), 0) AS total_units,
+               COUNT(DISTINCT (f.platform, f.order_id))
+                   FILTER (WHERE f.order_fact_id IS NOT NULL) AS total_orders
+        FROM Dim_Geography g
+        LEFT JOIN Fact_Orders f
+               ON f.geo_key = g.geo_key AND f.is_cancelled = FALSE
+        GROUP BY g.geo_key, g.state, g.region
+        HAVING COUNT(f.order_fact_id) > 0
+        ORDER BY total_revenue DESC
+    """,
+    "Fact_Orders_Summary.csv": """
+        SELECT d.date_key, s.order_date, s.platform, s.total_orders,
+               s.total_units_sold AS units_sold, s.gross_revenue, s.discounts,
+               s.total_revenue AS net_revenue, s.average_order_value AS aov
+        FROM vw_powerbi_executive_summary s
+        JOIN Dim_Dates d ON d.full_date = s.order_date
+        ORDER BY s.order_date, s.platform
+    """,
+    "Forecast_vs_Actual.csv": """
+        SELECT date_key, product_key, date, sku, product_name, category, matrix_segment,
+               actual_demand, forecast_demand, lower_bound, upper_bound,
+               absolute_error, squared_error, model_name, model_version,
+               model_source, forecast_generated_at, data_origin, source_datasets, actual_complete
+        FROM vw_powerbi_forecast_vs_actual
+        ORDER BY date, sku
+    """,
+    "Inventory_Health_Alerts.csv": """
+        SELECT date_key, product_key, sku, product_name, category, matrix_segment,
+               current_stock, avg_daily_demand, safety_stock, reorder_point,
+               needs_reorder, alert_level, days_until_stockout, recommended_reorder_qty
+        FROM vw_powerbi_inventory_health
+        ORDER BY CASE alert_level WHEN 'CRITICAL' THEN 1 WHEN 'WARNING' THEN 2 ELSE 3 END,
+                 days_until_stockout
+    """,
+    "Historical_Demand_Daily.csv": """
+        SELECT d.date_key, h.create_time::DATE AS order_date, h.sku,
+               MAX(h.product_name) AS product_name, h.platform, SUM(h.quantity) AS units_sold,
+               h.data_origin, h.source_dataset
+        FROM Fact_Historical_Order_Lines h
+        JOIN Dim_Dates d ON d.full_date = h.create_time::DATE
+        WHERE h.is_cancelled = FALSE
+        GROUP BY d.date_key, h.create_time::DATE, h.sku, h.platform, h.data_origin, h.source_dataset
+        ORDER BY order_date, h.sku
+    """,
+}
+
+
 def _database_url() -> str:
     return (
         f"postgresql://{os.getenv('POSTGRES_USER', 'ecom')}:{os.getenv('POSTGRES_PASSWORD', 'ecom_password')}"
@@ -106,70 +172,7 @@ def export_powerbi_data(output_dir: str | None = None, *, install_views: bool = 
     os.makedirs(out_dir, exist_ok=True)
     engine = create_engine(_database_url(), pool_pre_ping=True, connect_args={"connect_timeout": 3})
 
-    queries = {
-        "Dim_Dates.csv": """
-            SELECT date_key, full_date, day_of_week, day_name, month, month_name,
-                   quarter, year, is_weekend, is_mega_sale
-            FROM Dim_Dates
-            ORDER BY full_date
-        """,
-        "Dim_Products.csv": """
-            SELECT p.product_key, p.sku, p.product_name, p.category,
-                   COALESCE(m.avg_daily_demand, 0) AS base_demand,
-                   COALESCE(m.std_daily_demand, 0) AS sigma,
-                   COALESCE(m.matrix_segment, 'NA') AS matrix_segment
-            FROM Dim_Products p
-            LEFT JOIN vw_powerbi_abc_xyz_matrix m ON m.sku = p.sku
-            ORDER BY p.product_key
-        """,
-        "Dim_Geography.csv": """
-            SELECT g.geo_key, g.state, g.region,
-                   COALESCE(SUM(f.buyer_total_amount), 0) AS total_revenue,
-                   COALESCE(SUM(f.quantity), 0) AS total_units,
-                   COUNT(DISTINCT (f.platform, f.order_id))
-                       FILTER (WHERE f.order_fact_id IS NOT NULL) AS total_orders
-            FROM Dim_Geography g
-            LEFT JOIN Fact_Orders f
-                   ON f.geo_key = g.geo_key AND f.is_cancelled = FALSE
-            GROUP BY g.geo_key, g.state, g.region
-            HAVING COUNT(f.order_fact_id) > 0
-            ORDER BY total_revenue DESC
-        """,
-        "Fact_Orders_Summary.csv": """
-            SELECT d.date_key, s.order_date, s.platform, s.total_orders,
-                   s.total_units_sold AS units_sold, s.gross_revenue, s.discounts,
-                   s.total_revenue AS net_revenue, s.average_order_value AS aov
-            FROM vw_powerbi_executive_summary s
-            JOIN Dim_Dates d ON d.full_date = s.order_date
-            ORDER BY s.order_date, s.platform
-        """,
-        "Forecast_vs_Actual.csv": """
-            SELECT date_key, product_key, date, sku, product_name, category, matrix_segment,
-                   actual_demand, forecast_demand, lower_bound, upper_bound,
-                   absolute_error, squared_error, model_name, model_version,
-                   model_source, forecast_generated_at, data_origin, source_datasets, actual_complete
-            FROM vw_powerbi_forecast_vs_actual
-            ORDER BY date, sku
-        """,
-        "Inventory_Health_Alerts.csv": """
-            SELECT date_key, product_key, sku, product_name, category, matrix_segment,
-                   current_stock, avg_daily_demand, safety_stock, reorder_point,
-                   needs_reorder, alert_level, days_until_stockout, recommended_reorder_qty
-            FROM vw_powerbi_inventory_health
-            ORDER BY CASE alert_level WHEN 'CRITICAL' THEN 1 WHEN 'WARNING' THEN 2 ELSE 3 END,
-                     days_until_stockout
-        """,
-        "Historical_Demand_Daily.csv": """
-            SELECT d.date_key, h.create_time::DATE AS order_date, h.sku,
-                   MAX(h.product_name) AS product_name, h.platform, SUM(h.quantity) AS units_sold,
-                   h.data_origin, h.source_dataset
-            FROM Fact_Historical_Order_Lines h
-            JOIN Dim_Dates d ON d.full_date = h.create_time::DATE
-            WHERE h.is_cancelled = FALSE
-            GROUP BY d.date_key, h.create_time::DATE, h.sku, h.platform, h.data_origin, h.source_dataset
-            ORDER BY order_date, h.sku
-        """,
-    }
+    queries = DATASET_QUERIES
 
     try:
         with engine.begin() as conn:
@@ -204,4 +207,9 @@ def export_powerbi_data(output_dir: str | None = None, *, install_views: bool = 
 
 
 if __name__ == "__main__":
-    export_powerbi_data()
+    import argparse
+    parser = argparse.ArgumentParser(description="Export optional PostgreSQL CSV backups")
+    parser.add_argument("--no-install-views", action="store_true",
+                        help="Use views already installed by pipeline-worker")
+    args = parser.parse_args()
+    export_powerbi_data(install_views=not args.no_install_views)

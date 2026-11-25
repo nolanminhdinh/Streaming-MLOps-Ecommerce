@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_warehouse_schema_v2.py::test_latest_stock_does_not_sum_days_or_drop_products_without_policy",
+  "file": "cases\\test_latest_stock_does_not_sum_days_or_drop_products_without_policy-bb960750fe",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.17962890001945198,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.02306529995985329,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.003984999959357083,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

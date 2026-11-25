@@ -1,0 +1,34 @@
+{
+  "nodeid": "tests/test_powerbi_import.py::test_failed_etl_status_does_not_advance_checkpoint[FAILED]",
+  "file": "cases\\test_failed_etl_status_does_not_advance_checkpoint-FAILED--dc6c7c2c0b",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.002140199998393655,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0008478999370709062,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0006761000258848071,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "status": "FAILED"
+  },
+  "outcome": "passed"
+}

@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "external_notifications_sent": false,
+  "grafana_pipeline_panels": 6,
+  "pipeline_ready": true,
+  "pending_objects": 0.0,
+  "last_batch_p95_seconds": 31.0306762,
+  "verified_delivered_alerts": [
+    "EcommerceDemandHistoryStale"
+  ],
+  "protected_artifacts_unchanged": {
+    "data/daily_history.parquet": true,
+    "data/features_daily.parquet": true,
+    "data/feature_spec.json": true,
+    "data/model_manifest.json": true
+  },
+  "forecast_source": "mlflow_registry",
+  "forecast_points": 7,
+  "alert_delivery_destination": "local receiver on localhost:9094 only"
+}

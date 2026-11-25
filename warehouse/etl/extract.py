@@ -48,12 +48,24 @@ def list_parquet_files(
     bucket: str = MINIO_BUCKET,
     prefix: str = "raw/orders/",
     target_date: Optional[datetime] = None,
+    metadata: Optional[dict] = None,
 ) -> list[str]:
     """
     Liệt kê tất cả file Parquet trong MinIO theo prefix.
 
     Nếu target_date được chỉ định, chỉ lấy partition ngày đó.
     """
+    def collect(objects):
+        names = []
+        for obj in objects:
+            if not obj.object_name.endswith(".parquet"):
+                continue
+            names.append(obj.object_name)
+            if metadata is not None:
+                modified = getattr(obj, "last_modified", None)
+                metadata[obj.object_name] = {"last_modified": modified.timestamp() if isinstance(modified, datetime) else None,
+                                             "size": getattr(obj, "size", None)}
+        return names
     if target_date:
         # Duyệt cả 2 platform
         all_files = []
@@ -65,17 +77,11 @@ def list_parquet_files(
                 f"day={target_date.day:02d}/"
             )
             objects = client.list_objects(bucket, prefix=day_prefix, recursive=True)
-            all_files.extend([
-                obj.object_name for obj in objects
-                if obj.object_name.endswith(".parquet")
-            ])
+            all_files.extend(collect(objects))
         return all_files
     else:
         objects = client.list_objects(bucket, prefix=prefix, recursive=True)
-        return [
-            obj.object_name for obj in objects
-            if obj.object_name.endswith(".parquet")
-        ]
+        return collect(objects)
 
 
 def read_parquet_from_minio(client: Minio, bucket: str, object_name: str) -> pd.DataFrame:

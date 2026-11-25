@@ -1,0 +1,34 @@
+{
+  "nodeid": "tests/test_pipeline_completion.py::test_secondary_version_alias_cannot_hide_a_breaking_version[1.0]",
+  "file": "cases\\test_secondary_version_alias_cannot_hide-dd4255afe3",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00024990004021674395,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.01982970000244677,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00018129998352378607,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "primary": "1.0"
+  },
+  "outcome": "passed"
+}

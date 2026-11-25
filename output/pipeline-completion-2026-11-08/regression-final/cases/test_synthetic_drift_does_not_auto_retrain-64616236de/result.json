@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_monitoring.py::TestClosedLoopRetraining::test_synthetic_drift_does_not_auto_retrain",
+  "file": "cases\\test_synthetic_drift_does_not_auto_retrain-64616236de",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00024009996559470892,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0015553999692201614,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "WARNING  mlops.monitoring.retraining:trigger_retraining.py:185 Drift summary đến từ dữ liệu GIẢ LẬP → không tự động retrain (dùng force_retrain nếu muốn demo)."
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0002612998941913247,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "WARNING  mlops.monitoring.retraining:trigger_retraining.py:185 Drift summary đến từ dữ liệu GIẢ LẬP → không tự động retrain (dùng force_retrain nếu muốn demo)."
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

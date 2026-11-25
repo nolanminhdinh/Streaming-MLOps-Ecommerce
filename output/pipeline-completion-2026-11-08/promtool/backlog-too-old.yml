@@ -1,0 +1,39 @@
+{
+  "rule_files": [
+    "/etc/prometheus/alert_rules.yml"
+  ],
+  "evaluation_interval": "15s",
+  "tests": [
+    {
+      "name": "backlog-too-old",
+      "interval": "15s",
+      "input_series": [
+        {
+          "series": "ecommerce_pipeline_pending_objects{instance=\"acceptance\"}",
+          "values": "2+0x12"
+        },
+        {
+          "series": "ecommerce_pipeline_oldest_pending_seconds{instance=\"acceptance\"}",
+          "values": "181+0x12"
+        }
+      ],
+      "alert_rule_test": [
+        {
+          "eval_time": "2m",
+          "alertname": "EcommercePipelineBacklogTooOld",
+          "exp_alerts": [
+            {
+              "exp_labels": {
+                "instance": "acceptance",
+                "severity": "warning"
+              },
+              "exp_annotations": {
+                "summary": "Raw đang chờ ETL quá 180 giây"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

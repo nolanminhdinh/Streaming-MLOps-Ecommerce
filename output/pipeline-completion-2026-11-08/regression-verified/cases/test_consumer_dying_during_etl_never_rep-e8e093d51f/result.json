@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_core_operations.py::test_consumer_dying_during_etl_never_reports_healthy",
+  "file": "cases\\test_consumer_dying_during_etl_never_rep-e8e093d51f",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.001284700003452599,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.003152600023895502,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "ERROR    pipeline.worker:run_pipeline_worker.py:108 Pipeline cycle failed; checkpoint unchanged, will retry\nTraceback (most recent call last):\n  File \"C:\\Users\\MINH\\Đếm ngày xa trường\\temp-extract\\streaming-mlops-ecommerce\\warehouse\\etl\\..\\..\\ingestion\\..\\ingestion\\..\\scripts\\run_pipeline_worker.py\", line 102, in main\n    check_consumers(consumers)\n  File \"C:\\Users\\MINH\\Đếm ngày xa trường\\temp-extract\\streaming-mlops-ecommerce\\warehouse\\etl\\..\\..\\ingestion\\..\\ingestion\\..\\scripts\\run_pipeline_worker.py\", line 45, in check_consumers\n    raise RuntimeError(f\"Consumer exited (code={code}); restart worker to replay uncommitted offsets\")\nRuntimeError: Consumer exited (code=1); restart worker to replay uncommitted offsets"
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0001970999874174595,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "ERROR    pipeline.worker:run_pipeline_worker.py:108 Pipeline cycle failed; checkpoint unchanged, will retry\nTraceback (most recent call last):\n  File \"C:\\Users\\MINH\\Đếm ngày xa trường\\temp-extract\\streaming-mlops-ecommerce\\warehouse\\etl\\..\\..\\ingestion\\..\\ingestion\\..\\scripts\\run_pipeline_worker.py\", line 102, in main\n    check_consumers(consumers)\n  File \"C:\\Users\\MINH\\Đếm ngày xa trường\\temp-extract\\streaming-mlops-ecommerce\\warehouse\\etl\\..\\..\\ingestion\\..\\ingestion\\..\\scripts\\run_pipeline_worker.py\", line 45, in check_consumers\n    raise RuntimeError(f\"Consumer exited (code={code}); restart worker to replay uncommitted offsets\")\nRuntimeError: Consumer exited (code=1); restart worker to replay uncommitted offsets"
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

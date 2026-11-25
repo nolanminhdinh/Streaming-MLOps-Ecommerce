@@ -21,6 +21,10 @@ import time
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
+try:
+    from serving.app.pipeline_status import read_pipeline_status
+except ImportError:
+    from app.pipeline_status import read_pipeline_status
 
 try:
     from serving.app.data_access import get_repository
@@ -130,6 +134,17 @@ MODEL_READY = Gauge(
 )
 HISTORY_AGE_DAYS = Gauge("ecommerce_history_age_days", "Age of latest demand history; -1 when unavailable", registry=REGISTRY)
 PIPELINE_READY = Gauge("ecommerce_pipeline_ready", "Continuous pipeline heartbeat is healthy and recent", registry=REGISTRY)
+PIPELINE_GAUGES = {key: Gauge("ecommerce_pipeline_"+key, description, registry=REGISTRY) for key,description in {
+    "heartbeat_age_seconds":"Worker heartbeat age; -1 if unavailable",
+    "pending_objects":"Raw objects awaiting ETL; -1 if unavailable",
+    "oldest_pending_seconds":"Age of oldest waiting raw object; zero when drained, -1 if unavailable",
+    "last_success_age_seconds":"Age of most recent nonempty successful ETL batch; idle does not reset this value",
+    "ingest_to_warehouse_p95_seconds":"Last ETL batch p95 from Kafka consumer receipt to batch completion; -1 for legacy rows",
+    "latency_measured_rows":"Rows with valid ingestion timestamps in the last completed batch",
+    "batch_volume_ratio":"Last nonempty batch rows / median of at least six prior nonempty batches; -1 while warming up",
+    "batch_volume_anomaly":"Last batch volume outside 0.25 to 4 times its historical batch median",
+    "batch_volume_reference_batches":"Nonempty batches in the reference, capped at twelve"
+}.items()}
 DATA_DRIFT_RATIO = Gauge(
     "ecommerce_data_drift_ratio", "Share of input features detected with statistical drift",
     registry=REGISTRY,
@@ -571,20 +586,18 @@ def _refresh_gauges() -> Dict[str, Any]:
     MODEL_READY.set(1 if manager.has_model else 0)
     DATA_DRIFT_RATIO.set(drift_ratio)
     readiness_check()
-    try:
-        path = os.getenv("PIPELINE_STATUS_PATH", os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "pipeline", "status.json"))
-        with open(path, encoding="utf-8") as file:
-            pipeline_status = json.load(file)
-        pipeline_healthy = pipeline_status.get("status") == "healthy" and time.time() - float(pipeline_status["checked_at"]) < 180
-    except (OSError, ValueError, KeyError, TypeError):
-        pipeline_healthy = False
-    PIPELINE_READY.set(1 if pipeline_healthy else 0)
+    pipeline_status = get_pipeline_status()
+    PIPELINE_READY.set(1 if pipeline_status["ready"] else 0)
+    for key,gauge in PIPELINE_GAUGES.items():
+        value=pipeline_status.get(key)
+        gauge.set(value if value is not None else -1)
     return {
         "alert_summary": alert_summary,
         "meta": meta,
         "drift_ratio": drift_ratio,
         "manager": manager,
         "training_status": training_status,
+        "pipeline": pipeline_status,
     }
 
 
@@ -619,6 +632,7 @@ def get_metrics(
             "data_drift": {
                 "drift_ratio": state["drift_ratio"],
             },
+            "pipeline": state["pipeline"],
             "training_readiness": {
                 key: state["training_status"][key]
                 for key in (
@@ -635,3 +649,9 @@ def get_metrics(
     if HAS_FASTAPI:
         return Response(content=body, media_type=CONTENT_TYPE_LATEST)
     return body.decode("utf-8")
+
+
+@app.get("/pipeline/status", tags=["Monitoring"])
+def get_pipeline_status():
+    path=os.getenv("PIPELINE_STATUS_PATH",os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))),"data","pipeline","status.json"))
+    return read_pipeline_status(path)

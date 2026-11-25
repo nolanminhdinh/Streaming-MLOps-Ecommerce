@@ -1,0 +1,149 @@
+[
+  {
+    "_platform": "shopee",
+    "item_sku": "CMP20261108c96f7bfb-A",
+    "item_name": "Pipeline acceptance fixture",
+    "shop_id": "CMP20261108c96f7bfb",
+    "shop_name": "Pipeline acceptance",
+    "original_price": 10,
+    "order_status": "COMPLETED",
+    "create_time": "2026-11-08T15:43:05.438152+00:00",
+    "schema_version": "1.0",
+    "order_sn": "CMP20261108c96f7bfb-A",
+    "quantity": 7,
+    "total_order_value": 70,
+    "buyer_total_amount": 70,
+    "update_time": "2026-11-08T15:43:40.438152+00:00",
+    "additive_field": {
+      "accepted": true
+    }
+  },
+  {
+    "_platform": "shopee",
+    "item_sku": "CMP20261108c96f7bfb-B",
+    "item_name": "Pipeline acceptance fixture",
+    "shop_id": "CMP20261108c96f7bfb",
+    "shop_name": "Pipeline acceptance",
+    "original_price": 10,
+    "order_status": "COMPLETED",
+    "create_time": "2026-11-08T15:43:05.438152+00:00",
+    "schema_version": "1.0",
+    "order_sn": "CMP20261108c96f7bfb-B",
+    "quantity": 3,
+    "total_order_value": 30,
+    "buyer_total_amount": 30
+  },
+  {
+    "_platform": "shopee",
+    "item_sku": "CMP20261108c96f7bfb-A",
+    "item_name": "Pipeline acceptance fixture",
+    "shop_id": "CMP20261108c96f7bfb",
+    "shop_name": "Pipeline acceptance",
+    "original_price": 10,
+    "order_status": "COMPLETED",
+    "create_time": "2026-11-08T15:43:05.438152+00:00",
+    "schema_version": "1.0",
+    "order_sn": "CMP20261108c96f7bfb-A",
+    "quantity": 2,
+    "total_order_value": 20,
+    "buyer_total_amount": 20,
+    "update_time": "2026-11-08T15:43:25.438152+00:00",
+    "additive_field": {
+      "accepted": true
+    }
+  },
+  {
+    "_platform": "shopee",
+    "item_sku": "CMP20261108c96f7bfb-A",
+    "item_name": "Pipeline acceptance fixture",
+    "shop_id": "CMP20261108c96f7bfb",
+    "shop_name": "Pipeline acceptance",
+    "original_price": 10,
+    "order_status": "COMPLETED",
+    "create_time": "2026-11-08T15:43:05.438152+00:00",
+    "schema_version": "1.0",
+    "order_sn": "CMP20261108c96f7bfb-BADTYPE",
+    "quantity": [
+      1,
+      2
+    ],
+    "total_order_value": 70,
+    "buyer_total_amount": 70,
+    "update_time": "2026-11-08T15:43:40.438152+00:00",
+    "additive_field": {
+      "accepted": true
+    }
+  },
+  {
+    "_platform": "shopee",
+    "item_sku": "CMP20261108c96f7bfb-A",
+    "item_name": "Pipeline acceptance fixture",
+    "shop_id": "CMP20261108c96f7bfb",
+    "shop_name": "Pipeline acceptance",
+    "original_price": 10,
+    "order_status": "COMPLETED",
+    "create_time": "2026-11-08T15:43:05.438152+00:00",
+    "schema_version": "2.0",
+    "order_sn": "CMP20261108c96f7bfb-BADVERSION",
+    "quantity": 7,
+    "total_order_value": 70,
+    "buyer_total_amount": 70,
+    "update_time": "2026-11-08T15:43:40.438152+00:00",
+    "additive_field": {
+      "accepted": true
+    }
+  },
+  {
+    "_platform": "shopee",
+    "item_sku": null,
+    "item_name": "Pipeline acceptance fixture",
+    "shop_id": "CMP20261108c96f7bfb",
+    "shop_name": "Pipeline acceptance",
+    "original_price": 10,
+    "order_status": "COMPLETED",
+    "create_time": "2026-11-08T15:43:05.438152+00:00",
+    "schema_version": "1.0",
+    "order_sn": "CMP20261108c96f7bfb-BADKEY",
+    "quantity": 7,
+    "total_order_value": 70,
+    "buyer_total_amount": 70,
+    "update_time": "2026-11-08T15:43:40.438152+00:00",
+    "additive_field": {
+      "accepted": true
+    }
+  },
+  {
+    "_platform": "shopee",
+    "item_sku": "CMP20261108c96f7bfb-A",
+    "item_name": "Pipeline acceptance fixture",
+    "shop_id": "CMP20261108c96f7bfb",
+    "shop_name": "Pipeline acceptance",
+    "original_price": 10,
+    "order_status": "COMPLETED",
+    "create_time": "2026-11-08T15:43:05.438152+00:00",
+    "schema_version": "1.0",
+    "order_sn": "CMP20261108c96f7bfb-A",
+    "quantity": 7,
+    "total_order_value": 70,
+    "buyer_total_amount": 70,
+    "update_time": "2026-11-08T15:43:40.438152+00:00",
+    "additive_field": {
+      "accepted": true
+    }
+  },
+  {
+    "_platform": "shopee",
+    "item_sku": "CMP20261108c96f7bfb-B",
+    "item_name": "Pipeline acceptance fixture",
+    "shop_id": "CMP20261108c96f7bfb",
+    "shop_name": "Pipeline acceptance",
+    "original_price": 10,
+    "order_status": "COMPLETED",
+    "create_time": "2026-11-08T15:43:05.438152+00:00",
+    "schema_version": "1.0",
+    "order_sn": "CMP20261108c96f7bfb-B",
+    "quantity": 3,
+    "total_order_value": 30,
+    "buyer_total_amount": 30
+  }
+]

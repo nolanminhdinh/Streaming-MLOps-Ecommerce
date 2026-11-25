@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_pipeline_integrity.py::test_minio_storage_error_is_propagated",
+  "file": "cases\\test_minio_storage_error_is_propagated-8e4b0f5171",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00013150006998330355,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0009105999488383532,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "ERROR    etl.extract:extract.py:114 Lỗi đọc object: S3 operation failed; code: AccessDenied, message: unreadable, resource: object, request_id: request, host_id: host"
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0003179000923410058,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "ERROR    etl.extract:extract.py:114 Lỗi đọc object: S3 operation failed; code: AccessDenied, message: unreadable, resource: object, request_id: request, host_id: host"
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

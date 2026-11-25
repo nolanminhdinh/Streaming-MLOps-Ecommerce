@@ -85,14 +85,15 @@ def test_baseline_fast_path_matches_recursive_dataframe_predictions():
     from serving.app.features import build_feature_row, to_model_input
     model = MovingAverageModel()
     history = [{"daily_demand": float(index % 11)} for index in range(35)]
-    columns = ["lag_1", "rolling_mean_7", "ema_7"]
+    columns = ["daily_demand", "lag_7", "rolling_mean_7", "ema_7"]
     for step in range(90):
         row = build_feature_row(history, date(2026, 7, 1) + timedelta(days=step))
         expected = model.predict(pd.DataFrame([to_model_input(row, columns)], columns=columns))[0]
         actual = model.predict_from_history(history, columns)
         assert actual == pytest.approx(expected)
         history.append({"daily_demand": actual})
-    assert model.predict_from_history(history, ["lag_1"]) == 0
+    with pytest.raises(ValueError, match="Missing baseline features"):
+        model.predict_from_history(history, ["lag_1"])
 
 
 def test_features_count_orders_not_lines_for_repeated_sku():
@@ -115,7 +116,73 @@ def test_pipeline_cannot_load_when_quarantine_storage_fails():
     raw = pd.DataFrame([event(), event(item_sku=None)])
     with patch.object(pipeline, "build_minio_client"), patch.object(pipeline, "extract_orders", return_value=raw), \
          patch.object(pipeline, "persist_quarantine", side_effect=RuntimeError("audit write failed")), \
+         patch.object(pipeline, "stored_create_times", return_value=pd.DataFrame()), \
          patch.object(pipeline, "load") as load:
         with pytest.raises(RuntimeError, match="audit write failed"):
             pipeline.run_etl_pipeline()
         load.assert_not_called()
+
+
+def _normalized_valid(events):
+    normalized = clean_data(unify_schema(pd.DataFrame(events)), preserve_invalid=True)
+    valid, _, _ = DataValidator().validate(normalized)
+    return valid
+
+
+def _no_stored(keys):
+    return pd.DataFrame(columns=["order_id", "platform", "stored_create_time"])
+
+
+def test_status_updates_of_one_order_are_not_identity_conflicts():
+    from warehouse.etl.identity import split_identity_conflicts
+    rows = [event(order_status="UNPAID", update_time="2026-10-13T17:01:00Z"),
+            event(order_status="COMPLETED", update_time="2026-10-13T19:00:00Z")]
+    kept, conflicts = split_identity_conflicts(_normalized_valid(rows), lookup=_no_stored)
+    assert len(kept) == 2 and conflicts.empty
+    latest, _ = deduplicate_lines(kept)
+    assert list(latest.order_status) == ["COMPLETED"]
+
+
+def test_reused_order_id_keeps_first_order_and_quarantines_the_other():
+    from warehouse.etl.identity import CONFLICT_REASON, split_identity_conflicts
+    rows = [event(create_time="2026-10-13T15:39:00Z", quantity=5, total_order_value=50, buyer_total_amount=50),
+            event(create_time="2026-10-13T14:50:00Z")]
+    kept, conflicts = split_identity_conflicts(_normalized_valid(rows), lookup=_no_stored)
+    assert list(kept.quantity) == [2]  # đơn tạo sớm hơn giữ mã
+    assert list(conflicts.quantity) == [5]
+    assert set(conflicts.rejection_reasons) == {CONFLICT_REASON}
+
+
+def test_order_id_already_in_warehouse_wins_over_new_order():
+    from warehouse.etl.identity import split_identity_conflicts
+    stored = lambda keys: pd.DataFrame([{"order_id": "order", "platform": "shopee",
+                                         "stored_create_time": pd.Timestamp("2026-10-14 01:00:00")}])
+    rows = [event(create_time="2026-10-13T17:01:00Z"),                          # 00:01 giờ VN: đơn khác
+            event(create_time="2026-10-13T18:00:00Z", order_status="SHIPPED")]  # 01:00 giờ VN: cùng đơn
+    kept, conflicts = split_identity_conflicts(_normalized_valid(rows), lookup=stored)
+    assert list(kept.order_status) == ["SHIPPED"]
+    assert len(conflicts) == 1
+
+
+def test_pipeline_quarantines_identity_conflicts_and_keeps_accounting():
+    from warehouse.etl import pipeline
+    from warehouse.etl.identity import CONFLICT_REASON
+    raw = pd.DataFrame([event(), event(create_time="2026-10-13T18:30:00Z", quantity=4,
+                                       total_order_value=40, buyer_total_amount=40)])
+    raw["_source_object"] = "raw/orders/x.parquet"
+    saved = {}
+
+    def keep_quarantine(client, frame, run_id):
+        saved["q"] = frame
+        return "quarantine/orders/test.jsonl"
+
+    with patch.object(pipeline, "build_minio_client"), patch.object(pipeline, "extract_orders", return_value=raw), \
+         patch.object(pipeline, "stored_create_times", side_effect=_no_stored), \
+         patch.object(pipeline, "persist_quarantine", side_effect=keep_quarantine), \
+         patch.object(pipeline, "load", return_value={"rows_loaded": 1}) as load:
+        stats = pipeline.run_etl_pipeline()
+    assert stats["status"] == "SUCCESS"
+    assert stats["quarantined_records"] == 1 and stats["clean_records"] == 1
+    assert stats["validation_errors"][CONFLICT_REASON] == 1
+    assert list(saved["q"].rejection_reasons) == [CONFLICT_REASON]
+    assert list(load.call_args.args[0].quantity) == [2]

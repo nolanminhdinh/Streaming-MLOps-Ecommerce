@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_monitoring.py::TestPrometheusMetricsExposition::test_metrics_json_format",
+  "file": "cases\\test_metrics_json_format-d6379451c1",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0003557000309228897,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.012294800020754337,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "WARNING  mlops.serving.model_loader:model_loader.py:302 Không tải được mô hình từ MLflow Registry (http://localhost:5000): No module named 'mlflow'\nWARNING  mlops.serving.model_loader:model_loader.py:240 ⚠ KHÔNG nạp được mô hình ML nào — API chạy ở chế độ HEURISTIC DỰ PHÒNG (/health sẽ báo 'degraded'). Hãy chạy train_baseline + register_model.\nWARNING  mlops.serving.model_loader:model_loader.py:185 Chưa có model ML; thử lại sau 5.0 giây."
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00025289994664490223,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "WARNING  mlops.serving.model_loader:model_loader.py:302 Không tải được mô hình từ MLflow Registry (http://localhost:5000): No module named 'mlflow'\nWARNING  mlops.serving.model_loader:model_loader.py:240 ⚠ KHÔNG nạp được mô hình ML nào — API chạy ở chế độ HEURISTIC DỰ PHÒNG (/health sẽ báo 'degraded'). Hãy chạy train_baseline + register_model.\nWARNING  mlops.serving.model_loader:model_loader.py:185 Chưa có model ML; thử lại sau 5.0 giây."
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

@@ -1,0 +1,33 @@
+<!doctype html><meta charset="utf-8"><title>Tài nguyên container (docker stats)</title>
+<style>body{font:14px/1.45 Segoe UI,Arial;margin:24px;background:#fff;color:#1d2433}
+h1{font-size:22px;margin:0 0 4px} .meta{color:#5b6475;margin-bottom:14px}
+h2{font-size:15px;margin:16px 0 6px;color:#24508f}
+pre{background:#f4f6fa;border:1px solid #d9dee8;border-radius:6px;padding:10px;font:12.5px/1.4 Consolas,monospace;
+white-space:pre-wrap;word-break:break-all;margin:0}</style>
+<h1>Tài nguyên container (docker stats)</h1><div class="meta">Kết quả lệnh kiểm tra chạy lúc 20/11/2026 00:17:45 (giờ Việt Nam)</div><h2>docker compose ps</h2><pre>SERVICE            STATUS
+alertmanager       Up About an hour
+fastapi            Up About an hour (healthy)
+grafana            Up About an hour (healthy)
+kafka              Up About an hour (healthy)
+minio              Up About an hour (healthy)
+mlflow             Up About an hour (healthy)
+postgres           Up About an hour (healthy)
+prometheus         Up About an hour (healthy)
+alert-receiver     Up About an hour (healthy)
+batch-forecaster   Up About an hour
+demo-web           Up About an hour (healthy)
+pipeline-worker    Up About an hour (healthy)
+zookeeper          Up About an hour (healthy)</pre><h2>docker stats --no-stream</h2><pre>NAME                                           CPU %     MEM USAGE / LIMIT     NET I/O
+streaming-mlops-ecommerce-batch-forecaster-1   0.00%     85.38MiB / 15.38GiB   369kB / 50.9kB
+streaming-mlops-ecommerce-pipeline-worker-1    1.29%     251.5MiB / 15.38GiB   122MB / 74.9MB
+fastapi-serving                                0.27%     206.6MiB / 15.38GiB   114MB / 44.8MB
+streaming-mlops-ecommerce-demo-web-1           13.23%    105.7MiB / 15.38GiB   14GB / 144MB
+grafana                                        0.09%     152.4MiB / 15.38GiB   833kB / 42.1MB
+prometheus                                     0.99%     109MiB / 15.38GiB     8.84MB / 11.7MB
+kafka                                          2.54%     806.4MiB / 15.38GiB   12.2MB / 17.5MB
+postgres                                       0.45%     374.6MiB / 15.38GiB   51.6MB / 124MB
+zookeeper                                      5.85%     166MiB / 15.38GiB     145kB / 97.4kB
+streaming-mlops-ecommerce-alert-receiver-1     0.06%     23.63MiB / 15.38GiB   4.77kB / 126B
+minio                                          0.23%     499.5MiB / 15.38GiB   204MB / 14.2GB
+ecom-alertmanager                              0.17%     40MiB / 15.38GiB      38.5kB / 790kB
+mlflow                                         0.05%     647MiB / 15.38GiB     132kB / 7.43MB</pre>

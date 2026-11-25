@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_pipeline_completion.py::test_selected_object_backfill_never_expands_to_other_partitions",
+  "file": "cases\\test_selected_object_backfill_never_expa-ff3ad5b26c",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00034879997838288546,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.0011030000168830156,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0001404000213369727,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

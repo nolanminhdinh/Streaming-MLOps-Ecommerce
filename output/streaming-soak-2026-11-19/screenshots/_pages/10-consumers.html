@@ -1,0 +1,33 @@
+<!doctype html><meta charset="utf-8"><title>Consumer đơn hàng (→ MinIO) và consumer tồn kho (→ PostgreSQL)</title>
+<style>body{font:14px/1.45 Segoe UI,Arial;margin:24px;background:#fff;color:#1d2433}
+h1{font-size:22px;margin:0 0 4px} .meta{color:#5b6475;margin-bottom:14px}
+h2{font-size:15px;margin:16px 0 6px;color:#24508f}
+pre{background:#f4f6fa;border:1px solid #d9dee8;border-radius:6px;padding:10px;font:12.5px/1.4 Consolas,monospace;
+white-space:pre-wrap;word-break:break-all;margin:0}</style>
+<h1>Consumer đơn hàng (→ MinIO) và consumer tồn kho (→ PostgreSQL)</h1><div class="meta">Kết quả lệnh kiểm tra chạy lúc 20/11/2026 00:17:45 (giờ Việt Nam)</div><h2>Log consumer trong pipeline-worker</h2><pre>pipeline-worker-1  | 2026-11-19 17:08:10 [WARNING] kafka.coordinator.consumer: group_id is None: disabling auto-commit.
+pipeline-worker-1  | 2026-11-19 17:08:49 [WARNING] kafka.coordinator.consumer: group_id is None: disabling auto-commit.
+pipeline-worker-1  | 2026-11-19 17:09:25 [WARNING] kafka.coordinator.consumer: group_id is None: disabling auto-commit.
+pipeline-worker-1  | 2026-11-19 17:10:02 [WARNING] kafka.coordinator.consumer: group_id is None: disabling auto-commit.
+pipeline-worker-1  | 2026-11-19 17:10:39 [WARNING] kafka.coordinator.consumer: group_id is None: disabling auto-commit.
+pipeline-worker-1  | 2026-11-19 17:11:15 [WARNING] kafka.coordinator.consumer: group_id is None: disabling auto-commit.
+pipeline-worker-1  | 2026-11-19 17:11:52 [WARNING] kafka.coordinator.consumer: group_id is None: disabling auto-commit.
+pipeline-worker-1  | 2026-11-19 17:12:28 [WARNING] kafka.coordinator.consumer: group_id is None: disabling auto-commit.
+pipeline-worker-1  | 2026-11-19 17:13:08 [WARNING] kafka.coordinator.consumer: group_id is None: disabling auto-commit.
+pipeline-worker-1  | 2026-11-19 17:13:12 [INFO] pipeline.worker: Mart refresh: {&#x27;mode&#x27;: &#x27;incremental&#x27;, &#x27;seconds&#x27;: 3.93, &#x27;dim_date&#x27;: 0, &#x27;dim_product&#x27;: 0, &#x27;evaluation_date&#x27;: &#x27;2026-11-20&#x27;, &#x27;fact_sales_line&#x27;: 0, &#x27;fact_sales_order&#x27;: 582, &#x27;fact_demand_forecast&#x27;: 1414, &#x27;fact_inventory_daily&#x27;: 0, &#x27;forecast_actuals_scored&#x27;: 0, &#x27;fact_replenishment_today&#x27;: 88}
+pipeline-worker-1  | 2026-11-19 17:13:45 [WARNING] kafka.coordinator.consumer: group_id is None: disabling auto-commit.
+pipeline-worker-1  | 2026-11-19 17:14:21 [WARNING] kafka.coordinator.consumer: group_id is None: disabling auto-commit.
+pipeline-worker-1  | 2026-11-19 17:14:58 [WARNING] kafka.coordinator.consumer: group_id is None: disabling auto-commit.
+pipeline-worker-1  | 2026-11-19 17:15:35 [WARNING] kafka.coordinator.consumer: group_id is None: disabling auto-commit.
+pipeline-worker-1  | 2026-11-19 17:16:12 [WARNING] kafka.coordinator.consumer: group_id is None: disabling auto-commit.
+pipeline-worker-1  | 2026-11-19 17:16:50 [WARNING] kafka.coordinator.consumer: group_id is None: disabling auto-commit.
+pipeline-worker-1  | 2026-11-19 17:17:27 [WARNING] kafka.coordinator.consumer: group_id is None: disabling auto-commit.</pre><h2>Snapshot tồn kho mới nhất</h2><pre>sku     | stock_on_hand |          snapshot_at          
+------------+---------------+-------------------------------
+ SR-VC-TO30 |             0 | 2026-11-19 17:00:27.121454+00
+ CG-G304    |             0 | 2026-11-19 17:00:27.121454+00
+ QM-USB-01  |           123 | 2026-11-19 17:00:27.121454+00
+ KT-KF94-10 |             0 | 2026-11-19 17:00:27.121454+00
+ DEN-LED-10 |             0 | 2026-11-19 17:00:27.121454+00
+ DG-CT-1M8  |            12 | 2026-11-19 17:00:27.121454+00
+ OL-IP15PM  |             0 | 2026-11-19 17:00:27.121454+00
+ NHH-KLA180 |             0 | 2026-11-19 17:00:27.121454+00
+(8 rows)</pre>

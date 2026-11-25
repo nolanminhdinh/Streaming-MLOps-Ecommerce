@@ -1,0 +1,14 @@
+{
+  "contract": "ecommerce.orders",
+  "version": "1.0",
+  "compatibility": "Accept unversioned legacy events as 1.0 and any declared 1.x minor version; reject unknown major versions. Preserve unknown optional fields in raw payload. Never infer a renamed required field.",
+  "naive_timestamp_policy": "UTC legacy assumption; explicit ISO-8601 offsets recommended",
+  "identity": ["platform", "order_id", "source_line_id"],
+  "common_required": {"quantity": "number", "order_status": "string"},
+  "platform_required": {
+    "shopee": {"order_sn": "identifier", "item_sku": "identifier", "create_time": "timestamp", "original_price": "number", "total_order_value": "number", "buyer_total_amount": "number"},
+    "tiktok": {"order_id": "identifier", "seller_sku": "identifier", "created_time": "timestamp", "item_original_price": "number", "sub_total": "number", "total_amount": "number"}
+  },
+  "optional_scalar_fields": ["order_line_id", "line_id", "source_line_id", "item_name", "product_name", "model_name", "shop_id", "shop_name", "cancel_reason", "item_cancel_reason", "model_discounted_price", "item_sale_price", "seller_discount", "shopee_discount", "platform_discount", "voucher_from_seller", "voucher_from_shopee", "commission_fee", "service_fee", "transaction_fee", "actual_shipping_fee", "estimated_shipping_fee", "shipping_fee", "original_shipping_fee", "tax_amount", "payment_method", "shipping_carrier", "shipping_provider", "state", "city", "district", "country", "region_state", "city_town", "item_weight", "pay_time", "shipped_time", "completed_time", "cancel_time", "update_time", "updated_time", "updatedAt"],
+  "sink_policy": "Reject invalid rows to quarantine before deduplication. Upsert valid lines only when source_updated_at is not older than the stored version."
+}

@@ -1,0 +1,24 @@
+{
+  "model_registry_name": "ECommerceDemandForecastModel",
+  "version": "2",
+  "stage": "Staging",
+  "champion_algorithm": "moving_average",
+  "metrics": {
+    "cv_wape": 126.08,
+    "cv_mae": 0.1599,
+    "cv_rmse": 0.5253
+  },
+  "run_id": "9c01dafd9238464cbcd1cef677324bcc",
+  "model_file": "moving_average_model.joblib",
+  "target_variable": "daily_demand_t_plus_1",
+  "registered_at": "2026-10-10T15:44:33.622483+00:00",
+  "input_feature_count": 43,
+  "lead_time_days": 3,
+  "service_level": 0.95,
+  "status": "READY_FOR_SERVING",
+  "data_origin": "public_anonymized_historical_csv",
+  "source_datasets": [
+    "shopee:sha256:6ae345e246481a2bd3b656838396e4fd31ce821c253945de6aa1370b2008f18d",
+    "tiktok:sha256:881e893f6b318bc6fbf42f518f4bacb7f74bb4002076c33d8e7e7452176656fb"
+  ]
+}

@@ -1,0 +1,4111 @@
+{
+  "compatibilityLevel": 1606,
+  "model": {
+    "annotations": [
+      {
+        "name": "__PBI_TimeIntelligenceEnabled",
+        "value": "0"
+      },
+      {
+        "name": "PBI_QueryOrder",
+        "value": "[\"pServer\", \"pDatabase\", \"dim_date\", \"dim_product\", \"dim_platform\", \"dim_shop\", \"dim_geography\", \"dim_payment\", \"dim_carrier\", \"dim_order_status\", \"dim_model\", \"fact_sales_line\", \"fact_sales_order\", \"fact_inventory_daily\", \"fact_demand_forecast\", \"fact_replenishment_daily\"]"
+      },
+      {
+        "name": "PBI_ProTooling",
+        "value": "[\"DevMode\"]"
+      }
+    ],
+    "culture": "vi-VN",
+    "cultures": [
+      {
+        "name": "vi-VN",
+        "linguisticMetadata": {
+          "content": {
+            "Entities": {
+              "dim_date.confirmed_label": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "dim_date",
+                    "ConceptualProperty": "confirmed_label"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Xác nhận dữ liệu": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "dim_date.full_date": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "dim_date",
+                    "ConceptualProperty": "full_date"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Ngày": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  },
+                  {
+                    "Ngày đánh giá": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "dim_date.year_month_label": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "dim_date",
+                    "ConceptualProperty": "year_month_label"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Tháng": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "dim_geography.state": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "dim_geography",
+                    "ConceptualProperty": "state"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Tỉnh/thành": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "dim_model.cv_bias": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "dim_model",
+                    "ConceptualProperty": "cv_bias"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Bias backtest (đơn vị %)": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "dim_model.cv_wape": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "dim_model",
+                    "ConceptualProperty": "cv_wape"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "WAPE backtest (đơn vị %)": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "dim_model.first_forecast_at": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "dim_model",
+                    "ConceptualProperty": "first_forecast_at"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Dự báo đầu": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "dim_model.last_forecast_at": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "dim_model",
+                    "ConceptualProperty": "last_forecast_at"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Dự báo cuối": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "dim_model.model_stage": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "dim_model",
+                    "ConceptualProperty": "model_stage"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Giai đoạn": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "dim_model.serving_label": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "dim_model",
+                    "ConceptualProperty": "serving_label"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Đang phục vụ": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "dim_model.training_data_origin": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "dim_model",
+                    "ConceptualProperty": "training_data_origin"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Nguồn huấn luyện": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "dim_model.version_label": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "dim_model",
+                    "ConceptualProperty": "version_label"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Phiên bản": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  },
+                  {
+                    "Phiên bản dự báo": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "dim_order_status.status_group": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "dim_order_status",
+                    "ConceptualProperty": "status_group"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Trạng thái": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "dim_platform.platform_name": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "dim_platform",
+                    "ConceptualProperty": "platform_name"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Sàn": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "dim_product.abc_class": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "dim_product",
+                    "ConceptualProperty": "abc_class"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Nhóm ABC": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  },
+                  {
+                    "ABC": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "dim_product.category": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "dim_product",
+                    "ConceptualProperty": "category"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Danh mục": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "dim_product.product_name": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "dim_product",
+                    "ConceptualProperty": "product_name"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Sản phẩm": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "dim_product.sku": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "dim_product",
+                    "ConceptualProperty": "sku"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "SKU": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "dim_product.xyz_class": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "dim_product",
+                    "ConceptualProperty": "xyz_class"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "XYZ": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "fact_demand_forecast.horizon_days": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "fact_demand_forecast",
+                    "ConceptualProperty": "horizon_days"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Tầm dự báo (ngày)": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "fact_replenishment_daily.action_status": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "fact_replenishment_daily",
+                    "ConceptualProperty": "action_status"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Trạng thái": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "fact_replenishment_daily.avg_daily_demand": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "fact_replenishment_daily",
+                    "ConceptualProperty": "avg_daily_demand"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Nhu cầu/ngày": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "fact_replenishment_daily.days_of_cover": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "fact_replenishment_daily",
+                    "ConceptualProperty": "days_of_cover"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Ngày tồn": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "fact_replenishment_daily.demand_lead_time": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "fact_replenishment_daily",
+                    "ConceptualProperty": "demand_lead_time"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Nhu cầu trong lead time": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "fact_replenishment_daily.lead_time_days": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "fact_replenishment_daily",
+                    "ConceptualProperty": "lead_time_days"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Lead time": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "fact_replenishment_daily.on_hand": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "fact_replenishment_daily",
+                    "ConceptualProperty": "on_hand"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Tồn": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "fact_replenishment_daily.order_by_date": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "fact_replenishment_daily",
+                    "ConceptualProperty": "order_by_date"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Đặt trước ngày": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "fact_replenishment_daily.reason": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "fact_replenishment_daily",
+                    "ConceptualProperty": "reason"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Lý do": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "fact_replenishment_daily.recommended_order_qty": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "fact_replenishment_daily",
+                    "ConceptualProperty": "recommended_order_qty"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Đề xuất đặt": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "fact_replenishment_daily.reorder_point": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "fact_replenishment_daily",
+                    "ConceptualProperty": "reorder_point"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Điểm đặt hàng": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "fact_replenishment_daily.safety_stock": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "fact_replenishment_daily",
+                    "ConceptualProperty": "safety_stock"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Tồn an toàn": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "fact_replenishment_daily.urgency": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "fact_replenishment_daily",
+                    "ConceptualProperty": "urgency"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Mức khẩn": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "fact_sales_order.order_hour": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "fact_sales_order",
+                    "ConceptualProperty": "order_hour"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Giờ": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.actual_units": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Actual Units"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Thực tế": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.aov": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "AOV"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Giá trị đơn TB": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.backtest_bias": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Backtest Bias"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Bias backtest": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.backtest_wape": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Backtest WAPE"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "WAPE backtest": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.cancel_rate": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Cancel Rate"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Tỷ lệ hủy": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.common_wape": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Common WAPE"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "WAPE chung": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.days_of_cover_today": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Days Of Cover Today"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Số ngày tồn": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.forecast_lower": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Forecast Lower"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Cận dưới (1 SKU)": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  },
+                  {
+                    "Cận dưới": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.forecast_units": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Forecast Units"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Dự báo": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.forecast_upper": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Forecast Upper"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Cận trên (1 SKU)": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  },
+                  {
+                    "Cận trên": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.header_conflict_orders": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Header Conflict Orders"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Đơn xung đột header": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.last_confirmed_day": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Last Confirmed Day"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Ngày xác nhận gần nhất": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.last_order_created": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Last Order Created"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Đơn mới nhất": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.live_bias": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Live Bias"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Bias": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.live_wape": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Live WAPE"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "WAPE": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.median_days_of_cover": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Median Days Of Cover"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Số ngày tồn (trung vị)": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.net_revenue": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Net Revenue"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Doanh thu": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.order_value_today": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Order Value Today"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Giá trị (theo giá bán)": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.orders": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Orders"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Đơn": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  },
+                  {
+                    "Đơn hợp lệ": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.orders_all_status": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Orders All Status"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Đơn": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.recommended_qty": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Recommended Qty"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Lượng đề xuất": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.recommended_qty_today": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Recommended Qty Today"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Tổng lượng đề xuất": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  },
+                  {
+                    "Lượng đề xuất": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.revenue_7d_change_": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Revenue 7D Change %"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Tăng trưởng DT 7 ngày": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.scored_days": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Scored Days"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Ngày chấm": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.selected_sku": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Selected SKU"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Sản phẩm": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.serving_live_wape": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Serving Live WAPE"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "WAPE thực tế (t+1)": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.serving_model": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Serving Model"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Model đang dùng": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.serving_scored_days": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Serving Scored Days"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Số ngày đã chấm": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.sku_actual_units": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "SKU Actual Units"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Thực tế": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.sku_day_on_hand": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "SKU Day On Hand"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Tồn": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.sku_day_recommended": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "SKU Day Recommended"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Đề xuất": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.sku_day_reorder_point": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "SKU Day Reorder Point"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Điểm đặt hàng": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.sku_days_of_cover": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "SKU Days Of Cover"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Số ngày tồn": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.sku_forecast_units": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "SKU Forecast Units"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Dự báo": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.sku_reason": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "SKU Reason"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Lý do đề xuất": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.sku_recommended_qty": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "SKU Recommended Qty"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Đề xuất đặt": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.sku_stock_on_hand": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "SKU Stock On Hand"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Tồn hiện có": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.sku_stock_snapshot": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "SKU Stock Snapshot"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Tồn kho": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.skus_critical": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "SKUs Critical"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "SKU nguy cấp": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.skus_default_lead_time": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "SKUs Default Lead Time"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "SKU dùng lead time mặc định": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.skus_ok": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "SKUs OK"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "SKU ổn định": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.skus_order_now": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "SKUs Order Now"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "SKU đặt ngay": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.skus_order_this_week": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "SKUs Order This Week"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "SKU đặt trong tuần": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.skus_stockout_7d": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "SKUs Stockout 7d"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Hết hàng trong 7 ngày": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.skus_to_reorder": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "SKUs To Reorder"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "SKU cần đặt": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.stock_snapshot": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Stock Snapshot"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Tồn kho": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "table_measures.units_sold": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "_Measures",
+                    "ConceptualProperty": "Units Sold"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Sản phẩm bán": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              }
+            },
+            "Language": "en-US",
+            "Version": "2.0.0"
+          },
+          "contentType": "json"
+        }
+      }
+    ],
+    "dataAccessOptions": {
+      "legacyRedirects": true,
+      "returnErrorValuesAsNull": true
+    },
+    "defaultPowerBIDataSourceVersion": "powerBI_V3",
+    "expressions": [
+      {
+        "name": "pServer",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Text"
+          }
+        ],
+        "expression": "\"localhost:5432\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]",
+        "kind": "m",
+        "lineageTag": "d18197662585a92e4a4327d17cb15e4c"
+      },
+      {
+        "name": "pDatabase",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Text"
+          }
+        ],
+        "expression": "\"ecom_warehouse\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]",
+        "kind": "m",
+        "lineageTag": "b2a07e2232dac6d909cd560bd4dbe8d2"
+      }
+    ],
+    "relationships": [
+      {
+        "name": "e614ef63-61aa-55f9-bd2f-52b08faabf89",
+        "fromColumn": "order_date_key",
+        "fromTable": "fact_sales_line",
+        "toColumn": "date_key",
+        "toTable": "dim_date"
+      },
+      {
+        "name": "4eb3fa0e-8991-53ad-83a0-7a4295c65999",
+        "fromColumn": "order_date_key",
+        "fromTable": "fact_sales_order",
+        "toColumn": "date_key",
+        "toTable": "dim_date"
+      },
+      {
+        "name": "a3dd8672-7b6d-5a8f-b60f-0d27286bfa47",
+        "fromColumn": "completed_date_key",
+        "fromTable": "fact_sales_order",
+        "isActive": false,
+        "toColumn": "date_key",
+        "toTable": "dim_date"
+      },
+      {
+        "name": "3bdb4279-6170-596d-b899-84c637745be5",
+        "fromColumn": "snapshot_date_key",
+        "fromTable": "fact_inventory_daily",
+        "toColumn": "date_key",
+        "toTable": "dim_date"
+      },
+      {
+        "name": "974c1d83-fd28-5345-b45d-6785672451d1",
+        "fromColumn": "target_date_key",
+        "fromTable": "fact_demand_forecast",
+        "toColumn": "date_key",
+        "toTable": "dim_date"
+      },
+      {
+        "name": "c8b72777-0203-5205-84b9-1004a3534b1b",
+        "fromColumn": "issued_date_key",
+        "fromTable": "fact_demand_forecast",
+        "isActive": false,
+        "toColumn": "date_key",
+        "toTable": "dim_date"
+      },
+      {
+        "name": "5922e803-31e4-5ac5-93f3-dec068ad6115",
+        "fromColumn": "evaluation_date_key",
+        "fromTable": "fact_replenishment_daily",
+        "toColumn": "date_key",
+        "toTable": "dim_date"
+      },
+      {
+        "name": "c5b69e26-60b7-53b0-b130-4a0170cc1f88",
+        "fromColumn": "product_key",
+        "fromTable": "fact_sales_line",
+        "toColumn": "product_key",
+        "toTable": "dim_product"
+      },
+      {
+        "name": "1ff1841a-80c8-56f9-bf06-97c5b0c2665f",
+        "fromColumn": "product_key",
+        "fromTable": "fact_inventory_daily",
+        "toColumn": "product_key",
+        "toTable": "dim_product"
+      },
+      {
+        "name": "7589a5f7-fb18-5b15-ae8d-90db0f6a8190",
+        "fromColumn": "product_key",
+        "fromTable": "fact_demand_forecast",
+        "toColumn": "product_key",
+        "toTable": "dim_product"
+      },
+      {
+        "name": "3615fb70-8e0d-53bd-acaf-b22c16877063",
+        "fromColumn": "product_key",
+        "fromTable": "fact_replenishment_daily",
+        "toColumn": "product_key",
+        "toTable": "dim_product"
+      },
+      {
+        "name": "5b6fd0e4-c576-57a2-a80f-6ef443b2583a",
+        "fromColumn": "platform_key",
+        "fromTable": "fact_sales_line",
+        "toColumn": "platform_key",
+        "toTable": "dim_platform"
+      },
+      {
+        "name": "e45699ca-674b-5fb4-ae1a-9fa6fbeb8899",
+        "fromColumn": "platform_key",
+        "fromTable": "fact_sales_order",
+        "toColumn": "platform_key",
+        "toTable": "dim_platform"
+      },
+      {
+        "name": "4cb4fffb-b50a-59a2-aaa9-876c37904c8a",
+        "fromColumn": "shop_key",
+        "fromTable": "fact_sales_line",
+        "toColumn": "shop_key",
+        "toTable": "dim_shop"
+      },
+      {
+        "name": "031678c8-0652-5fa9-b974-2c67f5d0b555",
+        "fromColumn": "shop_key",
+        "fromTable": "fact_sales_order",
+        "toColumn": "shop_key",
+        "toTable": "dim_shop"
+      },
+      {
+        "name": "c9c3bee7-4efb-5a7c-827e-58da4a7d5ea1",
+        "fromColumn": "geo_key",
+        "fromTable": "fact_sales_line",
+        "toColumn": "geo_key",
+        "toTable": "dim_geography"
+      },
+      {
+        "name": "55db7e35-bd1a-502e-be04-f7519117ed6b",
+        "fromColumn": "geo_key",
+        "fromTable": "fact_sales_order",
+        "toColumn": "geo_key",
+        "toTable": "dim_geography"
+      },
+      {
+        "name": "c1c64488-6fa4-5a9b-961d-bdc9fa408f74",
+        "fromColumn": "payment_key",
+        "fromTable": "fact_sales_order",
+        "toColumn": "payment_key",
+        "toTable": "dim_payment"
+      },
+      {
+        "name": "71df43cf-ec23-5442-a15b-38f6a204caf1",
+        "fromColumn": "carrier_key",
+        "fromTable": "fact_sales_order",
+        "toColumn": "carrier_key",
+        "toTable": "dim_carrier"
+      },
+      {
+        "name": "9b657fd8-fa06-56a9-a77a-7ad12a27a8de",
+        "fromColumn": "status_key",
+        "fromTable": "fact_sales_line",
+        "toColumn": "status_key",
+        "toTable": "dim_order_status"
+      },
+      {
+        "name": "73d054f7-ea2f-57c2-8123-45dce84c1281",
+        "fromColumn": "status_key",
+        "fromTable": "fact_sales_order",
+        "toColumn": "status_key",
+        "toTable": "dim_order_status"
+      },
+      {
+        "name": "abdb871e-f9c9-59bb-b3e3-c44ac13b35e6",
+        "fromColumn": "model_key",
+        "fromTable": "fact_demand_forecast",
+        "toColumn": "model_key",
+        "toTable": "dim_model"
+      },
+      {
+        "name": "8135b62a-ade2-5f98-99e7-ad5e83af8887",
+        "fromColumn": "model_key",
+        "fromTable": "fact_replenishment_daily",
+        "toColumn": "model_key",
+        "toTable": "dim_model"
+      }
+    ],
+    "sourceQueryCulture": "vi-VN",
+    "tables": [
+      {
+        "name": "dim_date",
+        "columns": [
+          {
+            "name": "date_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "e9bd3c2d2e8bdf2e93fec2aac58ffc66",
+            "sourceColumn": "date_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "full_date",
+            "annotations": [
+              {
+                "name": "UnderlyingDateTimeDataType",
+                "value": "Date"
+              }
+            ],
+            "dataType": "dateTime",
+            "formatString": "dd/MM/yyyy",
+            "isKey": true,
+            "lineageTag": "3f33ff8b15066e42e63fb37e81b26f73",
+            "sourceColumn": "full_date",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "day_of_month",
+            "dataType": "int64",
+            "formatString": "#,0",
+            "lineageTag": "c161fd57a7ca518d564f2eb872040ce8",
+            "sourceColumn": "day_of_month",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "iso_day_of_week",
+            "dataType": "int64",
+            "formatString": "#,0",
+            "lineageTag": "9fd627b2b90fb30584dbc01f44233f2a",
+            "sourceColumn": "iso_day_of_week",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "day_name_vi",
+            "dataType": "string",
+            "lineageTag": "12d91eb32e49e60a5a168904d183b0a4",
+            "sortByColumn": "iso_day_of_week",
+            "sourceColumn": "day_name_vi",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "iso_week",
+            "dataType": "int64",
+            "formatString": "#,0",
+            "lineageTag": "9225074a6275176579aa1572df711cb0",
+            "sourceColumn": "iso_week",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "month",
+            "dataType": "int64",
+            "formatString": "#,0",
+            "lineageTag": "0ff6c012dcacb1c8cc945f61105a0132",
+            "sourceColumn": "month",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "month_label",
+            "dataType": "string",
+            "lineageTag": "a1ad7e1f265f295d3eacd685e1530cf3",
+            "sortByColumn": "month",
+            "sourceColumn": "month_label",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "quarter",
+            "dataType": "int64",
+            "formatString": "#,0",
+            "lineageTag": "3a0a0ec6efdfa31e56e0dfc7c28b6f54",
+            "sourceColumn": "quarter",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "year",
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "695561ac8a9e41522570a38e3597440f",
+            "sourceColumn": "year",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "year_month",
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "24c5db6f1e6dd977b461887aa11b3b9e",
+            "sourceColumn": "year_month",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "year_month_label",
+            "dataType": "string",
+            "lineageTag": "b61398268e4c88e0fb41b8e4b5ca5b5d",
+            "sortByColumn": "year_month",
+            "sourceColumn": "year_month_label",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_weekend",
+            "dataType": "boolean",
+            "lineageTag": "e91903ad292f8fdb10b3e4b57a11834f",
+            "sourceColumn": "is_weekend",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_mega_sale",
+            "dataType": "boolean",
+            "lineageTag": "7c6e66775ed0093720bdbf73f5e19808",
+            "sourceColumn": "is_mega_sale",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_data_confirmed",
+            "dataType": "boolean",
+            "lineageTag": "107b77f02e9baf259432ef865a5c1147",
+            "sourceColumn": "is_data_confirmed",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "confirmed_label",
+            "dataType": "string",
+            "isHidden": true,
+            "lineageTag": "a3ad77c0ca125d0d82a853ad1b4dbb0e",
+            "sourceColumn": "confirmed_label",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Last 30 Days",
+            "dataType": "boolean",
+            "expression": "dim_date[full_date] >= TODAY () - 30 && dim_date[full_date] <= TODAY ()",
+            "lineageTag": "68c0744faaf1b63daece6aafe929d09d",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Last 60 Days",
+            "dataType": "boolean",
+            "expression": "dim_date[full_date] >= TODAY () - 60 && dim_date[full_date] <= TODAY ()",
+            "lineageTag": "7b0b240db36354bfd248a1b6b737fd23",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Forecast Window",
+            "dataType": "boolean",
+            "expression": "dim_date[full_date] >= TODAY () - 60 && dim_date[full_date] <= TODAY () + 14",
+            "lineageTag": "d3abd37ad24c5a07d948bc74ee8401a9",
+            "summarizeBy": "none",
+            "type": "calculated"
+          }
+        ],
+        "dataCategory": "Time",
+        "lineageTag": "878f480f6c40b9ac9a935c1c350975f9",
+        "partitions": [
+          {
+            "name": "dim_date",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(pServer, pDatabase),",
+                "    Data = Source{[Schema=\"mart\",Item=\"dim_date\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"date_key\", \"full_date\", \"day_of_month\", \"iso_day_of_week\", \"day_name_vi\", \"iso_week\", \"month\", \"month_label\", \"quarter\", \"year\", \"year_month\", \"year_month_label\", \"is_weekend\", \"is_mega_sale\", \"is_data_confirmed\"}),",
+                "    Typed = Table.TransformColumnTypes(Selected, {{\"date_key\", Int64.Type}, {\"full_date\", type date}, {\"day_of_month\", Int64.Type}, {\"iso_day_of_week\", Int64.Type}, {\"day_name_vi\", type text}, {\"iso_week\", Int64.Type}, {\"month\", Int64.Type}, {\"month_label\", type text}, {\"quarter\", Int64.Type}, {\"year\", Int64.Type}, {\"year_month\", Int64.Type}, {\"year_month_label\", type text}, {\"is_weekend\", type logical}, {\"is_mega_sale\", type logical}, {\"is_data_confirmed\", type logical}}),",
+                "    Added0 = Table.AddColumn(Typed, \"confirmed_label\", each if [is_data_confirmed] = true then \"Đã xác nhận\" else \"Chưa xác nhận\", type text)",
+                "in",
+                "    Added0"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_product",
+        "columns": [
+          {
+            "name": "product_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "9f01e57c357714933d7c999bb9fc06fd",
+            "sourceColumn": "product_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "sku",
+            "dataType": "string",
+            "lineageTag": "2ba7f100016d9a916ca46e5b8d29001f",
+            "sourceColumn": "sku",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "product_name",
+            "dataType": "string",
+            "lineageTag": "aee8084c235cdf59879573a5362b524d",
+            "sourceColumn": "product_name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "category",
+            "dataType": "string",
+            "lineageTag": "998d2da5aeb102ff3f96bcfbdaac5406",
+            "sourceColumn": "category",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "abc_class",
+            "dataType": "string",
+            "lineageTag": "6226225c8ac670cb58429b68802bfcf2",
+            "sourceColumn": "abc_class",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "xyz_class",
+            "dataType": "string",
+            "lineageTag": "86f9133bd9b5d169229a2bd825524009",
+            "sourceColumn": "xyz_class",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "matrix_segment",
+            "dataType": "string",
+            "lineageTag": "cc4f11846ff436a61cebe28a91610c49",
+            "sourceColumn": "matrix_segment",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "service_level",
+            "dataType": "double",
+            "formatString": "#,0.0",
+            "lineageTag": "0f3dce0f416e3a93794c17666422ea27",
+            "sourceColumn": "service_level",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "reference_selling_price",
+            "dataType": "double",
+            "formatString": "#,0 \"₫\"",
+            "lineageTag": "90894b20534032bb0487140fbd346362",
+            "sourceColumn": "reference_selling_price",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "current_lead_time_days",
+            "dataType": "int64",
+            "formatString": "#,0",
+            "lineageTag": "0bf045d0947acf488317c5215eafb1d8",
+            "sourceColumn": "current_lead_time_days",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "4a15c5cdeefff8d51fc442d1dde0bacf",
+        "partitions": [
+          {
+            "name": "dim_product",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(pServer, pDatabase),",
+                "    Data = Source{[Schema=\"mart\",Item=\"dim_product\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"product_key\", \"sku\", \"product_name\", \"category\", \"abc_class\", \"xyz_class\", \"matrix_segment\", \"service_level\", \"reference_selling_price\", \"current_lead_time_days\"}),",
+                "    Typed = Table.TransformColumnTypes(Selected, {{\"product_key\", Int64.Type}, {\"sku\", type text}, {\"product_name\", type text}, {\"category\", type text}, {\"abc_class\", type text}, {\"xyz_class\", type text}, {\"matrix_segment\", type text}, {\"service_level\", type number}, {\"reference_selling_price\", type number}, {\"current_lead_time_days\", Int64.Type}})",
+                "in",
+                "    Typed"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_platform",
+        "columns": [
+          {
+            "name": "platform_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "e948a4d3d2ac30b07922be04ad25e4a8",
+            "sourceColumn": "platform_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "platform_code",
+            "dataType": "string",
+            "lineageTag": "a2e678a9ea3d64d5c8923351b4688fb4",
+            "sourceColumn": "platform_code",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "platform_name",
+            "dataType": "string",
+            "lineageTag": "524239bac29b4379eb8908b059f62951",
+            "sourceColumn": "platform_name",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "2869574b3bbef1577c47d1ff44bcb9a7",
+        "partitions": [
+          {
+            "name": "dim_platform",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(pServer, pDatabase),",
+                "    Data = Source{[Schema=\"mart\",Item=\"dim_platform\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"platform_key\", \"platform_code\", \"platform_name\"}),",
+                "    Typed = Table.TransformColumnTypes(Selected, {{\"platform_key\", Int64.Type}, {\"platform_code\", type text}, {\"platform_name\", type text}})",
+                "in",
+                "    Typed"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_shop",
+        "columns": [
+          {
+            "name": "shop_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "46cf02c45230144daba79dd1263e5b2d",
+            "sourceColumn": "shop_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "shop_id",
+            "dataType": "string",
+            "lineageTag": "48927a87def18f960430a25560c422ba",
+            "sourceColumn": "shop_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "shop_name",
+            "dataType": "string",
+            "lineageTag": "4574c29c641abe2f0fb6154fa1824056",
+            "sourceColumn": "shop_name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "platform_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "d23e3d8bb426f18758b41b583fc3dabf",
+            "sourceColumn": "platform_key",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "7a1425b33c674946aec1dc7055605513",
+        "partitions": [
+          {
+            "name": "dim_shop",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(pServer, pDatabase),",
+                "    Data = Source{[Schema=\"mart\",Item=\"dim_shop\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"shop_key\", \"shop_id\", \"shop_name\", \"platform_key\"}),",
+                "    Typed = Table.TransformColumnTypes(Selected, {{\"shop_key\", Int64.Type}, {\"shop_id\", type text}, {\"shop_name\", type text}, {\"platform_key\", Int64.Type}})",
+                "in",
+                "    Typed"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_geography",
+        "columns": [
+          {
+            "name": "geo_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "6aaef4767cc03f50dc9a3236531cba0e",
+            "sourceColumn": "geo_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "region",
+            "dataType": "string",
+            "lineageTag": "8be637b79c6bd96095beb410cdd80a17",
+            "sourceColumn": "region",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "state",
+            "dataType": "string",
+            "lineageTag": "43b9eaa661162d3b400eaf33b626e673",
+            "sourceColumn": "state",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "city",
+            "dataType": "string",
+            "lineageTag": "8b4a2b99714f126f73f908b7a28ae0ac",
+            "sourceColumn": "city",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "district",
+            "dataType": "string",
+            "lineageTag": "72922fca11c3d745a270d1901c4e06c0",
+            "sourceColumn": "district",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "country",
+            "dataType": "string",
+            "lineageTag": "63724d8562895a139ee7b05fc4117c97",
+            "sourceColumn": "country",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "0315976a285bdbb9a6c553ceabca3d95",
+        "partitions": [
+          {
+            "name": "dim_geography",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(pServer, pDatabase),",
+                "    Data = Source{[Schema=\"mart\",Item=\"dim_geography\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"geo_key\", \"region\", \"state\", \"city\", \"district\", \"country\"}),",
+                "    Typed = Table.TransformColumnTypes(Selected, {{\"geo_key\", Int64.Type}, {\"region\", type text}, {\"state\", type text}, {\"city\", type text}, {\"district\", type text}, {\"country\", type text}})",
+                "in",
+                "    Typed"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_payment",
+        "columns": [
+          {
+            "name": "payment_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "d5764303799909abbc99672d4bd2b537",
+            "sourceColumn": "payment_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "payment_method",
+            "dataType": "string",
+            "lineageTag": "b549c617fb0a77b5c5d1176b2a84bcc6",
+            "sourceColumn": "payment_method",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_cod",
+            "dataType": "boolean",
+            "lineageTag": "9660d621d62c700d0071079ad4c44f2f",
+            "sourceColumn": "is_cod",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "4629623245fa3c1e9d4a986b8a5666c8",
+        "partitions": [
+          {
+            "name": "dim_payment",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(pServer, pDatabase),",
+                "    Data = Source{[Schema=\"mart\",Item=\"dim_payment\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"payment_key\", \"payment_method\", \"is_cod\"}),",
+                "    Typed = Table.TransformColumnTypes(Selected, {{\"payment_key\", Int64.Type}, {\"payment_method\", type text}, {\"is_cod\", type logical}})",
+                "in",
+                "    Typed"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_carrier",
+        "columns": [
+          {
+            "name": "carrier_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "b3985b39af7c0113bb562a526ddd4cb6",
+            "sourceColumn": "carrier_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "carrier_name",
+            "dataType": "string",
+            "lineageTag": "80481a3cf4d349dff8de25f668dada07",
+            "sourceColumn": "carrier_name",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "1cd512f043d106fc9d5c57f3f2fd33bf",
+        "partitions": [
+          {
+            "name": "dim_carrier",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(pServer, pDatabase),",
+                "    Data = Source{[Schema=\"mart\",Item=\"dim_carrier\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"carrier_key\", \"carrier_name\"}),",
+                "    Typed = Table.TransformColumnTypes(Selected, {{\"carrier_key\", Int64.Type}, {\"carrier_name\", type text}})",
+                "in",
+                "    Typed"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_order_status",
+        "columns": [
+          {
+            "name": "status_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "25237a4bf1c680f0769989a6810c571c",
+            "sourceColumn": "status_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "order_status",
+            "dataType": "string",
+            "lineageTag": "c289ee7bd9a51d656c386d31d647767c",
+            "sourceColumn": "order_status",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "status_group",
+            "dataType": "string",
+            "lineageTag": "fadf4a09aee57693d8aaa19d6b3fa6c6",
+            "sortByColumn": "funnel_order",
+            "sourceColumn": "status_group",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "funnel_order",
+            "dataType": "int64",
+            "formatString": "#,0",
+            "lineageTag": "caf65bcf9bd80ea58881e0c511f267ba",
+            "sourceColumn": "funnel_order",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_final",
+            "dataType": "boolean",
+            "lineageTag": "af3b027aa022ef8b3febc01e9f195a46",
+            "sourceColumn": "is_final",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "cfeeae5cc9decb2b609a4bfe5ae36101",
+        "partitions": [
+          {
+            "name": "dim_order_status",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(pServer, pDatabase),",
+                "    Data = Source{[Schema=\"mart\",Item=\"dim_order_status\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"status_key\", \"order_status\", \"status_group\", \"funnel_order\", \"is_final\"}),",
+                "    Typed = Table.TransformColumnTypes(Selected, {{\"status_key\", Int64.Type}, {\"order_status\", type text}, {\"status_group\", type text}, {\"funnel_order\", Int64.Type}, {\"is_final\", type logical}})",
+                "in",
+                "    Typed"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_model",
+        "columns": [
+          {
+            "name": "model_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "5fe3b93bb8f122d082f9709bf627f3ac",
+            "sourceColumn": "model_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "model_name",
+            "dataType": "string",
+            "lineageTag": "77495a707c4ded7f6811d9785da477f1",
+            "sourceColumn": "model_name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "model_version",
+            "dataType": "string",
+            "lineageTag": "87031153ae360e21b492161bbe266555",
+            "sourceColumn": "model_version",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "training_data_origin",
+            "dataType": "string",
+            "lineageTag": "75055ac4fe4554563bc329f7adc938fa",
+            "sourceColumn": "training_data_origin",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "version_label",
+            "dataType": "string",
+            "lineageTag": "2296060f045400391f2e5aee0c1b3798",
+            "sourceColumn": "version_label",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "model_stage",
+            "dataType": "string",
+            "lineageTag": "e6fbc9d2118531a1f2a784a2b6db1088",
+            "sourceColumn": "model_stage",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "cv_wape",
+            "dataType": "double",
+            "formatString": "#,0.0",
+            "lineageTag": "82a566f9187f4b4da7ea0749e1c3c910",
+            "sourceColumn": "cv_wape",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "cv_bias",
+            "dataType": "double",
+            "formatString": "#,0.0",
+            "lineageTag": "a964570813adaf8f83c083470298c597",
+            "sourceColumn": "cv_bias",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "evaluation_protocol",
+            "dataType": "string",
+            "lineageTag": "9c4f0d59b000c37adc6eb2a6dc459638",
+            "sourceColumn": "evaluation_protocol",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "first_forecast_at",
+            "dataType": "dateTime",
+            "formatString": "dd/MM/yyyy HH:mm",
+            "lineageTag": "c8720b25a99f93cf404ca9f165c1cd12",
+            "sourceColumn": "first_forecast_at",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "last_forecast_at",
+            "dataType": "dateTime",
+            "formatString": "dd/MM/yyyy HH:mm",
+            "lineageTag": "1af1b8150d4314db08215d4180e2eda5",
+            "sourceColumn": "last_forecast_at",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_serving",
+            "dataType": "boolean",
+            "lineageTag": "a302b9b56ad32ff36f067e27a22d75e0",
+            "sourceColumn": "is_serving",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "serving_label",
+            "dataType": "string",
+            "isHidden": true,
+            "lineageTag": "4ab113250365bb36abfcf61f14d4e9fb",
+            "sourceColumn": "serving_label",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "e84f1368d6c1415cbd2a73312d396393",
+        "partitions": [
+          {
+            "name": "dim_model",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(pServer, pDatabase),",
+                "    Data = Source{[Schema=\"mart\",Item=\"dim_model\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"model_key\", \"model_name\", \"model_version\", \"training_data_origin\", \"version_label\", \"model_stage\", \"cv_wape\", \"cv_bias\", \"evaluation_protocol\", \"first_forecast_at\", \"last_forecast_at\", \"is_serving\"}),",
+                "    Typed = Table.TransformColumnTypes(Selected, {{\"model_key\", Int64.Type}, {\"model_name\", type text}, {\"model_version\", type text}, {\"training_data_origin\", type text}, {\"version_label\", type text}, {\"model_stage\", type text}, {\"cv_wape\", type number}, {\"cv_bias\", type number}, {\"evaluation_protocol\", type text}, {\"first_forecast_at\", type datetime}, {\"last_forecast_at\", type datetime}, {\"is_serving\", type logical}}),",
+                "    Added0 = Table.AddColumn(Typed, \"serving_label\", each if [is_serving] = true then \"Có\" else \"Không\", type text)",
+                "in",
+                "    Added0"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "fact_sales_line",
+        "columns": [
+          {
+            "name": "sales_line_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "7edcd79640432de707fa9df63d87032a",
+            "sourceColumn": "sales_line_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "order_id",
+            "dataType": "string",
+            "lineageTag": "d0d33b25778186b87bfd87f359a871a0",
+            "sourceColumn": "order_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "order_date_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "52a4b0430b546a62ceafee4d04b84313",
+            "sourceColumn": "order_date_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "product_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "415637704f02a50b2d18f8a23375bd1a",
+            "sourceColumn": "product_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "platform_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "67c0905be9602875c3ee9e658f087f95",
+            "sourceColumn": "platform_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "shop_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "7c4e4f2c38400ea9ff4abd74826b3643",
+            "sourceColumn": "shop_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "geo_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "47c1f32099a505f797aafdf1624cf639",
+            "sourceColumn": "geo_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "status_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "34b147a71a81bdf17a71ae1a5427ec9e",
+            "sourceColumn": "status_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_cancelled",
+            "dataType": "boolean",
+            "lineageTag": "34f105f95f484dc3d7198eff4c484a5b",
+            "sourceColumn": "is_cancelled",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "quantity",
+            "dataType": "int64",
+            "formatString": "#,0",
+            "lineageTag": "38e4c6faea03a7d0adc8f9f88b4daa8d",
+            "sourceColumn": "quantity",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "net_quantity",
+            "dataType": "int64",
+            "formatString": "#,0",
+            "lineageTag": "1505134c7a195009fa5f4a7939146971",
+            "sourceColumn": "net_quantity",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "unit_price",
+            "dataType": "double",
+            "formatString": "#,0 \"₫\"",
+            "lineageTag": "d1749ae298b559bd27db3b4868cc6e71",
+            "sourceColumn": "unit_price",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "gross_amount",
+            "dataType": "double",
+            "formatString": "#,0 \"₫\"",
+            "lineageTag": "f3bc6ae0bdadcfc06afe0aae07d554c4",
+            "sourceColumn": "gross_amount",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "net_amount",
+            "dataType": "double",
+            "formatString": "#,0 \"₫\"",
+            "lineageTag": "1af64c1a00760565d80cac9b0918abf4",
+            "sourceColumn": "net_amount",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "discount_amount",
+            "dataType": "double",
+            "formatString": "#,0 \"₫\"",
+            "lineageTag": "9ef2d159cf8640f1098fdcefcaaa89c4",
+            "sourceColumn": "discount_amount",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "platform_fees",
+            "dataType": "double",
+            "formatString": "#,0 \"₫\"",
+            "lineageTag": "b3bdd9fa04f0b5d71c89b012bb07925c",
+            "sourceColumn": "platform_fees",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "create_time",
+            "dataType": "dateTime",
+            "formatString": "dd/MM/yyyy HH:mm",
+            "lineageTag": "7295d74581e3c7803b481a114c8afeb7",
+            "sourceColumn": "create_time",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "fb56978a3ca6783e600dd5aaf38be42a",
+        "partitions": [
+          {
+            "name": "fact_sales_line",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(pServer, pDatabase),",
+                "    Data = Source{[Schema=\"mart\",Item=\"fact_sales_line\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"sales_line_key\", \"order_id\", \"order_date_key\", \"product_key\", \"platform_key\", \"shop_key\", \"geo_key\", \"status_key\", \"is_cancelled\", \"quantity\", \"net_quantity\", \"unit_price\", \"gross_amount\", \"net_amount\", \"discount_amount\", \"platform_fees\", \"create_time\"}),",
+                "    Typed = Table.TransformColumnTypes(Selected, {{\"sales_line_key\", Int64.Type}, {\"order_id\", type text}, {\"order_date_key\", Int64.Type}, {\"product_key\", Int64.Type}, {\"platform_key\", Int64.Type}, {\"shop_key\", Int64.Type}, {\"geo_key\", Int64.Type}, {\"status_key\", Int64.Type}, {\"is_cancelled\", type logical}, {\"quantity\", Int64.Type}, {\"net_quantity\", Int64.Type}, {\"unit_price\", type number}, {\"gross_amount\", type number}, {\"net_amount\", type number}, {\"discount_amount\", type number}, {\"platform_fees\", type number}, {\"create_time\", type datetime}})",
+                "in",
+                "    Typed"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "fact_sales_order",
+        "columns": [
+          {
+            "name": "order_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "1ec6174399661cc7b0f9762f52781056",
+            "sourceColumn": "order_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "order_id",
+            "dataType": "string",
+            "lineageTag": "b9f6f1229c5ce83d2f5d41026e2d49eb",
+            "sourceColumn": "order_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "platform_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "14e01285ae12e6ed91588a73ce43d7c8",
+            "sourceColumn": "platform_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "shop_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "54b6396dabea36506fc91584f1faab1a",
+            "sourceColumn": "shop_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "geo_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "7fffacaee77e7effde53c7b7aca7e7ec",
+            "sourceColumn": "geo_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "payment_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "4cb7b0435550ed38dd9178d5540f069c",
+            "sourceColumn": "payment_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "carrier_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "08fe33a5477f208be677fb0f2946512e",
+            "sourceColumn": "carrier_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "status_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "6e2733c35a1aa899f6251db6113a6294",
+            "sourceColumn": "status_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "order_date_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "657cd764e86e3c5c6b8f4a9c13c71214",
+            "sourceColumn": "order_date_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "completed_date_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "ffdc40648f9696ee71a95133269e2344",
+            "sourceColumn": "completed_date_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "create_time",
+            "dataType": "dateTime",
+            "formatString": "dd/MM/yyyy HH:mm",
+            "lineageTag": "d2e9a11f48001ff294cbd9f1aaf35036",
+            "sourceColumn": "create_time",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "pay_time",
+            "dataType": "dateTime",
+            "formatString": "dd/MM/yyyy HH:mm",
+            "lineageTag": "49c73aea2db1ca9fb76a4aee97cc6fa8",
+            "sourceColumn": "pay_time",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "shipped_time",
+            "dataType": "dateTime",
+            "formatString": "dd/MM/yyyy HH:mm",
+            "lineageTag": "1442c6d324730a7e23378d8a28a31a46",
+            "sourceColumn": "shipped_time",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "completed_time",
+            "dataType": "dateTime",
+            "formatString": "dd/MM/yyyy HH:mm",
+            "lineageTag": "3253c4f1b114ff398da5430e02a376bf",
+            "sourceColumn": "completed_time",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "cancel_time",
+            "dataType": "dateTime",
+            "formatString": "dd/MM/yyyy HH:mm",
+            "lineageTag": "93f258775caf238e9b57639159c27e3d",
+            "sourceColumn": "cancel_time",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "order_hour",
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "1d1e0951e4236976c18b945ce6ed8251",
+            "sourceColumn": "order_hour",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "hours_to_pay",
+            "dataType": "double",
+            "formatString": "#,0.0",
+            "lineageTag": "e95b5598a7ac5f388298feaa623d9190",
+            "sourceColumn": "hours_to_pay",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "hours_to_ship",
+            "dataType": "double",
+            "formatString": "#,0.0",
+            "lineageTag": "0de38113dab54f4548e2666eb927a307",
+            "sourceColumn": "hours_to_ship",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "hours_to_complete",
+            "dataType": "double",
+            "formatString": "#,0.0",
+            "lineageTag": "9c07ed8c2c14da22f3b374d9a69b8a73",
+            "sourceColumn": "hours_to_complete",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_cancelled",
+            "dataType": "boolean",
+            "lineageTag": "a473e67a24c1ef5959b4cea12a6e1a5d",
+            "sourceColumn": "is_cancelled",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "line_count",
+            "dataType": "int64",
+            "formatString": "#,0",
+            "lineageTag": "3d70cd64ded98ea65fd44b68b96cf6a7",
+            "sourceColumn": "line_count",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "gross_units",
+            "dataType": "int64",
+            "formatString": "#,0",
+            "lineageTag": "691bd025e6e8ac88e87a2584f378ea32",
+            "sourceColumn": "gross_units",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "net_units",
+            "dataType": "int64",
+            "formatString": "#,0",
+            "lineageTag": "ca88427584fc384e4168bb67d778a534",
+            "sourceColumn": "net_units",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "gross_amount",
+            "dataType": "double",
+            "formatString": "#,0 \"₫\"",
+            "lineageTag": "cfe9f44046f27ab9296497852884c579",
+            "sourceColumn": "gross_amount",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "net_amount",
+            "dataType": "double",
+            "formatString": "#,0 \"₫\"",
+            "lineageTag": "fdff78f2dcdc1cc7d6f9dcc5030eda82",
+            "sourceColumn": "net_amount",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "discount_amount",
+            "dataType": "double",
+            "formatString": "#,0 \"₫\"",
+            "lineageTag": "2f35961e7310fc20f0bc0e97b0f460ad",
+            "sourceColumn": "discount_amount",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "platform_fees",
+            "dataType": "double",
+            "formatString": "#,0 \"₫\"",
+            "lineageTag": "81ce2fbcb93da88354f061f400e760d4",
+            "sourceColumn": "platform_fees",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "shipping_fee",
+            "dataType": "double",
+            "formatString": "#,0 \"₫\"",
+            "lineageTag": "3e87a3f3082d0d8643b09e744fb8317c",
+            "sourceColumn": "shipping_fee",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "has_header_conflict",
+            "dataType": "boolean",
+            "lineageTag": "1677fb65f446742eb1f601eaaefa5527",
+            "sourceColumn": "has_header_conflict",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "09546000d167d8a2c78ef092d81db1fb",
+        "partitions": [
+          {
+            "name": "fact_sales_order",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(pServer, pDatabase),",
+                "    Data = Source{[Schema=\"mart\",Item=\"fact_sales_order\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"order_key\", \"order_id\", \"platform_key\", \"shop_key\", \"geo_key\", \"payment_key\", \"carrier_key\", \"status_key\", \"order_date_key\", \"completed_date_key\", \"create_time\", \"pay_time\", \"shipped_time\", \"completed_time\", \"cancel_time\", \"order_hour\", \"hours_to_pay\", \"hours_to_ship\", \"hours_to_complete\", \"is_cancelled\", \"line_count\", \"gross_units\", \"net_units\", \"gross_amount\", \"net_amount\", \"discount_amount\", \"platform_fees\", \"shipping_fee\", \"has_header_conflict\"}),",
+                "    Typed = Table.TransformColumnTypes(Selected, {{\"order_key\", Int64.Type}, {\"order_id\", type text}, {\"platform_key\", Int64.Type}, {\"shop_key\", Int64.Type}, {\"geo_key\", Int64.Type}, {\"payment_key\", Int64.Type}, {\"carrier_key\", Int64.Type}, {\"status_key\", Int64.Type}, {\"order_date_key\", Int64.Type}, {\"completed_date_key\", Int64.Type}, {\"create_time\", type datetime}, {\"pay_time\", type datetime}, {\"shipped_time\", type datetime}, {\"completed_time\", type datetime}, {\"cancel_time\", type datetime}, {\"order_hour\", Int64.Type}, {\"hours_to_pay\", type number}, {\"hours_to_ship\", type number}, {\"hours_to_complete\", type number}, {\"is_cancelled\", type logical}, {\"line_count\", Int64.Type}, {\"gross_units\", Int64.Type}, {\"net_units\", Int64.Type}, {\"gross_amount\", type number}, {\"net_amount\", type number}, {\"discount_amount\", type number}, {\"platform_fees\", type number}, {\"shipping_fee\", type number}, {\"has_header_conflict\", type logical}})",
+                "in",
+                "    Typed"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "fact_inventory_daily",
+        "columns": [
+          {
+            "name": "product_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "077e914682a7adb0c7a3a14291955675",
+            "sourceColumn": "product_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "snapshot_date_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "163025a96b08aca8722f727eb580ca9b",
+            "sourceColumn": "snapshot_date_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "on_hand",
+            "dataType": "int64",
+            "formatString": "#,0",
+            "lineageTag": "445c2dabb3c927721502d228ab5f5ed3",
+            "sourceColumn": "on_hand",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "lead_time_days",
+            "dataType": "int64",
+            "formatString": "#,0",
+            "lineageTag": "cf871b0862ff1729c0f407947d49c2c4",
+            "sourceColumn": "lead_time_days",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "snapshot_at",
+            "dataType": "dateTime",
+            "formatString": "dd/MM/yyyy HH:mm",
+            "lineageTag": "e0b7d83348706fa2fe0a6a73c0ce9b2f",
+            "sourceColumn": "snapshot_at",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "snapshot_time_known",
+            "dataType": "boolean",
+            "isHidden": true,
+            "lineageTag": "36b3459b04e36de785b3ed2ea6f3b52e",
+            "sourceColumn": "snapshot_time_known",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "0aed2a4aeb74eac6f3db3838d0a130f8",
+        "partitions": [
+          {
+            "name": "fact_inventory_daily",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(pServer, pDatabase),",
+                "    Data = Source{[Schema=\"mart\",Item=\"fact_inventory_daily\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"product_key\", \"snapshot_date_key\", \"on_hand\", \"lead_time_days\", \"snapshot_at\", \"snapshot_time_known\"}),",
+                "    Typed = Table.TransformColumnTypes(Selected, {{\"product_key\", Int64.Type}, {\"snapshot_date_key\", Int64.Type}, {\"on_hand\", Int64.Type}, {\"lead_time_days\", Int64.Type}, {\"snapshot_at\", type datetime}, {\"snapshot_time_known\", type logical}})",
+                "in",
+                "    Typed"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "fact_demand_forecast",
+        "columns": [
+          {
+            "name": "forecast_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "6aee9aa670d965fe3c332a5dab338aaf",
+            "sourceColumn": "forecast_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "product_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "3145113b34205ef9fe4197bb17df05cb",
+            "sourceColumn": "product_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "target_date_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "c8f7547e7ab1431996660c5be99744d7",
+            "sourceColumn": "target_date_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "issued_date_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "be0094bfe3d81bac9b46989fe4b8a9d8",
+            "sourceColumn": "issued_date_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "model_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "6b8ad1441687fdfb803f09288445aafa",
+            "sourceColumn": "model_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "horizon_days",
+            "dataType": "int64",
+            "formatString": "#,0",
+            "lineageTag": "d514cc8912a5478600540f0745397578",
+            "sourceColumn": "horizon_days",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "predicted_quantity",
+            "dataType": "double",
+            "formatString": "#,0",
+            "lineageTag": "0fd878407dc0b34c50d624c398037d8b",
+            "sourceColumn": "predicted_quantity",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "lower_bound",
+            "dataType": "double",
+            "formatString": "#,0",
+            "lineageTag": "8b8e3c3b7ff54d032b7dba95e8afb475",
+            "sourceColumn": "lower_bound",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "upper_bound",
+            "dataType": "double",
+            "formatString": "#,0",
+            "lineageTag": "f229b5d382d3c69547a4b9e964af62f7",
+            "sourceColumn": "upper_bound",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "forecast_generated_at",
+            "dataType": "dateTime",
+            "formatString": "dd/MM/yyyy HH:mm",
+            "lineageTag": "a04f238f0e1a1e9b42b98b658b0831c8",
+            "sourceColumn": "forecast_generated_at",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_latest_for_target",
+            "dataType": "boolean",
+            "lineageTag": "835497648497c99e24332fb9e4018d91",
+            "sourceColumn": "is_latest_for_target",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "actual_quantity",
+            "dataType": "double",
+            "formatString": "#,0",
+            "lineageTag": "00bdfbfdf95a046f19e640a2e0bc7f96",
+            "sourceColumn": "actual_quantity",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "actual_complete",
+            "dataType": "boolean",
+            "lineageTag": "0f6225a10eef29691d56096c1bfb4c7a",
+            "sourceColumn": "actual_complete",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "absolute_error",
+            "dataType": "double",
+            "formatString": "#,0",
+            "lineageTag": "f4d73324d3c3115e82d58af764096238",
+            "sourceColumn": "absolute_error",
+            "summarizeBy": "sum"
+          }
+        ],
+        "lineageTag": "4f9c880748ad94a9acd59ae9b17ae9d2",
+        "partitions": [
+          {
+            "name": "fact_demand_forecast",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(pServer, pDatabase),",
+                "    Data = Source{[Schema=\"mart\",Item=\"fact_demand_forecast\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"forecast_key\", \"product_key\", \"target_date_key\", \"issued_date_key\", \"model_key\", \"horizon_days\", \"predicted_quantity\", \"lower_bound\", \"upper_bound\", \"forecast_generated_at\", \"is_latest_for_target\", \"actual_quantity\", \"actual_complete\", \"absolute_error\"}),",
+                "    Typed = Table.TransformColumnTypes(Selected, {{\"forecast_key\", Int64.Type}, {\"product_key\", Int64.Type}, {\"target_date_key\", Int64.Type}, {\"issued_date_key\", Int64.Type}, {\"model_key\", Int64.Type}, {\"horizon_days\", Int64.Type}, {\"predicted_quantity\", type number}, {\"lower_bound\", type number}, {\"upper_bound\", type number}, {\"forecast_generated_at\", type datetime}, {\"is_latest_for_target\", type logical}, {\"actual_quantity\", type number}, {\"actual_complete\", type logical}, {\"absolute_error\", type number}})",
+                "in",
+                "    Typed"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "fact_replenishment_daily",
+        "columns": [
+          {
+            "name": "product_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "0c895329130392c5c08627e0df48b246",
+            "sourceColumn": "product_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "evaluation_date_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "63716451a26d86580fa15ccc595a636d",
+            "sourceColumn": "evaluation_date_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "model_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "0c937cbfb47c187913e301e0ca9d6a93",
+            "sourceColumn": "model_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "inventory_date_key",
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "0322ed2723eebc6517af64616851c3a9",
+            "sourceColumn": "inventory_date_key",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "inventory_age_days",
+            "dataType": "int64",
+            "formatString": "#,0",
+            "lineageTag": "3909fc602513e24bee311a67d0c56bc1",
+            "sourceColumn": "inventory_age_days",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "on_hand",
+            "dataType": "int64",
+            "formatString": "#,0",
+            "lineageTag": "bedae075e4b81ac554a299028b9691ca",
+            "sourceColumn": "on_hand",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "lead_time_days",
+            "dataType": "int64",
+            "formatString": "#,0",
+            "lineageTag": "712f7ffcdbbfad33cff5931fc0667201",
+            "sourceColumn": "lead_time_days",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "lead_time_defaulted",
+            "dataType": "boolean",
+            "lineageTag": "f2489c84429ef35418b5add2ead8f92d",
+            "sourceColumn": "lead_time_defaulted",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "service_level",
+            "dataType": "double",
+            "formatString": "#,0.0",
+            "lineageTag": "6a75a8dc427b737d2072eb7091ce8e17",
+            "sourceColumn": "service_level",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "sigma_daily",
+            "dataType": "double",
+            "formatString": "#,0.0",
+            "lineageTag": "2b73c71c5e1af7cd6085ebc2725f63b2",
+            "sourceColumn": "sigma_daily",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "avg_daily_demand",
+            "dataType": "double",
+            "formatString": "#,0.0",
+            "lineageTag": "07c711aa2c579a0e691f15e02b936eb4",
+            "sourceColumn": "avg_daily_demand",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "demand_lead_time",
+            "dataType": "double",
+            "formatString": "#,0",
+            "lineageTag": "8b5b9e45831894413c54befd47067228",
+            "sourceColumn": "demand_lead_time",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "forecast_next_7d",
+            "dataType": "double",
+            "formatString": "#,0",
+            "lineageTag": "9874728e06d96cce01c0f5d7f5ce265f",
+            "sourceColumn": "forecast_next_7d",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "demand_source",
+            "dataType": "string",
+            "lineageTag": "d3979620eaae38a8540d86e6c2b287a6",
+            "sourceColumn": "demand_source",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "safety_stock",
+            "dataType": "double",
+            "formatString": "#,0",
+            "lineageTag": "78d160e141190edaf078ce5001450069",
+            "sourceColumn": "safety_stock",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "reorder_point",
+            "dataType": "double",
+            "formatString": "#,0",
+            "lineageTag": "d380be151c2c440e60ace3a2c14a6330",
+            "sourceColumn": "reorder_point",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "order_up_to",
+            "dataType": "double",
+            "formatString": "#,0",
+            "lineageTag": "4e1dffe4c71c36468cae4aaae527a3a4",
+            "sourceColumn": "order_up_to",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "days_of_cover",
+            "dataType": "double",
+            "formatString": "#,0.0",
+            "lineageTag": "c0da3bd23736d40c06854662852f84d4",
+            "sourceColumn": "days_of_cover",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "action_status",
+            "dataType": "string",
+            "lineageTag": "20562a1905a3fece3d37a708591d4777",
+            "sortByColumn": "status_order",
+            "sourceColumn": "action_status",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "urgency",
+            "dataType": "string",
+            "lineageTag": "f84550a2a843e844eb8551a86d46b041",
+            "sourceColumn": "urgency",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "recommended_order_qty",
+            "dataType": "double",
+            "formatString": "#,0",
+            "lineageTag": "9046479a7ca6bf6730a08680043e1111",
+            "sourceColumn": "recommended_order_qty",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "projected_stockout_date",
+            "annotations": [
+              {
+                "name": "UnderlyingDateTimeDataType",
+                "value": "Date"
+              }
+            ],
+            "dataType": "dateTime",
+            "formatString": "dd/MM/yyyy",
+            "lineageTag": "654ad428bfc5db7200b0a9b34438b087",
+            "sourceColumn": "projected_stockout_date",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "order_by_date",
+            "annotations": [
+              {
+                "name": "UnderlyingDateTimeDataType",
+                "value": "Date"
+              }
+            ],
+            "dataType": "dateTime",
+            "formatString": "dd/MM/yyyy",
+            "lineageTag": "0bf6f5db1251edb072c3369fcb129b72",
+            "sourceColumn": "order_by_date",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "order_value_at_selling_price",
+            "dataType": "double",
+            "formatString": "#,0 \"₫\"",
+            "lineageTag": "53a885fb962d8523b16a820a0d5fa5b6",
+            "sourceColumn": "order_value_at_selling_price",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "reason",
+            "dataType": "string",
+            "lineageTag": "d9f500a816830fffc388d8793fc14abf",
+            "sourceColumn": "reason",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "status_order",
+            "dataType": "int64",
+            "formatString": "#,0",
+            "isHidden": true,
+            "lineageTag": "9b928d8c3d1310d17b9a8cda75a6eb72",
+            "sourceColumn": "status_order",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Is Latest Evaluation",
+            "dataType": "boolean",
+            "expression": "fact_replenishment_daily[evaluation_date_key] = MAX ( fact_replenishment_daily[evaluation_date_key] )",
+            "lineageTag": "109c90c48e89a0571a1169c7d2c7c7c4",
+            "summarizeBy": "none",
+            "type": "calculated"
+          }
+        ],
+        "lineageTag": "ac1b102a44099883f0f517373645f232",
+        "partitions": [
+          {
+            "name": "fact_replenishment_daily",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(pServer, pDatabase),",
+                "    Data = Source{[Schema=\"mart\",Item=\"fact_replenishment_daily\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"product_key\", \"evaluation_date_key\", \"model_key\", \"inventory_date_key\", \"inventory_age_days\", \"on_hand\", \"lead_time_days\", \"lead_time_defaulted\", \"service_level\", \"sigma_daily\", \"avg_daily_demand\", \"demand_lead_time\", \"forecast_next_7d\", \"demand_source\", \"safety_stock\", \"reorder_point\", \"order_up_to\", \"days_of_cover\", \"action_status\", \"urgency\", \"recommended_order_qty\", \"projected_stockout_date\", \"order_by_date\", \"order_value_at_selling_price\", \"reason\"}),",
+                "    Typed = Table.TransformColumnTypes(Selected, {{\"product_key\", Int64.Type}, {\"evaluation_date_key\", Int64.Type}, {\"model_key\", Int64.Type}, {\"inventory_date_key\", Int64.Type}, {\"inventory_age_days\", Int64.Type}, {\"on_hand\", Int64.Type}, {\"lead_time_days\", Int64.Type}, {\"lead_time_defaulted\", type logical}, {\"service_level\", type number}, {\"sigma_daily\", type number}, {\"avg_daily_demand\", type number}, {\"demand_lead_time\", type number}, {\"forecast_next_7d\", type number}, {\"demand_source\", type text}, {\"safety_stock\", type number}, {\"reorder_point\", type number}, {\"order_up_to\", type number}, {\"days_of_cover\", type number}, {\"action_status\", type text}, {\"urgency\", type text}, {\"recommended_order_qty\", type number}, {\"projected_stockout_date\", type date}, {\"order_by_date\", type date}, {\"order_value_at_selling_price\", type number}, {\"reason\", type text}}),",
+                "    Added0 = Table.AddColumn(Typed, \"status_order\", each if [action_status] = \"CRITICAL\" then 1 else if [action_status] = \"REORDER\" then 2 else if [action_status] = \"NO_DEMAND_DATA\" then 3 else if [action_status] = \"OK\" then 4 else 9, Int64.Type)",
+                "in",
+                "    Added0"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "_Measures",
+        "columns": [
+          {
+            "name": "Value",
+            "dataType": "int64",
+            "isDataTypeInferred": true,
+            "isHidden": true,
+            "isNameInferred": true,
+            "lineageTag": "38147563db97db0119cc5fbadd2aa4cc",
+            "sourceColumn": "[Value]",
+            "summarizeBy": "none",
+            "type": "calculatedTableColumn"
+          }
+        ],
+        "lineageTag": "f735656f2685b2dc1d3166e59d4d9a6d",
+        "measures": [
+          {
+            "name": "Orders",
+            "displayFolder": "1. Đơn hàng sàn",
+            "expression": "CALCULATE ( COUNTROWS ( fact_sales_order ), fact_sales_order[is_cancelled] = FALSE () )",
+            "formatString": "#,0",
+            "lineageTag": "3e044accf9038b0c6eb1d9e895bebcfc"
+          },
+          {
+            "name": "Orders All Status",
+            "displayFolder": "1. Đơn hàng sàn",
+            "expression": "COUNTROWS ( fact_sales_order )",
+            "formatString": "#,0",
+            "lineageTag": "10be7dcaa08a85c04401344443751417"
+          },
+          {
+            "name": "Cancelled Orders",
+            "displayFolder": "1. Đơn hàng sàn",
+            "expression": "CALCULATE ( COUNTROWS ( fact_sales_order ), fact_sales_order[is_cancelled] = TRUE () )",
+            "formatString": "#,0",
+            "lineageTag": "de418eb8c452a2b773d26ea3f7e4180d"
+          },
+          {
+            "name": "Cancel Rate",
+            "displayFolder": "1. Đơn hàng sàn",
+            "expression": "DIVIDE ( [Cancelled Orders], [Orders All Status] )",
+            "formatString": "0.0%;-0.0%;0.0%",
+            "lineageTag": "96d1dcffdf36fb1ce876ea04bc5c2875"
+          },
+          {
+            "name": "Net Revenue",
+            "displayFolder": "1. Đơn hàng sàn",
+            "expression": "SUM ( fact_sales_order[net_amount] )",
+            "lineageTag": "345bef0b09c770ce9570002458c11a52",
+            "formatStringDefinition": {
+              "expression": "VAR v = SELECTEDMEASURE ()\nVAR a = ABS ( v )\nVAR t =\n    SWITCH ( TRUE (),\n        a >= 1E9, FORMAT ( v / 1E9, \"#,0.0\" ) & \" tỷ ₫\",\n        a >= 1E6, FORMAT ( v / 1E6, \"#,0.0\" ) & \" triệu ₫\",\n        a >= 1E3, FORMAT ( v / 1E3, \"#,0\" ) & \" nghìn ₫\",\n        FORMAT ( v, \"#,0\" ) & \" ₫\" )\nRETURN \"\"\"\" & t & \"\"\"\""
+            }
+          },
+          {
+            "name": "Units Sold",
+            "displayFolder": "1. Đơn hàng sàn",
+            "expression": "SUM ( fact_sales_line[net_quantity] )",
+            "formatString": "#,0",
+            "lineageTag": "c7f23cfe0783e3ca306d5706eb36c969"
+          },
+          {
+            "name": "AOV",
+            "displayFolder": "1. Đơn hàng sàn",
+            "expression": "DIVIDE ( [Net Revenue], [Orders] )",
+            "lineageTag": "d9c1434c41ca353eed20327da007b7ed",
+            "formatStringDefinition": {
+              "expression": "VAR v = SELECTEDMEASURE ()\nVAR a = ABS ( v )\nVAR t =\n    SWITCH ( TRUE (),\n        a >= 1E9, FORMAT ( v / 1E9, \"#,0.0\" ) & \" tỷ ₫\",\n        a >= 1E6, FORMAT ( v / 1E6, \"#,0.0\" ) & \" triệu ₫\",\n        a >= 1E3, FORMAT ( v / 1E3, \"#,0\" ) & \" nghìn ₫\",\n        FORMAT ( v, \"#,0\" ) & \" ₫\" )\nRETURN \"\"\"\" & t & \"\"\"\""
+            }
+          },
+          {
+            "name": "Platform Fees",
+            "displayFolder": "1. Đơn hàng sàn",
+            "expression": "SUM ( fact_sales_order[platform_fees] )",
+            "lineageTag": "beb5d8c6c3ad6bfb681c36714dea704f",
+            "formatStringDefinition": {
+              "expression": "VAR v = SELECTEDMEASURE ()\nVAR a = ABS ( v )\nVAR t =\n    SWITCH ( TRUE (),\n        a >= 1E9, FORMAT ( v / 1E9, \"#,0.0\" ) & \" tỷ ₫\",\n        a >= 1E6, FORMAT ( v / 1E6, \"#,0.0\" ) & \" triệu ₫\",\n        a >= 1E3, FORMAT ( v / 1E3, \"#,0\" ) & \" nghìn ₫\",\n        FORMAT ( v, \"#,0\" ) & \" ₫\" )\nRETURN \"\"\"\" & t & \"\"\"\""
+            }
+          },
+          {
+            "name": "Avg Hours To Complete",
+            "displayFolder": "1. Đơn hàng sàn",
+            "expression": "CALCULATE ( AVERAGE ( fact_sales_order[hours_to_complete] ), fact_sales_order[is_cancelled] = FALSE () )",
+            "formatString": "#,0.0",
+            "lineageTag": "41b169966d76db441b3dc9e2d1bd4f86"
+          },
+          {
+            "name": "Revenue Last 7D",
+            "displayFolder": "1. Đơn hàng sàn",
+            "expression": [
+              "VAR LastDay = MIN ( MAX ( dim_date[full_date] ), TODAY () - 1 )",
+              "RETURN CALCULATE ( [Net Revenue], DATESINPERIOD ( dim_date[full_date], LastDay, -7, DAY ) )"
+            ],
+            "lineageTag": "7c72bb0d83cab45855983c02ac8a9cf0",
+            "formatStringDefinition": {
+              "expression": "VAR v = SELECTEDMEASURE ()\nVAR a = ABS ( v )\nVAR t =\n    SWITCH ( TRUE (),\n        a >= 1E9, FORMAT ( v / 1E9, \"#,0.0\" ) & \" tỷ ₫\",\n        a >= 1E6, FORMAT ( v / 1E6, \"#,0.0\" ) & \" triệu ₫\",\n        a >= 1E3, FORMAT ( v / 1E3, \"#,0\" ) & \" nghìn ₫\",\n        FORMAT ( v, \"#,0\" ) & \" ₫\" )\nRETURN \"\"\"\" & t & \"\"\"\""
+            }
+          },
+          {
+            "name": "Revenue Prev 7D",
+            "displayFolder": "1. Đơn hàng sàn",
+            "expression": [
+              "VAR LastDay = MIN ( MAX ( dim_date[full_date] ), TODAY () - 1 )",
+              "RETURN CALCULATE ( [Net Revenue], DATESINPERIOD ( dim_date[full_date], LastDay - 7, -7, DAY ) )"
+            ],
+            "lineageTag": "a31bd39bbb41987978a6a2c3922b2ece",
+            "formatStringDefinition": {
+              "expression": "VAR v = SELECTEDMEASURE ()\nVAR a = ABS ( v )\nVAR t =\n    SWITCH ( TRUE (),\n        a >= 1E9, FORMAT ( v / 1E9, \"#,0.0\" ) & \" tỷ ₫\",\n        a >= 1E6, FORMAT ( v / 1E6, \"#,0.0\" ) & \" triệu ₫\",\n        a >= 1E3, FORMAT ( v / 1E3, \"#,0\" ) & \" nghìn ₫\",\n        FORMAT ( v, \"#,0\" ) & \" ₫\" )\nRETURN \"\"\"\" & t & \"\"\"\""
+            }
+          },
+          {
+            "name": "Revenue 7D Change %",
+            "displayFolder": "1. Đơn hàng sàn",
+            "expression": "DIVIDE ( [Revenue Last 7D] - [Revenue Prev 7D], [Revenue Prev 7D] )",
+            "formatString": "0.0%;-0.0%;0.0%",
+            "lineageTag": "6e1c1488a87a27f738754b6c6e75c2a4"
+          },
+          {
+            "name": "Revenue Share",
+            "displayFolder": "1. Đơn hàng sàn",
+            "expression": "DIVIDE ( [Net Revenue], CALCULATE ( [Net Revenue], ALL ( dim_platform ) ) )",
+            "formatString": "0.0%;-0.0%;0.0%",
+            "lineageTag": "95097ea1dad76ebd38afcad1543fb8d9"
+          },
+          {
+            "name": "SKUs Tracked Today",
+            "displayFolder": "2. Tồn kho",
+            "expression": "CALCULATE ( COUNTROWS ( fact_replenishment_daily ), fact_replenishment_daily[Is Latest Evaluation] = TRUE (), REMOVEFILTERS ( dim_date ) )",
+            "formatString": "#,0",
+            "lineageTag": "85e00d36e90f63545bd19efd7ed85bfc"
+          },
+          {
+            "name": "SKUs Critical",
+            "displayFolder": "2. Tồn kho",
+            "expression": "CALCULATE ( [SKUs Tracked Today], fact_replenishment_daily[action_status] = \"CRITICAL\" )",
+            "formatString": "#,0",
+            "lineageTag": "44bb5e613229d3c40f575e2edec847a9"
+          },
+          {
+            "name": "SKUs To Reorder",
+            "displayFolder": "2. Tồn kho",
+            "expression": "CALCULATE ( [SKUs Tracked Today], fact_replenishment_daily[action_status] IN { \"CRITICAL\", \"REORDER\" } )",
+            "formatString": "#,0",
+            "lineageTag": "22b35ba2ba8d184f2022957bce1089ae"
+          },
+          {
+            "name": "SKUs OK",
+            "displayFolder": "2. Tồn kho",
+            "expression": "CALCULATE ( [SKUs Tracked Today], fact_replenishment_daily[action_status] = \"OK\" )",
+            "formatString": "#,0",
+            "lineageTag": "0011b72c775787d3c67d74b052fcb03b"
+          },
+          {
+            "name": "SKUs No Demand Data",
+            "displayFolder": "2. Tồn kho",
+            "expression": "CALCULATE ( [SKUs Tracked Today], fact_replenishment_daily[action_status] = \"NO_DEMAND_DATA\" )",
+            "formatString": "#,0",
+            "lineageTag": "b23598c14299681991a41dca79e74d79"
+          },
+          {
+            "name": "SKUs Stockout 7d",
+            "displayFolder": "2. Tồn kho",
+            "expression": "CALCULATE ( COUNTROWS ( FILTER ( fact_replenishment_daily, NOT ISBLANK ( fact_replenishment_daily[days_of_cover] ) && fact_replenishment_daily[days_of_cover] <= 7 ) ), fact_replenishment_daily[Is Latest Evaluation] = TRUE (), REMOVEFILTERS ( dim_date ) )",
+            "formatString": "#,0",
+            "lineageTag": "d58117ee56bbe085c98846283bcdfa49"
+          },
+          {
+            "name": "Stock On Hand Today",
+            "displayFolder": "2. Tồn kho",
+            "expression": "CALCULATE ( SUM ( fact_replenishment_daily[on_hand] ), fact_replenishment_daily[Is Latest Evaluation] = TRUE (), REMOVEFILTERS ( dim_date ) )",
+            "formatString": "#,0",
+            "lineageTag": "3fdff87ff81bf6e04ba52b7b8fc01d65"
+          },
+          {
+            "name": "Reorder Point Today",
+            "displayFolder": "2. Tồn kho",
+            "expression": "CALCULATE ( SUM ( fact_replenishment_daily[reorder_point] ), fact_replenishment_daily[Is Latest Evaluation] = TRUE (), REMOVEFILTERS ( dim_date ) )",
+            "formatString": "#,0",
+            "lineageTag": "2f96de587a89ff9577a0faa6a4ab2890"
+          },
+          {
+            "name": "Median Days Of Cover",
+            "displayFolder": "2. Tồn kho",
+            "expression": "CALCULATE ( MEDIAN ( fact_replenishment_daily[days_of_cover] ), fact_replenishment_daily[Is Latest Evaluation] = TRUE (), REMOVEFILTERS ( dim_date ) )",
+            "formatString": "#,0.0",
+            "lineageTag": "6db3bb437cf85d33f1e964fe4ffca277"
+          },
+          {
+            "name": "Days Of Cover Today",
+            "displayFolder": "2. Tồn kho",
+            "expression": "CALCULATE ( MIN ( fact_replenishment_daily[days_of_cover] ), fact_replenishment_daily[Is Latest Evaluation] = TRUE (), REMOVEFILTERS ( dim_date ) )",
+            "formatString": "#,0.0",
+            "lineageTag": "6fd294a0b759e1e80ab8e0f1b4322607"
+          },
+          {
+            "name": "Stock Snapshot",
+            "displayFolder": "2. Tồn kho",
+            "expression": [
+              "VAR d = MAX ( dim_date[full_date] )",
+              "RETURN SUMX ( VALUES ( dim_product[product_key] ),",
+              "    VAR LastKey = CALCULATE ( MAX ( fact_inventory_daily[snapshot_date_key] ), dim_date[full_date] <= d, REMOVEFILTERS ( dim_date ) )",
+              "    RETURN IF ( NOT ISBLANK ( LastKey ), CALCULATE ( SUM ( fact_inventory_daily[on_hand] ),",
+              "        fact_inventory_daily[snapshot_date_key] = LastKey, REMOVEFILTERS ( dim_date ) ) ) )"
+            ],
+            "formatString": "#,0",
+            "lineageTag": "6bb3ab38f257a92b9cabb50028c4eb7f"
+          },
+          {
+            "name": "Status Color",
+            "displayFolder": "2. Tồn kho",
+            "expression": [
+              "VAR s = CALCULATE ( SELECTEDVALUE ( fact_replenishment_daily[action_status] ), fact_replenishment_daily[Is Latest Evaluation] = TRUE (), REMOVEFILTERS ( dim_date ) )",
+              "RETURN SWITCH ( s, \"CRITICAL\", \"#D64545\", \"REORDER\", \"#E8912D\", \"OK\", \"#3A9D5D\", \"NO_DEMAND_DATA\", \"#9AA0A6\", \"#C8C8C8\" )"
+            ],
+            "lineageTag": "c9e08311311c7d8cfe531a0fc9bcc623"
+          },
+          {
+            "name": "Reason Today",
+            "displayFolder": "2. Tồn kho",
+            "expression": "CALCULATE ( SELECTEDVALUE ( fact_replenishment_daily[reason] ), fact_replenishment_daily[Is Latest Evaluation] = TRUE (), REMOVEFILTERS ( dim_date ) )",
+            "lineageTag": "029dc2fc3203240f51b2a1e6edbcd6b9"
+          },
+          {
+            "name": "Forecast Units",
+            "displayFolder": "3. Dự báo AI",
+            "expression": "CALCULATE ( SUM ( fact_demand_forecast[predicted_quantity] ), fact_demand_forecast[is_latest_for_target] = TRUE (), dim_model[training_data_origin] = \"warehouse_live\" )",
+            "formatString": "#,0.0",
+            "lineageTag": "0ae5f61977ab6551d55975c214c72567"
+          },
+          {
+            "name": "Forecast Upper",
+            "displayFolder": "3. Dự báo AI",
+            "expression": "IF ( HASONEVALUE ( dim_product[sku] ), CALCULATE ( SUM ( fact_demand_forecast[upper_bound] ), fact_demand_forecast[is_latest_for_target] = TRUE (), dim_model[training_data_origin] = \"warehouse_live\" ) )",
+            "formatString": "#,0.0",
+            "lineageTag": "adc513d288afce81c665522c08f376c7"
+          },
+          {
+            "name": "Forecast Lower",
+            "displayFolder": "3. Dự báo AI",
+            "expression": "IF ( HASONEVALUE ( dim_product[sku] ), CALCULATE ( SUM ( fact_demand_forecast[lower_bound] ), fact_demand_forecast[is_latest_for_target] = TRUE (), dim_model[training_data_origin] = \"warehouse_live\" ) )",
+            "formatString": "#,0.0",
+            "lineageTag": "135163b33977446347ccc54cc3576f38"
+          },
+          {
+            "name": "Actual Units",
+            "displayFolder": "3. Dự báo AI",
+            "expression": "SUM ( fact_sales_line[net_quantity] )",
+            "formatString": "#,0",
+            "lineageTag": "140b69a8854e16bd3917d737812799f0"
+          },
+          {
+            "name": "Scored Forecast Error",
+            "displayFolder": "3. Dự báo AI",
+            "expression": "CALCULATE ( SUM ( fact_demand_forecast[absolute_error] ), fact_demand_forecast[actual_complete] = TRUE () )",
+            "formatString": "#,0.0",
+            "lineageTag": "ce366c18b866597b368c4a242254b8bd"
+          },
+          {
+            "name": "Scored Actual",
+            "displayFolder": "3. Dự báo AI",
+            "expression": "CALCULATE ( SUM ( fact_demand_forecast[actual_quantity] ), fact_demand_forecast[actual_complete] = TRUE () )",
+            "formatString": "#,0.0",
+            "lineageTag": "f5792f0284315987acb0344e95507d68"
+          },
+          {
+            "name": "Scored Predicted",
+            "displayFolder": "3. Dự báo AI",
+            "expression": "CALCULATE ( SUM ( fact_demand_forecast[predicted_quantity] ), fact_demand_forecast[actual_complete] = TRUE () )",
+            "formatString": "#,0.0",
+            "lineageTag": "646c214c1a76b38c0de9d021bcdf5e67"
+          },
+          {
+            "name": "Live WAPE",
+            "displayFolder": "3. Dự báo AI",
+            "expression": "DIVIDE ( [Scored Forecast Error], [Scored Actual] )",
+            "formatString": "0.0%;-0.0%;0.0%",
+            "lineageTag": "ec21cd262b390ddc00473cdf327aae45"
+          },
+          {
+            "name": "Live Bias",
+            "displayFolder": "3. Dự báo AI",
+            "expression": "DIVIDE ( [Scored Predicted] - [Scored Actual], [Scored Actual] )",
+            "formatString": "0.0%;-0.0%;0.0%",
+            "lineageTag": "88d3091755865264390400acf3f643bf"
+          },
+          {
+            "name": "Scored Days",
+            "displayFolder": "3. Dự báo AI",
+            "expression": "CALCULATE ( DISTINCTCOUNT ( fact_demand_forecast[target_date_key] ), fact_demand_forecast[actual_complete] = TRUE () )",
+            "formatString": "#,0",
+            "lineageTag": "8d804abf324a50723e281e9964610c6a"
+          },
+          {
+            "name": "Serving Live WAPE",
+            "displayFolder": "3. Dự báo AI",
+            "expression": "CALCULATE ( [Live WAPE], dim_model[is_serving] = TRUE (), fact_demand_forecast[horizon_days] = 1 )",
+            "formatString": "0.0%;-0.0%;0.0%",
+            "lineageTag": "9c97a9b74bd701c07cf3dea1aaf2205a"
+          },
+          {
+            "name": "Serving Live Bias",
+            "displayFolder": "3. Dự báo AI",
+            "expression": "CALCULATE ( [Live Bias], dim_model[is_serving] = TRUE (), fact_demand_forecast[horizon_days] = 1 )",
+            "formatString": "0.0%;-0.0%;0.0%",
+            "lineageTag": "1685c6727f9290d96a0dd64c8d78bc6c"
+          },
+          {
+            "name": "Serving Scored Days",
+            "displayFolder": "3. Dự báo AI",
+            "expression": "CALCULATE ( [Scored Days], dim_model[is_serving] = TRUE (), fact_demand_forecast[horizon_days] = 1 )",
+            "formatString": "#,0",
+            "lineageTag": "368ec955a0a7c632454c5933651c5971"
+          },
+          {
+            "name": "Scored Forecasts",
+            "displayFolder": "3. Dự báo AI",
+            "expression": "CALCULATE ( COUNTROWS ( fact_demand_forecast ), fact_demand_forecast[actual_complete] = TRUE () )",
+            "formatString": "#,0",
+            "lineageTag": "9ded40fe78df95001a8757c4a02a2061"
+          },
+          {
+            "name": "Backtest WAPE",
+            "displayFolder": "3. Dự báo AI",
+            "expression": "DIVIDE ( CALCULATE ( MAX ( dim_model[cv_wape] ), dim_model[is_serving] = TRUE () ), 100 )",
+            "formatString": "0.0%;-0.0%;0.0%",
+            "lineageTag": "061368e96f020b92d8d6045abb09239f"
+          },
+          {
+            "name": "Backtest Bias",
+            "displayFolder": "3. Dự báo AI",
+            "expression": "DIVIDE ( CALCULATE ( MAX ( dim_model[cv_bias] ), dim_model[is_serving] = TRUE () ), 100 )",
+            "formatString": "0.0%;-0.0%;0.0%",
+            "lineageTag": "9728d085c5874374fc98adca75c37377"
+          },
+          {
+            "name": "Serving Model",
+            "displayFolder": "3. Dự báo AI",
+            "expression": "CALCULATE ( MAX ( dim_model[version_label] ), dim_model[is_serving] = TRUE () )",
+            "lineageTag": "f0b4f6ef048fd27473c347e9747c679f"
+          },
+          {
+            "name": "Common WAPE",
+            "displayFolder": "3. Dự báo AI",
+            "expression": [
+              "VAR NModels = CALCULATE ( DISTINCTCOUNT ( fact_demand_forecast[model_key] ), fact_demand_forecast[actual_complete] = TRUE (), ALLSELECTED ( dim_model ) )",
+              "VAR CommonKeys =",
+              "    FILTER (",
+              "        CALCULATETABLE (",
+              "            SUMMARIZE ( fact_demand_forecast, fact_demand_forecast[product_key], fact_demand_forecast[target_date_key], fact_demand_forecast[horizon_days] ),",
+              "            fact_demand_forecast[actual_complete] = TRUE (), ALLSELECTED ( dim_model ) ),",
+              "        CALCULATE ( DISTINCTCOUNT ( fact_demand_forecast[model_key] ), fact_demand_forecast[actual_complete] = TRUE (), ALLSELECTED ( dim_model ) ) = NModels )",
+              "RETURN DIVIDE (",
+              "    CALCULATE ( SUM ( fact_demand_forecast[absolute_error] ), fact_demand_forecast[actual_complete] = TRUE (), KEEPFILTERS ( CommonKeys ) ),",
+              "    CALCULATE ( SUM ( fact_demand_forecast[actual_quantity] ), fact_demand_forecast[actual_complete] = TRUE (), KEEPFILTERS ( CommonKeys ) ) )"
+            ],
+            "formatString": "0.0%;-0.0%;0.0%",
+            "lineageTag": "335a5c7984fb322875c50df244ac3b76"
+          },
+          {
+            "name": "Recommended Qty Today",
+            "displayFolder": "4. Đặt hàng NCC",
+            "expression": "CALCULATE ( SUM ( fact_replenishment_daily[recommended_order_qty] ), fact_replenishment_daily[Is Latest Evaluation] = TRUE (), REMOVEFILTERS ( dim_date ) )",
+            "formatString": "#,0",
+            "lineageTag": "b52fdd70d9e8bc03162721cc3ae98948"
+          },
+          {
+            "name": "Order Value Today",
+            "displayFolder": "4. Đặt hàng NCC",
+            "expression": "CALCULATE ( SUM ( fact_replenishment_daily[order_value_at_selling_price] ), fact_replenishment_daily[Is Latest Evaluation] = TRUE (), REMOVEFILTERS ( dim_date ) )",
+            "lineageTag": "e6ea8c58dc955ff7468bc2bcec932806",
+            "formatStringDefinition": {
+              "expression": "VAR v = SELECTEDMEASURE ()\nVAR a = ABS ( v )\nVAR t =\n    SWITCH ( TRUE (),\n        a >= 1E9, FORMAT ( v / 1E9, \"#,0.0\" ) & \" tỷ ₫\",\n        a >= 1E6, FORMAT ( v / 1E6, \"#,0.0\" ) & \" triệu ₫\",\n        a >= 1E3, FORMAT ( v / 1E3, \"#,0\" ) & \" nghìn ₫\",\n        FORMAT ( v, \"#,0\" ) & \" ₫\" )\nRETURN \"\"\"\" & t & \"\"\"\""
+            }
+          },
+          {
+            "name": "SKUs Order Now",
+            "displayFolder": "4. Đặt hàng NCC",
+            "expression": "CALCULATE ( [SKUs Tracked Today], fact_replenishment_daily[urgency] = \"Đặt ngay\" )",
+            "formatString": "#,0",
+            "lineageTag": "33d6def54739c4c5cca3bdd6656e5d5d"
+          },
+          {
+            "name": "SKUs Order This Week",
+            "displayFolder": "4. Đặt hàng NCC",
+            "expression": "CALCULATE ( [SKUs Tracked Today], fact_replenishment_daily[urgency] = \"Đặt trong tuần\" )",
+            "formatString": "#,0",
+            "lineageTag": "031062ea3745560692202ca1f50c8e2f"
+          },
+          {
+            "name": "SKUs Default Lead Time",
+            "displayFolder": "4. Đặt hàng NCC",
+            "expression": "CALCULATE ( [SKUs Tracked Today], fact_replenishment_daily[lead_time_defaulted] = TRUE () )",
+            "formatString": "#,0",
+            "lineageTag": "ed4bc7bb599a2e7fe583693e59240f29"
+          },
+          {
+            "name": "Recommended Qty",
+            "displayFolder": "4. Đặt hàng NCC",
+            "expression": "SUM ( fact_replenishment_daily[recommended_order_qty] )",
+            "formatString": "#,0",
+            "lineageTag": "222c173f8a4bc945d8c85b16132bc936"
+          },
+          {
+            "name": "Last Order Created",
+            "displayFolder": "5. Độ tin cậy",
+            "expression": "FORMAT ( CALCULATE ( MAX ( fact_sales_line[create_time] ), ALL ( fact_sales_line ) ), \"dd/MM/yyyy HH:mm\" )",
+            "lineageTag": "f6fb6c4f3727275b0e78476a145bc3fb"
+          },
+          {
+            "name": "Selected SKU",
+            "displayFolder": "6. Chi tiết SKU",
+            "expression": "IF ( HASONEVALUE ( dim_product[sku] ), SELECTEDVALUE ( dim_product[product_name] ), \"Hãy chọn 1 SKU\" )",
+            "lineageTag": "5274e0c2d7b9a72e767a0ce8bd1d0f3a"
+          },
+          {
+            "name": "SKU Stock On Hand",
+            "displayFolder": "6. Chi tiết SKU",
+            "expression": "IF ( HASONEVALUE ( dim_product[sku] ), [Stock On Hand Today] )",
+            "formatString": "#,0",
+            "lineageTag": "fea66ef7b7f45eb2d22dae45c90fee06"
+          },
+          {
+            "name": "SKU Days Of Cover",
+            "displayFolder": "6. Chi tiết SKU",
+            "expression": "IF ( HASONEVALUE ( dim_product[sku] ), [Days Of Cover Today] )",
+            "formatString": "#,0.0",
+            "lineageTag": "75fb4596ef0889beb46912a13c1b8892"
+          },
+          {
+            "name": "SKU Recommended Qty",
+            "displayFolder": "6. Chi tiết SKU",
+            "expression": "IF ( HASONEVALUE ( dim_product[sku] ), [Recommended Qty Today] )",
+            "formatString": "#,0",
+            "lineageTag": "b0d2826df7c9b8c68ef636aa4db881c0"
+          },
+          {
+            "name": "SKU Reason",
+            "displayFolder": "6. Chi tiết SKU",
+            "expression": "IF ( HASONEVALUE ( dim_product[sku] ), [Reason Today], \"Lý do hiển thị khi chọn 1 SKU\" )",
+            "lineageTag": "5ef41341c8eb48763bea500fdd37cd75"
+          },
+          {
+            "name": "SKU Actual Units",
+            "displayFolder": "6. Chi tiết SKU",
+            "expression": "IF ( HASONEVALUE ( dim_product[sku] ), [Actual Units] )",
+            "formatString": "#,0",
+            "lineageTag": "6f17dc84970438cf202028a3ac692fab"
+          },
+          {
+            "name": "SKU Forecast Units",
+            "displayFolder": "6. Chi tiết SKU",
+            "expression": "IF ( HASONEVALUE ( dim_product[sku] ), [Forecast Units] )",
+            "formatString": "#,0.0",
+            "lineageTag": "4227c01b2a1aef3da747af7f8b4b7de5"
+          },
+          {
+            "name": "SKU Stock Snapshot",
+            "displayFolder": "6. Chi tiết SKU",
+            "expression": "IF ( HASONEVALUE ( dim_product[sku] ), [Stock Snapshot] )",
+            "formatString": "#,0",
+            "lineageTag": "f14d53d7f29ef82ea31ccb369f1f72aa"
+          },
+          {
+            "name": "SKU Day On Hand",
+            "displayFolder": "6. Chi tiết SKU",
+            "expression": "IF ( HASONEVALUE ( dim_product[sku] ) && HASONEVALUE ( dim_date[full_date] ), SUM ( fact_replenishment_daily[on_hand] ) )",
+            "formatString": "#,0",
+            "lineageTag": "693e10966f10889eb95ae12144f043b4"
+          },
+          {
+            "name": "SKU Day Reorder Point",
+            "displayFolder": "6. Chi tiết SKU",
+            "expression": "IF ( HASONEVALUE ( dim_product[sku] ) && HASONEVALUE ( dim_date[full_date] ), SUM ( fact_replenishment_daily[reorder_point] ) )",
+            "formatString": "#,0",
+            "lineageTag": "009f561d230f86a142a48dfe5f16b7da"
+          },
+          {
+            "name": "SKU Day Recommended",
+            "displayFolder": "6. Chi tiết SKU",
+            "expression": "IF ( HASONEVALUE ( dim_product[sku] ) && HASONEVALUE ( dim_date[full_date] ), SUM ( fact_replenishment_daily[recommended_order_qty] ) )",
+            "formatString": "#,0",
+            "lineageTag": "63c65d354938786ef63731ecd1d94647"
+          },
+          {
+            "name": "Last Confirmed Day",
+            "displayFolder": "5. Độ tin cậy",
+            "expression": "FORMAT ( CALCULATE ( MAX ( dim_date[full_date] ), dim_date[is_data_confirmed] = TRUE (), ALL ( dim_date ) ), \"dd/MM/yyyy\" )",
+            "lineageTag": "cb43550015f9307537946dcf563ae1a5"
+          },
+          {
+            "name": "Header Conflict Orders",
+            "displayFolder": "5. Độ tin cậy",
+            "expression": "CALCULATE ( COUNTROWS ( fact_sales_order ), fact_sales_order[has_header_conflict] = TRUE () )",
+            "formatString": "#,0",
+            "lineageTag": "78f3524179e09640f3187db3358c419f"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "_Measures",
+            "mode": "import",
+            "source": {
+              "expression": "ROW ( \"Value\", 0 )",
+              "type": "calculated"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

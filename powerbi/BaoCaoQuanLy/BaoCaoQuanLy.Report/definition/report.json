@@ -1,0 +1,185 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/3.3.0/schema.json",
+  "themeCollection": {
+    "baseTheme": {
+      "name": "Fluent2-CY26SU09",
+      "reportVersionAtImport": {
+        "visual": "2.13.0",
+        "report": "3.4.0",
+        "page": "2.3.1"
+      },
+      "type": "SharedResources"
+    },
+    "customTheme": {
+      "name": "QuanLyKho.json",
+      "reportVersionAtImport": {
+        "visual": "2.13.0",
+        "report": "3.4.0",
+        "page": "2.3.1"
+      },
+      "type": "RegisteredResources"
+    }
+  },
+  "resourcePackages": [
+    {
+      "name": "SharedResources",
+      "type": "SharedResources",
+      "items": [
+        {
+          "name": "Fluent2-CY26SU09",
+          "path": "BaseThemes/Fluent2-CY26SU09.json",
+          "type": "BaseTheme"
+        }
+      ]
+    },
+    {
+      "name": "RegisteredResources",
+      "type": "RegisteredResources",
+      "items": [
+        {
+          "name": "icon_alert_d64545.svg",
+          "path": "icon_alert_d64545.svg",
+          "type": "Image"
+        },
+        {
+          "name": "icon_bolt_d64545.svg",
+          "path": "icon_bolt_d64545.svg",
+          "type": "Image"
+        },
+        {
+          "name": "icon_box_768cce.svg",
+          "path": "icon_box_768cce.svg",
+          "type": "Image"
+        },
+        {
+          "name": "icon_box_d64545.svg",
+          "path": "icon_box_d64545.svg",
+          "type": "Image"
+        },
+        {
+          "name": "icon_calcheck_3a9d5d.svg",
+          "path": "icon_calcheck_3a9d5d.svg",
+          "type": "Image"
+        },
+        {
+          "name": "icon_calcheck_768cce.svg",
+          "path": "icon_calcheck_768cce.svg",
+          "type": "Image"
+        },
+        {
+          "name": "icon_calendar_768cce.svg",
+          "path": "icon_calendar_768cce.svg",
+          "type": "Image"
+        },
+        {
+          "name": "icon_calendar_e8912d.svg",
+          "path": "icon_calendar_e8912d.svg",
+          "type": "Image"
+        },
+        {
+          "name": "icon_cart_3a9d5d.svg",
+          "path": "icon_cart_3a9d5d.svg",
+          "type": "Image"
+        },
+        {
+          "name": "icon_cart_e8912d.svg",
+          "path": "icon_cart_e8912d.svg",
+          "type": "Image"
+        },
+        {
+          "name": "icon_check_3a9d5d.svg",
+          "path": "icon_check_3a9d5d.svg",
+          "type": "Image"
+        },
+        {
+          "name": "icon_chip_768cce.svg",
+          "path": "icon_chip_768cce.svg",
+          "type": "Image"
+        },
+        {
+          "name": "icon_clock_768cce.svg",
+          "path": "icon_clock_768cce.svg",
+          "type": "Image"
+        },
+        {
+          "name": "icon_clock_ffb0bd.svg",
+          "path": "icon_clock_ffb0bd.svg",
+          "type": "Image"
+        },
+        {
+          "name": "icon_coin_97a8dc.svg",
+          "path": "icon_coin_97a8dc.svg",
+          "type": "Image"
+        },
+        {
+          "name": "icon_link_ffb0bd.svg",
+          "path": "icon_link_ffb0bd.svg",
+          "type": "Image"
+        },
+        {
+          "name": "icon_pulse_97a8dc.svg",
+          "path": "icon_pulse_97a8dc.svg",
+          "type": "Image"
+        },
+        {
+          "name": "icon_receipt_768cce.svg",
+          "path": "icon_receipt_768cce.svg",
+          "type": "Image"
+        },
+        {
+          "name": "icon_scale_97a8dc.svg",
+          "path": "icon_scale_97a8dc.svg",
+          "type": "Image"
+        },
+        {
+          "name": "icon_tag_768cce.svg",
+          "path": "icon_tag_768cce.svg",
+          "type": "Image"
+        },
+        {
+          "name": "icon_tag_97a8dc.svg",
+          "path": "icon_tag_97a8dc.svg",
+          "type": "Image"
+        },
+        {
+          "name": "icon_target_768cce.svg",
+          "path": "icon_target_768cce.svg",
+          "type": "Image"
+        },
+        {
+          "name": "icon_trend_ffb0bd.svg",
+          "path": "icon_trend_ffb0bd.svg",
+          "type": "Image"
+        },
+        {
+          "name": "icon_xcircle_ffb0bd.svg",
+          "path": "icon_xcircle_ffb0bd.svg",
+          "type": "Image"
+        },
+        {
+          "name": "Logo_QuanLyKho.svg",
+          "path": "Logo_QuanLyKho.svg",
+          "type": "Image"
+        },
+        {
+          "name": "NenTrang_QuanLyKho.png",
+          "path": "NenTrang_QuanLyKho.png",
+          "type": "Image"
+        },
+        {
+          "name": "QuanLyKho.json",
+          "path": "QuanLyKho.json",
+          "type": "CustomTheme"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "useStylableVisualContainerHeader": true,
+    "exportDataMode": "AllowSummarized",
+    "defaultDrillFilterOtherVisuals": true,
+    "allowChangeFilterTypes": true,
+    "useEnhancedTooltips": true,
+    "useDefaultAggregateDisplayName": true
+  }
+}

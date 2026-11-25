@@ -1,0 +1,12 @@
+{
+  "test": "tests/test_pipeline_completion.py::test_backfill_rejects_unbounded_or_reversed_interval[start1-end1]",
+  "name": "range-gate",
+  "inputs": {
+    "start": "2026-01-01",
+    "end": "2026-03-01"
+  },
+  "expected": "rejected before any ETL",
+  "actual": {
+    "etl_calls": 0
+  }
+}

@@ -1,0 +1,337 @@
+{
+  "run": 2,
+  "processed_within_timeout": true,
+  "seconds_to_processed": 25.5,
+  "kafka": {
+    "sent": {
+      "ecom.orders.raw": 34,
+      "inventory.logs": 7
+    },
+    "offset_delta": {
+      "ecom.orders.raw": 34,
+      "inventory.logs": 7
+    },
+    "consumer_lag_after": {
+      "minio-writer-group": 0,
+      "inventory-postgres-writer-group": 0
+    }
+  },
+  "lake": {
+    "raw_rows": 34,
+    "raw_objects": [
+      "raw/orders/platform=shopee/year=2026/month=11/day=15/part-20261115T142803-d8197988-1.parquet",
+      "raw/orders/platform=shopee/year=2026/month=11/day=15/part-20261115T142813-eea9845b-20.parquet",
+      "raw/orders/platform=tiktok/year=2026/month=11/day=15/part-20261115T142813-eea9845b-11.parquet",
+      "raw/orders/platform=unknown/year=2026/month=11/day=15/part-20261115T142813-eea9845b-2.parquet"
+    ],
+    "quarantine": {
+      "orders": {
+        "records": 4,
+        "CONTRACT_INVALID_TYPE_ORIGINAL_PRICE": 1,
+        "INVALID_ORIGINAL_PRICE_TYPE": 3,
+        "NON_POSITIVE_QUANTITY": 2,
+        "MISSING_SKU": 2,
+        "INVALID_PLATFORM": 2,
+        "INVALID_SUBTOTAL_TYPE": 2,
+        "INVALID_BUYER_TOTAL_AMOUNT_TYPE": 2,
+        "CONTRACT_MISSING_QUANTITY": 1,
+        "CONTRACT_MISSING_ORDER_STATUS": 1,
+        "MISSING_ORDER_ID": 1,
+        "MISSING_CREATE_TIME": 1,
+        "MISSING_ORDER_STATUS": 1,
+        "INVALID_ORDER_STATUS": 1,
+        "INVALID_CREATE_TIMESTAMP": 1
+      },
+      "inventory": {
+        "records": 1,
+        "Invalid nonnegative integer inventory field: stock_on_hand": 1
+      }
+    },
+    "quarantine_objects": [
+      "quarantine/inventory/run_id=1fefcc9b9b954bd0adec8f0030497707/rejected.jsonl",
+      "quarantine/orders/run_id=20261115T142823-afeb3263cd5d4983a6fd78335649cd0d/rejected.jsonl"
+    ]
+  },
+  "warehouse": {
+    "fact_rows": 24,
+    "dim_products": 13,
+    "duplicate_business_keys": 0,
+    "units": 40,
+    "buyer_amount": 9739030.0,
+    "status_mix": {
+      "CANCELLED": 3,
+      "COMPLETED": 12,
+      "DELIVERED": 1,
+      "READY_TO_SHIP": 1,
+      "SHIPPED": 5,
+      "UNPAID": 2
+    },
+    "cancelled_rows": 3,
+    "fact_business_sha256": "f3a3b5d7dbe078a0a921c939d02479c5cb76dbbaf9296bab88aeb75cb1dd06a3",
+    "bi_business_sha256": "b3a421152c524c2a375d913b2eef0d987e85e06b1f849025a2c079096493e743",
+    "bi_rows": 24,
+    "bi_units": 40,
+    "bi_buyer_amount": 9739030.0,
+    "inventory_business_sha256": "7a47727661e4690f1d8cf8e8bb5e6d7b211c6e816630c1175def78d9ee7e7736",
+    "latest_stock": {
+      "RPT11151427-ATN-CB-001": 249,
+      "RPT11151427-OL-IP15PM": 344,
+      "RPT11151427-OMO-6KG": 299,
+      "RPT11151427-SN-65W-GAN": 280,
+      "RPT11151427-TN-TWS-PRO": 220
+    },
+    "order_status_by_id": {
+      "RPT11151427-SPE261115000001": "COMPLETED",
+      "RPT11151427-SPE261115000003": "COMPLETED",
+      "RPT11151427-SPE261115000005": "SHIPPED",
+      "RPT11151427-SPE261115000006": "CANCELLED",
+      "RPT11151427-SPE261115000008": "SHIPPED",
+      "RPT11151427-SPE261115000009": "COMPLETED",
+      "RPT11151427-SPE261115000011": "UNPAID",
+      "RPT11151427-SPE261115000012": "CANCELLED",
+      "RPT11151427-SPE261115000013": "READY_TO_SHIP",
+      "RPT11151427-SPE261115000017": "SHIPPED",
+      "RPT11151427-SPE261115000018": "COMPLETED",
+      "RPT11151427-SPE261115000020": "COMPLETED",
+      "RPT11151427-SPE261115000021": "COMPLETED",
+      "RPT11151427-SPE261115000022": "COMPLETED",
+      "RPT11151427-SPE261115000023": "COMPLETED",
+      "RPT11151427-SPE261115000024": "COMPLETED",
+      "RPT11151427-TT261115000002": "COMPLETED",
+      "RPT11151427-TT261115000004": "UNPAID",
+      "RPT11151427-TT261115000007": "COMPLETED",
+      "RPT11151427-TT261115000010": "SHIPPED",
+      "RPT11151427-TT261115000014": "COMPLETED",
+      "RPT11151427-TT261115000015": "DELIVERED",
+      "RPT11151427-TT261115000016": "CANCELLED",
+      "RPT11151427-TT261115000019": "SHIPPED"
+    },
+    "technical": {
+      "order_fact_ids": [
+        300797,
+        300800,
+        300791,
+        300779,
+        300790,
+        300795,
+        300780,
+        300793,
+        300781,
+        300792,
+        300798,
+        300801,
+        300802,
+        300794,
+        300796,
+        300799,
+        300783,
+        300782,
+        300784,
+        300785,
+        300786,
+        300787,
+        300788,
+        300789
+      ],
+      "fact_loaded_at": [
+        "2026-11-15 07:28:23.717270",
+        "2026-11-15 07:28:23.717270",
+        "2026-11-15 07:28:23.717270",
+        "2026-11-15 07:28:23.717270",
+        "2026-11-15 07:28:23.717270",
+        "2026-11-15 07:28:23.717270",
+        "2026-11-15 07:28:23.717270",
+        "2026-11-15 07:28:23.717270",
+        "2026-11-15 07:28:23.717270",
+        "2026-11-15 07:28:23.717270",
+        "2026-11-15 07:28:23.717270",
+        "2026-11-15 07:28:23.717270",
+        "2026-11-15 07:28:23.717270",
+        "2026-11-15 07:28:23.717270",
+        "2026-11-15 07:28:23.717270",
+        "2026-11-15 07:28:23.717270",
+        "2026-11-15 07:28:23.717270",
+        "2026-11-15 07:28:23.717270",
+        "2026-11-15 07:28:23.717270",
+        "2026-11-15 07:28:23.717270",
+        "2026-11-15 07:28:23.717270",
+        "2026-11-15 07:28:23.717270",
+        "2026-11-15 07:28:23.717270",
+        "2026-11-15 07:28:23.717270"
+      ],
+      "inventory_fact_ids": [
+        12231,
+        12230,
+        12233,
+        12232,
+        12234
+      ],
+      "inventory_loaded_at": [
+        "2026-11-15 07:28:06.250077",
+        "2026-11-15 07:28:06.250077",
+        "2026-11-15 07:28:06.250077",
+        "2026-11-15 07:28:06.250077",
+        "2026-11-15 07:28:06.250077"
+      ]
+    }
+  },
+  "lineage": [
+    {
+      "run_id": "20261115T142823-afeb3263cd5d4983a6fd78335649cd0d",
+      "status": "SUCCESS",
+      "raw": 34,
+      "clean": 24,
+      "quarantined": 4,
+      "loaded_records": 24,
+      "duplicates_removed": 6,
+      "quarantine_object": "quarantine/orders/run_id=20261115T142823-afeb3263cd5d4983a6fd78335649cd0d/rejected.jsonl",
+      "contract": "ecommerce.orders/1.0",
+      "validation_errors": {
+        "CONTRACT_INVALID_TYPE_ORIGINAL_PRICE": 1,
+        "INVALID_ORIGINAL_PRICE_TYPE": 3,
+        "NON_POSITIVE_QUANTITY": 2,
+        "MISSING_SKU": 2,
+        "INVALID_PLATFORM": 2,
+        "INVALID_SUBTOTAL_TYPE": 2,
+        "INVALID_BUYER_TOTAL_AMOUNT_TYPE": 2,
+        "CONTRACT_MISSING_QUANTITY": 1,
+        "CONTRACT_MISSING_ORDER_STATUS": 1,
+        "MISSING_ORDER_ID": 1,
+        "MISSING_CREATE_TIME": 1,
+        "MISSING_ORDER_STATUS": 1,
+        "INVALID_ORDER_STATUS": 1,
+        "INVALID_CREATE_TIMESTAMP": 1
+      },
+      "object_accounting": [
+        {
+          "source_object": "raw/orders/platform=shopee/year=2026/month=11/day=15/part-20261115T142813-eea9845b-20.parquet",
+          "raw": 20,
+          "valid": 16,
+          "duplicates": 2,
+          "rejected": 2
+        },
+        {
+          "source_object": "raw/orders/platform=tiktok/year=2026/month=11/day=15/part-20261115T142813-eea9845b-11.parquet",
+          "raw": 11,
+          "valid": 8,
+          "duplicates": 3,
+          "rejected": 0
+        },
+        {
+          "source_object": "raw/orders/platform=unknown/year=2026/month=11/day=15/part-20261115T142813-eea9845b-2.parquet",
+          "raw": 2,
+          "valid": 0,
+          "duplicates": 0,
+          "rejected": 2
+        },
+        {
+          "source_object": "raw/orders/platform=shopee/year=2026/month=11/day=15/part-20261115T142803-d8197988-1.parquet",
+          "raw": 1,
+          "valid": 0,
+          "duplicates": 1,
+          "rejected": 0
+        }
+      ],
+      "accounting_balanced": true
+    }
+  ],
+  "api": {
+    "inventory_alerts_sha256": "db765aad31abdee86e0106f31a749df6e73fff5b01c139e28b049d8d5f1ac67e",
+    "inventory_alerts": {
+      "total_skus_evaluated": 5,
+      "skus_needing_reorder": 0,
+      "critical_count": 0,
+      "warning_count": 0,
+      "normal_count": 5,
+      "alerts": [
+        {
+          "sku": "RPT11151427-TN-TWS-PRO",
+          "product_name": "Sản phẩm RPT11151427-TN-TWS-PRO",
+          "category": "Khác",
+          "matrix_segment": "BX",
+          "current_stock": 220,
+          "avg_daily_demand": 10.0,
+          "lead_time_days": 3,
+          "safety_stock": 9,
+          "reorder_point": 39,
+          "needs_reorder": false,
+          "alert_level": "NORMAL",
+          "days_until_stockout": 22.0,
+          "recommended_reorder_qty": 0,
+          "stock_source": "warehouse_snapshot:2026-11-15",
+          "demand_source": "fallback_catalog"
+        },
+        {
+          "sku": "RPT11151427-ATN-CB-001",
+          "product_name": "Sản phẩm RPT11151427-ATN-CB-001",
+          "category": "Khác",
+          "matrix_segment": "BX",
+          "current_stock": 249,
+          "avg_daily_demand": 10.0,
+          "lead_time_days": 3,
+          "safety_stock": 9,
+          "reorder_point": 39,
+          "needs_reorder": false,
+          "alert_level": "NORMAL",
+          "days_until_stockout": 24.9,
+          "recommended_reorder_qty": 0,
+          "stock_source": "warehouse_snapshot:2026-11-15",
+          "demand_source": "fallback_catalog"
+        },
+        {
+          "sku": "RPT11151427-SN-65W-GAN",
+          "product_name": "Sản phẩm RPT11151427-SN-65W-GAN",
+          "category": "Khác",
+          "matrix_segment": "BX",
+          "current_stock": 280,
+          "avg_daily_demand": 10.0,
+          "lead_time_days": 3,
+          "safety_stock": 9,
+          "reorder_point": 39,
+          "needs_reorder": false,
+          "alert_level": "NORMAL",
+          "days_until_stockout": 28.0,
+          "recommended_reorder_qty": 0,
+          "stock_source": "warehouse_snapshot:2026-11-15",
+          "demand_source": "fallback_catalog"
+        },
+        {
+          "sku": "RPT11151427-OMO-6KG",
+          "product_name": "Sản phẩm RPT11151427-OMO-6KG",
+          "category": "Khác",
+          "matrix_segment": "BX",
+          "current_stock": 299,
+          "avg_daily_demand": 10.0,
+          "lead_time_days": 3,
+          "safety_stock": 9,
+          "reorder_point": 39,
+          "needs_reorder": false,
+          "alert_level": "NORMAL",
+          "days_until_stockout": 29.9,
+          "recommended_reorder_qty": 0,
+          "stock_source": "warehouse_snapshot:2026-11-15",
+          "demand_source": "fallback_catalog"
+        },
+        {
+          "sku": "RPT11151427-OL-IP15PM",
+          "product_name": "Sản phẩm RPT11151427-OL-IP15PM",
+          "category": "Khác",
+          "matrix_segment": "BX",
+          "current_stock": 344,
+          "avg_daily_demand": 10.0,
+          "lead_time_days": 3,
+          "safety_stock": 9,
+          "reorder_point": 39,
+          "needs_reorder": false,
+          "alert_level": "NORMAL",
+          "days_until_stockout": 34.4,
+          "recommended_reorder_qty": 0,
+          "stock_source": "warehouse_snapshot:2026-11-15",
+          "demand_source": "fallback_catalog"
+        }
+      ]
+    },
+    "pipeline_status": "healthy",
+    "ready": true
+  }
+}

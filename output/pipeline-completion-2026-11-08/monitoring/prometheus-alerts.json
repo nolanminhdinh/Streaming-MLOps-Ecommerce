@@ -1,0 +1,1 @@
+{"status":"success","data":{"alerts":[{"labels":{"alertname":"EcommerceDemandHistoryStale","app":"ecommerce-mlops","environment":"production","instance":"fastapi:8000","job":"fastapi-serving","severity":"warning"},"annotations":{"summary":"Lịch sử nhu cầu của model đã cũ hơn 7 ngày"},"state":"firing","activeAt":"2026-11-08T15:42:48.041764798Z","value":"8.9e+01"}]}}

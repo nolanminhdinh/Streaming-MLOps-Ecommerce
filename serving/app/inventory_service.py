@@ -136,7 +136,7 @@ class InventoryService:
             stock_source = "request"
         else:
             if stock_snapshot is None:
-                stock_snapshot = get_repository().get_latest_stock() or {}
+                stock_snapshot = self._complete_snapshot(get_repository().get_latest_stock() or {}, [sku])
             snap = stock_snapshot.get(sku)
             if snap is not None:
                 current_stock = int(snap["stock_on_hand"])
@@ -182,6 +182,15 @@ class InventoryService:
         )
 
     @staticmethod
+    def _complete_snapshot(snapshot: Dict[str, Dict[str, Any]], skus: List[str]) -> Dict[str, Dict[str, Any]]:
+        """Tra trực tiếp kho cho SKU thiếu trong cache trước khi rơi về tồn kho giả lập."""
+        missing = [sku for sku in skus if sku not in snapshot]
+        if not missing:
+            return snapshot
+        fresh = get_repository().get_stock_for_skus(missing)
+        return {**snapshot, **fresh} if fresh else snapshot
+
+    @staticmethod
     def _simulated_stock(sku: str, segment: str, safety_stock: int, reorder_point: int) -> int:
         """
         Tồn kho GIẢ LẬP cho chế độ demo khi chưa có snapshot trong Fact_Inventory_Daily.
@@ -205,7 +214,10 @@ class InventoryService:
         target_skus = skus if skus is not None else list(catalog.keys())
         custom_stocks = custom_stocks or {}
         # Đọc snapshot tồn kho 1 lần cho cả lượt quét thay vì 1 truy vấn / SKU
-        stock_snapshot = get_repository().get_latest_stock() or {}
+        stock_snapshot = self._complete_snapshot(
+            get_repository().get_latest_stock() or {},
+            [sku for sku in target_skus if sku not in custom_stocks],
+        )
 
         items: List[ReorderAlertItem] = []
         critical_count = 0

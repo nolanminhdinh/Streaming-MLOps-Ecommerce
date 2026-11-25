@@ -1,0 +1,15 @@
+{
+  "test": "tests/test_pipeline_completion_postgres.py::test_real_postgres_lock_excludes_overlapping_jobs",
+  "name": "real-session-lock",
+  "inputs": {
+    "concurrent_jobs": 2
+  },
+  "expected": [
+    "second_job_blocked",
+    "next_job_acquired_after_release"
+  ],
+  "actual": [
+    "second_job_blocked",
+    "next_job_acquired_after_release"
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "case": "volume-reference-ready",
+  "status": "PASS",
+  "inputs": {
+    "batch_volume_anomaly": 1,
+    "batch_volume_reference_batches": 6
+  },
+  "expected_firing": true,
+  "exit_code": 0,
+  "stdout": "Unit Testing:  /tmp/volume-reference-ready.yml\n  SUCCESS\n\n",
+  "stderr": "",
+  "specification": {
+    "rule_files": [
+      "/etc/prometheus/alert_rules.yml"
+    ],
+    "evaluation_interval": "15s",
+    "tests": [
+      {
+        "name": "volume-reference-ready",
+        "interval": "15s",
+        "input_series": [
+          {
+            "series": "ecommerce_pipeline_batch_volume_anomaly{instance=\"acceptance\"}",
+            "values": "1+0x12"
+          },
+          {
+            "series": "ecommerce_pipeline_batch_volume_reference_batches{instance=\"acceptance\"}",
+            "values": "6+0x12"
+          }
+        ],
+        "alert_rule_test": [
+          {
+            "eval_time": "2m",
+            "alertname": "EcommercePipelineBatchVolumeAnomaly",
+            "exp_alerts": [
+              {
+                "exp_labels": {
+                  "instance": "acceptance",
+                  "severity": "warning"
+                },
+                "exp_annotations": {
+                  "summary": "Khối lượng mẻ ETL lệch khỏi mức tham chiếu"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,349 @@
+{
+  "label": "RPT11161927",
+  "dataset_sha256": "849189ade330103094e85ef33ac02d93fb93ab80086271d9345b56f07c258029",
+  "messages_per_run": 41,
+  "verdict": "PASS",
+  "checks": [
+    {
+      "requirement": "0. Điều kiện thử",
+      "check": "Mỗi lượt được xử lý xong trước khi gửi lượt sau",
+      "result": "PASS",
+      "run1": 33.9,
+      "run2": 27.6,
+      "note": "nếu FAIL, hai lượt có thể bị ETL gộp và các so sánh bên dưới không tách bạch"
+    },
+    {
+      "requirement": "1. Thu nhận đầy đủ",
+      "check": "Kafka nhận đủ message mỗi lượt",
+      "result": "PASS",
+      "run1": {
+        "ecom.orders.raw": 34,
+        "inventory.logs": 7
+      },
+      "run2": {
+        "ecom.orders.raw": 34,
+        "inventory.logs": 7
+      },
+      "note": ""
+    },
+    {
+      "requirement": "1. Thu nhận đầy đủ",
+      "check": "Consumer không còn lag sau xử lý",
+      "result": "PASS",
+      "run1": {
+        "minio-writer-group": 0,
+        "inventory-postgres-writer-group": 0
+      },
+      "run2": {
+        "minio-writer-group": 0,
+        "inventory-postgres-writer-group": 0
+      },
+      "note": ""
+    },
+    {
+      "requirement": "1. Thu nhận đầy đủ",
+      "check": "Raw lake lưu đủ mọi message đơn (kể cả lỗi)",
+      "result": "PASS",
+      "run1": 34,
+      "run2": 34,
+      "note": "kỳ vọng 34 mỗi lượt"
+    },
+    {
+      "requirement": "2. Đối soát (reconciliation)",
+      "check": "raw = valid + duplicates + rejected theo từng object",
+      "result": "PASS",
+      "run1": {
+        "raw": 34,
+        "clean": 24,
+        "quarantined": 4,
+        "duplicates_removed": 6,
+        "loaded_records": 24
+      },
+      "run2": {
+        "raw": 34,
+        "clean": 24,
+        "quarantined": 4,
+        "duplicates_removed": 6,
+        "loaded_records": 24
+      },
+      "note": ""
+    },
+    {
+      "requirement": "3. Chống trùng / idempotent",
+      "check": "Số dòng fact không tăng sau lượt 2",
+      "result": "PASS",
+      "run1": 24,
+      "run2": 24,
+      "note": "kỳ vọng 24 dòng đơn hợp lệ"
+    },
+    {
+      "requirement": "3. Chống trùng / idempotent",
+      "check": "Không có khóa nghiệp vụ trùng trong Fact_Orders",
+      "result": "PASS",
+      "run1": 0,
+      "run2": 0,
+      "note": ""
+    },
+    {
+      "requirement": "3. Chống trùng / idempotent",
+      "check": "Trùng tuyệt đối trong cùng lô bị loại",
+      "result": "PASS",
+      "run1": 6,
+      "run2": 6,
+      "note": ""
+    },
+    {
+      "requirement": "3. Chống trùng / idempotent",
+      "check": "Không tạo thêm SKU trong Dim_Products",
+      "result": "PASS",
+      "run1": 13,
+      "run2": 13,
+      "note": ""
+    },
+    {
+      "requirement": "4. Xác định (deterministic)",
+      "check": "Nội dung nghiệp vụ Fact_Orders giống hệt (SHA-256)",
+      "result": "PASS",
+      "run1": "f6c0da6b7deaa68a",
+      "run2": "f6c0da6b7deaa68a",
+      "note": "loại trừ order_fact_id, loaded_at"
+    },
+    {
+      "requirement": "4. Xác định (deterministic)",
+      "check": "Tổng số lượng / doanh thu không đổi",
+      "result": "PASS",
+      "run1": [
+        40,
+        9739030.0
+      ],
+      "run2": [
+        40,
+        9739030.0
+      ],
+      "note": ""
+    },
+    {
+      "requirement": "4. Xác định (deterministic)",
+      "check": "Kết quả kiểm định giống nhau giữa hai lượt",
+      "result": "PASS",
+      "run1": {
+        "orders": {
+          "records": 4,
+          "CONTRACT_INVALID_TYPE_ORIGINAL_PRICE": 1,
+          "INVALID_ORIGINAL_PRICE_TYPE": 3,
+          "NON_POSITIVE_QUANTITY": 2,
+          "MISSING_SKU": 2,
+          "INVALID_PLATFORM": 2,
+          "INVALID_SUBTOTAL_TYPE": 2,
+          "INVALID_BUYER_TOTAL_AMOUNT_TYPE": 2,
+          "CONTRACT_MISSING_QUANTITY": 1,
+          "CONTRACT_MISSING_ORDER_STATUS": 1,
+          "MISSING_ORDER_ID": 1,
+          "MISSING_CREATE_TIME": 1,
+          "MISSING_ORDER_STATUS": 1,
+          "INVALID_ORDER_STATUS": 1,
+          "INVALID_CREATE_TIMESTAMP": 1
+        },
+        "inventory": {
+          "records": 1,
+          "Invalid nonnegative integer inventory field: stock_on_hand": 1
+        }
+      },
+      "run2": {
+        "orders": {
+          "records": 4,
+          "CONTRACT_INVALID_TYPE_ORIGINAL_PRICE": 1,
+          "INVALID_ORIGINAL_PRICE_TYPE": 3,
+          "NON_POSITIVE_QUANTITY": 2,
+          "MISSING_SKU": 2,
+          "INVALID_PLATFORM": 2,
+          "INVALID_SUBTOTAL_TYPE": 2,
+          "INVALID_BUYER_TOTAL_AMOUNT_TYPE": 2,
+          "CONTRACT_MISSING_QUANTITY": 1,
+          "CONTRACT_MISSING_ORDER_STATUS": 1,
+          "MISSING_ORDER_ID": 1,
+          "MISSING_CREATE_TIME": 1,
+          "MISSING_ORDER_STATUS": 1,
+          "INVALID_ORDER_STATUS": 1,
+          "INVALID_CREATE_TIMESTAMP": 1
+        },
+        "inventory": {
+          "records": 1,
+          "Invalid nonnegative integer inventory field: stock_on_hand": 1
+        }
+      },
+      "note": ""
+    },
+    {
+      "requirement": "5. Thứ tự / phiên bản sự kiện",
+      "check": "Phiên bản mới hơn thắng, bản cũ đến sau không ghi đè",
+      "result": "PASS",
+      "run1": {
+        "RPT11161927-SPE261115000003": "COMPLETED",
+        "RPT11161927-TT261115000002": "COMPLETED"
+      },
+      "run2": {
+        "RPT11161927-SPE261115000003": "COMPLETED",
+        "RPT11161927-TT261115000002": "COMPLETED"
+      },
+      "note": ""
+    },
+    {
+      "requirement": "5. Thứ tự / phiên bản sự kiện",
+      "check": "Snapshot tồn kho cũ không ghi đè snapshot mới",
+      "result": "PASS",
+      "run1": 344,
+      "run2": 344,
+      "note": "kỳ vọng 344, bản cũ mang giá trị 1"
+    },
+    {
+      "requirement": "6. Chất lượng dữ liệu",
+      "check": "Bản ghi lỗi bị cách ly, không vào kho",
+      "result": "PASS",
+      "run1": {
+        "orders": 4,
+        "inventory": 1
+      },
+      "run2": {
+        "orders": 4,
+        "inventory": 1
+      },
+      "note": "kỳ vọng 4 đơn, 1 tồn kho mỗi lượt"
+    },
+    {
+      "requirement": "7. Truy vết (lineage)",
+      "check": "Mỗi lượt có run_id, object nguồn, object cách ly và hợp đồng",
+      "result": "PASS",
+      "run1": [
+        "20261116T192747-ae99c7079d0541ae8475da0a2ade6fe8"
+      ],
+      "run2": [
+        "20261116T192819-f2f920a8509c4c9885479a303077cfe0"
+      ],
+      "note": ""
+    },
+    {
+      "requirement": "8. Nhất quán hạ nguồn",
+      "check": "View bi.fact_order_line khớp Fact_Orders",
+      "result": "PASS",
+      "run1": [
+        24,
+        40,
+        9739030.0
+      ],
+      "run2": [
+        24,
+        40,
+        9739030.0
+      ],
+      "note": ""
+    },
+    {
+      "requirement": "8. Nhất quán hạ nguồn",
+      "check": "API tồn kho trả kết quả giống hệt (so theo SKU)",
+      "result": "PASS",
+      "run1": {
+        "RPT11161927-TN-TWS-PRO": [
+          220,
+          "warehouse_snapshot:2026-11-15"
+        ],
+        "RPT11161927-ATN-CB-001": [
+          249,
+          "warehouse_snapshot:2026-11-15"
+        ],
+        "RPT11161927-SN-65W-GAN": [
+          280,
+          "warehouse_snapshot:2026-11-15"
+        ],
+        "RPT11161927-OMO-6KG": [
+          299,
+          "warehouse_snapshot:2026-11-15"
+        ],
+        "RPT11161927-OL-IP15PM": [
+          344,
+          "warehouse_snapshot:2026-11-15"
+        ]
+      },
+      "run2": {
+        "RPT11161927-TN-TWS-PRO": [
+          220,
+          "warehouse_snapshot:2026-11-15"
+        ],
+        "RPT11161927-ATN-CB-001": [
+          249,
+          "warehouse_snapshot:2026-11-15"
+        ],
+        "RPT11161927-SN-65W-GAN": [
+          280,
+          "warehouse_snapshot:2026-11-15"
+        ],
+        "RPT11161927-OMO-6KG": [
+          299,
+          "warehouse_snapshot:2026-11-15"
+        ],
+        "RPT11161927-OL-IP15PM": [
+          344,
+          "warehouse_snapshot:2026-11-15"
+        ]
+      },
+      "note": ""
+    },
+    {
+      "requirement": "8. Nhất quán hạ nguồn",
+      "check": "API dùng tồn kho thật trong kho, không dùng số giả lập",
+      "result": "PASS",
+      "run1": [
+        "warehouse_snapshot:2026-11-15"
+      ],
+      "run2": [
+        "warehouse_snapshot:2026-11-15"
+      ],
+      "note": "serving cache latest_stock 30 s; SKU thiếu trong cache rơi về simulated_demo"
+    },
+    {
+      "requirement": "9. Giám sát",
+      "check": "Pipeline healthy và API ready sau mỗi lượt",
+      "result": "PASS",
+      "run1": [
+        "healthy",
+        true
+      ],
+      "run2": [
+        "healthy",
+        true
+      ],
+      "note": ""
+    }
+  ],
+  "observations": [
+    {
+      "topic": "Khóa kỹ thuật",
+      "detail": "order_fact_id giữ nguyên",
+      "same": true
+    },
+    {
+      "topic": "loaded_at Fact_Orders",
+      "same": false,
+      "detail": "24/24 dòng bị ghi lại ở lượt 2",
+      "loaded_records": [
+        24,
+        24
+      ]
+    },
+    {
+      "topic": "loaded_at Fact_Inventory_Daily",
+      "same": false,
+      "detail": "5/5 dòng bị ghi lại ở lượt 2"
+    },
+    {
+      "topic": "Dung lượng lake",
+      "same": false,
+      "detail": "lượt 2 tạo thêm 5 object raw và 2 object cách ly (at-least-once ở tầng lake)"
+    },
+    {
+      "topic": "Thời gian xử lý",
+      "same": null,
+      "detail": "lượt 1 33.9 s, lượt 2 27.6 s (phụ thuộc chu kỳ poll worker 30 s)"
+    }
+  ]
+}

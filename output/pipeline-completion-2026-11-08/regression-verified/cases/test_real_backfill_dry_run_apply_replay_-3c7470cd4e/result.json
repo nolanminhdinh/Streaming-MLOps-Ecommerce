@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_pipeline_completion_postgres.py::test_real_backfill_dry_run_apply_replay_and_old_version_guard",
+  "file": "cases\\test_real_backfill_dry_run_apply_replay_-3c7470cd4e",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.3479546000016853,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.28670890000648797,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "WARNING  etl.pipeline:pipeline.py:144 CẢNH BÁO: Đã cách ly 1 bản ghi không đạt chuẩn chất lượng dữ liệu.\nWARNING  etl.pipeline:pipeline.py:144 CẢNH BÁO: Đã cách ly 1 bản ghi không đạt chuẩn chất lượng dữ liệu.\nWARNING  etl.pipeline:pipeline.py:144 CẢNH BÁO: Đã cách ly 1 bản ghi không đạt chuẩn chất lượng dữ liệu."
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.006198300048708916,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "WARNING  etl.pipeline:pipeline.py:144 CẢNH BÁO: Đã cách ly 1 bản ghi không đạt chuẩn chất lượng dữ liệu.\nWARNING  etl.pipeline:pipeline.py:144 CẢNH BÁO: Đã cách ly 1 bản ghi không đạt chuẩn chất lượng dữ liệu.\nWARNING  etl.pipeline:pipeline.py:144 CẢNH BÁO: Đã cách ly 1 bản ghi không đạt chuẩn chất lượng dữ liệu."
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

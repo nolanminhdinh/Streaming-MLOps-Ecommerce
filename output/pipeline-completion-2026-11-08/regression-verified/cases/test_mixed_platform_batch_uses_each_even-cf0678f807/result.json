@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_ingestion.py::test_mixed_platform_batch_uses_each_events_historical_date",
+  "file": "cases\\test_mixed_platform_batch_uses_each_even-cf0678f807",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00017959997057914734,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.031879100017249584,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00017959997057914734,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

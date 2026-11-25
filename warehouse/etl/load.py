@@ -176,8 +176,8 @@ def ensure_dim_dates(conn, dates):
         conn.execute(text("""
             INSERT INTO Dim_Dates (full_date, day_of_week, day_name, week_of_year,
                                    month, month_name, quarter, year, is_weekend, is_mega_sale)
-            SELECT d, EXTRACT(DOW FROM d), TO_CHAR(d, 'Day'), EXTRACT(WEEK FROM d),
-                   EXTRACT(MONTH FROM d), TO_CHAR(d, 'Month'), EXTRACT(QUARTER FROM d),
+            SELECT d, EXTRACT(DOW FROM d), TO_CHAR(d, 'FMDay'), EXTRACT(WEEK FROM d),
+                   EXTRACT(MONTH FROM d), TO_CHAR(d, 'FMMonth'), EXTRACT(QUARTER FROM d),
                    EXTRACT(YEAR FROM d), EXTRACT(DOW FROM d) IN (0, 6),
                    EXTRACT(DAY FROM d) = EXTRACT(MONTH FROM d)
             FROM (SELECT CAST(:day AS DATE) AS d) dates

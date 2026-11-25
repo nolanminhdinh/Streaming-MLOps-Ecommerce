@@ -1,0 +1,4419 @@
+{
+  "exit_status": 0,
+  "tests": 132,
+  "counts": {
+    "passed": 132,
+    "failed": 0,
+    "skipped": 0
+  },
+  "cases": [
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_additive_schema_is_backward_compatible[None]",
+      "file": "cases\\test_additive_schema_is_backward_compati-55030eb242",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003621000796556473,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.03782099997624755,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002269999822601676,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "version": null
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_additive_schema_is_backward_compatible[1]",
+      "file": "cases\\test_additive_schema_is_backward_compati-c4a62d45fa",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0006714999908581376,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.021238300018012524,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0001879000337794423,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "version": "1"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_additive_schema_is_backward_compatible[1.0]",
+      "file": "cases\\test_additive_schema_is_backward_compati-c78687fd91",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00024500000290572643,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.024867999949492514,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00020379992201924324,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "version": "1.0"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_additive_schema_is_backward_compatible[1.7]",
+      "file": "cases\\test_additive_schema_is_backward_compati-ad05b0032f",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00029790005646646023,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.01925640006083995,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00018339999951422215,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "version": "1.7"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_breaking_schema_is_quarantined_without_losing_good_rows[change0-CONTRACT_MISSING_ITEM_SKU]",
+      "file": "cases\\test_breaking_schema_is_quarantined_with-00be4f646b",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003000000724568963,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.023438300006091595,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0001993000041693449,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "change": {
+          "item_sku": null
+        },
+        "reason": "CONTRACT_MISSING_ITEM_SKU"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_breaking_schema_is_quarantined_without_losing_good_rows[change1-CONTRACT_MISSING_ORIGINAL_PRICE]",
+      "file": "cases\\test_breaking_schema_is_quarantined_with-c95018b77f",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00031100003980100155,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.021939900005236268,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00017470004968345165,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "change": {
+          "original_price": null,
+          "renamed_price": 10
+        },
+        "reason": "CONTRACT_MISSING_ORIGINAL_PRICE"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_breaking_schema_is_quarantined_without_losing_good_rows[change2-CONTRACT_INVALID_TYPE_QUANTITY]",
+      "file": "cases\\test_breaking_schema_is_quarantined_with-e3ff0eb5a5",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.000287500093691051,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.018500300007872283,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00023090001195669174,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "change": {
+          "quantity": [
+            1,
+            2
+          ]
+        },
+        "reason": "CONTRACT_INVALID_TYPE_QUANTITY"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_breaking_schema_is_quarantined_without_losing_good_rows[change3-CONTRACT_INVALID_TYPE_ORDER_LINE_ID]",
+      "file": "cases\\test_breaking_schema_is_quarantined_with-2e8c2e227c",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00029120000544935465,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.01871700002811849,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.000179499969817698,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "change": {
+          "order_line_id": [
+            1
+          ]
+        },
+        "reason": "CONTRACT_INVALID_TYPE_ORDER_LINE_ID"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_breaking_schema_is_quarantined_without_losing_good_rows[change4-CONTRACT_INVALID_TYPE_VOUCHER_FROM_SELLER]",
+      "file": "cases\\test_breaking_schema_is_quarantined_with-85f0141b87",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00031599996145814657,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.017855499987490475,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00018740002997219563,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "change": {
+          "voucher_from_seller": {
+            "bad": 1
+          }
+        },
+        "reason": "CONTRACT_INVALID_TYPE_VOUCHER_FROM_SELLER"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_breaking_schema_is_quarantined_without_losing_good_rows[change5-CONTRACT_UNSUPPORTED_VERSION]",
+      "file": "cases\\test_breaking_schema_is_quarantined_with-2d3f1d75fe",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00027439999394118786,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.018779000034555793,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00023950007744133472,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "change": {
+          "schema_version": "2.0"
+        },
+        "reason": "CONTRACT_UNSUPPORTED_VERSION"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_breaking_schema_is_quarantined_without_losing_good_rows[change6-CONTRACT_INVALID_TYPE_ORDER_STATUS]",
+      "file": "cases\\test_breaking_schema_is_quarantined_with-82569d101c",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00036970002111047506,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.021670599933713675,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00019719998817890882,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "change": {
+          "order_status": true
+        },
+        "reason": "CONTRACT_INVALID_TYPE_ORDER_STATUS"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_backfill_defaults_to_read_only_validation",
+      "file": "cases\\test_backfill_defaults_to_read_only_vali-d8fc8cc473",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00022709998302161694,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0018952999962493777,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00015460001304745674,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_backfill_rejects_unbounded_or_reversed_interval[start0-end0]",
+      "file": "cases\\test_backfill_rejects_unbounded_or_rever-daddb59289",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0010705998865887523,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0009006999898701906,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00016589998267591,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "start": "2026-10-15",
+        "end": "2026-10-14"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_backfill_rejects_unbounded_or_reversed_interval[start1-end1]",
+      "file": "cases\\test_backfill_rejects_unbounded_or_rever-f9b1643c28",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00030229997355490923,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.000799100031144917,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0001460999483242631,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "start": "2026-01-01",
+        "end": "2026-03-01"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_backfill_stops_at_first_unsuccessful_day",
+      "file": "cases\\test_backfill_stops_at_first_unsuccessfu-2d7ab46e69",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00019679998513311148,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0008017999352887273,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00012829992920160294,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_selected_object_backfill_never_expands_to_other_partitions",
+      "file": "cases\\test_selected_object_backfill_never_expa-ff3ad5b26c",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003106000367552042,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0017869999865069985,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00047909992281347513,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_out_of_range_selected_object_is_rejected_before_io",
+      "file": "cases\\test_out_of_range_selected_object_is_rej-827c642db6",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00024780002422630787,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.000651499954983592,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00014680007006973028,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_latency_uses_measured_ingestion_not_business_date",
+      "file": "cases\\test_latency_uses_measured_ingestion_not-71466cf23a",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00020840007346123457,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0036868000170215964,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00018500001169741154,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_heartbeat_idle_and_future_timestamp_contract[995-True]",
+      "file": "cases\\test_heartbeat_idle_and_future_timestamp-9e256abf92",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0023324000649154186,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.002584200003184378,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005065000150352716,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "checked": 995,
+        "expected": true
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_heartbeat_idle_and_future_timestamp_contract[100-False]",
+      "file": "cases\\test_heartbeat_idle_and_future_timestamp-96e204dcba",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0028611000161617994,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0019677000818774104,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00020840007346123457,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "checked": 100,
+        "expected": false
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_heartbeat_idle_and_future_timestamp_contract[1007-False]",
+      "file": "cases\\test_heartbeat_idle_and_future_timestamp-10199f599c",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0016827000072225928,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0012335999635979533,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00016120006330311298,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "checked": 1007,
+        "expected": false
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_batch_volume_warms_up_before_signalling_anomaly",
+      "file": "cases\\test_batch_volume_warms_up_before_signal-72e5f94013",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002237000735476613,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0010846999939531088,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00014870008453726768,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_object_metadata_supports_queue_age_without_guessing",
+      "file": "cases\\test_object_metadata_supports_queue_age_-7128654bd2",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00021319999359548092,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0010498999617993832,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0001677999971434474,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_busy_pipeline_does_not_enter_critical_section",
+      "file": "cases\\test_busy_pipeline_does_not_enter_critic-4ac247d7a2",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0004480000352486968,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0018879000563174486,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00017070001922547817,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_local_alert_delivery_journals_payload",
+      "file": "cases\\test_local_alert_delivery_journals_paylo-f3ee853af4",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.001352699939161539,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0034860000014305115,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00020699994638562202,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_invalid_alert_does_not_create_journal[payload0]",
+      "file": "cases\\test_invalid_alert_does_not_create_journ-973797f7bd",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0014854999026283622,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0009028000058606267,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002940999111160636,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "payload": {}
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_invalid_alert_does_not_create_journal[payload1]",
+      "file": "cases\\test_invalid_alert_does_not_create_journ-7f2ca3d417",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.001449999981559813,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0012048999778926373,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0004341999301686883,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "payload": []
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion.py::test_invalid_alert_does_not_create_journal[payload2]",
+      "file": "cases\\test_invalid_alert_does_not_create_journ-2a692488e0",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.002028699964284897,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0012435000389814377,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00016649998724460602,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "payload": {
+          "alerts": "bad"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion_postgres.py::test_real_backfill_dry_run_apply_replay_and_old_version_guard",
+      "file": "cases\\test_real_backfill_dry_run_apply_replay_-3c7470cd4e",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.3479546000016853,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.28670890000648797,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "WARNING  etl.pipeline:pipeline.py:144 CẢNH BÁO: Đã cách ly 1 bản ghi không đạt chuẩn chất lượng dữ liệu.\nWARNING  etl.pipeline:pipeline.py:144 CẢNH BÁO: Đã cách ly 1 bản ghi không đạt chuẩn chất lượng dữ liệu.\nWARNING  etl.pipeline:pipeline.py:144 CẢNH BÁO: Đã cách ly 1 bản ghi không đạt chuẩn chất lượng dữ liệu."
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.006198300048708916,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "WARNING  etl.pipeline:pipeline.py:144 CẢNH BÁO: Đã cách ly 1 bản ghi không đạt chuẩn chất lượng dữ liệu.\nWARNING  etl.pipeline:pipeline.py:144 CẢNH BÁO: Đã cách ly 1 bản ghi không đạt chuẩn chất lượng dữ liệu.\nWARNING  etl.pipeline:pipeline.py:144 CẢNH BÁO: Đã cách ly 1 bản ghi không đạt chuẩn chất lượng dữ liệu."
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_completion_postgres.py::test_real_postgres_lock_excludes_overlapping_jobs",
+      "file": "cases\\test_real_postgres_lock_excludes_overlap-65a298ca0b",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.2694937000051141,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.045758699998259544,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0077502999920398,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_core_operations.py::test_producer_propagates_broker_rejection",
+      "file": "cases\\test_producer_propagates_broker_rejectio-3007b6f8f9",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002055000513792038,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005185999907553196,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00015159999020397663,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_core_operations.py::test_storage_failure_never_commits_order_offsets",
+      "file": "cases\\test_storage_failure_never_commits_order-f2a65fdacb",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005089000333100557,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0009431999642401934,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "ERROR    kafka-consumer-minio:consumer_to_minio.py:330 Lỗi flush cuối: lake down"
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00018159998580813408,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "ERROR    kafka-consumer-minio:consumer_to_minio.py:330 Lỗi flush cuối: lake down"
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_core_operations.py::test_exited_consumer_is_failure_even_on_clean_exit[0]",
+      "file": "cases\\test_exited_consumer_is_failure_even_on_-966be324d2",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0004425999941304326,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0006485999329015613,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00032410002313554287,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "exit_code": 0
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_core_operations.py::test_exited_consumer_is_failure_even_on_clean_exit[1]",
+      "file": "cases\\test_exited_consumer_is_failure_even_on_-64a327235f",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00047750002704560757,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.00032130000181496143,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0001449999399483204,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "exit_code": 1
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_core_operations.py::test_exited_consumer_is_failure_even_on_clean_exit[-15]",
+      "file": "cases\\test_exited_consumer_is_failure_even_on_-d663b51866",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00022529996931552887,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002416999777778983,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00035559991374611855,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "exit_code": -15
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_core_operations.py::test_worker_invalidates_healthy_status_before_failed_startup",
+      "file": "cases\\test_worker_invalidates_healthy_status_b-27473371f5",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0020041000097990036,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0028117999900132418,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00018640002235770226,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_core_operations.py::test_consumer_dying_during_etl_never_reports_healthy",
+      "file": "cases\\test_consumer_dying_during_etl_never_rep-e8e093d51f",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.001284700003452599,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.003152600023895502,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "ERROR    pipeline.worker:run_pipeline_worker.py:108 Pipeline cycle failed; checkpoint unchanged, will retry\nTraceback (most recent call last):\n  File \"C:\\Users\\MINH\\Đếm ngày xa trường\\temp-extract\\streaming-mlops-ecommerce\\warehouse\\etl\\..\\..\\ingestion\\..\\ingestion\\..\\scripts\\run_pipeline_worker.py\", line 102, in main\n    check_consumers(consumers)\n  File \"C:\\Users\\MINH\\Đếm ngày xa trường\\temp-extract\\streaming-mlops-ecommerce\\warehouse\\etl\\..\\..\\ingestion\\..\\ingestion\\..\\scripts\\run_pipeline_worker.py\", line 45, in check_consumers\n    raise RuntimeError(f\"Consumer exited (code={code}); restart worker to replay uncommitted offsets\")\nRuntimeError: Consumer exited (code=1); restart worker to replay uncommitted offsets"
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0001970999874174595,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "ERROR    pipeline.worker:run_pipeline_worker.py:108 Pipeline cycle failed; checkpoint unchanged, will retry\nTraceback (most recent call last):\n  File \"C:\\Users\\MINH\\Đếm ngày xa trường\\temp-extract\\streaming-mlops-ecommerce\\warehouse\\etl\\..\\..\\ingestion\\..\\ingestion\\..\\scripts\\run_pipeline_worker.py\", line 102, in main\n    check_consumers(consumers)\n  File \"C:\\Users\\MINH\\Đếm ngày xa trường\\temp-extract\\streaming-mlops-ecommerce\\warehouse\\etl\\..\\..\\ingestion\\..\\ingestion\\..\\scripts\\run_pipeline_worker.py\", line 45, in check_consumers\n    raise RuntimeError(f\"Consumer exited (code={code}); restart worker to replay uncommitted offsets\")\nRuntimeError: Consumer exited (code=1); restart worker to replay uncommitted offsets"
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_powerbi_import.py::test_import_sources_match_backup_queries_and_checked_in_files",
+      "file": "cases\\test_import_sources_match_backup_queries-ecd99c4472",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0023931999458000064,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0062302000587806106,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00020709994714707136,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_powerbi_import.py::test_export_failure_does_not_replay_completed_warehouse_batch",
+      "file": "cases\\test_export_failure_does_not_replay_comp-c8ce5cdfa8",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.002016899990849197,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.002223299932666123,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0001604000572115183,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_powerbi_import.py::test_failed_etl_status_does_not_advance_checkpoint[FAILED]",
+      "file": "cases\\test_failed_etl_status_does_not_advance_-dc6c7c2c0b",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.001200100057758391,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0006501999450847507,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00014739995822310448,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "status": "FAILED"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_powerbi_import.py::test_failed_etl_status_does_not_advance_checkpoint[LOAD_ERROR]",
+      "file": "cases\\test_failed_etl_status_does_not_advance_-537643b10d",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0012336000800132751,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0007029999978840351,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003651001024991274,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "status": "LOAD_ERROR"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_order_line_integrity.py::test_multi_sku_and_same_sku_explicit_line_ids_survive_replay",
+      "file": "cases\\test_multi_sku_and_same_sku_explicit_lin-f8207337a8",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00023879995569586754,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.032528200070373714,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00019639998208731413,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_order_line_integrity.py::test_invalid_duplicate_identity_cannot_hide_rejections",
+      "file": "cases\\test_invalid_duplicate_identity_cannot_h-1d6c4cbed8",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003101000329479575,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.04671930009499192,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003901999443769455,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_order_line_integrity.py::test_unknown_platform_and_invalid_money_are_auditable",
+      "file": "cases\\test_unknown_platform_and_invalid_money_-aefc123d51",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00018259999342262745,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.022915199981071055,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00017559994012117386,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_order_line_integrity.py::test_quarantine_payload_and_storage_failure",
+      "file": "cases\\test_quarantine_payload_and_storage_fail-948e9de2fa",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00011880008969455957,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.02219449996482581,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00017479993402957916,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_order_line_integrity.py::test_quality_report_does_not_count_invalid_rows_as_duplicates",
+      "file": "cases\\test_quality_report_does_not_count_inval-9d5bd54995",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0001398999011144042,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.01685190002899617,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002750999992713332,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_order_line_integrity.py::test_baseline_fast_path_matches_recursive_dataframe_predictions",
+      "file": "cases\\test_baseline_fast_path_matches_recursiv-1ea730ffa8",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003293999470770359,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.044078500010073185,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00016960001084953547,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_order_line_integrity.py::test_features_count_orders_not_lines_for_repeated_sku",
+      "file": "cases\\test_features_count_orders_not_lines_for-4e18478186",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00013010005932301283,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.043002699967473745,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00017309992108494043,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_order_line_integrity.py::test_numeric_line_id_is_stable_across_nullable_parquet_batches",
+      "file": "cases\\test_numeric_line_id_is_stable_across_nu-fdeada4506",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0001262999139726162,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.00033469998743385077,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00015580002218484879,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_order_line_integrity.py::test_pipeline_cannot_load_when_quarantine_storage_fails",
+      "file": "cases\\test_pipeline_cannot_load_when_quarantin-3c68660eae",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0001379000023007393,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.024064900004304945,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00027950003277510405,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_null_empty_and_unsupported_platforms_are_preserved",
+      "file": "cases\\test_null_empty_and_unsupported_platform-8ebd270f74",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0001542000100016594,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.029364699963480234,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00018099998123943806,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_date_extraction_includes_unknown_partition",
+      "file": "cases\\test_date_extraction_includes_unknown_pa-4914d8f180",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00013259996194392443,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.00034680007956922054,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0001767000649124384,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_optional_values_reach_quarantine[updates0-INVALID_DISCOUNTED_PRICE_TYPE]",
+      "file": "cases\\test_bad_optional_values_reach_quarantin-1b8fe17bad",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0006129000103101134,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.017217099899426103,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0001767999492585659,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "model_discounted_price": "bad"
+        },
+        "reason": "INVALID_DISCOUNTED_PRICE_TYPE"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_optional_values_reach_quarantine[updates1-INVALID_VOUCHER_TOTAL_TYPE]",
+      "file": "cases\\test_bad_optional_values_reach_quarantin-acf31e3acd",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00024510000366717577,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.017532299971207976,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00018930004443973303,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "voucher_from_seller": "bad"
+        },
+        "reason": "INVALID_VOUCHER_TOTAL_TYPE"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_optional_values_reach_quarantine[updates2-INVALID_SOURCE_UPDATED_AT_TYPE]",
+      "file": "cases\\test_bad_optional_values_reach_quarantin-fcc28c5fa1",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00028280005790293217,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.016014899942092597,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00031509995460510254,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "update_time": "bad"
+        },
+        "reason": "INVALID_SOURCE_UPDATED_AT_TYPE"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_optional_values_reach_quarantine[updates3-INVALID_PAY_TIME_TYPE]",
+      "file": "cases\\test_bad_optional_values_reach_quarantin-16e57fc245",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00030339998193085194,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0177034999942407,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00019430008251219988,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "pay_time": "bad"
+        },
+        "reason": "INVALID_PAY_TIME_TYPE"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_optional_values_reach_quarantine[updates4-INVALID_WEIGHT_KG]",
+      "file": "cases\\test_bad_optional_values_reach_quarantin-dc11bd9f0f",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002983000595122576,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.023734199930913746,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003578999312594533,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "item_weight": "bad"
+        },
+        "reason": "INVALID_WEIGHT_KG"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_optional_values_reach_quarantine[updates5-TOO_LONG_PRODUCT_NAME]",
+      "file": "cases\\test_bad_optional_values_reach_quarantin-1004402103",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003290999447926879,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.021854300051927567,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00018180010374635458,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "item_name": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        },
+        "reason": "TOO_LONG_PRODUCT_NAME"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_dedupe_chooses_source_version_independent_of_arrival_order",
+      "file": "cases\\test_dedupe_chooses_source_version_indep-ed412e5fb5",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00012390001211315393,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.03223880007863045,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00015890004578977823,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_inventory_is_not_silently_committed[updates0]",
+      "file": "cases\\test_bad_inventory_is_not_silently_commi-a25fae8072",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002095999661833048,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0031956000020727515,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00019319995772093534,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "loaded_at": "bad"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_inventory_is_not_silently_committed[updates1]",
+      "file": "cases\\test_bad_inventory_is_not_silently_commi-6f4cc7bc3f",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00021440000273287296,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0017542000859975815,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00017790007404983044,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "sku": " "
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_inventory_is_not_silently_committed[updates2]",
+      "file": "cases\\test_bad_inventory_is_not_silently_commi-721167fc5e",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00023090001195669174,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.002242799964733422,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00021329999435693026,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "stock_on_hand": -1
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_inventory_is_not_silently_committed[updates3]",
+      "file": "cases\\test_bad_inventory_is_not_silently_commi-59536fe53e",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005452999612316489,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.002062799991108477,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0001832999987527728,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "stock_on_hand": 1.5
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_inventory_is_not_silently_committed[updates4]",
+      "file": "cases\\test_bad_inventory_is_not_silently_commi-4a6280ce0c",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00022629997693002224,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0023887999122962356,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00017209991347044706,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "stock_on_hand": null
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_bad_inventory_is_not_silently_committed[updates5]",
+      "file": "cases\\test_bad_inventory_is_not_silently_commi-f6785c0e25",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00024940003640949726,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.003205300075933337,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00039389997255057096,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "sku": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_nonfinite_amounts_are_rejected_and_quarantine_is_valid_json",
+      "file": "cases\\test_nonfinite_amounts_are_rejected_and_-27f26de4ff",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0006343999411910772,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.07861910003703088,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00035170000046491623,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_sparse_source_dates_cannot_pass_training_gate",
+      "file": "cases\\test_sparse_source_dates_cannot_pass_tra-395a2f05b5",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00036559998989105225,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.01619550003670156,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00022219994571059942,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_prices_never_backfill_from_future_or_other_sku",
+      "file": "cases\\test_prices_never_backfill_from_future_o-6bd1da9b02",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003515999997034669,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.026360099902376533,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.000462499912828207,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_inventory_request_rejects_invalid_business_parameters[updates0]",
+      "file": "cases\\test_inventory_request_rejects_invalid_b-92aabce8b9",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002791000297293067,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002476000227034092,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00015820004045963287,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "lead_time_days": -1
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_inventory_request_rejects_invalid_business_parameters[updates1]",
+      "file": "cases\\test_inventory_request_rejects_invalid_b-04832c4708",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00038320000749081373,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.00023530004546046257,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00016009993851184845,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "lead_time_days": 31
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_inventory_request_rejects_invalid_business_parameters[updates2]",
+      "file": "cases\\test_inventory_request_rejects_invalid_b-c797f9fb43",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00021840003319084644,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002607000060379505,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00041119998786598444,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "service_level": 2
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_inventory_request_rejects_invalid_business_parameters[updates3]",
+      "file": "cases\\test_inventory_request_rejects_invalid_b-6ffbfcdc42",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005172999808564782,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003018999705091119,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00018269999418407679,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "service_level": null
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_inventory_request_rejects_invalid_business_parameters[updates4]",
+      "file": "cases\\test_inventory_request_rejects_invalid_b-736bef7a06",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00022000004537403584,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.00022549997083842754,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0001702000154182315,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "updates": {
+          "current_stocks": {
+            "A": -3
+          }
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_malformed_json_reaches_raw_quarantine_instead_of_crashing_deserializer",
+      "file": "cases\\test_malformed_json_reaches_raw_quaranti-790553c0a6",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00015360000543296337,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.07209819997660816,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002661000471562147,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_mixed_numeric_and_text_payloads_survive_parquet_roundtrip",
+      "file": "cases\\test_mixed_numeric_and_text_payloads_sur-f5d8828f39",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00029070000164210796,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.03902420005761087,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00021510000806301832,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_inventory_quarantine_failure_prevents_database_write",
+      "file": "cases\\test_inventory_quarantine_failure_preven-5bf22ed32a",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00014860008377581835,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0015143000055104494,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00016389996744692326,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_inventory_mixed_batch_persists_reject_and_valid_snapshot",
+      "file": "cases\\test_inventory_mixed_batch_persists_reje-38b3d068db",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00012699991930276155,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.010861099930480123,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "WARNING  kafka-consumer-inventory:consumer_inventory_to_postgres.py:192 Quarantined 1 invalid inventory snapshots"
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0001922999508678913,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "WARNING  kafka-consumer-inventory:consumer_inventory_to_postgres.py:192 Quarantined 1 invalid inventory snapshots"
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_worker_checkpoints_after_etl_without_csv_export",
+      "file": "cases\\test_worker_checkpoints_after_etl_withou-3c0929c1f5",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0017347000539302826,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0033655998995527625,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00022689998149871826,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_worker_never_checkpoints_failed_etl",
+      "file": "cases\\test_worker_never_checkpoints_failed_etl-43cf51b679",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00107849994674325,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0007332999957725406,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00036149995867162943,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_failed_csv_write_preserves_previous_dataset",
+      "file": "cases\\test_failed_csv_write_preserves_previous-eb2bbfd08e",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0033091000514104962,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.00391289999242872,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00017929996829479933,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_runtime_integrity_fixes.py::test_postgres_rejects_stale_order_and_inventory_and_extends_calendar",
+      "file": "cases\\test_postgres_rejects_stale_order_and_in-2bf670cf59",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00014089990872889757,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.12263320002239197,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002604000037536025,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_ingestion.py::test_mixed_platform_batch_uses_each_events_historical_date",
+      "file": "cases\\test_mixed_platform_batch_uses_each_even-cf0678f807",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00017959997057914734,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.031879100017249584,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00017959997057914734,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_ingestion.py::test_vietnam_midnight_year_boundary_and_mixed_iso_formats[shopee-create_time]",
+      "file": "cases\\test_vietnam_midnight_year_boundary_and_-a7114d7582",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002938000252470374,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.014852400054223835,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00020250002853572369,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "platform": "shopee",
+        "time_column": "create_time"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_ingestion.py::test_vietnam_midnight_year_boundary_and_mixed_iso_formats[tiktok-created_time]",
+      "file": "cases\\test_vietnam_midnight_year_boundary_and_-3fd68b54e6",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003218000056222081,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.013618599972687662,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00022590009029954672,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "platform": "tiktok",
+        "time_column": "created_time"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_ingestion.py::test_invalid_primary_timestamp_uses_valid_alternative",
+      "file": "cases\\test_invalid_primary_timestamp_uses_vali-5bacdce262",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00016369996592402458,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.008785099955275655,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002041999250650406,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_ingestion.py::test_missing_or_invalid_timestamps_fall_back_to_vietnam_receipt_date",
+      "file": "cases\\test_missing_or_invalid_timestamps_fall_-1367d48b56",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003823000006377697,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.017297199927270412,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00016520009376108646,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_ingestion.py::test_offset_free_timestamps_keep_utc_contract_shared_with_etl",
+      "file": "cases\\test_offset_free_timestamps_keep_utc_con-b1418ecd08",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00016729999333620071,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.013653400004841387,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00016459997277706861,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_warehouse_schema_v2.py::test_order_line_grain_shared_keys_and_distinct_business_order",
+      "file": "cases\\test_order_line_grain_shared_keys_and_di-997867c2dc",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.1912544999504462,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.00581509992480278,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.004869499942287803,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_warehouse_schema_v2.py::test_conflicts_are_flagged_without_dropping_or_rewriting_lines",
+      "file": "cases\\test_conflicts_are_flagged_without_dropp-bf8f3fa137",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.1702034999616444,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.011278799967840314,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.007173399906605482,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_warehouse_schema_v2.py::test_latest_stock_does_not_sum_days_or_drop_products_without_policy",
+      "file": "cases\\test_latest_stock_does_not_sum_days_or_d-bb960750fe",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.18717889999970794,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.007217800011858344,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.005387299926951528,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_warehouse_schema_v2.py::test_external_catalog_uses_source_and_dataset_not_live_product_key",
+      "file": "cases\\test_external_catalog_uses_source_and_da-e6e249de4e",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.12470429996028543,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0046168999979272485,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.002061299979686737,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_warehouse_schema_v2.py::test_database_rejects_invalid_order_rows[quantity-0]",
+      "file": "cases\\test_database_rejects_invalid_order_rows-7a8f1a6fdb",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.11137379996944219,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.013771500089205801,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0028731999918818474,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "column": "quantity",
+        "value": "0"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_warehouse_schema_v2.py::test_database_rejects_invalid_order_rows[quantity--1]",
+      "file": "cases\\test_database_rejects_invalid_order_rows-64980f759c",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.10071569995488971,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.004320099949836731,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0023747000377625227,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "column": "quantity",
+        "value": "-1"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_warehouse_schema_v2.py::test_database_rejects_invalid_order_rows[original_price-'NaN'::numeric]",
+      "file": "cases\\test_database_rejects_invalid_order_rows-2ed39a563b",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.14020369993522763,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.02806619997136295,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.003251899965107441,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "column": "original_price",
+        "value": "'NaN'::numeric"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_warehouse_schema_v2.py::test_database_rejects_invalid_order_rows[buyer_total_amount--1]",
+      "file": "cases\\test_database_rejects_invalid_order_rows-f971bb4217",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.40961570001672953,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.006995900068432093,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.002137599978595972,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "column": "buyer_total_amount",
+        "value": "-1"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_warehouse_schema_v2.py::test_database_rejects_invalid_order_rows[product_key-NULL]",
+      "file": "cases\\test_database_rejects_invalid_order_rows-19a8c30f06",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.3071745000779629,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.007285999949090183,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.004870000062510371,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "column": "product_key",
+        "value": "NULL"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_warehouse_schema_v2.py::test_database_rejects_invalid_order_rows[date_key-NULL]",
+      "file": "cases\\test_database_rejects_invalid_order_rows-0f395aeea5",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.19925619999412447,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0034474999411031604,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0021995999850332737,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {
+        "column": "date_key",
+        "value": "NULL"
+      },
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_warehouse_schema_v2.py::test_database_rejects_negative_and_per_shop_central_stock",
+      "file": "cases\\test_database_rejects_negative_and_per_s-d0010763ff",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.11146919999737293,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.005576799972914159,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0022863999474793673,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_warehouse_schema_v2.py::test_additive_schema_can_be_applied_twice",
+      "file": "cases\\test_additive_schema_can_be_applied_twic-eafcfbb1d7",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.1628848999971524,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.042998300050385296,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.013252800097689033,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_integrity.py::test_minio_error_aborts_extraction_instead_of_partial_success",
+      "file": "cases\\test_minio_error_aborts_extraction_inste-1055e8b82f",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0004197999369353056,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.008518800023011863,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00018700002692639828,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_integrity.py::test_minio_storage_error_is_propagated",
+      "file": "cases\\test_minio_storage_error_is_propagated-8e4b0f5171",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00013150006998330355,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0009105999488383532,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "ERROR    etl.extract:extract.py:114 Lỗi đọc object: S3 operation failed; code: AccessDenied, message: unreadable, resource: object, request_id: request, host_id: host"
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003179000923410058,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "ERROR    etl.extract:extract.py:114 Lỗi đọc object: S3 operation failed; code: AccessDenied, message: unreadable, resource: object, request_id: request, host_id: host"
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_integrity.py::test_minio_response_is_closed_when_read_fails",
+      "file": "cases\\test_minio_response_is_closed_when_read_-be1406f767",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003149999538436532,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0007061999058350921,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00034200004301965237,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_integrity.py::test_default_retraining_reads_deployment_csv_fingerprints",
+      "file": "cases\\test_default_retraining_reads_deployment-e795d717b8",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00032220000866800547,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.03432430000975728,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00037839997094124556,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_integrity.py::test_retraining_rejects_changed_origin_before_training",
+      "file": "cases\\test_retraining_rejects_changed_origin_b-87fdaf1fa6",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0001897999318316579,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0009811000199988484,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003722000401467085,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_integrity.py::test_stale_drift_origin_does_not_train_or_change_manifest",
+      "file": "cases\\test_stale_drift_origin_does_not_train_o-0c86d95233",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0030556999845430255,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.005335999885573983,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "WARNING  mlops.monitoring.retraining:trigger_retraining.py:197 🚨 KÍCH HOẠT TÁI HUẤN LUYỆN (data_drift) | drift_share=0.0% | target_drift=False | nguồn=feature_store\nERROR    mlops.monitoring.retraining:trigger_retraining.py:263 ✗ Huấn luyện lại THẤT BẠI: Drift summary provenance differs from the deployed model; regenerate it. — giữ nguyên mô hình v2."
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005501999985426664,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "WARNING  mlops.monitoring.retraining:trigger_retraining.py:197 🚨 KÍCH HOẠT TÁI HUẤN LUYỆN (data_drift) | drift_share=0.0% | target_drift=False | nguồn=feature_store\nERROR    mlops.monitoring.retraining:trigger_retraining.py:263 ✗ Huấn luyện lại THẤT BẠI: Drift summary provenance differs from the deployed model; regenerate it. — giữ nguyên mô hình v2."
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_integrity.py::test_registration_cannot_change_deployment_fingerprints",
+      "file": "cases\\test_registration_cannot_change_deployme-72db1f214e",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0032854999881237745,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.00914600002579391,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "WARNING  mlops.monitoring.retraining:trigger_retraining.py:197 🚨 KÍCH HOẠT TÁI HUẤN LUYỆN (manual_force) | drift_share=0.0% | target_drift=False | nguồn=unknown"
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00034849997609853745,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "WARNING  mlops.monitoring.retraining:trigger_retraining.py:197 🚨 KÍCH HOẠT TÁI HUẤN LUYỆN (manual_force) | drift_share=0.0% | target_drift=False | nguồn=unknown"
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_integrity.py::test_forecast_audit_persists_source_and_canonical_fingerprints",
+      "file": "cases\\test_forecast_audit_persists_source_and_-836207f0df",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00019699998665601015,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.001814700081013143,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00018740002997219563,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_integrity.py::test_forecast_without_source_is_not_written",
+      "file": "cases\\test_forecast_without_source_is_not_writ-09aa1453a0",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00016119994688779116,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.00043709995225071907,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00016769999638199806,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_integrity.py::test_drift_summary_carries_feature_store_provenance",
+      "file": "cases\\test_drift_summary_carries_feature_store-f8e33d7245",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0019317999249324203,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.012054900056682527,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003966001095250249,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_integrity.py::test_coverage_refuses_unfinished_vietnam_business_day",
+      "file": "cases\\test_coverage_refuses_unfinished_vietnam-ed03c2bf20",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.000528500066138804,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.00423439999576658,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00033320009242743254,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_integrity.py::test_coverage_refuses_missing_historical_dataset",
+      "file": "cases\\test_coverage_refuses_missing_historical-2b3fe579d4",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003237000200897455,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0028032000409439206,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00020819995552301407,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_pipeline_integrity.py::test_empty_warehouse_does_not_publish_powerbi_csvs",
+      "file": "cases\\test_empty_warehouse_does_not_publish_po-769e6badcc",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0015918000135570765,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.01027940004132688,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00021440000273287296,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_monitoring.py::TestStatisticalDriftFunctions::test_ks_statistic_identical_distributions",
+      "file": "cases\\test_ks_statistic_identical_distribution-d891fb1b06",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005472999764606357,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002845000708475709,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00018660002388060093,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_monitoring.py::TestStatisticalDriftFunctions::test_ks_statistic_shifted_distributions",
+      "file": "cases\\test_ks_statistic_shifted_distributions-7f2ddf8342",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002718000905588269,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0007693999214097857,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00020350003615021706,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_monitoring.py::TestStatisticalDriftFunctions::test_psi_calculation",
+      "file": "cases\\test_psi_calculation-3f58ce51f9",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002028000308200717,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.00021029997151345015,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00017659994773566723,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_monitoring.py::TestDriftDetector::test_detect_injected_drift",
+      "file": "cases\\test_detect_injected_drift-fae0d66002",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005507000023499131,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.004472399945370853,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00048479996621608734,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_monitoring.py::TestDriftDetector::test_detect_no_drift_when_healthy",
+      "file": "cases\\test_detect_no_drift_when_healthy-ba2f745a78",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00024889991618692875,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0033194998977705836,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00020650005899369717,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_monitoring.py::TestClosedLoopRetraining::test_evaluate_and_trigger_flow",
+      "file": "cases\\test_evaluate_and_trigger_flow-ed754baa2a",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003205999964848161,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.010128900059498847,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "WARNING  mlops.monitoring.retraining:trigger_retraining.py:197 🚨 KÍCH HOẠT TÁI HUẤN LUYỆN (manual_force) | drift_share=0.0% | target_drift=False | nguồn=unknown"
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00037779996637254953,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "WARNING  mlops.monitoring.retraining:trigger_retraining.py:197 🚨 KÍCH HOẠT TÁI HUẤN LUYỆN (manual_force) | drift_share=0.0% | target_drift=False | nguồn=unknown"
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_monitoring.py::TestClosedLoopRetraining::test_failed_training_keeps_current_model",
+      "file": "cases\\test_failed_training_keeps_current_model-32dc9b307d",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002519999397918582,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.003269099979661405,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "WARNING  mlops.monitoring.retraining:trigger_retraining.py:197 🚨 KÍCH HOẠT TÁI HUẤN LUYỆN (manual_force) | drift_share=0.0% | target_drift=False | nguồn=unknown\nERROR    mlops.monitoring.retraining:trigger_retraining.py:263 ✗ Huấn luyện lại THẤT BẠI: không kết nối được PostgreSQL — giữ nguyên mô hình v3."
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00019589997828006744,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "WARNING  mlops.monitoring.retraining:trigger_retraining.py:197 🚨 KÍCH HOẠT TÁI HUẤN LUYỆN (manual_force) | drift_share=0.0% | target_drift=False | nguồn=unknown\nERROR    mlops.monitoring.retraining:trigger_retraining.py:263 ✗ Huấn luyện lại THẤT BẠI: không kết nối được PostgreSQL — giữ nguyên mô hình v3."
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_monitoring.py::TestClosedLoopRetraining::test_synthetic_drift_does_not_auto_retrain",
+      "file": "cases\\test_synthetic_drift_does_not_auto_retra-64616236de",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0006903999019414186,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0029669998912140727,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "WARNING  mlops.monitoring.retraining:trigger_retraining.py:185 Drift summary đến từ dữ liệu GIẢ LẬP → không tự động retrain (dùng force_retrain nếu muốn demo)."
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0004525999538600445,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "WARNING  mlops.monitoring.retraining:trigger_retraining.py:185 Drift summary đến từ dữ liệu GIẢ LẬP → không tự động retrain (dùng force_retrain nếu muốn demo)."
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_monitoring.py::TestFeatureStoreDriftWindows::test_windows_split_by_date",
+      "file": "cases\\test_windows_split_by_date-824fe89f2f",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002888001035898924,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0237409999826923,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.000295699923299253,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_monitoring.py::TestPrometheusMetricsExposition::test_metrics_json_format",
+      "file": "cases\\test_metrics_json_format-d6379451c1",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002571999793872237,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.00981870002578944,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "WARNING  mlops.serving.model_loader:model_loader.py:302 Không tải được mô hình từ MLflow Registry (http://localhost:5000): No module named 'mlflow'\nWARNING  mlops.serving.model_loader:model_loader.py:240 ⚠ KHÔNG nạp được mô hình ML nào — API chạy ở chế độ HEURISTIC DỰ PHÒNG (/health sẽ báo 'degraded'). Hãy chạy train_baseline + register_model.\nWARNING  mlops.serving.model_loader:model_loader.py:185 Chưa có model ML; thử lại sau 5.0 giây."
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0004298000130802393,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "WARNING  mlops.serving.model_loader:model_loader.py:302 Không tải được mô hình từ MLflow Registry (http://localhost:5000): No module named 'mlflow'\nWARNING  mlops.serving.model_loader:model_loader.py:240 ⚠ KHÔNG nạp được mô hình ML nào — API chạy ở chế độ HEURISTIC DỰ PHÒNG (/health sẽ báo 'degraded'). Hãy chạy train_baseline + register_model.\nWARNING  mlops.serving.model_loader:model_loader.py:185 Chưa có model ML; thử lại sau 5.0 giây."
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_monitoring.py::TestPrometheusMetricsExposition::test_metrics_prometheus_text_format",
+      "file": "cases\\test_metrics_prometheus_text_format-55f6245dd4",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002902999985963106,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0009966000216081738,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00018440000712871552,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_features.py::TestABCXYZClassifier::test_abc_xyz_classification",
+      "file": "cases\\test_abc_xyz_classification-469d4128ef",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002614000113680959,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.04180969996377826,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00020640005823224783,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_features.py::TestABCXYZClassifier::test_inventory_policy_calculations",
+      "file": "cases\\test_inventory_policy_calculations-1ad7cc6d82",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002055999357253313,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.027109500020742416,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0004157000221312046,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_features.py::TestTimeSeriesFeatures::test_aggregate_daily_and_lags",
+      "file": "cases\\test_aggregate_daily_and_lags-750f89b57d",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0005903000710532069,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.02868540002964437,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0001642000861465931,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_features.py::TestTimeSeriesFeatures::test_calendar_features",
+      "file": "cases\\test_calendar_features-b2f12ab949",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00021650001872330904,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.023626900045201182,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.0004093999741598964,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_features.py::TestTimeSeriesFeatures::test_target_calendar_describes_forecast_day",
+      "file": "cases\\test_target_calendar_describes_forecast_-e481f92d0a",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0002489000326022506,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.019894100027158856,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00021730002481490374,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_model_recovery.py::test_startup_failure_recovers_without_blocking_readiness",
+      "file": "cases\\test_startup_failure_recovers_without_bl-65ce3f890d",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.0003659999929368496,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.004923899890854955,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "WARNING  mlops.serving.model_loader:model_loader.py:185 Chưa có model ML; thử lại sau 5.0 giây."
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00015310000162571669,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "WARNING  mlops.serving.model_loader:model_loader.py:185 Chưa có model ML; thử lại sau 5.0 giây."
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_model_recovery.py::test_backoff_is_capped_and_early_probes_do_not_load",
+      "file": "cases\\test_backoff_is_capped_and_early_probes_-6aba6cb367",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00013239996042102575,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0029952999902889132,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "WARNING  mlops.serving.model_loader:model_loader.py:185 Chưa có model ML; thử lại sau 5.0 giây.\nWARNING  mlops.serving.model_loader:model_loader.py:185 Chưa có model ML; thử lại sau 10.0 giây.\nWARNING  mlops.serving.model_loader:model_loader.py:185 Chưa có model ML; thử lại sau 12.0 giây.\nWARNING  mlops.serving.model_loader:model_loader.py:185 Chưa có model ML; thử lại sau 12.0 giây."
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00039279996417462826,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "WARNING  mlops.serving.model_loader:model_loader.py:185 Chưa có model ML; thử lại sau 5.0 giây.\nWARNING  mlops.serving.model_loader:model_loader.py:185 Chưa có model ML; thử lại sau 10.0 giây.\nWARNING  mlops.serving.model_loader:model_loader.py:185 Chưa có model ML; thử lại sau 12.0 giây.\nWARNING  mlops.serving.model_loader:model_loader.py:185 Chưa có model ML; thử lại sau 12.0 giây."
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_model_recovery.py::test_healthy_model_is_not_replaced_and_failed_reload_keeps_lock",
+      "file": "cases\\test_healthy_model_is_not_replaced_and_f-2431d28195",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00017250003293156624,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.0021600000327453017,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "ERROR    mlops.serving.model_loader:model_loader.py:165 Reload model thất bại; giữ nguyên model heuristic_catalog vunknown đang phục vụ."
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00019149994477629662,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "ERROR    mlops.serving.model_loader:model_loader.py:165 Reload model thất bại; giữ nguyên model heuristic_catalog vunknown đang phục vụ."
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_model_recovery.py::test_unexpected_loader_error_releases_lock_and_schedules_retry",
+      "file": "cases\\test_unexpected_loader_error_releases_lo-3f760aadf7",
+      "phases": {
+        "setup": {
+          "outcome": "passed",
+          "duration_seconds": 0.00015899993013590574,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": ""
+        },
+        "call": {
+          "outcome": "passed",
+          "duration_seconds": 0.001415099948644638,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "ERROR    mlops.serving.model_loader:model_loader.py:159 Nạp ứng viên model thất bại; giữ nguyên trạng thái đang phục vụ.\nTraceback (most recent call last):\n  File \"C:\\Users\\MINH\\Đếm ngày xa trường\\temp-extract\\streaming-mlops-ecommerce\\tests\\..\\serving\\app\\model_loader.py\", line 157, in _load_model_locked\n    candidate._load_model_candidate()\n  File \"C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1105-1297-0_26.1105.1297.0_x64__3k8sg7r9htsxt\\dependencies\\python\\Lib\\unittest\\mock.py\", line 1139, in __call__\n    return self._mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1105-1297-0_26.1105.1297.0_x64__3k8sg7r9htsxt\\dependencies\\python\\Lib\\unittest\\mock.py\", line 1143, in _mock_call\n    return self._execute_mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1105-1297-0_26.1105.1297.0_x64__3k8sg7r9htsxt\\dependencies\\python\\Lib\\unittest\\mock.py\", line 1198, in _execute_mock_call\n    raise effect\nRuntimeError: transient\nWARNING  mlops.serving.model_loader:model_loader.py:185 Chưa có model ML; thử lại sau 5.0 giây."
+        },
+        "teardown": {
+          "outcome": "passed",
+          "duration_seconds": 0.00019560009241104126,
+          "details": null,
+          "stdout": "",
+          "stderr": "",
+          "log": "ERROR    mlops.serving.model_loader:model_loader.py:159 Nạp ứng viên model thất bại; giữ nguyên trạng thái đang phục vụ.\nTraceback (most recent call last):\n  File \"C:\\Users\\MINH\\Đếm ngày xa trường\\temp-extract\\streaming-mlops-ecommerce\\tests\\..\\serving\\app\\model_loader.py\", line 157, in _load_model_locked\n    candidate._load_model_candidate()\n  File \"C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1105-1297-0_26.1105.1297.0_x64__3k8sg7r9htsxt\\dependencies\\python\\Lib\\unittest\\mock.py\", line 1139, in __call__\n    return self._mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1105-1297-0_26.1105.1297.0_x64__3k8sg7r9htsxt\\dependencies\\python\\Lib\\unittest\\mock.py\", line 1143, in _mock_call\n    return self._execute_mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1105-1297-0_26.1105.1297.0_x64__3k8sg7r9htsxt\\dependencies\\python\\Lib\\unittest\\mock.py\", line 1198, in _execute_mock_call\n    raise effect\nRuntimeError: transient\nWARNING  mlops.serving.model_loader:model_loader.py:185 Chưa có model ML; thử lại sau 5.0 giây."
+        }
+      },
+      "parameters": {},
+      "outcome": "passed"
+    }
+  ]
+}

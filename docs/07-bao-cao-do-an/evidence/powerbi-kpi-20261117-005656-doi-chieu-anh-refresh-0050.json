@@ -1,0 +1,94 @@
+{
+  "checked_at": "2026-11-17T00:56:56.022443+07:00",
+  "cutoff_vn": "2026-11-17 00:50:59",
+  "label": "doi-chieu-anh-refresh-0050",
+  "values": {
+    "don_hang_tu_cac_san": {
+      "Đơn hợp lệ": 130692,
+      "Doanh thu": 79561190660.0,
+      "Giá trị đơn TB": 608768.6366418756,
+      "Sản phẩm bán": 314150,
+      "Tỷ lệ hủy": 0.17626073857440894,
+      "Tăng trưởng DT 7 ngày": -0.0508152734629519,
+      "Tỷ trọng doanh thu theo sàn": {
+        "Shopee": {
+          "doanh_thu": 42433706630.0,
+          "ty_trong": 0.5333468023541517
+        },
+        "TikTok Shop": {
+          "doanh_thu": 37127484030.0,
+          "ty_trong": 0.4666531976458483
+        }
+      },
+      "Đơn mới nhất": "2026-11-17 00:50:58.375178"
+    },
+    "suc_khoe_ton_kho": {
+      "Ngày đánh giá": 20261117,
+      "SKU nguy cấp": 15,
+      "SKU cần đặt": 20,
+      "SKU ổn định": 62,
+      "Hết hàng trong 7 ngày": 24,
+      "Số ngày tồn (trung vị)": 4.8,
+      "Ma trận ABC × XYZ": [
+        {
+          "abc_class": "A",
+          "xyz_class": "Y",
+          "n": 3
+        },
+        {
+          "abc_class": "A",
+          "xyz_class": "Z",
+          "n": 8
+        },
+        {
+          "abc_class": "B",
+          "xyz_class": "Y",
+          "n": 1
+        },
+        {
+          "abc_class": "B",
+          "xyz_class": "Z",
+          "n": 4
+        },
+        {
+          "abc_class": "C",
+          "xyz_class": "Z",
+          "n": 4
+        }
+      ]
+    },
+    "dat_hang_nha_cung_cap": {
+      "SKU đặt ngay": 14,
+      "SKU đặt trong tuần": 6,
+      "Tổng lượng đề xuất": 9115.0,
+      "Giá trị (theo giá bán)": 2838074000.0,
+      "Lịch sử tổng lượng đề xuất": {
+        "20261116": 25982.0,
+        "20261117": 9115.0
+      }
+    },
+    "du_bao_nhu_cau_ai": {
+      "Model đang dùng": "v4 · naive",
+      "WAPE backtest": 0.5821999999999999,
+      "Bias backtest": -0.23070000000000002,
+      "WAPE thực tế (t+1)": 2.2152466367713006,
+      "Số ngày đã chấm": 1,
+      "So sánh phiên bản": [
+        {
+          "Phiên bản": "v4 · naive",
+          "Tầm dự báo": 1,
+          "Số dự báo": 129,
+          "Ngày chấm": 1,
+          "WAPE": 2.2152466367713006,
+          "Bias": 2.188340807174888
+        }
+      ]
+    },
+    "do_tin_cay_du_lieu": {
+      "Ngày xác nhận gần nhất": "2026-11-16",
+      "SKU dùng lead time mặc định": 68,
+      "Đơn xung đột header": 16,
+      "Đơn hôm nay (chưa xác nhận)": 764
+    }
+  }
+}

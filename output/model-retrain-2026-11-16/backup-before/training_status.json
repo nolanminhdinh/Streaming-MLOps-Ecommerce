@@ -1,0 +1,39 @@
+{
+  "event": "MODEL_TRAINING_DATA_READINESS",
+  "status": "TRAINING_SUCCEEDED",
+  "severity": "info",
+  "data_sufficient": true,
+  "data_origin": "public_anonymized_historical_csv",
+  "source_type": "warehouse",
+  "available_history_days": 227,
+  "required_history_days": 78,
+  "missing_history_days": 0,
+  "active_source_days": 226,
+  "evaluation_days_available": 198,
+  "evaluation_days_required": 49,
+  "minimum_train_days": 14,
+  "validation_days": 7,
+  "test_days_per_fold": 14,
+  "walk_forward_splits": 2,
+  "max_lag_days": 28,
+  "row_count": 5734,
+  "sku_count": 216,
+  "history_start": "2025-12-28",
+  "history_end": "2026-08-11",
+  "action": "Huấn luyện hoàn tất. Model chỉ được đăng ký sau khi qua bước kiểm tra registry.",
+  "checked_at": "2026-10-12T18:03:12.986390+00:00",
+  "feature_row_count": 42768,
+  "feature_sku_count": 216,
+  "notification": {
+    "configured": false,
+    "attempted": false,
+    "delivered": false,
+    "reason": "webhook_not_configured"
+  },
+  "best_model": "MOVING_AVERAGE",
+  "trained_models": [
+    "MOVING_AVERAGE",
+    "LIGHTGBM"
+  ],
+  "completed_at": "2026-10-12T18:05:08.396266+00:00"
+}

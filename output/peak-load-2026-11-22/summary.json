@@ -1,0 +1,56 @@
+{
+  "baseline": {
+    "started_at": "2026-11-22T00:24:37.147248+07:00",
+    "fact_orders": 165138,
+    "fact_inventory": 6248,
+    "mart_sales_line": 165138,
+    "last_loaded_age_s": "32.7",
+    "kafka_end_offsets": {
+      "inventory.logs": 2675,
+      "ecom.orders.raw": 8027
+    },
+    "kafka_lag": {
+      "inventory-postgres-writer-group": 0,
+      "minio-writer-group": 0,
+      "nifi-ecom-orders-consumer": 2306
+    },
+    "host": {
+      "host_cpu_pct": 89.0,
+      "host_ram_total_gb": 31.52,
+      "host_ram_used_gb": 21.37,
+      "host_ram_used_pct": 67.8,
+      "docker_vm_ram_gb": 8.17,
+      "producer_ram_mb": 0.0
+    },
+    "fixed_rate_evt_s": 12
+  },
+  "final": {
+    "stopped_at": "2026-11-22T00:44:43.959499+07:00",
+    "drained_seconds": 66.9,
+    "fact_orders": 179544,
+    "fact_inventory": 6248,
+    "mart_sales_line": 179544,
+    "last_loaded_age_s": "-1225.4",
+    "kafka_end_offsets": {
+      "inventory.logs": 3075,
+      "ecom.orders.raw": 22407
+    },
+    "kafka_lag": {
+      "inventory-postgres-writer-group": 0,
+      "minio-writer-group": 0,
+      "nifi-ecom-orders-consumer": 16686
+    },
+    "worker_status": "healthy",
+    "pending_objects": 0,
+    "last_success_age_s": 45.3,
+    "ingest_to_wh_p50_s": 33.508518,
+    "ingest_to_wh_p95_s": 44.363197400000004
+  },
+  "producer_events_logged": 14300,
+  "producer_rate_evt_s": 12.0,
+  "orders_messages_in_kafka": 14380,
+  "inventory_messages_in_kafka": 400,
+  "fact_orders_added": 14406,
+  "fact_inventory_added": 0,
+  "mart_sales_line_added": 14406
+}

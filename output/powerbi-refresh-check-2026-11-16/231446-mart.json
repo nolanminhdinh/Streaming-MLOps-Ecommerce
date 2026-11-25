@@ -1,0 +1,11 @@
+{
+  "checked_at": "2026-11-16T23:14:46.137005+07:00",
+  "label": "mart",
+  "status": "FAIL",
+  "transaction_read_only": true,
+  "powerbi_desktop_refresh_verified": false,
+  "sources": {},
+  "relationships": [],
+  "checks": {},
+  "error": "NameError: name 'MART_TABLES' is not defined"
+}

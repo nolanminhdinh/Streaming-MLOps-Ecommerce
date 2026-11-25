@@ -1,0 +1,180 @@
+[
+  {
+    "scenario": "postgres",
+    "label": "FLT1116201701PO",
+    "before": {
+      "at": "2026-11-16T13:17:02.220117+00:00",
+      "worker": "running|1|healthy",
+      "heartbeat_status": "healthy",
+      "pending_objects": 0,
+      "api_ready_http": 200,
+      "api_pipeline_status": "healthy",
+      "kafka_lag": {
+        "minio-writer-group": 0,
+        "inventory-postgres-writer-group": 0
+      },
+      "alerts": [
+        "EcommerceDemandHistoryStale:pending",
+        "EcommercePipelineBatchVolumeAnomaly:pending"
+      ]
+    },
+    "service_stopped_at": "2026-11-16T13:17:03.180550+00:00",
+    "during_outage": {
+      "at": "2026-11-16T13:18:03.921724+00:00",
+      "worker": "restarting|6|unhealthy",
+      "heartbeat_status": "starting",
+      "pending_objects": null,
+      "api_ready_http": 503,
+      "api_pipeline_status": "starting",
+      "kafka_lag": {
+        "minio-writer-group": 0,
+        "inventory-postgres-writer-group": 1
+      },
+      "alerts": [
+        "EcommercePipelineUnhealthy:pending"
+      ]
+    },
+    "warehouse_during_outage": {
+      "error": "OperationalError"
+    },
+    "service_started_at": "2026-11-16T13:18:08.587084+00:00",
+    "recovery_seconds_after_restore": 21.8,
+    "final_warehouse": {
+      "facts": 5,
+      "units": 15,
+      "duplicate_keys": 0,
+      "stock": 77
+    },
+    "after": {
+      "at": "2026-11-16T13:18:31.050085+00:00",
+      "worker": "running|7|healthy",
+      "heartbeat_status": "healthy",
+      "pending_objects": 0,
+      "api_ready_http": 200,
+      "api_pipeline_status": "healthy",
+      "kafka_lag": {
+        "minio-writer-group": 0,
+        "inventory-postgres-writer-group": 0
+      },
+      "alerts": [
+        "EcommercePipelineUnhealthy:pending"
+      ]
+    },
+    "passed": true
+  },
+  {
+    "scenario": "minio",
+    "label": "FLT1116201841MI",
+    "before": {
+      "at": "2026-11-16T13:18:42.084402+00:00",
+      "worker": "running|7|healthy",
+      "heartbeat_status": "healthy",
+      "pending_objects": 0,
+      "api_ready_http": 200,
+      "api_pipeline_status": "healthy",
+      "kafka_lag": {
+        "minio-writer-group": 0,
+        "inventory-postgres-writer-group": 0
+      },
+      "alerts": [
+        "EcommercePipelineBatchVolumeAnomaly:pending"
+      ]
+    },
+    "service_stopped_at": "2026-11-16T13:18:43.270947+00:00",
+    "during_outage": {
+      "at": "2026-11-16T13:19:44.101186+00:00",
+      "worker": "running|7|healthy",
+      "heartbeat_status": "stopped",
+      "pending_objects": null,
+      "api_ready_http": 200,
+      "api_pipeline_status": "stopped",
+      "kafka_lag": {
+        "minio-writer-group": 5,
+        "inventory-postgres-writer-group": 0
+      },
+      "alerts": [
+        "EcommerceDemandHistoryStale:pending",
+        "EcommercePipelineUnhealthy:pending"
+      ]
+    },
+    "warehouse_during_outage": {
+      "facts": 0,
+      "units": 0,
+      "duplicate_keys": 0,
+      "stock": 77
+    },
+    "service_started_at": "2026-11-16T13:19:44.765694+00:00",
+    "recovery_seconds_after_restore": 36.9,
+    "final_warehouse": {
+      "facts": 5,
+      "units": 15,
+      "duplicate_keys": 0,
+      "stock": 77
+    },
+    "after": {
+      "at": "2026-11-16T13:20:22.254301+00:00",
+      "worker": "running|8|healthy",
+      "heartbeat_status": "healthy",
+      "pending_objects": 0,
+      "api_ready_http": 200,
+      "api_pipeline_status": "healthy",
+      "kafka_lag": {
+        "minio-writer-group": 0,
+        "inventory-postgres-writer-group": 0
+      },
+      "alerts": [
+        "EcommerceDemandHistoryStale:pending",
+        "EcommercePipelineBatchVolumeAnomaly:pending"
+      ]
+    },
+    "passed": true
+  },
+  {
+    "scenario": "worker",
+    "label": "FLT1116202032WO",
+    "before": {
+      "at": "2026-11-16T13:20:33.177550+00:00",
+      "worker": "running|8|healthy",
+      "heartbeat_status": "healthy",
+      "pending_objects": 0,
+      "api_ready_http": 200,
+      "api_pipeline_status": "healthy",
+      "kafka_lag": {
+        "minio-writer-group": 0,
+        "inventory-postgres-writer-group": 0
+      },
+      "alerts": [
+        "EcommerceDemandHistoryStale:pending",
+        "EcommercePipelineBatchVolumeAnomaly:pending"
+      ]
+    },
+    "after_kill": {
+      "before": "running|8|healthy",
+      "after": "running|9|starting"
+    },
+    "recovery_seconds_after_restore": 33.4,
+    "final_warehouse": {
+      "facts": 5,
+      "units": 15,
+      "duplicate_keys": 0,
+      "stock": 77
+    },
+    "after": {
+      "at": "2026-11-16T13:21:15.816618+00:00",
+      "worker": "running|9|healthy",
+      "heartbeat_status": "healthy",
+      "pending_objects": 0,
+      "api_ready_http": 200,
+      "api_pipeline_status": "healthy",
+      "kafka_lag": {
+        "minio-writer-group": 0,
+        "inventory-postgres-writer-group": 0
+      },
+      "alerts": [
+        "EcommerceDemandHistoryStale:pending",
+        "EcommercePipelineBatchVolumeAnomaly:pending"
+      ]
+    },
+    "passed": true
+  }
+]

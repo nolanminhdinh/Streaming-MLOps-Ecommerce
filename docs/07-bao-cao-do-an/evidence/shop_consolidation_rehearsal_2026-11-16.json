@@ -1,0 +1,53 @@
+{
+  "mode": "rehearsal",
+  "status": "REHEARSAL_PASSED_ROLLED_BACK",
+  "checked_at": "2026-11-16T21:38:21.219323+07:00",
+  "before": {
+    "order_lines": "145660",
+    "units": "347833",
+    "buyer_amount": "88971577430.00",
+    "null_shop_lines": "30",
+    "shop_rows": 22080,
+    "distinct_shops": 57
+  },
+  "after": {
+    "order_lines": "145660",
+    "units": "347833",
+    "buyer_amount": "88971577430.00",
+    "null_shop_lines": "30",
+    "shop_rows": 57,
+    "distinct_shops": 57
+  },
+  "checks": {
+    "fact_totals_unchanged": true,
+    "totals_per_shop_name_unchanged": true,
+    "one_key_per_shop_name": true,
+    "no_orphan_shop_keys": true,
+    "bi_view_matches_fact": true,
+    "quality_view_empty": true
+  },
+  "facts_repointed": 5675,
+  "shop_rows_deleted": 22023,
+  "mapped_shop_keys": 22023,
+  "stable_shop_ids_assigned": [
+    {
+      "platform": "shopee",
+      "shop_name": "DEMO bảo vệ",
+      "shop_key": 22142,
+      "shop_id": "DEMO-SHOPEE"
+    },
+    {
+      "platform": "shopee",
+      "shop_name": "Continuous test",
+      "shop_key": 22119,
+      "shop_id": "CONTINUOUS-TEST"
+    },
+    {
+      "platform": "shopee",
+      "shop_name": "Fault test",
+      "shop_key": 22276,
+      "shop_id": "FAULT-TEST"
+    }
+  ],
+  "mapping_csv": "output\\shop-consolidation-2026-11-16\\shop_key_mapping_rehearsal.csv"
+}

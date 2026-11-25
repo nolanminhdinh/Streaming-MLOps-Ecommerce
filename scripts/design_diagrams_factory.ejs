@@ -1,0 +1,85 @@
+<%
+var nativeResult;
+try {
+// SPEC is inserted as a literal by the build wrapper. Only documented StarUML APIs are used.
+var spec = __DESIGN_SPEC_LITERAL__;
+var project = app.project.getProject();
+app.engine.setProperty(project,'name','ĐATN — Thiết kế pipeline end-to-end — 09/11/2026');
+var typeMap={component:'UMLComponent',deploy:'UMLNode',host:'UMLNode',boundary:'UMLUseCaseSubject',actor:'UMLActor',usecase:'UMLUseCase',action:'UMLAction',initial:'UMLInitialNode',decision:'UMLDecisionNode',merge:'UMLMergeNode',entity:'ERDEntity',lifeline:'UMLLifeline'};
+var diagramMap={component:'UMLComponentDiagram',deployment:'UMLDeploymentDiagram',usecase:'UMLUseCaseDiagram',activity:'UMLActivityDiagram',sequence:'UMLSequenceDiagram',erd:'ERDDiagram'};
+function color(view,fill,size) {
+  app.engine.setFont([view],'Arial',size||14,'#16334d');
+  app.engine.setFillColor([view],fill||'#e7f0fc');
+  app.engine.setLineColor([view],'#54718d');
+}
+function annotation(diagram,parent,text,x,y,w,h,header) {
+  var v=app.factory.createModelAndView({id:header?'TextBox':'Note',parent:parent,diagram:diagram,x1:x,y1:y,x2:x+w,y2:y+h,
+    viewInitializer:function(v){v.text=text;v.wordWrap=true;v.autoResize=false;}});
+  color(v,header?'#ffffff':'#fff7e6',header?22:14);
+  return v;
+}
+for (var di=0;di<spec.diagrams.length;di++) {
+  var def=spec.diagrams[di];
+  var pkg=app.factory.createModel({id:def.kind==='erd'?'ERDDataModel':'UMLModel',parent:project,modelInitializer:function(m){m.name=def.slug;m.documentation=def.purpose+'\nBáo cáo: '+def.section+'\nĐối chiếu mã: '+def.refs.join(', ');}});
+  var owner=pkg;
+  if (def.kind==='activity') owner=app.factory.createModel({id:'UMLActivity',parent:pkg,modelInitializer:function(m){m.name=def.title;}});
+  if (def.kind==='sequence') {
+    var collaboration=app.factory.createModel({id:'UMLCollaboration',parent:pkg,modelInitializer:function(m){m.name='Các thành phần tương tác';}});
+    owner=app.factory.createModel({id:'UMLInteraction',parent:collaboration,modelInitializer:function(m){m.name=def.title;}});
+  }
+  var dg=app.factory.createDiagram({id:diagramMap[def.kind],parent:owner,diagramInitializer:function(d){d.name=def.slug;d.defaultDiagram=di===1;}});
+  var views={};
+  annotation(dg,owner,def.title,30,15,def.width-60,65,true);
+  for (var ni=0;ni<def.nodes.length;ni++) {
+    var n=def.nodes[ni];
+    var options={id:typeMap[n.kind],parent:owner,diagram:dg,x1:n.x,y1:n.y,x2:n.x+n.w,y2:n.kind==='lifeline'?n.y+70:n.y+n.h,
+      modelInitializer:function(m){m.name=n.name;m.documentation=n.detail||'';},
+      viewInitializer:function(v){v.wordWrap=true;v.autoResize=false;}};
+    if(n.parent&&views[n.parent]) options.containerView=views[n.parent];
+    if(def.kind==='activity') options.field='nodes';
+    if(def.kind==='sequence') options.field='participants';
+    var v=app.factory.createModelAndView(options);
+    if(!v) throw new Error('Cannot create '+options.id+' '+n.key);
+    views[n.key]=v;
+    color(v,n.fill,n.kind==='entity'?13:14);
+    if(n.columns) {
+      for(var ci=0;ci<n.columns.length;ci++) {
+        var column=n.columns[ci];
+        app.factory.createModel({id:'ERDColumn',parent:v.model,field:'columns',modelInitializer:function(m){m.name=column.name;m.type=column.type;m.primaryKey=column.pk;m.foreignKey=column.fk;m.nullable=column.nullable;}});
+      }
+    }
+    // A note keeps descriptive text editable without putting paragraphs in UML names.
+    if(n.detail) annotation(dg,owner,n.detail,n.x+8,n.y+n.h-43,n.w-16,40,false);
+  }
+  for(var ei=0;ei<def.edges.length;ei++) {
+    var e=def.edges[ei],tail=views[e.a],head=views[e.b];
+    var id=e.kind==='association'?'UMLAssociation':e.kind==='relationship'?'ERDRelationship':e.kind==='message'?'UMLMessage':def.kind==='activity'?'UMLControlFlow':'UMLDependency';
+    var points=e.points;
+    var opt={id:id,parent:owner,diagram:dg,tailView:tail,headView:head,tailModel:tail.model,headModel:head.model,
+      x1:points[0][0],y1:points[0][1],x2:points[points.length-1][0],y2:points[points.length-1][1],
+      modelInitializer:function(m){
+        m.name=id==='ERDRelationship'?'':e.label;
+        if(id==='UMLMessage')m.messageSort=e.dashed?'reply':'synchCall';
+        if(id==='ERDRelationship'){m.identifying=false;m.end1.cardinality=e.label.indexOf('0..1')===0?'0..1':'1';m.end2.cardinality='0..*';}
+        if(id==='UMLControlFlow'&&(tail.model instanceof type.UMLDecisionNode)){m.name='';m.guard=e.label;}
+      }};
+    if(id==='UMLControlFlow')opt.field='edges';
+    if(id==='UMLMessage')opt.field='messages';
+    var relationship=app.factory.createModelAndView(opt);
+    if(!relationship)throw new Error('Cannot create edge '+id+' '+e.a+' -> '+e.b);
+    app.engine.setFont([relationship],'Arial',13,'#36546f');
+    if(id!=='UMLMessage') {
+      var ps=new type.Points();
+      for(var pi=0;pi<points.length;pi++)ps.add(new type.Point(points[pi][0],points[pi][1]));
+      var builder=app.repository.getOperationBuilder();builder.begin('Định tuyến quan hệ');
+      builder.fieldAssign(relationship,'lineStyle',type.EdgeView.LS_RECTILINEAR);
+      builder.fieldAssign(relationship,'points',ps.__write());builder.end();app.repository.doOperation(builder.getOperation());
+    }
+  }
+  for(var no=0;no<def.notes.length;no++){var note=def.notes[no];annotation(dg,owner,note.text,note.x,note.y,note.w,note.h,false);}
+}
+nativeResult=app.repository.writeObject(project);
+} catch (error) {
+  nativeResult=JSON.stringify({error:String(error),stack:error.stack||'',diagram:typeof def!=='undefined'?def.slug:null,node:typeof n!=='undefined'?n.key:null,edge:typeof e!=='undefined'?e:null},null,2);
+}
+%><%- nativeResult %>

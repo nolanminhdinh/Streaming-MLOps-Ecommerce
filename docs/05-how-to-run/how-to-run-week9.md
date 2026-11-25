@@ -4,13 +4,14 @@ Tài liệu này hướng dẫn chi tiết cách xuất khẩu dữ liệu và k
 
 ---
 
-## 1. Xuất khẩu Bộ Dữ liệu cho Power BI Desktop
+## 1. Nguồn chính: PostgreSQL Import
 
-Chạy script tự động trích xuất các bảng dữ liệu chuẩn hóa sang thư mục `powerbi/data/`:
+Hướng dẫn hiện hành từ 01/11/2026: [PostgreSQL Import](../../powerbi/import/README.md).
+Worker nạp warehouse và checkpoint sau ETL. Power BI đọc PostgreSQL trực tiếp,
+không phụ thuộc CSV. Chỉ chạy lệnh dưới nếu cần snapshot dự phòng:
 
 ```bash
-# Xuất khẩu toàn bộ dữ liệu CSV cho Power BI
-python powerbi/export_powerbi_dataset.py
+docker compose --profile backup run --rm csv-backup
 ```
 
 > Các file được xuất từ facts hiện có trong PostgreSQL; số SKU/ngày phụ thuộc dữ liệu đã nạp. `Forecast_vs_Actual.csv` có thể chỉ có header nếu chưa có ML forecast được lưu và actual khớp.
@@ -21,8 +22,8 @@ python powerbi/export_powerbi_dataset.py
 
 1. **Khởi động ứng dụng Power BI Desktop**.
 2. **Nạp dữ liệu**:
-   - Chọn **Get Data** ➔ **Folder** (hoặc **Text/CSV**) ➔ Chọn đường dẫn tới thư mục `powerbi/data/`.
-   - Chọn **Load** để đưa toàn bộ các bảng vào mô hình dữ liệu.
+   - Chọn **Get Data** ➔ **PostgreSQL database**, server `localhost:5432`, database `ecom_warehouse`, chọn **Import**.
+   - Dùng các query `powerbi/import/*.pq` và hướng dẫn liên kết ở trên, giữ nguyên tên bảng, Apply rồi Refresh.
 3. **Thiết lập Quan hệ (Model View)**:
    - Kéo liên kết: `Inventory_Health_Alerts[sku]` ➔ `Dim_Products[sku]` (1-to-1).
    - Kéo liên kết: `Forecast_vs_Actual[sku]` ➔ `Dim_Products[sku]` (Many-to-1).

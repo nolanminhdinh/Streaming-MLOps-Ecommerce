@@ -444,8 +444,8 @@ class ModelManager:
         """
         Dự báo chuỗi nhu cầu [from_date, to_date].
 
-        - Có mô hình + lịch sử thật: dự báo đệ quy từ ngày cuối có dữ liệu; mỗi ngày dự báo
-          được nối vào chuỗi để làm lag/rolling cho ngày kế tiếp.
+        - Có mô hình + lịch sử thật: ưu tiên hook dự báo trực tiếp cả chân trời từ
+          lịch sử quan sát; mô hình cũ tiếp tục nối dự báo vào chuỗi lag/rolling.
         - Chỉ có lịch sử: heuristic với baseline = trung bình 28 ngày gần nhất.
         - Không có gì: heuristic với bảng demo (đánh dấu rõ nguồn).
 
@@ -457,6 +457,7 @@ class ModelManager:
         hist_mean, hist_std = _mean_std(recent)
 
         preds: Dict[date, float] = {}
+        direct_used = False
         model_source = self.model_source
         if self.has_model and history and self.feature_spec.get("feature_columns"):
             steps = (to_date - hist_end).days
@@ -470,26 +471,38 @@ class ModelManager:
             qty_per_order = (sum(recent) / tot_orders) if tot_orders else 1.0
             d = hist_end
             try:
-                while d < to_date:
-                    y_hat = self._model_predict_one(series, d, sku)
-                    d = d + timedelta(days=1)
-                    price = series[-1]["avg_unit_price"] or 0.0
-                    series.append({
-                        "date": d,
-                        "daily_demand": y_hat,
-                        "daily_revenue": y_hat * price,
-                        "avg_unit_price": price,
-                        "total_discount": 0.0,
-                        "order_count": y_hat / qty_per_order if qty_per_order else 0.0,
-                    })
-                    if d >= from_date:
-                        preds[d] = y_hat
+                direct = getattr(self.model, "predict_horizon_from_history", None)
+                if callable(direct):
+                    values = list(direct(series, steps))
+                    if len(values) != steps or any(not math.isfinite(float(x)) or x < 0 for x in values):
+                        raise ValueError("Direct model returned an invalid forecast horizon.")
+                    for i, value in enumerate(values, 1):
+                        target = hist_end + timedelta(days=i)
+                        if target >= from_date:
+                            preds[target] = float(value)
+                    direct_used = True
+                else:
+                    while d < to_date:
+                        y_hat = self._model_predict_one(series, d, sku)
+                        d = d + timedelta(days=1)
+                        price = series[-1]["avg_unit_price"] or 0.0
+                        series.append({
+                            "date": d,
+                            "daily_demand": y_hat,
+                            "daily_revenue": y_hat * price,
+                            "avg_unit_price": price,
+                            "total_discount": 0.0,
+                            "order_count": y_hat / qty_per_order if qty_per_order else 0.0,
+                        })
+                        if d >= from_date:
+                            preds[d] = y_hat
             except Exception as e:
                 # Không nuốt lỗi âm thầm: log WARNING và đánh dấu nguồn heuristic trong response
                 logger.warning("Suy luận mô hình lỗi cho SKU %s (%s) → heuristic dự phòng.", sku, e)
                 preds = {}
 
         if not preds:
+            direct_used = False
             base = hist_mean if history else self.get_product_info(sku)["base_demand"]
             model_source = SOURCE_HEURISTIC_HISTORY if history else SOURCE_HEURISTIC_CATALOG
             d = from_date
@@ -501,7 +514,9 @@ class ModelManager:
         sigma = hist_std if history else self.get_product_info(sku)["sigma"]
         items = []
         for d in sorted(preds):
-            qty = round(preds[d], 1)
+            # Sparse conditional means may be well below 0.1 units/day.
+            # Keep precision rather than rounding their entire rate to zero.
+            qty = round(preds[d], 4 if direct_used else 1)
             item: Dict[str, Any] = {"date": d.strftime("%Y-%m-%d"), "predicted_quantity": qty}
             if confidence_interval:
                 # Khoảng ±1.96σ với σ = độ lệch chuẩn nhu cầu 28 ngày gần nhất (xấp xỉ, không phải

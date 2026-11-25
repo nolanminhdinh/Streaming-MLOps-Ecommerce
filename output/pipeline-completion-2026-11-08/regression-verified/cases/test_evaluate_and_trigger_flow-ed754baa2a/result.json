@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_monitoring.py::TestClosedLoopRetraining::test_evaluate_and_trigger_flow",
+  "file": "cases\\test_evaluate_and_trigger_flow-ed754baa2a",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0003205999964848161,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.010128900059498847,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "WARNING  mlops.monitoring.retraining:trigger_retraining.py:197 🚨 KÍCH HOẠT TÁI HUẤN LUYỆN (manual_force) | drift_share=0.0% | target_drift=False | nguồn=unknown"
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00037779996637254953,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "WARNING  mlops.monitoring.retraining:trigger_retraining.py:197 🚨 KÍCH HOẠT TÁI HUẤN LUYỆN (manual_force) | drift_share=0.0% | target_drift=False | nguồn=unknown"
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

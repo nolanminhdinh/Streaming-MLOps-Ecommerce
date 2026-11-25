@@ -1,0 +1,168 @@
+{
+  "samples": 120,
+  "duration_min": 59.51,
+  "host_cpu_pct": {
+    "tb": 45.42,
+    "max": 100.0,
+    "min": 2.0
+  },
+  "host_ram_used_gb": {
+    "tb": 19.37,
+    "max": 28.21,
+    "min": 17.5
+  },
+  "host_ram_total_gb": 31.52,
+  "docker_vm_ram_gb": {
+    "tb": 6.34,
+    "max": 14.76,
+    "min": 4.52
+  },
+  "stack_cpu_cores": {
+    "tb": 1.45,
+    "max": 4.55,
+    "min": 0.03
+  },
+  "stack_mem_gb": {
+    "tb": 3.02,
+    "max": 3.22,
+    "min": 2.76
+  },
+  "other_mem_gb": {
+    "tb": 0.54,
+    "max": 8.2,
+    "min": 0.0
+  },
+  "other_cpu_pct": {
+    "tb": 2.26,
+    "max": 82.3,
+    "min": 0.0
+  },
+  "producer_ram_mb": {
+    "tb": 10.73,
+    "max": 10.9,
+    "min": 10.6
+  },
+  "producer_rate": {
+    "tb": 0.87,
+    "max": 0.9,
+    "min": 0.0
+  },
+  "lag_minio": {
+    "tb": 5.42,
+    "max": 11.0,
+    "min": 0.0
+  },
+  "lag_inventory": {
+    "tb": 1.75,
+    "max": 20.0,
+    "min": 0.0
+  },
+  "pending_objects": {
+    "tb": 0.0,
+    "max": 0.0,
+    "min": 0.0
+  },
+  "p50_s": {
+    "tb": 24.72,
+    "max": 28.53,
+    "min": 19.18
+  },
+  "p95_s": {
+    "tb": 40.9,
+    "max": 47.44,
+    "min": 28.32
+  },
+  "containers": [
+    {
+      "container": "mlflow",
+      "cpu_tb": 0.96,
+      "cpu_max": 17.63,
+      "mem_tb_mb": 634.3,
+      "mem_max_mb": 652.5
+    },
+    {
+      "container": "kafka",
+      "cpu_tb": 32.33,
+      "cpu_max": 275.49,
+      "mem_tb_mb": 569.3,
+      "mem_max_mb": 727.2
+    },
+    {
+      "container": "minio",
+      "cpu_tb": 7.08,
+      "cpu_max": 41.67,
+      "mem_tb_mb": 458.0,
+      "mem_max_mb": 489.5
+    },
+    {
+      "container": "postgres",
+      "cpu_tb": 20.33,
+      "cpu_max": 184.31,
+      "mem_tb_mb": 330.4,
+      "mem_max_mb": 376.8
+    },
+    {
+      "container": "streaming-mlops-ecommerce-pipeline-worker-1",
+      "cpu_tb": 2.96,
+      "cpu_max": 37.43,
+      "mem_tb_mb": 247.4,
+      "mem_max_mb": 251.6
+    },
+    {
+      "container": "fastapi-serving",
+      "cpu_tb": 4.85,
+      "cpu_max": 65.38,
+      "mem_tb_mb": 196.1,
+      "mem_max_mb": 197.4
+    },
+    {
+      "container": "zookeeper",
+      "cpu_tb": 0.86,
+      "cpu_max": 11.62,
+      "mem_tb_mb": 151.8,
+      "mem_max_mb": 164.0
+    },
+    {
+      "container": "grafana",
+      "cpu_tb": 0.41,
+      "cpu_max": 4.6,
+      "mem_tb_mb": 146.8,
+      "mem_max_mb": 166.8
+    },
+    {
+      "container": "prometheus",
+      "cpu_tb": 0.29,
+      "cpu_max": 3.3,
+      "mem_tb_mb": 106.3,
+      "mem_max_mb": 120.2
+    },
+    {
+      "container": "streaming-mlops-ecommerce-demo-web-1",
+      "cpu_tb": 73.81,
+      "cpu_max": 145.17,
+      "mem_tb_mb": 105.4,
+      "mem_max_mb": 112.4
+    },
+    {
+      "container": "streaming-mlops-ecommerce-batch-forecaster-1",
+      "cpu_tb": 0.02,
+      "cpu_max": 1.05,
+      "mem_tb_mb": 85.2,
+      "mem_max_mb": 86.0
+    },
+    {
+      "container": "ecom-alertmanager",
+      "cpu_tb": 0.18,
+      "cpu_max": 1.64,
+      "mem_tb_mb": 39.7,
+      "mem_max_mb": 40.1
+    },
+    {
+      "container": "streaming-mlops-ecommerce-alert-receiver-1",
+      "cpu_tb": 0.94,
+      "cpu_max": 19.99,
+      "mem_tb_mb": 24.0,
+      "mem_max_mb": 34.5
+    }
+  ]
+}

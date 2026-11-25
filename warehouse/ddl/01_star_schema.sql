@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS Dim_Geography (
 CREATE TABLE IF NOT EXISTS Dim_Dates (
     date_key        SERIAL PRIMARY KEY,
     full_date       DATE UNIQUE NOT NULL,
-    day_of_week     SMALLINT,               -- 0=Mon, 6=Sun
+    day_of_week     SMALLINT,               -- PostgreSQL DOW: 0=Sun, 1=Mon, ..., 6=Sat
     day_name        VARCHAR(20),
     week_of_year    SMALLINT,
     month           SMALLINT,
@@ -163,6 +163,9 @@ CREATE TABLE IF NOT EXISTS Fact_Inventory_Daily (
 
 -- Fact_Forecast_Predictions: lưu dự báo thật đã được Model Serving phát ra.
 ALTER TABLE Fact_Inventory_Daily ADD COLUMN IF NOT EXISTS snapshot_at TIMESTAMPTZ;
+ALTER TABLE Fact_Inventory_Daily ADD COLUMN IF NOT EXISTS lead_time_days INTEGER;   -- ngày giao hàng của NCC
+ALTER TABLE Fact_Inventory_Daily ADD COLUMN IF NOT EXISTS incoming_stock INTEGER;   -- hàng đã đặt, đang về
+ALTER TABLE Fact_Inventory_Daily ADD COLUMN IF NOT EXISTS restock_eta TIMESTAMPTZ;  -- dự kiến hàng về
 -- Fact này cho phép đối chiếu dự báo với đơn hàng thực tế sau khi ngày mục tiêu kết thúc.
 CREATE TABLE IF NOT EXISTS Fact_Forecast_Predictions (
     forecast_id          BIGSERIAL PRIMARY KEY,
@@ -204,6 +207,8 @@ CREATE TABLE IF NOT EXISTS Fact_Historical_Order_Lines (
 
 -- Migration additive: forecasts cũ thiếu provenance được giữ là unknown, không chấm accuracy.
 ALTER TABLE Fact_Forecast_Predictions ADD COLUMN IF NOT EXISTS data_origin TEXT NOT NULL DEFAULT 'unknown';
+ALTER TABLE Fact_Forecast_Predictions ADD COLUMN IF NOT EXISTS lower_bound NUMERIC(14, 3);
+ALTER TABLE Fact_Forecast_Predictions ADD COLUMN IF NOT EXISTS upper_bound NUMERIC(14, 3);
 ALTER TABLE Fact_Forecast_Predictions ADD COLUMN IF NOT EXISTS source_datasets JSONB NOT NULL DEFAULT '[]'::JSONB;
 ALTER TABLE Fact_Forecast_Predictions DROP CONSTRAINT IF EXISTS uq_fact_forecasts_issue;
 ALTER TABLE Fact_Forecast_Predictions ADD CONSTRAINT uq_fact_forecasts_issue UNIQUE (
@@ -218,6 +223,32 @@ CREATE TABLE IF NOT EXISTS Warehouse_Daily_Coverage (
     full_date DATE NOT NULL,
     confirmed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     PRIMARY KEY (data_origin, source_dataset, full_date)
+);
+
+-- Một dòng mỗi lượt dự báo theo lô (scripts/run_batch_forecast.py). Giữ đồng bộ với 03_event_versions.sql,
+-- nơi bảng được tạo cho kho đã có dữ liệu.
+CREATE TABLE IF NOT EXISTS Model_Serving_Snapshot (
+    snapshot_id          BIGSERIAL PRIMARY KEY,
+    snapshot_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    model_registry_name  TEXT NOT NULL,
+    model_version        TEXT NOT NULL,
+    model_stage          TEXT,
+    algorithm            TEXT,
+    training_data_origin TEXT,
+    run_id               TEXT,
+    evaluation_protocol  TEXT,
+    cv_wape              NUMERIC(10, 3),
+    cv_bias              NUMERIC(10, 3),
+    cv_mae               NUMERIC(14, 3),
+    cv_rmse              NUMERIC(14, 3),
+    cv_scored_rows       INTEGER,
+    history_end          DATE,
+    forecast_from        DATE,
+    forecast_to          DATE,
+    skus_requested       INTEGER,
+    skus_model           INTEGER,
+    skus_heuristic       INTEGER,
+    skus_failed          INTEGER
 );
 
 CREATE INDEX IF NOT EXISTS idx_historical_lines_sku_date
@@ -250,10 +281,10 @@ INSERT INTO Dim_Dates (full_date, day_of_week, day_name, week_of_year,
 SELECT
     d::DATE AS full_date,
     EXTRACT(DOW FROM d)::SMALLINT AS day_of_week,
-    TO_CHAR(d, 'Day') AS day_name,
+    TO_CHAR(d, 'FMDay') AS day_name,      -- FM: không đệm khoảng trắng ('Monday', không phải 'Monday   ')
     EXTRACT(WEEK FROM d)::SMALLINT AS week_of_year,
     EXTRACT(MONTH FROM d)::SMALLINT AS month,
-    TO_CHAR(d, 'Month') AS month_name,
+    TO_CHAR(d, 'FMMonth') AS month_name,
     EXTRACT(QUARTER FROM d)::SMALLINT AS quarter,
     EXTRACT(YEAR FROM d)::SMALLINT AS year,
     EXTRACT(DOW FROM d) IN (0, 6) AS is_weekend,

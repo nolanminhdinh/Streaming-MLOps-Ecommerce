@@ -1,0 +1,92 @@
+{
+  "status": "PASS",
+  "completed_at_utc": "2026-11-08T16:24:01.389180+00:00",
+  "primary_regression": {
+    "passed": 134,
+    "failed": 0,
+    "skipped": 0
+  },
+  "primary_regression_tests": 134,
+  "alert_rule_cases": 6,
+  "live": {
+    "run_id": "CMP20261108c96f7bfb",
+    "status": "PASS",
+    "expected": {
+      "order_acks": 8,
+      "inventory_acks": 2,
+      "raw_rows": 8,
+      "fact_rows": 2,
+      "quantity": 10,
+      "stock": 50,
+      "rejected_source_events": 3
+    },
+    "writes": "labelled acceptance rows retained; no model/coverage change",
+    "actual": {
+      "kafka_readback": 8,
+      "raw_rows": 8,
+      "raw_objects": 2,
+      "fact_rows": 2,
+      "quantity": 10,
+      "rejected_events": 3,
+      "checkpointed_objects": 2,
+      "stock": 50,
+      "observed_completion_seconds": 33.20299999997951
+    }
+  },
+  "monitoring": {
+    "status": "PASS",
+    "external_notifications_sent": false,
+    "grafana_pipeline_panels": 6,
+    "pipeline_ready": true,
+    "pending_objects": 0.0,
+    "last_batch_p95_seconds": 31.0306762,
+    "verified_delivered_alerts": [
+      "EcommerceDemandHistoryStale"
+    ],
+    "protected_artifacts_unchanged": {
+      "data/daily_history.parquet": true,
+      "data/features_daily.parquet": true,
+      "data/feature_spec.json": true,
+      "data/model_manifest.json": true
+    },
+    "forecast_source": "mlflow_registry",
+    "forecast_points": 7,
+    "alert_delivery_destination": "local receiver on localhost:9094 only"
+  },
+  "backfill": [
+    {
+      "case": "dry",
+      "status": "DRY_RUN",
+      "business_output_unchanged": true,
+      "rows_before": 2,
+      "rows_after": 2,
+      "quantity_before": 10.0,
+      "quantity_after": 10.0,
+      "audit_file": "backfill-dry/20261108T160100-3c3bdbb5.json"
+    },
+    {
+      "case": "apply",
+      "status": "APPLIED",
+      "business_output_unchanged": true,
+      "rows_before": 2,
+      "rows_after": 2,
+      "quantity_before": 10.0,
+      "quantity_after": 10.0,
+      "audit_file": "backfill-apply/20261108T160104-08003f47.json"
+    },
+    {
+      "case": "replay",
+      "status": "APPLIED",
+      "business_output_unchanged": true,
+      "rows_before": 2,
+      "rows_after": 2,
+      "quantity_before": 10.0,
+      "quantity_after": 10.0,
+      "audit_file": "backfill-replay/20261108T160107-7d258d4e.json"
+    }
+  ],
+  "power_bi": "student will finish independently, per instruction on 2026-11-08",
+  "historical_attempts_retained": true,
+  "prior_failure_resolved": "Seven CSV export failures in regression-final caused by Windows path length; shorter case directories fixed; regression-complete passed",
+  "no_prospective_forecast_accuracy_claim": true
+}

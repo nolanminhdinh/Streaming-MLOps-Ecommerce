@@ -1,0 +1,33 @@
+{
+  "mode": "apply",
+  "status": "COMMITTED",
+  "checked_at": "2026-11-16T22:43:02.207825+07:00",
+  "before": {
+    "order_lines": 157901,
+    "units": 377710,
+    "buyer_amount": "96134756720.00",
+    "inventory_snapshots": 6168,
+    "stock": 1753972,
+    "forecast_issues": 1843,
+    "historical_lines": 7000
+  },
+  "validation": {
+    "order_lines": true,
+    "daily_inventory": true,
+    "forecasts": true,
+    "historical_lines": true,
+    "historical_keys_complete": true,
+    "inventory_policy_does_not_drop_skus": true,
+    "order_header_conflicts": 161,
+    "legacy_inventory_unknown_time": 24
+  },
+  "after": {
+    "order_lines": 157901,
+    "units": 377710,
+    "buyer_amount": "96134756720.00",
+    "inventory_snapshots": 6168,
+    "stock": 1753972,
+    "forecast_issues": 1843,
+    "historical_lines": 7000
+  }
+}

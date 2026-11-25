@@ -1,0 +1,32 @@
+{
+  "nodeid": "tests/test_monitoring.py::TestClosedLoopRetraining::test_failed_training_keeps_current_model",
+  "file": "cases\\test_failed_training_keeps_current_model-32dc9b307d",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00031869998201727867,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.005602099932730198,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "WARNING  mlops.monitoring.retraining:trigger_retraining.py:197 🚨 KÍCH HOẠT TÁI HUẤN LUYỆN (manual_force) | drift_share=0.0% | target_drift=False | nguồn=unknown\nERROR    mlops.monitoring.retraining:trigger_retraining.py:263 ✗ Huấn luyện lại THẤT BẠI: không kết nối được PostgreSQL — giữ nguyên mô hình v3."
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.00032780005130916834,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": "WARNING  mlops.monitoring.retraining:trigger_retraining.py:197 🚨 KÍCH HOẠT TÁI HUẤN LUYỆN (manual_force) | drift_share=0.0% | target_drift=False | nguồn=unknown\nERROR    mlops.monitoring.retraining:trigger_retraining.py:263 ✗ Huấn luyện lại THẤT BẠI: không kết nối được PostgreSQL — giữ nguyên mô hình v3."
+    }
+  },
+  "parameters": {},
+  "outcome": "passed"
+}

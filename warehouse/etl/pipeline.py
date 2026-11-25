@@ -34,7 +34,9 @@ from warehouse.etl.extract import build_minio_client, extract_orders
 from warehouse.etl.transform import BUSINESS_TZ, unify_schema, clean_data, deduplicate_lines
 from warehouse.etl.quarantine import persist_quarantine
 from warehouse.etl.data_validation import DataValidator
+from warehouse.etl.identity import CONFLICT_REASON, split_identity_conflicts, stored_create_times
 from warehouse.etl.load import get_engine, load
+from warehouse.etl.observability import latency_summary, object_accounting
 
 logging.basicConfig(
     level=logging.INFO,
@@ -122,6 +124,13 @@ def run_etl_pipeline(
     validator = DataValidator()
     clean_df, quarantine_df, val_report = validator.validate(transformed_df)
     val_report.print_summary()
+    # Hai đơn khác nhau dùng chung mã (khác create_time) bị cách ly thay vì gộp bằng upsert.
+    clean_df, conflict_df = split_identity_conflicts(clean_df, lookup=stored_create_times)
+    if not conflict_df.empty:
+        quarantine_df = pd.concat([quarantine_df, conflict_df], ignore_index=True)
+        val_report.error_counts[CONFLICT_REASON] = len(conflict_df)
+        logger.warning("Cách ly %d dòng: mã đơn đã thuộc về đơn khác (%s).", len(conflict_df), CONFLICT_REASON)
+    valid_before_dedupe = clean_df
     clean_df, duplicates = deduplicate_lines(clean_df)
     stats["duplicates_removed"] = duplicates
     stats["validation_errors"] = val_report.error_counts
@@ -132,6 +141,8 @@ def run_etl_pipeline(
 
     stats["clean_records"] = len(clean_df)
     stats["quarantined_records"] = len(quarantine_df)
+    stats["contract"] = "ecommerce.orders/1.0"
+    stats["object_accounting"] = object_accounting(raw_df, valid_before_dedupe, clean_df, quarantine_df)
     stats["accounted_records"] = len(clean_df) + duplicates + len(quarantine_df)
     if stats["accounted_records"] != stats["raw_records"]:
         raise RuntimeError("ETL accounting mismatch: raw != valid + duplicates + rejected")
@@ -166,6 +177,9 @@ def run_etl_pipeline(
                 stats["status"] = "LOAD_ERROR"
                 raise
 
+    finished_at = pd.Timestamp.now(tz="UTC")
+    stats["completed_at"] = finished_at.isoformat()
+    stats["ingest_to_warehouse_seconds"] = latency_summary(raw_df, finished_at) if not dry_run else None
     stats["elapsed_seconds"] = round(time.time() - start_time, 2)
     logger.info("═" * 60)
     logger.info("  KẾT THÚC CHU TRÌNH ETL — Trạng thái: %s", stats["status"])
@@ -217,11 +231,13 @@ def main():
         target_date = pd.Timestamp.now(tz=BUSINESS_TZ).to_pydatetime()
 
     try:
-        stats = run_etl_pipeline(
-            target_date=target_date,
-            dry_run=args.dry_run,
-            batch_size=args.batch_size,
-        )
+        from warehouse.etl.coordination import pipeline_lock
+        engine = get_engine()
+        try:
+            with pipeline_lock(engine):
+                stats = run_etl_pipeline(target_date=target_date, dry_run=args.dry_run, batch_size=args.batch_size)
+        finally:
+            engine.dispose()
         if stats["status"] in ("SUCCESS", "DRY_RUN_SUCCESS"):
             sys.exit(0)
         else:

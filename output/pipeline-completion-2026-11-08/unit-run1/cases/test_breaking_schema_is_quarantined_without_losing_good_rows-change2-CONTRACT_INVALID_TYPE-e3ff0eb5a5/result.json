@@ -1,0 +1,40 @@
+{
+  "nodeid": "tests/test_pipeline_completion.py::test_breaking_schema_is_quarantined_without_losing_good_rows[change2-CONTRACT_INVALID_TYPE_QUANTITY]",
+  "file": "cases\\test_breaking_schema_is_quarantined_without_losing_good_rows-change2-CONTRACT_INVALID_TYPE-e3ff0eb5a5",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.00047010008711367846,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.047742799972184,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0005420999368652701,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "change": {
+      "quantity": [
+        1,
+        2
+      ]
+    },
+    "reason": "CONTRACT_INVALID_TYPE_QUANTITY"
+  },
+  "outcome": "passed"
+}

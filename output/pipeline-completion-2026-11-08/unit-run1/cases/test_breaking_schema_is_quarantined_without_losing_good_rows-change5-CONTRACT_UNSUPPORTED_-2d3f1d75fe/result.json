@@ -1,0 +1,37 @@
+{
+  "nodeid": "tests/test_pipeline_completion.py::test_breaking_schema_is_quarantined_without_losing_good_rows[change5-CONTRACT_UNSUPPORTED_VERSION]",
+  "file": "cases\\test_breaking_schema_is_quarantined_without_losing_good_rows-change5-CONTRACT_UNSUPPORTED_-2d3f1d75fe",
+  "phases": {
+    "setup": {
+      "outcome": "passed",
+      "duration_seconds": 0.0006404999876394868,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "call": {
+      "outcome": "passed",
+      "duration_seconds": 0.06963690009433776,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    },
+    "teardown": {
+      "outcome": "passed",
+      "duration_seconds": 0.0005397999193519354,
+      "details": null,
+      "stdout": "",
+      "stderr": "",
+      "log": ""
+    }
+  },
+  "parameters": {
+    "change": {
+      "schema_version": "2.0"
+    },
+    "reason": "CONTRACT_UNSUPPORTED_VERSION"
+  },
+  "outcome": "passed"
+}
